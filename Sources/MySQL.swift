@@ -7,13 +7,9 @@
 public class MySQL {
   private var mysql: COpaquePointer!
 
-  // public var errorMessage: String {
-  //   return "\(mysql_error(_mysql))"
-  // }
-  //
-  // public var errorCode: Int {
-  //   return return mysql_errno(_mysql)
-  // }
+  public var errorMessage: String {
+    return "\(mysql_error(_mysql))"
+  }
 
   public var connected: Bool {
     return mysql_stat(_mysql) ? true : false
@@ -34,16 +30,6 @@ public class MySQL {
     finalize()
   }
 
-  public func finalize() {
-    mysql_library_end()
-  }
-
-  public func close() {
-    if let mysql = mysql {
-      mysql_close(mysql)
-    }
-  }
-
   public func execute(query: String) -> MSQLResult? {
     if !mysql_query(mysql, query) {
       let result = mysql_use_result(mysql)
@@ -57,7 +43,17 @@ public class MySQL {
     return nil
   }
 
-  public func connect(username: String, password: String, databasae: String, host: String? = nil, port: Int? = 0, socket: String? = nil, flag: Int = 0) -> Bool {
+  public func finalize() {
+    mysql_library_end()
+  }
+
+  public func close() {
+    if let mysql = mysql {
+      mysql_close(mysql)
+    }
+  }
+
+  public func connect(username: String, password: String, database: String, host: String? = nil, port: Int? = 0, socket: String? = nil, flag: Int = 0) -> Bool {
     if mysql == nil {
       mysql = mysql_init(nil)
     }
@@ -96,17 +92,6 @@ class MSQLResult {
 
   public lazy var columnCount: Int = {
       return Int(mysql_num_fields(self.internalPointer))
-  }()
-
-  public lazy var fieldLengths: [UInt] = {
-      let fieldLengths = mysql_fetch_lengths(self.internalPointer)
-      var lengths = [UInt]()
-      for i in 0..<self.fieldCount {
-          let fieldLength = fieldLengths[i]
-          lengths.append(fieldLength)
-      }
-
-      return lengths
   }()
 
   public init(result: COpaquePointer) {
