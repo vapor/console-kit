@@ -103,12 +103,14 @@ class MSQLResult {
   }
 
   public func affectedRow() -> [[String: String]]? {
-   let data = [[String: String]]()
-    while var rowP = mysql_fetch_row(result) {
+    let data = [[String: String]]()
+    var rowP: COpaquePointer? 
+    repeat {  
+      rowP = mysql_fetch_row(result)
       for columnField in columns {
-          data[columnField.name] = rowP[columnField.index]
+          data[columnField.name] = rowP![columnField.index]
       }
-    }
+    } while rowP != nil 
     defer { mysql_free_result(result) }
     return data
   }
