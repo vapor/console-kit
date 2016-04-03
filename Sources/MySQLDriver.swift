@@ -1,73 +1,49 @@
 import Fluent
 
 public class MySQLDriver: Fluent.Driver {
-    private(set) var database: PostgreSQL!
+    private(set) var database: MySQL!
+    private init() { }  
 
-    private init() {
-
+    public init(username: String, password: String, database: String, host: String? = nil, port: Int? = 0, socket: String? = nil, flag: Int = 0) throws {
+        self.database = try MySQL(username: username, password: password, database: database, host: host, port: port, socket: socket, flag: flag)
     }
-
-    public init(username: String, password: String, database: String, host: String? = nil, port: Int? = 0, socket: String? = nil, flag: Int = 0) {
-        self.database = MySQL()
-        self.database.connect(username, password, database, host, port, socket, flag)
-    }
-
-    public func fetchOne(table table: String, filters: [Filter]) -> [String: String]? {
-        let sql = SQL(operation: .SELECT, table: table)
-        sql.filters = filters
-        sql.limit = 1
-
-        if let result = self.database.execute(sql.query) {
-          return result.data.first
+    
+    public func execute<T : Model>(query: Query<T>) throws -> [[String : Value]] {
+        let sql = SQL(query: query)
+        let results: [[String: String]]
+        
+        do {
+            if sql.values.count > 0 {
+                var position = 1
+                results = try self.database.execute(sql.statement) {
+                    for value in sql.values {
+                        if let int = value.int {
+                            self.database.bind(Int32(int), position: position)
+                        } else if let double = value.double {
+                            self.database.bind(double, position: position)
+                        } else {
+                            self.database.bind(value.string, position: position)
+                        }
+                        position += 1
+                    }
+                }
+            } else {
+                results = try self.database.execute(sql.statement)
+            }
+        } catch {
+            throw DriverError.Generic(message: self.database.errorMessage)
         }
-        return nil
-    }
-
-    public func fetch(table table: String, filters: [Filter]) -> [[String: String]] {
-        let sql = SQL(operation: .SELECT, table: table)
-        sql.filters = filters
-
-        if let result = self.database.execute(sql.query) {
-          return result.data
+        
+        var data: [[String: Value]] = []
+        
+        for row in results {
+            var t: [String: Value] = [:]
+            for (k, v) in row {
+                t[k] = v as String
+            }
+            data.append(t)
         }
-        return []
-    }
-
-    public func delete(table table: String, filters: [Filter]) {
-        let sql = SQL(operation: .DELETE, table: table)
-        sql.filters = filters
-
-        self.database.execute(sql.query)
-    }
-
-    public func update(table table: String, filters: [Filter], data: [String: String]) {
-        let sql = SQL(operation: .UPDATE, table: table)
-        sql.filters = filters
-        sql.data = data
-
-        self.database.execute(sql.query)
-    }
-
-    public func insert(table table: String, items: [[String: String]]) {
-      for item in items {
-        let sql = SQL(operation: .INSERT, table: table)
-        sql.data = item
-
-        self.database.execute(sql.query)
-      }
-    }
-
-    public func upsert(table table: String, items: [[String: String]]) {
-        //check if object exists
-    }
-
-    public func exists(table table: String, filters: [Filter]) -> Bool {
-        print("exists \(filters.count) filters on \(table)")
-        return false
-    }
-
-    public func count(table table: String, filters: [Filter]) -> Int {
-        print("count \(filters.count) filters on \(table)")
-        return 0
+        
+        return data
     }
 }
