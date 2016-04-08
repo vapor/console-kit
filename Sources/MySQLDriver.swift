@@ -1,10 +1,11 @@
 import Fluent
+import Foundation
 
 public class MySQLDriver: Fluent.Driver {
     private(set) var database: MySQL!
     private init() { }  
 
-     public init(username: String, password: String, host: String, database: String, port: UInt = 3306, flag: UInt = 0) throws {
+    public init(username: String, password: String, host: String, database: String, port: UInt = 3306, flag: UInt = 0) throws {
         self.database = try MySQL(username: username, password: password, host: host, database: database, port: port, flag: flag)
     }
     
@@ -15,26 +16,19 @@ public class MySQLDriver: Fluent.Driver {
     public func execute<T : Model>(query: Query<T>) throws -> [[String : Value]] {
         let sql = SQL(query: query)
         let results: [[String: String]]
+        let statement = sql.statement
+        let values = sql.values
         
         do {
-            if sql.values.count > 0 {
-                var position = 1
-                results = try self.database.execute(sql.statement) {
-                    for value in sql.values {
-                        if let int = value.int {
-                            self.database.bind(Int32(int), position: position)
-                        } else if let double = value.double {
-                            self.database.bind(double, position: position)
-                        } else {
-                            self.database.bind(value.string, position: position)
-                        }
-                        position += 1
-                    }
-                }
+            if values.count > 0 {
+                let escapedValues = try self.database.escapeValues(values)
+                let newStatement = combine(statement, values: escapedValues)
+                results = try self.database.execute(newStatement)
             } else {
-                results = try self.database.execute(sql.statement)
+                results = try self.database.execute(statement)
             }
         } catch {
+            print(self.database.errorMessage)
             throw DriverError.Generic(message: self.database.errorMessage)
         }
         
@@ -49,5 +43,21 @@ public class MySQLDriver: Fluent.Driver {
         }
         
         return data
+    }
+    
+    func combine(query: String, values: [String]) -> String {
+        var vals = values
+        let splits = query.componentsSeparated(by: "?")
+        var str = ""
+        for comp in splits {
+            str.append(comp)
+            if vals.isEmpty {
+                continue
+            }
+            str.append(vals.removeFirst())
+        }
+        
+        
+        return str
     }
 }
