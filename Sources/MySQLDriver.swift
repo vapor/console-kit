@@ -34,13 +34,14 @@ public class MySQLDriver: Fluent.Driver {
         
         var data: [[String: Value]] = []
         
+        var t: [String: Value] = [:]
         for row in results {
-            var t: [String: Value] = [:]
             for (k, v) in row {
                 t[k] = v as String
             }
-            data.append(t)
         }
+        
+        data.append(t)
         
         return data
     }
