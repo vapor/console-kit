@@ -4,8 +4,12 @@ public class MySQLDriver: Fluent.Driver {
     private(set) var database: MySQL!
     private init() { }  
 
-    public init(username: String, password: String, database: String, host: String? = nil, port: Int? = 0, socket: String? = nil, flag: Int = 0) throws {
-        self.database = try MySQL(username: username, password: password, database: database, host: host, port: port, socket: socket, flag: flag)
+     public init(username: String, password: String, host: String, database: String, port: UInt = 3306, flag: UInt = 0) throws {
+        self.database = try MySQL(username: username, password: password, host: host, database: database, port: port, flag: flag)
+    }
+    
+    public init(username: String, password: String, database: String, socket: String, flag: UInt = 0) throws {
+        self.database = try MySQL(username: username, password: password, database: database, socket: socket, flag: flag)
     }
     
     public func execute<T : Model>(query: Query<T>) throws -> [[String : Value]] {

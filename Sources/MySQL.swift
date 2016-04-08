@@ -38,12 +38,24 @@ public class MySQL {
         close()
     }
     
-    public init(username: String, password: String, database: String, host: String? = nil, port: Int? = 0, socket: String? = nil, flag: Int = 0) throws {
+    public init(username: String, password: String, host: String, database: String, port: UInt = 3306, flag: UInt = 0) throws {
         if mysql == nil {
             mysql = mysql_init(nil)
         }
         
-        let connection = mysql_real_connect(mysql, host!, username, password, database, UInt32(port!), socket!, UInt(flag))
+        let connection = mysql_real_connect(mysql, host, username, password, database, UInt32(port), nil, flag)
+        if connection == nil {
+            throw MySQLError.NoConnection
+        }
+
+    }
+    
+    public init(username: String, password: String, database: String, socket: String, flag: UInt = 0) throws {
+        if mysql == nil {
+            mysql = mysql_init(nil)
+        }
+        
+        let connection = mysql_real_connect(mysql, nil, username, password, database, 0, socket, flag)
         if connection == nil {
             throw MySQLError.NoConnection
         }
