@@ -102,6 +102,10 @@ public class MySQL {
             throw MySQLError.BadSQL
         }
         
+        if query.hasPrefix("UPDATE") || query.hasPrefix("DELETE") || query.hasPrefix("INSERT") {
+            return []
+        }
+        
         var results = [[String: String]]()
         var row = mysql_fetch_row(result)
         repeat {

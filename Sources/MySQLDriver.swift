@@ -18,7 +18,7 @@ public class MySQLDriver: Fluent.Driver {
         let results: [[String: String]]
         let statement = sql.statement
         let values = sql.values
-        
+                
         do {
             if values.count > 0 {
                 let escapedValues = try self.database.escapeValues(values)
@@ -52,10 +52,22 @@ public class MySQLDriver: Fluent.Driver {
         var str = ""
         for comp in splits {
             str.append(comp)
+            
+            if str.hasSuffix(";") { // prevent any weird cases
+                break
+            }
+
             if vals.isEmpty {
                 continue
             }
-            str.append(vals.removeFirst())
+            
+            let val = vals.removeFirst()
+            
+            if val.contains(" ") {
+                str.append("'\(val)'")
+            } else {
+                str.append(val)
+            }
         }
         
         
