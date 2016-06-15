@@ -3,7 +3,10 @@
 #else
     import CMySQLMac
 #endif
-
+/**
+    Wraps a pointer to an array of fields
+    to ensure proper freeing of allocated memory.
+*/
 public final class Fields {
     public typealias CMetadata = UnsafeMutablePointer<MYSQL_RES>
 
@@ -13,6 +16,10 @@ public final class Fields {
         case fieldFetch
     }
 
+    /**
+        Creates the array of fields from
+        the metadata of a statement.
+    */
     public init(_ cMetadata: CMetadata) throws {
         guard let cFields = mysql_fetch_fields(cMetadata) else {
             throw Error.fieldFetch

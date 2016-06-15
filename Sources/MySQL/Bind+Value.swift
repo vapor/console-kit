@@ -5,6 +5,10 @@
 #endif
 
 extension Bind {
+    /**
+        Parses a MySQL Value object from
+        an output binding.
+    */
     public var value: Value? {
         guard let buffer = cBind.buffer else {
             return nil

@@ -4,17 +4,34 @@
     import CMySQLMac
 #endif
 
+/**
+    This structure is used both for statement input (data values sent to the server) 
+    and output (result values returned from the server):
+ 
+    The Swift version consists of a wrapper around MySQL's implementation
+    to ensure proper freeing of allocated memory.
+*/
 public final class Bind {
     public typealias CBind = MYSQL_BIND
 
+    /// MySQL represents Characters using signed integers.
     typealias Char = Int8
 
+    /**
+        The raw C binding.
+    */
     public let cBind: CBind
 
+    /**
+        Creates a binding from a raw C binding.
+    */
     public init(cBind: CBind) {
         self.cBind = cBind
     }
 
+    /**
+        Creates a NULL input binding.
+    */
     public init() {
         var cBind = CBind()
         cBind.buffer_type = MYSQL_TYPE_NULL
@@ -22,6 +39,9 @@ public final class Bind {
         self.cBind = cBind
     }
 
+    /**
+        Creates an output binding from an expected Field.
+    */
     public init(_ field: Field) {
         var cBind = CBind()
 
@@ -38,6 +58,9 @@ public final class Bind {
         self.cBind = cBind
     }
 
+    /**
+        Creates an input binding from a String.
+    */
     public convenience init(_ string: String) {
         let bytes = Array(string.utf8)
         let buffer = UnsafeMutablePointer<Char>(allocatingCapacity: bytes.count)
@@ -48,6 +71,9 @@ public final class Bind {
         self.init(type: MYSQL_TYPE_STRING, buffer: buffer, bufferLength: bytes.count)
     }
 
+    /**
+        Creates an input binding from an Int.
+    */
     public convenience init(_ int: Int) {
         let buffer = UnsafeMutablePointer<Int64>(allocatingCapacity: 1)
         buffer.initialize(with: Int64(int))
@@ -55,6 +81,9 @@ public final class Bind {
         self.init(type: MYSQL_TYPE_LONGLONG, buffer: buffer, bufferLength: sizeof(Int64))
     }
 
+    /**
+        Creates an input binding from a UInt.
+    */
     public convenience init(_ int: UInt) {
         let buffer = UnsafeMutablePointer<UInt64>(allocatingCapacity: 1)
         buffer.initialize(with: UInt64(int))
@@ -62,6 +91,9 @@ public final class Bind {
         self.init(type: MYSQL_TYPE_LONGLONG, buffer: buffer, bufferLength: sizeof(UInt64))
     }
 
+    /**
+        Creates an input binding from an Double.
+    */
     public convenience init(_ int: Double) {
         let buffer = UnsafeMutablePointer<Double>(allocatingCapacity: 1)
         buffer.initialize(with: Double(int))
@@ -69,6 +101,10 @@ public final class Bind {
         self.init(type: MYSQL_TYPE_LONGLONG, buffer: buffer, bufferLength: sizeof(Double))
     }
 
+    /**
+        Creates an input binding from a field variant,
+        input buffer, and input buffer length.
+    */
     public init<T>(type: Field.Variant, buffer: UnsafeMutablePointer<T>, bufferLength: Int, unsigned: Bool = false) {
         var cBind = CBind()
 
@@ -90,10 +126,17 @@ public final class Bind {
         self.cBind = cBind
     }
 
+    /**
+        Buffer type variant.
+    */
     public var variant: Field.Variant {
         return cBind.buffer_type
     }
 
+    /**
+        Frees allocated memory from the underlying
+        C binding.
+    */
     deinit {
         guard cBind.buffer_type != MYSQL_TYPE_NULL else {
             return
@@ -120,6 +163,9 @@ public final class Bind {
 }
 
 extension Value {
+    /**
+        Creates in input binding from a MySQL Value.
+    */
     var bind: Bind {
         switch self {
         case .int(let int):

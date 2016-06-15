@@ -41,11 +41,11 @@ public class Database {
         engine running on host.
      
         - parameter host: May be either a host name or an IP address.
-            If host is NULL or the string "localhost", a connection to the local host is assumed.
+            If host is the string "localhost", a connection to the local host is assumed.
         - parameter user: The user's MySQL login ID.
         - parameter password: Password for user.
         - parameter database: Database name. 
-            If db is not NULL, the connection sets the default database to this value.
+            The connection sets the default database to this value.
         - parameter port: If port is not 0, the value is used as 
             the port number for the TCP/IP connection.
         - parameter socket: If socket is not NULL, 
@@ -59,10 +59,10 @@ public class Database {
 
     */
     public init(
-        host: String = "localhost",
+        host: String,
         user: String,
         password: String,
-        database: String?,
+        database: String,
         port: UInt32 = 3306,
         socket: String? = nil,
         flag: UInt = 0

@@ -4,6 +4,9 @@
     import CMySQLMac
 #endif
 
+/**
+    Wraps a MySQL C field struct.
+*/
 public final class Field {
     public typealias CField = MYSQL_FIELD
 

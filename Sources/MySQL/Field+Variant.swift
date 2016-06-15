@@ -5,10 +5,18 @@
 #endif
 
 extension Field {
+    /**
+        The various types of fields MySQL is
+        capable of storing.
+    */
     public typealias Variant = enum_field_types
 }
 
 extension Field.Variant: CustomStringConvertible {
+    /**
+        A readable representation
+        of the Field variant.
+    */
     public var description: String {
         switch self {
         case MYSQL_TYPE_TINY:
