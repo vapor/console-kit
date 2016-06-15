@@ -55,7 +55,7 @@ public class MySQL {
     }
 
     @discardableResult
-    public func execute(_ query: String, _ values: [Value] = []) throws -> [[String: Value?]] {
+    public func execute(_ query: String, _ values: [Value] = []) throws -> [[String: Value]] {
         guard let statement = mysql_stmt_init(connection) else {
             throw Error.statement
         }
@@ -213,10 +213,10 @@ public class MySQL {
 
             mysql_stmt_execute(statement)
 
-            var results: [[String: Value?]] = []
+            var results: [[String: Value]] = []
 
             while mysql_stmt_fetch(statement) == Result.ok {
-                var parsed: [String: Value?] = [:]
+                var parsed: [String: Value] = [:]
 
                 for i in 0 ..< fieldsCount {
                     let field = fields[i]
@@ -273,7 +273,7 @@ public class MySQL {
                             let double = unwrap(buffer, Double.self)
                             value = .double(double)
                         default:
-                            value = nil
+                            value = .null
                         }
                     }
 

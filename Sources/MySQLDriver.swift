@@ -21,24 +21,61 @@ public class MySQLDriver: Fluent.Driver {
             flag: flag
         )
     }
-    
+
+    public init(_ database: MySQL) {
+        self.database = database
+    }
+
+    @discardableResult
     public func execute<T : Model>(_ query: Query<T>) throws -> [[String: Value]] {
         let sql = SQL(query: query)
         let statement = sql.statement
 
+        var results = try raw(statement, sql.values)
+
+        if query.action == .create {
+            if let insert = try raw("SELECT LAST_INSERT_ID() as id").first?["id"] {
+                results.append([
+                    "id": insert
+                ])
+            }
+        }
+
+        return results
+    }
+
+    @discardableResult
+    public func raw(_ query: String, _ values: [Value] = []) throws -> [[String: Value]] {
         var results: [[String: Value]] = []
 
-        for row in try database.execute(statement) {
+        let values = values.map { $0.mysql }
+
+        for row in try database.execute(query, values) {
             var result: [String: Value] = [:]
 
             for (key, val) in row {
-                result[key] = val ?? StructuredData.null
+                result[key] = val
             }
 
             results.append(result)
         }
 
         return results
+    }
+}
+
+extension Value {
+    public var mysql: MySQL.Value {
+        switch structuredData {
+        case .int(let int):
+            return .int(int)
+        case .double(let double):
+            return .double(double)
+        case .string(let string):
+            return .string(string)
+        default:
+            return .null
+        }
     }
 }
 
