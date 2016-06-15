@@ -8,9 +8,9 @@ extension MySQL.Database {
     static func makeTestConnection() -> MySQL.Database {
         do {
             return try MySQL.Database(
-                username: "tester",
-                password: "secret",
                 host: "localhost",
+                user: "tester",
+                password: "secret",
                 database: "test"
             )
         } catch {

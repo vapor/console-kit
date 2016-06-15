@@ -6,17 +6,17 @@ public class MySQLDriver: Fluent.Driver {
     public var database: MySQL.Database
 
     public init(
-        username: String,
-        password: String,
         host: String,
+        user: String,
+        password: String,
         database: String,
         port: UInt32 = 3306,
         flag: UInt = 0
     ) throws {
         self.database = try MySQL.Database(
-            username: username,
-            password: password,
             host: host,
+            user: user,
+            password: password,
             database: database,
             port: port,
             flag: flag
