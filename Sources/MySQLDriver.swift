@@ -42,6 +42,38 @@ public class MySQLDriver: Fluent.Driver {
     }
 }
 
+extension MySQL.Value: Value {
+    public var structuredData: StructuredData {
+        switch self {
+        case .string(let string):
+            return .string(string)
+        case .int(let int):
+            return .int(int)
+        case .uint(let uint):
+            return .int(Int(uint))
+        case .double(let double):
+            return .double(double)
+        case .null:
+            return .null
+        }
+    }
+
+    public var description: String {
+        switch self {
+        case .string(let string):
+            return string
+        case int(let int):
+            return "\(int)"
+        case .uint(let uint):
+            return "\(uint)"
+        case .double(let double):
+            return "\(double)"
+        case .null:
+            return "NULL"
+        }
+    }
+}
+
 extension StructuredData: Value {
     public var structuredData: StructuredData {
         return self
