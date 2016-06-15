@@ -1,8 +1,9 @@
 import Fluent
+import MySQL
 
 public class MySQLDriver: Fluent.Driver {
     public var idKey: String = "id"
-    public var database: MySQL
+    public var database: MySQL.Database
 
     public init(
         username: String,
@@ -12,7 +13,7 @@ public class MySQLDriver: Fluent.Driver {
         port: UInt32 = 3306,
         flag: UInt = 0
     ) throws {
-        self.database = try MySQL(
+        self.database = try MySQL.Database(
             username: username,
             password: password,
             host: host,
@@ -22,12 +23,12 @@ public class MySQLDriver: Fluent.Driver {
         )
     }
 
-    public init(_ database: MySQL) {
+    public init(_ database: MySQL.Database) {
         self.database = database
     }
 
     @discardableResult
-    public func execute<T : Model>(_ query: Query<T>) throws -> [[String: Value]] {
+    public func execute<T : Model>(_ query: Query<T>) throws -> [[String: Fluent.Value]] {
         let sql = SQL(query: query)
         let statement = sql.statement
 
@@ -45,13 +46,13 @@ public class MySQLDriver: Fluent.Driver {
     }
 
     @discardableResult
-    public func raw(_ query: String, _ values: [Value] = []) throws -> [[String: Value]] {
-        var results: [[String: Value]] = []
+    public func raw(_ query: String, _ values: [Fluent.Value] = []) throws -> [[String: Fluent.Value]] {
+        var results: [[String: Fluent.Value]] = []
 
         let values = values.map { $0.mysql }
 
         for row in try database.execute(query, values) {
-            var result: [String: Value] = [:]
+            var result: [String: Fluent.Value] = [:]
 
             for (key, val) in row {
                 result[key] = val
@@ -64,7 +65,7 @@ public class MySQLDriver: Fluent.Driver {
     }
 }
 
-extension Value {
+extension Fluent.Value {
     public var mysql: MySQL.Value {
         switch structuredData {
         case .int(let int):
@@ -79,7 +80,7 @@ extension Value {
     }
 }
 
-extension MySQL.Value: Value {
+extension MySQL.Value: Fluent.Value {
     public var structuredData: StructuredData {
         switch self {
         case .string(let string):
@@ -111,7 +112,7 @@ extension MySQL.Value: Value {
     }
 }
 
-extension StructuredData: Value {
+extension StructuredData: Fluent.Value {
     public var structuredData: StructuredData {
         return self
     }

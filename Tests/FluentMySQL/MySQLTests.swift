@@ -1,6 +1,7 @@
 import XCTest
 @testable import FluentMySQL
 import Fluent
+import MySQL
 
 class MySQLTests: XCTestCase {
     static let allTests = [
@@ -9,10 +10,10 @@ class MySQLTests: XCTestCase {
         ("testParameterization", testParameterization),
     ]
 
-    var mysql: MySQL!
+    var mysql: MySQL.Database!
 
     override func setUp() {
-        mysql = MySQL.makeTestConnection()
+        mysql = MySQL.Database.makeTestConnection()
     }
 
     func testSelectVersion() {

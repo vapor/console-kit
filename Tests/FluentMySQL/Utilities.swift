@@ -1,11 +1,13 @@
 import XCTest
+
+import MySQL
 import FluentMySQL
 import Fluent
 
-extension MySQL {
-    static func makeTestConnection() -> MySQL {
+extension MySQL.Database {
+    static func makeTestConnection() -> MySQL.Database {
         do {
-            return try MySQL(
+            return try MySQL.Database(
                 username: "tester",
                 password: "secret",
                 host: "localhost",
@@ -34,17 +36,17 @@ extension MySQL {
 }
 
 struct User: Model {
-    var id: Value?
+    var id: Fluent.Value?
     var name: String
     var email: String
 
-    init(id: Value?, name: String, email: String) {
+    init(id: Fluent.Value?, name: String, email: String) {
         self.id = id
         self.name = name
         self.email = email
     }
 
-    func serialize() -> [String : Value?] {
+    func serialize() -> [String : Fluent.Value?] {
         return [
             "id": id,
             "name": name,
@@ -52,7 +54,7 @@ struct User: Model {
         ]
     }
 
-    init?(serialized: [String : Value]) {
+    init?(serialized: [String : Fluent.Value]) {
         id = serialized["id"]
         name = serialized["name"]?.string ?? ""
         email = serialized["email"]?.string ?? ""
