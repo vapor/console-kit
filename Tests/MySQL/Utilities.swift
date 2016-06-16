@@ -32,6 +32,7 @@ extension MySQL.Database {
     }
 }
 
+// Makes fetching values during tests easier
 extension MySQL.Value {
     var string: String? {
         guard case .string(let string) = self else {
