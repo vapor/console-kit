@@ -56,7 +56,6 @@ public class Database {
 
         - throws: `Error.connection(String)` if the call to
             `mysql_real_connect()` fails.
-
     */
     public init(
         host: String,
