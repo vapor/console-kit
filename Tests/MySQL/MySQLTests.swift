@@ -1,7 +1,5 @@
 import XCTest
-@testable import FluentMySQL
-import Fluent
-import MySQL
+@testable import MySQL
 
 class MySQLTests: XCTestCase {
     static let allTests = [
