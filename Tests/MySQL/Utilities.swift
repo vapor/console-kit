@@ -6,7 +6,7 @@ extension MySQL.Database {
         do {
             return try MySQL.Database(
                 host: "127.0.0.1",
-                user: "travis",
+                user: "root",
                 password: "",
                 database: "test"
             )
