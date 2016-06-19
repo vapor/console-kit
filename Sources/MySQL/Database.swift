@@ -7,9 +7,7 @@
 /**
     Holds a `Connection` to the MySQL database.
 */
-public class Database {
-    public typealias Connection = UnsafeMutablePointer<MYSQL>
-
+public final class Database {
     /**
         A list of all Error messages that
         can be thrown from calls to `Database`.
@@ -18,6 +16,7 @@ public class Database {
         contains MySQL's last error message.
     */
     public enum Error: ErrorProtocol {
+        case serverInit
         case connection(String)
         case inputBind(String)
         case outputBind(String)
@@ -26,15 +25,6 @@ public class Database {
         case statement(String)
         case execute(String)
     }
-
-
-    /**
-        This structure represents a handle to one database connection. 
-        It is used for almost all MySQL functions.
-        Do not try to make a copy of a MYSQL structure. 
-        There is no guarantee that such a copy will be usable.
-    */
-    public let connection: Connection
 
     /**
         Attempts to establish a connection to a MySQL database
@@ -62,16 +52,32 @@ public class Database {
         user: String,
         password: String,
         database: String,
-        port: UInt32 = 3306,
+        port: UInt = 3306,
         socket: String? = nil,
         flag: UInt = 0
     ) throws {
-        connection = mysql_init(nil)
-
-        guard mysql_real_connect(connection, host, user, password, database, port, socket, flag) != nil else {
-            throw Error.connection(errorMessage)
+        /// Initializes the server that will
+        /// create new connections on each thread
+        guard mysql_server_init(0, nil, nil) == 0 else {
+            throw Error.serverInit
         }
+
+        self.host = host
+        self.user = user
+        self.password = password
+        self.database = database
+        self.port = UInt32(port)
+        self.socket = socket
+        self.flag = flag
     }
+
+    private let host: String
+    private let user: String
+    private let password: String
+    private let database: String
+    private let port: UInt32
+    private let socket: String?
+    private let flag: UInt
 
     /**
         Executes the MySQL query string with parameterized values.
@@ -86,30 +92,45 @@ public class Database {
             May be empty if the call does not produce data.
     */
     @discardableResult
-    public func execute(_ query: String, _ values: [Value] = []) throws -> [[String: Value]] {
+    public func execute(_ query: String, _ values: [Value] = [], _ on: Connection? = nil) throws -> [[String: Value]] {
+        // If not connection is supplied, make a new one.
+        // This makes thread-safety default.
+        let connection: Connection
+        if let c = on {
+            connection = c
+        } else {
+            connection = try makeConnection()
+        }
+
         // Create a pointer to the statement
         // This should only fail if memory is limited.
-        guard let statement = mysql_stmt_init(connection) else {
-            throw Error.statement(errorMessage)
+        guard let statement = mysql_stmt_init(connection.cConnection) else {
+            throw Error.statement(connection.error)
+        }
+        defer {
+            mysql_stmt_close(statement)
         }
 
         // Prepares the created statement
         // This parses `?` in the query and
         // prepares them to attach parameterized bindings.
         guard mysql_stmt_prepare(statement, query, strlen(query)) == 0 else {
-            throw Error.prepare(errorMessage)
+            throw Error.prepare(connection.error)
         }
 
         // Transforms the `[Value]` array into bindings
         // and applies those bindings to the statement.
         let inputBinds = Binds(values)
         guard mysql_stmt_bind_param(statement, inputBinds.cBinds) == 0 else {
-            throw Error.inputBind(errorMessage)
+            throw Error.inputBind(connection.error)
         }
 
         // Fetches metadata from the statement which has
         // not yet run.
         if let metadata = mysql_stmt_result_metadata(statement) {
+            defer {
+                mysql_free_result(metadata)
+            }
 
             // Parse the fields (columns) that will be returned
             // by this statement.
@@ -117,7 +138,7 @@ public class Database {
             do {
                 fields = try Fields(metadata)
             } catch {
-                throw Error.fetchFields(errorMessage)
+                throw Error.fetchFields(connection.error)
             }
 
             // Use the fields data to create output bindings.
@@ -127,13 +148,13 @@ public class Database {
 
             // Bind the output bindings to the statement.
             guard mysql_stmt_bind_result(statement, outputBinds.cBinds) == 0 else {
-                throw Error.outputBind(errorMessage)
+                throw Error.outputBind(connection.error)
             }
 
             // Execute the statement!
             // The data is ready to be fetched when this completes.
             guard mysql_stmt_execute(statement) == 0 else {
-                throw Error.execute(errorMessage)
+                throw Error.execute(connection.error)
             }
 
             var results: [[String: Value]] = []
@@ -161,7 +182,7 @@ public class Database {
                 // signal that they may be reused as buffers
                 // for the next row fetch.
                 guard mysql_stmt_bind_result(statement, outputBinds.cBinds) == 0 else {
-                    throw Error.outputBind(errorMessage)
+                    throw Error.outputBind(connection.error)
                 }
             }
 
@@ -170,31 +191,35 @@ public class Database {
             // no data is expected to return from 
             // this query, simply execute it.
             guard mysql_stmt_execute(statement) == 0 else {
-                throw Error.execute(errorMessage)
+                throw Error.execute(connection.error)
             }
             return []
         }
     }
 
+
     /**
-        Contains the last error message generated
-        by this MySQLS connection.
+        Creates a new thread-safe connection to
+        the database that can be reused between executions.
+
+        The connection will close automatically when deinitialized.
     */
-    public var errorMessage: String {
-        guard let error = mysql_error(connection) else {
-            return "Unknown"
-        }
-        return String(cString: error)
+    public func makeConnection() throws -> Connection {
+        return try Connection(
+            host: host,
+            user: user,
+            password: password,
+            database: database,
+            port: port,
+            socket: socket,
+            flag: flag
+        )
     }
-    
+
     /**
         Closes the connection to MySQL.
     */
-    public func close() {
-        mysql_close(connection)
-    }
-
     deinit {
-        close()
+        mysql_server_end()
     }
 }
