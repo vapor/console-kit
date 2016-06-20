@@ -9,8 +9,14 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       ls /usr/local/lib/;
       ls /usr/local/include/mysql/;
+      ls /usr/local/opt/;
+      ls /usr/include;
       brew install mysql;
       brew link mysql;
+      ls /usr/local/lib/;
+      ls /usr/local/include/mysql/;
+      ls /usr/local/opt/;
+      ls /usr/include;
       mysql.server start;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
