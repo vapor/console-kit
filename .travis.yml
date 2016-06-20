@@ -1,0 +1,34 @@
+os:
+  - linux
+  - osx
+language: generic
+sudo: required
+dist: trusty
+osx_image: xcode7.3
+install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      brew install mysql;
+      brew link mysql;
+      ls /usr/local/include/mysql/;
+      mysql.server start;
+    fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      sudo apt-get update;
+      sudo apt-get install -y mysql-server libmysqlclient-dev;
+      sudo mysql_install_db;
+    fi
+  - mysql -u root --password="" -e 'create database test;'
+  - eval "$(curl -sL https://gist.githubusercontent.com/kylef/5c0475ff02b7c7671d2a/raw/02090c7ede5a637b76e6df1710e83cd0bbe7dcdf/swiftenv-install.sh)"
+script:
+  # Build MySQL 
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      swift build -Xcc -I/usr/local/include/mysql -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib;
+      swift build --configuration release -Xcc -I/usr/local/include/mysql -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib;
+    fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      swift build;
+      swift build --configuration release;
+    fi
+  # Test MySQL
+  - swift test
+  
