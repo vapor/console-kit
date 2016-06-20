@@ -9,7 +9,6 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       brew install mysql;
       brew link mysql;
-      ls /usr/local/include/mysql/;
       mysql.server start;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
@@ -22,8 +21,8 @@ install:
 script:
   # Build MySQL 
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      swift build -Xcc -I/usr/local/include/mysql -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib;
-      swift build --configuration release -Xcc -I/usr/local/include/mysql -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib;
+      swift build -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib;
+      swift build --configuration release -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       swift build;

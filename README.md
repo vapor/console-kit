@@ -68,6 +68,43 @@ let result = try mysql.execute("SELECT LAST_INSERTED_ID() as id", [], connection
 
 No need to worry about closing the connection.
 
+## Building
+
+### macOS
+
+Installing MySQL
+
+```shell
+brew install mysql
+brew link mysql
+mysql.server start
+```
+
+Linking MySQL to `swift build`
+
+```swift
+swift build -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib
+```
+
+`-I` tells the compiler where to find the MySQL header files, and `-L` tells the linker where to find the library. This is required to compile and run on macOS.
+
+### Linux
+
+Install MySQL
+
+```shell
+sudo apt-get update
+sudo apt-get install -y mysql-server libmysqlclient-dev
+sudo mysql_install_db
+sudo service mysql start
+```
+
+`swift build` should work normally without needing to link.
+
+### Travis
+
+Travis builds Swift MySQL on both Ubuntu 14.04 and macOS 10.10. Check out the `.travis.yml` file to see how this package is built and compiled during testing.
+
 ## Fluent
 
 This wrapper was created to power [Fluent](https://github.com/qutheory/fluent), an elegant ORM for Swift. 
