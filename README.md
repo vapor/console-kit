@@ -6,7 +6,6 @@
 A Swift wrapper for MySQL.
 
 - [x] Thread-Safe
-- [x] Pure Swift
 - [x] Prepared Statements
 - [x] Tested
 
