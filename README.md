@@ -14,7 +14,7 @@ This wrapper uses the latest MySQL fetch API to enable performant prepared state
 
 The Swift wrappers around the MySQL's C structs and pointers automatically manage closing connections and deallocating memeory. Additionally, the MySQL library API is used to perform thread safe, performant queries to the database.
 
-~40 assertions tested on Ubuntu 14.04 and macOS 10.10 on every push.
+~40 assertions tested on Ubuntu 14.04 and macOS 10.11 on every push.
 
 ## Examples
 
@@ -72,7 +72,7 @@ No need to worry about closing the connection.
 
 ### macOS
 
-Installing MySQL
+Install MySQL
 
 ```shell
 brew install mysql
@@ -80,7 +80,7 @@ brew link mysql
 mysql.server start
 ```
 
-Linking MySQL to `swift build`
+Link MySQL during `swift build`
 
 ```swift
 swift build -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib
@@ -99,15 +99,15 @@ sudo mysql_install_db
 sudo service mysql start
 ```
 
-`swift build` should work normally without needing to link.
+`swift build` should work normally.
 
 ### Travis
 
-Travis builds Swift MySQL on both Ubuntu 14.04 and macOS 10.10. Check out the `.travis.yml` file to see how this package is built and compiled during testing.
+Travis builds Swift MySQL on both Ubuntu 14.04 and macOS 10.11. Check out the `.travis.yml` file to see how this package is built and compiled during testing.
 
 ## Fluent
 
-This wrapper was created to power [Fluent](https://github.com/qutheory/fluent), an elegant ORM for Swift. 
+This wrapper was created to power [Fluent](https://github.com/qutheory/fluent), an ORM for Swift. 
 
 ## Author
 
