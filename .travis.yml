@@ -21,8 +21,8 @@ install:
 script:
   # Build MySQL 
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      swift build;
-      swift build --configuration release -Xlinker;
+      swift build -Xcc -I/usr/local/include -Xlinker -L/usr/local/lib;
+      swift build --configuration release -Xcc -I/usr/local/include -Xlinker -L/usr/local/lib;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       swift build;
