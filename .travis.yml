@@ -7,6 +7,8 @@ dist: trusty
 osx_image: xcode7.3
 install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      ls /usr/local/lib/;
+      ls /usr/local/include/mysql/;
       brew install mysql;
       brew link mysql;
       mysql.server start;
@@ -21,8 +23,8 @@ install:
 script:
   # Build MySQL 
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      swift build -Xswiftc -I/usr/local/include -Xlinker -L/usr/local/lib;
-      swift build --configuration release -Xswiftc -I/usr/local/include -Xlinker -L/usr/local/lib;
+      swift build -Xcc -I/usr/local/include -Xswiftc -I/usr/local/include -Xlinker -L/usr/local/lib;
+      swift build --configuration release -Xcc -I/usr/local/include -Xswiftc -I/usr/local/include -Xlinker -L/usr/local/lib;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       swift build;
