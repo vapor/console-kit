@@ -11,43 +11,36 @@ import Darwin
 
 class ConsoleTests: XCTestCase {
     static let allTests = [
-        ("testExample", testExample)
+        ("testAsk", testAsk),
+        ("testConfirm", testConfirm),
     ]
 
-    func testExample() {
-        let console = Terminal()
+    func testAsk() {
+        let console = TestConsole()
 
-        console.info("")
+        let name = "Test Name"
+        let question = "What is your name?"
 
-        let progressBar = console.progressBar(title: "Fake download")
+        console.inputBuffer = name
 
-        for i in 0 ... 3 {
-            if i != 0 {
-                sleep(1)
-            }
-            let progress = Double(i) / 4.0
-            progressBar.progress = progress
-        }
+        let response = console.ask(question)
 
-        //progressBar.fail("Download failed")
-        progressBar.finish()
+        XCTAssertEqual(response, name)
+        XCTAssertEqual(console.outputBuffer, question + "\n>")
+    }
 
-        let loadingBar = console.loadingBar(title: "Fake loading")
-        loadingBar.start()
+    func testConfirm() {
+        let console = TestConsole()
 
-        sleep(3)
+        let name = "y"
+        let question = "Do you want to continue?"
 
-        loadingBar.fail()
-//        loadingBar.finish()
+        console.inputBuffer = name
 
-        let result = console.ask("What's your name?")
-        console.print("Your name is: \(result)")
+        let response = console.confirm(question)
 
-
-
-        let result2 = console.confirm("Do you want to continue?")
-        console.print(result2.description)
-
+        XCTAssertEqual(response, true)
+        XCTAssertEqual(console.outputBuffer, question + "\ny/n>")
     }
 
 }
