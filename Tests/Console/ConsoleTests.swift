@@ -1,7 +1,7 @@
 import XCTest
 @testable import MySQL
 
-class MySQLTests: XCTestCase {
+class ConsoleTests: XCTestCase {
     static let allTests = [
         ("testSelectVersion", testSelectVersion),
         ("testTables", testTables),
