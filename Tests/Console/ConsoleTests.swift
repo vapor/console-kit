@@ -21,7 +21,9 @@ class ConsoleTests: XCTestCase {
 
 
         for i in 0 ... 3 {
-            sleep(1)
+            if i != 0 {
+                sleep(1)
+            }
             let progress = Double(i) / 3.0
             console.progress(progress)
         }
