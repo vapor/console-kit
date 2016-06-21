@@ -41,12 +41,12 @@ class ConsoleTests: XCTestCase {
 //        loadingBar.finish()
 
         let result = console.ask("What's your name?")
-        console.info("Your name is: \(result)")
+        console.print("Your name is: \(result)")
 
 
 
         let result2 = console.confirm("Do you want to continue?")
-        console.info(result2.description)
+        console.print(result2.description)
 
     }
 

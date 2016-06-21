@@ -3,15 +3,15 @@ public class Bar {
     let title: String
     let width: Int
     let barStyle: ConsoleStyle
-    let statusStyle: ConsoleStyle
+    let titleStyle: ConsoleStyle
     var hasStarted: Bool
 
-    public init(console: Console, title: String, width: Int, barStyle: ConsoleStyle, statusStyle: ConsoleStyle) {
+    public init(console: Console, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
         self.console = console
         self.width = width
         self.title = title
         self.barStyle = barStyle
-        self.statusStyle = statusStyle
+        self.titleStyle = titleStyle
         hasStarted = false
     }
 
@@ -19,7 +19,7 @@ public class Bar {
         let message = message ?? "Failed"
 
         prepareLine()
-        console.output(title, style: statusStyle, newLine: false)
+        console.output(title, style: titleStyle, newLine: false)
         console.output(" [\(message)]", style: .error)
     }
 
@@ -27,16 +27,16 @@ public class Bar {
         let message = message ?? "Done"
 
         prepareLine()
-        console.output(title, style: statusStyle, newLine: false)
+        console.output(title, style: titleStyle, newLine: false)
         console.output(" [\(message)]", style: .success)
     }
 
     public func update() {
         prepareLine()
         
-        console.output(title + " ", style: statusStyle, newLine: false)
+        console.output(title + " ", style: titleStyle, newLine: false)
         console.output(bar, style: barStyle, newLine: false)
-        console.output(status, style: statusStyle)
+        console.output(status, style: titleStyle)
     }
 
     public func prepareLine() {

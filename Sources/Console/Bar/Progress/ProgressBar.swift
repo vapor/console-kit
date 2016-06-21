@@ -1,3 +1,15 @@
+/**
+    A loading bar that indicates ongoing activity.
+
+    progress = 0.5 // updated progress
+        Loading Item [===    ] 50%
+
+    fail()
+        Loading Item [Failed]
+
+    finish()
+        Loading Item [Done]
+*/
 public class ProgressBar: Bar {
     public var progress: Double {
         didSet {
@@ -5,9 +17,9 @@ public class ProgressBar: Bar {
         }
     }
 
-    override init(console: Console, title: String, width: Int, barStyle: ConsoleStyle, statusStyle: ConsoleStyle) {
+    override init(console: Console, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
         progress = 0
-        super.init(console: console, title: title, width: width, barStyle: barStyle, statusStyle: statusStyle)
+        super.init(console: console, title: title, width: width, barStyle: barStyle, titleStyle: titleStyle)
     }
 
     override var bar: String {
@@ -41,15 +53,4 @@ public class ProgressBar: Bar {
         return string
     }
 
-}
-
-extension Console {
-    public func progressBar(
-        title: String = "",
-        width: Int = 25,
-        barStyle: ConsoleStyle = .plain,
-        statusStyle: ConsoleStyle = .info
-    ) -> ProgressBar {
-        return ProgressBar(console: self, title: title, width: width, barStyle: barStyle, statusStyle: statusStyle)
-    }
 }

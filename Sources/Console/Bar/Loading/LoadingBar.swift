@@ -5,6 +5,18 @@ import Strand
     import Darwin
 #endif
 
+/**
+    A loading bar that indicates ongoing activity.
+
+    start() // dot moves
+        Loading Item [      •  ] 
+
+    fail()
+        Loading Item [Failed]
+
+    finish()
+        Loading Item [Done]
+*/
 public class LoadingBar: Bar {
     var thread: Strand?
     var current: Int
@@ -12,13 +24,13 @@ public class LoadingBar: Bar {
     let cycles: Int
     var running: Bool
 
-    public override init(console: Console, title: String, width: Int, barStyle: ConsoleStyle, statusStyle: ConsoleStyle) {
+    public override init(console: Console, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
         current = -1
         inc = 1
         cycles = width
         running = true
 
-        super.init(console: console, title: title, width: width, barStyle: barStyle, statusStyle: statusStyle)
+        super.init(console: console, title: title, width: width, barStyle: barStyle, titleStyle: titleStyle)
     }
 
     public override func finish(_ message: String? = nil) {
@@ -90,17 +102,5 @@ public class LoadingBar: Bar {
 
     deinit {
         finish()
-    }
-}
-
-
-extension Console {
-    public func loadingBar(
-        title: String = "",
-        width: Int = 25,
-        barStyle: ConsoleStyle = .plain,
-        statusStyle: ConsoleStyle = .info
-    ) -> LoadingBar {
-        return LoadingBar(console: self, title: title, width: width, barStyle: barStyle, statusStyle: statusStyle)
     }
 }
