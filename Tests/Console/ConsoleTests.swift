@@ -17,26 +17,28 @@ class ConsoleTests: XCTestCase {
     func testExample() {
         let console = Terminal()
 
-        console.info("Simulating download...")
+        console.info("")
 
+        let progressBar = console.progressBar(title: "Fake download")
 
         for i in 0 ... 3 {
             if i != 0 {
                 sleep(1)
             }
-            let progress = Double(i) / 3.0
-            console.progress(progress)
+            let progress = Double(i) / 4.0
+            progressBar.progress = progress
         }
 
-        console.progress(0.75, failed: true)
+        //progressBar.fail("Download failed")
+        progressBar.finish()
 
-        console.error("Download failed")
-
-        let loader = console.loader()
+        let loadingBar = console.loadingBar(title: "Fake loading")
+        loadingBar.start()
 
         sleep(3)
 
-        loader.stop()
+        loadingBar.fail()
+//        loadingBar.finish()
 
         let result = console.ask("What's your name?")
         console.info("Your name is: \(result)")

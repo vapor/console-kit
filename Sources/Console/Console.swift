@@ -4,6 +4,7 @@
 public protocol Console {
     func output(_ string: String, style: ConsoleStyle, newLine: Bool)
     func input() -> String
+    func clear(_ clear: ConsoleClear)
 }
 
 /**
@@ -14,6 +15,7 @@ public protocol Console {
 */
 public enum ConsoleStyle {
     case plain
+    case success
     case info
     case warning
     case error
@@ -32,6 +34,11 @@ public enum ConsoleColor {
     case magenta
     case cyan
     case white
+}
+
+public enum ConsoleClear {
+    case screen
+    case line
 }
 
 extension Console {

@@ -1,43 +1,14 @@
-import Strand
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
-
-public class Loader {
-    var strand: Strand?
-    weak var console: Terminal?
-
-    public init(console: Terminal, loop: () -> ()) {
-        self.console = console
-        do {
-            strand = try Strand {
-                loop()
-            }
-        } catch {
-            strand = nil
-        }
-    }
-
-    func stop() {
-        console?.clearLine()
-        do {
-            try strand?.cancel()
-        } catch {
-            strand = nil
-        }
-    }
-
-    deinit {
-        stop()
-    }
-}
 public class Terminal: Console {
     /**
         Creates an instance of Terminal.
     */
     public init() { }
+
+    public enum Command {
+        case eraseScreen
+        case eraseLine
+        case cursorUp
+    }
 
     /**
         Prints styled output to the terminal.
@@ -55,81 +26,18 @@ public class Terminal: Console {
         Swift.print(output, terminator: terminator)
     }
 
-    public func loader(width: Int = 50) -> Loader {
-        return Loader(console: self) { [weak self] in
-            var current: Int = -1
-            var inc: Int = 1
-            let cycles = width
-
-            while true {
-                if current >= 0 {
-                    self?.clearLine()
-                } else {
-                    current = 0
-                }
-
-                var string: String = "["
-
-                let pos = (width / cycles) * current
-                for i in 0 ..< width {
-                    if i == pos {
-                        string += "•"
-                    } else {
-                        string += " "
-                    }
-                }
-
-                string += "]"
-
-                string += " Loading..."
-
-                self?.output(string, style: .custom(.cyan))
-
-                current += inc
-                if current == cycles || current == 0 {
-                    inc *= -1
-                }
-                usleep(10 * 1000)
-            }
+    public func clear(_ clear: ConsoleClear) {
+        switch clear {
+        case .line:
+            command(.cursorUp)
+            command(.eraseLine)
+        case .screen:
+            command(.eraseScreen)
         }
     }
 
-    public func clearLine() {
-        output("1A".ansi, newLine: false)
-        output("2K".ansi, newLine: false)
-    }
-
-    public func progress(_ percent: Double, width: Int = 50, failed: Bool = false) {
-        if percent != 0 {
-            clearLine()
-        }
-
-        let current = Int(percent * Double(width))
-
-        var string: String = "["
-
-        for i in 0 ..< width {
-            if i <= current {
-                string += "="
-            } else {
-                string += " "
-            }
-        }
-
-        string += "]"
-
-        if failed {
-            string += " ❌"
-        } else{
-            let progress = Int(percent * 100.0)
-            if progress < 100 {
-                string += " \(progress)%"
-            } else {
-                string += " ✅"
-            }
-        }
-
-        output(string, style: .custom(.magenta), newLine: true)
+    public func command(_ command: Command) {
+        output(command.ansi, newLine: false)
     }
 
     /**
@@ -137,6 +45,19 @@ public class Terminal: Console {
     */
     public func input() -> String {
         return readLine(strippingNewline: true) ?? ""
+    }
+}
+
+extension Terminal.Command {
+    public var ansi: String {
+        switch self {
+        case .cursorUp:
+            return "1A".ansi
+        case .eraseScreen:
+            return "2J".ansi
+        case .eraseLine:
+            return "2K".ansi
+        }
     }
 }
 
@@ -235,6 +156,8 @@ extension ConsoleStyle {
             color = .yellow
         case .error:
             color = .red
+        case .success:
+            color = .green
         case .custom(let c):
             color = c
         }
