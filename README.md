@@ -18,4 +18,3 @@ This wrapper was created to power [Vapor](https://github.com/qutheory/vapor), a 
 ## Author
 
 Created by [Tanner Nelson](https://github.com/tannernelson).
-

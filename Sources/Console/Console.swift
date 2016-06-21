@@ -1,3 +1,4 @@
 struct Console {
+
 	
 }
