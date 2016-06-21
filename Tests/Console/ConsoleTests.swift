@@ -17,6 +17,7 @@ class ConsoleTests: XCTestCase {
     func testExample() {
         let console = Terminal()
 
+        console.info("Simulating download...")
 
 
         for i in 0 ... 3 {
