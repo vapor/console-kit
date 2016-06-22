@@ -1,3 +1,9 @@
+#if os(Linux)
+    import Glibc
+#else
+    import Darwin
+#endif
+
 /**
     Protocol for powering styled Console I/O.
 */
@@ -13,5 +19,11 @@ extension Console {
     */
     public func output(_ string: String, style: ConsoleStyle = .plain, newLine: Bool = true) {
         output(string, style: style, newLine: newLine)
+    }
+
+    public func wait(seconds: Double) {
+        let factor = 1000 * 1000
+        let microseconds = seconds * Double(factor)
+        usleep(useconds_t(microseconds))
     }
 }

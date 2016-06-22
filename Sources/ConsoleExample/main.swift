@@ -1,9 +1,3 @@
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
-
 import Console
 
 let console: Console = Terminal()
@@ -16,72 +10,76 @@ console.output(" Example!", style: .custom(.magenta))
 
 console.print()
 
+
+// TEST DEMO
+
 let name = console.ask("What is your name?")
 
 console.print("Hello, \(name).")
+
+console.wait(seconds: 1.5)
 console.print()
 
-if console.confirm("Would you like to see a download simulated?") {
-    let shouldFail = console.confirm("Would you like the download to fail?")
+console.print("I can show progress bars...")
+console.wait(seconds: 1.5)
+console.clear(.line)
 
-    console.print()
-    console.print("Simulating a download...")
-    let progressBar = console.progressBar(title: shouldFail ? "passwords.txt" : "garbage.dat")
+let progressBar = console.progressBar(title: "backups.dat")
 
-    let cycles = 30
-    for i in 0 ... cycles {
-        if i != 0 {
-            usleep(50 * 1000)
-        }
-        progressBar.progress = Double(i) / Double(cycles)
+let cycles = 30
+for i in 0 ... cycles {
+    if i != 0 {
+        console.wait(seconds: 0.05)
     }
-
-    if shouldFail {
-        progressBar.fail("Failed (You asked for it)")
-    } else {
-        progressBar.finish("Done (As you wished)")
-    }
-
-    console.print()
+    progressBar.progress = Double(i) / Double(cycles)
 }
 
-if console.confirm("Would you like to see loading simulated?") {
-    let shouldFail = console.confirm("Would you like the load to fail?")
+progressBar.finish()
 
-    console.print()
-    console.print("Simulating loading...")
-    let loadingBar = console.loadingBar(title: shouldFail ? "Important thing" : "Unimportant thing")
+console.wait(seconds: 0.5)
+console.print()
 
-    loadingBar.start()
+console.print("I can show loading bars...")
+console.wait(seconds: 1.5)
+console.clear(.line)
 
-    usleep(1500 * 1000)
 
-    if shouldFail {
-        loadingBar.fail()
-    } else {
-        loadingBar.finish()
-    }
-    
-    console.print()
-}
+let loadingBar = console.loadingBar(title: "Connecting...")
 
-if console.confirm("Would you like to see the various console styles?") {
-    console.print()
-    console.print("print")
-    console.info("info")
-    console.success("success")
-    console.warning("warning")
-    console.error("error")
-    console.print()
-    console.output(".custom(.black)", style: .custom(.black))
-    console.output(".custom(.red)", style: .custom(.red))
-    console.output(".custom(.green)", style: .custom(.green))
-    console.output(".custom(.yellow)", style: .custom(.yellow))
-    console.output(".custom(.blue)", style: .custom(.blue))
-    console.output(".custom(.magenta)", style: .custom(.magenta))
-    console.output(".custom(.cyan)", style: .custom(.cyan))
-    console.output(".custom(.white)", style: .custom(.white))
-    console.print()
-}
+loadingBar.start()
+console.wait(seconds: 2.5)
+loadingBar.finish()
+
+
+console.wait(seconds: 0.5)
+console.print()
+
+console.print("I can show...")
+console.wait(seconds: 1.5)
+console.clear(.line)
+
+console.print("Plain messages")
+console.wait(seconds: 0.5)
+
+console.info("Informational messages")
+console.wait(seconds: 0.5)
+
+console.success("Success messages")
+console.wait(seconds: 0.5)
+
+console.warning("Warning messages")
+console.wait(seconds: 0.5)
+
+console.error("Error messages")
+console.wait(seconds: 0.5)
+
+console.wait(seconds: 0.5)
+console.print()
+
+console.print("Thanks for watching, \(name)!")
+console.wait(seconds: 1.5)
+console.clear(.line)
+
 
 console.info("Goodbye! 👋")
+console.print()
