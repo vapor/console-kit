@@ -1,6 +1,5 @@
 <p align="center">
 <img src="https://cloud.githubusercontent.com/assets/1342803/16251041/b927cf44-37f0-11e6-9255-055ab471b1cd.png" width="826" align="middle"/>
-<a href="https://youtu.be/3WMv8IjuYK8">YouTube Demo</a>
 </p>
 
 # Swift Console
