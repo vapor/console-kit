@@ -54,7 +54,7 @@ if console.confirm("Would you like to see loading simulated?") {
 
     loadingBar.start()
 
-    usleep(1000 * 1000)
+    usleep(1500 * 1000)
 
     if shouldFail {
         loadingBar.fail()
