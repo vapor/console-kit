@@ -1,7 +1,6 @@
 <p align="center">
-![Swift Console](https://cloud.githubusercontent.com/assets/1342803/16250972/fca2efb6-37ef-11e6-9fd5-3a8a08d781f7.png)
-
-[YouTube Demo](https://youtu.be/3WMv8IjuYK8)
+<img src="https://cloud.githubusercontent.com/assets/1342803/16250972/fca2efb6-37ef-11e6-9fd5-3a8a08d781f7.png" width="400" align="middle"/>
+<a href="https://youtu.be/3WMv8IjuYK8">YouTube Demo</a>
 </p>
 
 # Swift Console
