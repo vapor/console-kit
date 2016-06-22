@@ -22,8 +22,21 @@ public class ProgressBar: Bar {
         super.init(console: console, title: title, width: width, barStyle: barStyle, titleStyle: titleStyle)
     }
 
+    public override func update() {
+        super.update()
+
+        if progress == 1 {
+            self.finish()
+        }
+    }
+
     override var bar: String {
-        let current = Int(progress * Double(width))
+        let result: Double = progress * Double(width)
+        if result.isNaN || result.isInfinite {
+            return "[ NaN or Infinite Value ]"
+        }
+
+        let current = Int(result)
 
         var string: String = "["
 
@@ -43,7 +56,12 @@ public class ProgressBar: Bar {
     override var status: String {
         let string: String
 
-        let percent = Int(progress * 100.0)
+        let result: Double = progress * 100.0
+        if result.isNaN || result.isInfinite {
+            return ""
+        }
+
+        let percent = Int(result)
         if percent < 100 {
             string = " \(percent)%"
         } else {
