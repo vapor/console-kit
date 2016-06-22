@@ -9,7 +9,101 @@
 
 A Swift wrapper for Console I/O.
 
-- [x] Swift
+- [x] Terminal Colors
+- [x] User Input
+- [x] Threads and Animations
+
+## Example
+
+Create a terminal console, or create a new type of console that conforms to the `Console` protocol.
+
+```swift
+let console = Terminal()
+```
+
+### Ask
+
+```swift
+let name = console.ask("What is your name?")
+
+console.print("Hello, \(name).")
+```
+
+### Confirm
+
+```swift
+if console.confirm("Are you sure?") {
+	// user is sure	
+}
+```
+
+### Styles
+
+```swift
+console.warning("Watch out!")
+```
+
+```swift
+public enum ConsoleStyle {
+    case plain
+    case success
+    case info
+    case warning
+    case error
+    case custom(ConsoleColor)
+}
+```
+
+### Colors
+
+```swift
+console.output("Cool colors.", style: .custom(.magenta))
+```
+
+```swift
+public enum ConsoleColor {
+    case black
+    case red
+    case green
+    case yellow
+    case blue
+    case magenta
+    case cyan
+    case white
+}
+```
+
+### Progress Bar
+
+For showing loading with progress updates.
+
+```swift
+let filename = "filename.txt"
+
+let progressBar = console.progressBar(title: filename)
+progress.start()
+
+fakeClient.download(progressCallback: { progress in
+	progressBar.progress = progress	
+}, completionCallback: { file in 
+	progressBar.finish()
+})
+```
+
+### Loading Bar
+
+For showing loading of indeterminate length.
+
+```swift
+let filename = "filename.txt"
+
+let loadingBar = console.loadingBar(title: "Connecting")
+progress.start()
+
+fakeServer.connect(completionCallback: { connection in 
+	loadingBar.finish()
+})
+```
 
 ### Travis
 
