@@ -90,6 +90,10 @@ fakeClient.download(progressCallback: { progress in
 })
 ```
 
+```shell
+filename.txt [====           ] 23%
+```
+
 ### Loading Bar
 
 For showing loading of indeterminate length.
@@ -103,6 +107,10 @@ progress.start()
 fakeServer.connect(completionCallback: { connection in 
 	loadingBar.finish()
 })
+```
+
+```shell
+Connecting [         •     ]
 ```
 
 ### Travis

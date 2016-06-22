@@ -35,7 +35,7 @@ public class LoadingBar: Bar {
 
     public override func finish(_ message: String? = nil) {
         stop()
-        super.finish()
+        super.finish(message)
     }
 
     public override func fail(_ message: String? = nil) {
