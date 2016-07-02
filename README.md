@@ -102,7 +102,7 @@ For showing loading of indeterminate length.
 let filename = "filename.txt"
 
 let loadingBar = console.loadingBar(title: "Connecting")
-progress.start()
+loadingBar.start()
 
 fakeServer.connect(completionCallback: { connection in 
 	loadingBar.finish()

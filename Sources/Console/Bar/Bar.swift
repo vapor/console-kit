@@ -22,9 +22,7 @@ public class Bar {
     public func fail(_ message: String? = nil) {
         let message = message ?? "Failed"
 
-        prepareLine()
-        console.output(title, style: titleStyle, newLine: false)
-        console.output(" [\(message)]", style: .error)
+        collapseBar(message: message, style: .error)
     }
 
     public func finish(_ message: String? = nil) {
@@ -35,6 +33,10 @@ public class Bar {
 
         let message = message ?? "Done"
 
+        collapseBar(message: message, style: .success)
+    }
+
+    func collapseBar(message: String, style: ConsoleStyle) {
         for i in 0 ..< (width - message.characters.count) {
             prepareLine()
 
@@ -49,7 +51,7 @@ public class Bar {
                 let index = message.characters.index(message.characters.startIndex, offsetBy: j)
                 newBar.append(message.characters[index])
             }
-            console.output(newBar, style: .success, newLine: false)
+            console.output(newBar, style: style, newLine: false)
 
             var oldBar: String = ""
             for _ in 0 ..< (width - i - 1 - charactersShowing) {
@@ -59,17 +61,13 @@ public class Bar {
             oldBar += "]"
 
             console.output(oldBar, style: barStyle)
-
+            
             console.wait(seconds: 0.01)
         }
 
         prepareLine()
-
         console.output(title, style: titleStyle, newLine: false)
-        console.output(" [\(message)]", style: .success)
-
-        console.wait(seconds: 2)
-
+        console.output(" [\(message)]", style: style)
     }
 
     public func update() {
