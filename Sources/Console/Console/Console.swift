@@ -1,8 +1,4 @@
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
+import libc
 
 /**
     Protocol for powering styled Console I/O.
@@ -11,6 +7,8 @@ public protocol Console {
     func output(_ string: String, style: ConsoleStyle, newLine: Bool)
     func input() -> String
     func clear(_ clear: ConsoleClear)
+    func execute(_ command: String) throws
+    func subexecute(_ command: String) throws -> String
 }
 
 extension Console {
