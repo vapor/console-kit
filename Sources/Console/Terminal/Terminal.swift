@@ -1,4 +1,5 @@
 import libc
+import Foundation
 
 public class Terminal: Console {
     public enum Error: ErrorProtocol {
@@ -54,52 +55,56 @@ public class Terminal: Console {
         Reads a line of input from the terminal.
     */
     public func input() -> String {
+        //let string = String(data: FileHandle.standardInput().readData(ofLength: 2), encoding: .utf8) ?? "Unknown"
+        //Swift.print(string)
         return readLine(strippingNewline: true) ?? ""
     }
 
     public func execute(_ command: String) throws {
-        let result = libc.system(command)
+        let task = Task()
+
+        task.arguments = ["-c", command]
+        task.launchPath = "/bin/sh"
+
+        task.standardInput = FileHandle.standardInput()
+
+        task.launch()
+        task.waitUntilExit()
+
+        let result = task.terminationStatus
 
         if result == 2 {
             throw Error.cancelled
         } else if result != 0 {
-            throw ConsoleError.execute(Int(result) / 256)
+            throw ConsoleError.execute(Int(result))
         }
-
     }
 
+
     public func subexecute(_ command: String) throws -> String {
-        // Run the command
-        let fp = popen("\(command) 2>&1", "r")
+        let task = Task()
 
-        var output = ""
+        let standardOutput = Pipe()
+        let standardError = Pipe()
 
-        if let fp = fp {
-            // Get the output of the command
-            let pathSize = 1024
+        task.arguments = ["-c", command]
+        task.launchPath = "/bin/sh"
+        task.standardOutput = standardOutput
+        task.standardError = standardError
 
-            let path: UnsafeMutablePointer<Int8> = UnsafeMutablePointer(allocatingCapacity: pathSize)
-            defer {
-                path.deallocateCapacity(pathSize)
-            }
+        task.launch()
+        task.waitUntilExit()
 
-            while fgets(path, Int32(pathSize - 1), fp) != nil {
-                output += String(cString: path)
-            }
-        } else {
-            throw ConsoleError.execute(1)
-        }
+        let result = task.terminationStatus
 
-
-        let exit = pclose(fp) / 256
-
-        if exit == 2 {
+        if result == 2 {
             throw Error.cancelled
-        } else if exit != 0 {
-            throw ConsoleError.execute(Int(exit))
+        } else if result != 0 {
+            let error = String(data: standardError.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
+            throw ConsoleError.subexecute(Int(result), error)
         }
 
-        return output
+        return String(data: standardOutput.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
     }
 
     public var confirmOverride: Bool? {
