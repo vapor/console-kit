@@ -9,6 +9,7 @@ public protocol Console {
     func clear(_ clear: ConsoleClear)
     func execute(_ command: String) throws
     func subexecute(_ command: String) throws -> String
+    var confirmOverride: Bool? { get }
 }
 
 extension Console {
@@ -23,5 +24,9 @@ extension Console {
         let factor = 1000 * 1000
         let microseconds = seconds * Double(factor)
         usleep(useconds_t(microseconds))
+    }
+
+    public var confirmOverride: Bool? {
+        return nil
     }
 }

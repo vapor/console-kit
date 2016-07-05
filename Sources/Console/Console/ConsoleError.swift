@@ -2,7 +2,9 @@ public enum ConsoleError: ErrorProtocol {
     case help
     case noExecutable
     case noCommand
-    case commandNotFound
+    case insufficientArguments
+    case argumentNotFound
+    case commandNotFound(String)
     case cancelled
     case execute(Int)
 }

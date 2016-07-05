@@ -5,11 +5,15 @@ public class Terminal: Console {
         case cancelled
         case execute(Int)
     }
+
+    public let arguments: [String]
     
     /**
         Creates an instance of Terminal.
     */
-    public init() { }
+    public init(arguments: [String]) {
+        self.arguments = arguments
+    }
 
     /**
         Prints styled output to the terminal.
@@ -19,7 +23,11 @@ public class Terminal: Console {
 
         let output: String
         if let color = style.terminalColor {
-            output = string.terminalColorize(color)
+            #if !Xcode
+                output = string.terminalColorize(color)
+            #else
+                output = string
+            #endif
         } else {
             output = string
         }
@@ -31,6 +39,7 @@ public class Terminal: Console {
         Clears text from the terminal window.
     */
     public func clear(_ clear: ConsoleClear) {
+        #if !Xcode
         switch clear {
         case .line:
             command(.cursorUp)
@@ -38,6 +47,7 @@ public class Terminal: Console {
         case .screen:
             command(.eraseScreen)
         }
+        #endif
     }
 
     /**
@@ -90,6 +100,16 @@ public class Terminal: Console {
         }
 
         return output
+    }
+
+    public var confirmOverride: Bool? {
+        if arguments.contains("-y") {
+            return true
+        } else if arguments.contains("-n") {
+            return false
+        }
+
+        return nil
     }
 
     /**

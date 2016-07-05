@@ -13,6 +13,14 @@ extension Console {
             } else {
                 output("y/n>", style: style, newLine: false)
             }
+
+            // Defaults for all confirms for headless environments
+            if let override = confirmOverride {
+                let message = override ? "yes" : "no"
+                output(message, style: .warning)
+                return override
+            }
+
             result = input().lowercased()
             i += 1
         }
