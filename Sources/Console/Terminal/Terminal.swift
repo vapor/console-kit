@@ -60,51 +60,27 @@ public class Terminal: Console {
         return readLine(strippingNewline: true) ?? ""
     }
 
-    public func execute(_ command: String) throws {
+    public func execute(_ command: String, input: AnyObject?, output: AnyObject?, error: AnyObject?) throws {
         let task = Task()
 
         task.arguments = ["-c", command]
         task.launchPath = "/bin/sh"
 
-        task.standardInput = FileHandle.standardInput()
+        task.standardInput = input
+        task.standardOutput = output
+        task.standardError = error
 
         task.launch()
+
         task.waitUntilExit()
 
         let result = task.terminationStatus
 
         if result == 2 {
-            throw Error.cancelled
+            throw ConsoleError.cancelled
         } else if result != 0 {
             throw ConsoleError.execute(Int(result))
         }
-    }
-
-
-    public func subexecute(_ command: String) throws -> String {
-        let task = Task()
-
-        let standardOutput = Pipe()
-        let standardError = Pipe()
-
-        task.arguments = ["-c", command]
-        task.launchPath = "/bin/sh"
-        task.standardOutput = standardOutput
-        task.standardError = standardError
-
-        task.launch()
-        task.waitUntilExit()
-
-        let result = task.terminationStatus
-
-        if result == 2 {
-            throw Error.cancelled
-        } else if result != 0 {
-            let error = String(data: standardError.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
-            throw ConsoleError.subexecute(Int(result), error)
-        }
-
-        return String(data: standardOutput.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
     }
 
     public var confirmOverride: Bool? {
@@ -115,6 +91,21 @@ public class Terminal: Console {
         }
 
         return nil
+    }
+
+    public var size: (width: Int, height: Int) {
+        // Get the columns and lines from tput
+        let tput = "/usr/bin/tput"
+
+        do {
+            // FIXME: tput doesn't work with NSTask
+            let cols = try executeInBackground("\(tput) cols").trim()
+            let lines = try executeInBackground("\(tput) lines").trim()
+
+            return (Int(cols) ?? 0, Int(lines) ?? 0)
+        } catch {
+            return (0, 0)
+        }
     }
 
     /**
