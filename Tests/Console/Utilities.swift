@@ -22,4 +22,12 @@ class TestConsole: Console {
     func clear(_ clear: ConsoleClear) {
         //
     }
+
+    func execute(_ command: String, input: AnyObject?, output: AnyObject?, error: AnyObject?) throws {
+        //
+    }
+
+    var size: (width: Int, height: Int) {
+        return (0, 0)
+    }
 }

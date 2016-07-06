@@ -1,4 +1,16 @@
 extension Console {
+    /**
+        Runs a group of commands.
+     
+        The first argument should be the name of the 
+        currently executing program.
+     
+        The second argument should be the id of the command
+        that should run. Identifiers can recurse through groups.
+     
+        Following arguments and options will be passed through
+        to the commands.
+    */
     public func run(_ group: Group, arguments: [String]) throws {
         var group = group
 
@@ -68,6 +80,10 @@ extension Console {
         }
     }
 
+    /**
+        Runs an array of commands by creating a group
+        then calling run(group: Group).
+    */
     public func run(executable: String, commands: [Runnable], arguments: [String], help: [String]) throws {
         let group = Group(
             id: executable,
@@ -76,36 +92,5 @@ extension Console {
         )
 
         try run(group, arguments: arguments)
-    }
-
-    public func printUsage(executable: String, commands: [Runnable]) {
-        info("Usage: ", newLine: false)
-        print("\(executable)", newLine: false)
-
-        if commands.count > 0 {
-            print(" <", newLine: false)
-            print(commands.map { command in
-                return command.id
-            }.joined(separator: "|"), newLine: false)
-            print(">")
-        } else {
-            print()
-        }
-    }
-
-    public func printHelp(executable: String, group: Group) {
-        printHelp(group.help)
-    }
-
-    public func printHelp(executable: String, command: Command) {
-        command.printUsage(executable: executable)
-        printHelp(command.help)
-        command.printSignatureHelp()
-    }
-
-    public func printHelp(_ help: [String]) {
-        for help in help {
-            print(help)
-        }
     }
 }

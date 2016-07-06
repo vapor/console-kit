@@ -5,11 +5,46 @@ import Foundation
     Protocol for powering styled Console I/O.
 */
 public protocol Console {
+    /**
+        Outputs a String in the given style to 
+        the console. If newLine is true, the next
+        output will appear on a new line.
+    */
     func output(_ string: String, style: ConsoleStyle, newLine: Bool)
+
+    /**
+        Returns a String of input read from the
+        console until a line feed character was found.
+     
+        The line feed character should not be included.
+    */
     func input() -> String
+
+    /**
+        Clears previously printed Console outputs
+        according to the ConsoleClear type given.
+    */
     func clear(_ clear: ConsoleClear)
-    func execute(_ command: String, input: AnyObject?, output: AnyObject?, error: AnyObject?) throws
+
+    /**
+        Executes a command using the console's POSIX subsystem.
+        The input, output, and error streams will be used
+        during the execution.
+     
+        throws: ConsoleError.execute(Int)
+    */
+    func execute(_ command: String, input: Stream?, output: Stream?, error: Stream?) throws
+
+    /**
+        When set, all `confirm(_ prompt:)` methods
+        will return the value. When nil, the confirm
+        calls will wait for input from `input()`
+    */
     var confirmOverride: Bool? { get }
+
+    /**
+        The size of the console window used for centering.
+    */
     var size: (width: Int, height: Int) { get }
 }
 
@@ -29,65 +64,5 @@ extension Console {
 
     public var confirmOverride: Bool? {
         return nil
-    }
-}
-
-extension Console {
-    public func executeInBackground(_ command: String, input: AnyObject? = nil) throws -> String {
-        let output = Pipe()
-        let error = Pipe()
-
-        do {
-            try execute(command, input: input, output: output, error: error)
-        } catch ConsoleError.execute(let result) {
-            let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
-            throw ConsoleError.backgroundExecute(result, error)
-        }
-
-        return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-    }
-
-    public func executeInForeground(_ command: String) throws {
-        let input = FileHandle.standardInput()
-        let output = FileHandle.standardOutput()
-        let error = FileHandle.standardError()
-
-        try execute(command, input: input, output: output, error: error)
-    }
-}
-
-extension Console {
-    public func center(_ string: String, paddingCharacter: Character = " ") -> String {
-        // Split the string into lines
-        let lines = string.characters.split(separator: Character("\n")).map(String.init)
-        return center(lines).joined(separator: "\n")
-    }
-    public func center(_ lines: [String], paddingCharacter: Character = " ") -> [String] {
-        var lines = lines
-
-        // Make sure there's more than one line
-        guard lines.count > 0 else {
-            return []
-        }
-
-        // Find the longest line
-        var longestLine = 0
-        for line in lines {
-            if line.characters.count > longestLine {
-                longestLine = line.characters.count
-            }
-        }
-
-        // Calculate the padding and make sure it's greater than or equal to 0
-        let padding = max(0, (size.width - longestLine) / 2)
-
-        // Apply the padding to each line
-        for i in 0..<lines.count {
-            for _ in 0..<padding {
-                lines[i].insert(paddingCharacter, at: lines[i].startIndex)
-            }
-        }
-
-        return lines
     }
 }

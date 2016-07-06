@@ -60,7 +60,7 @@ public class Terminal: Console {
         return readLine(strippingNewline: true) ?? ""
     }
 
-    public func execute(_ command: String, input: AnyObject?, output: AnyObject?, error: AnyObject?) throws {
+    public func execute(_ command: String, input: Stream?, output: Stream?, error: Stream?) throws {
         let task = Task()
 
         task.arguments = ["-c", command]
