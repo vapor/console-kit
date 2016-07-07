@@ -8,6 +8,10 @@ extension FileHandle: IOStream {
     }
 
     public func write(_ bytes: [UInt8]) {
-        write(Data(bytes: bytes))
+        #if os(Linux)
+            write(bytes)
+        #else
+            write(Data(bytes: bytes))
+        #endif
     }
 }

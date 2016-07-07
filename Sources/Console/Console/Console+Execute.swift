@@ -17,7 +17,7 @@ extension Console {
         }
 
         #if os(Linux)
-        return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: NSUTF8StringEncoding)
+        return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: NSUTF8StringEncoding) ?? ""
         #else
         return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
         #endif
