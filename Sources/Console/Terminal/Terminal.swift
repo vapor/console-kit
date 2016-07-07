@@ -55,8 +55,6 @@ public class Terminal: Console {
         Reads a line of input from the terminal.
     */
     public func input() -> String {
-        //let string = String(data: FileHandle.standardInput().readData(ofLength: 2), encoding: .utf8) ?? "Unknown"
-        //Swift.print(string)
         return readLine(strippingNewline: true) ?? ""
     }
 

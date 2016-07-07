@@ -8,11 +8,19 @@ extension Console {
         do {
             try execute(command, input: input, output: output, error: error)
         } catch ConsoleError.execute(let result) {
-            let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
+            #if os(Linux)
+                let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: NSUTF8StringEncoding) ?? "Unknown"
+            #else
+                let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
+            #endif
             throw ConsoleError.backgroundExecute(result, error)
         }
 
+        #if os(Linux)
+        return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: NSUTF8StringEncoding)
+        #else
         return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        #endif
     }
 
     public func executeInForeground(_ command: String) throws {

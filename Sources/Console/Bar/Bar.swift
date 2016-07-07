@@ -53,15 +53,15 @@ public class Bar {
             }
             console.output(newBar, style: style, newLine: false)
 
-            var oldBar: String = ""
+            var oldBar = ""
             for _ in 0 ..< (width - i - 1 - charactersShowing) {
                 let index = bar.characters.index(bar.characters.endIndex, offsetBy: -2)
                 oldBar.append(bar.characters[index])
             }
-            oldBar += "]"
+            oldBar.append("]")
 
-            console.output(oldBar, style: barStyle)
-            
+            console.output(oldBar, style: barStyle, newLine: true)
+
             console.wait(seconds: 0.01)
         }
 
