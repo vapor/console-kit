@@ -23,7 +23,7 @@ class TestConsole: Console {
         //
     }
 
-    func execute(_ command: String, input: AnyObject?, output: AnyObject?, error: AnyObject?) throws {
+    func execute(_ command: String, input: IOStream?, output: IOStream?, error: IOStream?) throws {
         //
     }
 

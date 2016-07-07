@@ -1,6 +1,6 @@
 import Foundation
 
-extension Pipe: Stream {
+extension Pipe: IOStream {
     public func read() -> [UInt8] {
         return fileHandleForReading.read()
     }

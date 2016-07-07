@@ -1,7 +1,7 @@
 import Foundation
 
 extension Console {
-    public func executeInBackground(_ command: String, input: Stream? = nil) throws -> String {
+    public func executeInBackground(_ command: String, input: IOStream? = nil) throws -> String {
         let output = Pipe()
         let error = Pipe()
 

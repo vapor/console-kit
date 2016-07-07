@@ -33,7 +33,7 @@ public protocol Console {
      
         throws: ConsoleError.execute(Int)
     */
-    func execute(_ command: String, input: Stream?, output: Stream?, error: Stream?) throws
+    func execute(_ command: String, input: IOStream?, output: IOStream?, error: IOStream?) throws
 
     /**
         When set, all `confirm(_ prompt:)` methods

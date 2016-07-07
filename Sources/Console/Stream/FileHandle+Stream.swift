@@ -1,6 +1,6 @@
 import Foundation
 
-extension FileHandle: Stream {
+extension FileHandle: IOStream {
     public func read() -> [UInt8] {
         var bytes = [UInt8](repeating: 0, count: availableData.count)
         availableData.copyBytes(to: &bytes, count: availableData.count)
