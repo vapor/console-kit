@@ -12,12 +12,12 @@ extension Data {
     }
 
     func copyBytes(to bytes: UnsafeMutablePointer<Void>, count: Int) {
-        getBytes(bytes: bytes, length: count)
+        getBytes(bytes, length: count)
     }
 
     convenience init(bytes: [UInt8]) {
         var bytes = bytes
-        self.init(&bytes, length: bytes.count)
+        self.init(bytes: &bytes, length: bytes.count)
     }
 }
 
