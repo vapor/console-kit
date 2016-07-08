@@ -68,6 +68,7 @@ public class Terminal: Console {
 
     public func subexecute(_ command: String, input: String) throws -> String {
         let output = Pipe()
+        let input = Pipe()
         let error = Pipe()
 
         do {
