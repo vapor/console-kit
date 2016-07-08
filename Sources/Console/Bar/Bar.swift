@@ -1,3 +1,5 @@
+import libc
+
 public class Bar {
     let console: Console
     let title: String
@@ -8,6 +10,8 @@ public class Bar {
     var hasStarted: Bool
     var hasFinished: Bool
 
+    var mutex: UnsafeMutablePointer<pthread_mutex_t>
+
     public init(console: Console, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
         self.console = console
         self.width = width
@@ -17,6 +21,14 @@ public class Bar {
 
         hasStarted = false
         hasFinished = false
+
+        mutex = UnsafeMutablePointer(allocatingCapacity: 1)
+        pthread_mutex_init(mutex, nil)
+    }
+
+    deinit {
+        mutex.deinitialize()
+        mutex.deallocateCapacity(1)
     }
 
     public func fail(_ message: String? = nil) {
@@ -37,6 +49,7 @@ public class Bar {
     }
 
     func collapseBar(message: String, style: ConsoleStyle) {
+        pthread_mutex_lock(mutex)
         for i in 0 ..< (width - message.characters.count) {
             prepareLine()
 
@@ -68,14 +81,17 @@ public class Bar {
         prepareLine()
         console.output(title, style: titleStyle, newLine: false)
         console.output(" [\(message)]", style: style)
+        pthread_mutex_unlock(mutex)
     }
 
     public func update() {
+        pthread_mutex_lock(mutex)
         prepareLine()
-        
+
         console.output(title + " ", style: titleStyle, newLine: false)
         console.output(bar, style: barStyle, newLine: false)
         console.output(status, style: titleStyle)
+        pthread_mutex_unlock(mutex)
     }
 
     public func prepareLine() {
@@ -85,11 +101,11 @@ public class Bar {
             hasStarted = true
         }
     }
-
+    
     var bar: String {
         return ""
     }
-
+    
     var status: String {
         return ""
     }
