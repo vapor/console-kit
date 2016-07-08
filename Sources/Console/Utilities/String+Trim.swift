@@ -1,5 +1,5 @@
 extension String {
-    public func trim(characters: [Character] = [" ", "\t", "\n"]) -> String {
+    public func trim(characters: [Character] = [" ", "\t", "\n", "\r"]) -> String {
         // while characters
         var mutable = self
         while let next = mutable.characters.first where characters.contains(next) {
