@@ -78,7 +78,7 @@ public class Terminal: Console {
             #else
                 let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
             #endif
-            throw ConsoleError.backgroundExecute(result, error)
+            throw ConsoleError.subexecute(result, error)
         }
 
         #if os(Linux)

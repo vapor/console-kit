@@ -7,5 +7,5 @@ public enum ConsoleError: ErrorProtocol {
     case commandNotFound(String)
     case cancelled
     case execute(Int)
-    case backgroundExecute(Int, String)
+    case subexecute(Int, String)
 }
