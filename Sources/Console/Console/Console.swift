@@ -70,7 +70,7 @@ extension Console {
     }
 
 
-    func subexecute(_ command: String) throws -> String {
+    public func subexecute(_ command: String) throws -> String {
         return try subexecute(command, input: "")
     }
 
