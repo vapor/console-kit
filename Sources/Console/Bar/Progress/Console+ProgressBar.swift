@@ -1,0 +1,13 @@
+extension Console {
+	/**
+		Creates a progress bar using the console.
+	*/
+    public func progressBar(
+        title: String = "",
+        width: Int = 25,
+        barStyle: ConsoleStyle = .info,
+        titleStyle: ConsoleStyle = .plain
+    ) -> ProgressBar {
+        return ProgressBar(console: self, title: title, width: width, barStyle: barStyle, titleStyle: titleStyle)
+    }
+}
