@@ -58,7 +58,37 @@ public class Terminal: Console {
         return readLine(strippingNewline: true) ?? ""
     }
 
-    public func execute(_ command: String, input: IOStream?, output: IOStream?, error: IOStream?) throws {
+    public func execute(_ command: String) throws {
+        let input = FileHandle.standardInput()
+        let output = FileHandle.standardOutput()
+        let error = FileHandle.standardError()
+
+        try execute(command, input: input, output: output, error: error)
+    }
+
+    public func subexecute(_ command: String, input: String) throws -> String {
+        let output = Pipe()
+        let error = Pipe()
+
+        do {
+            try execute(command, input: input, output: output, error: error)
+        } catch ConsoleError.execute(let result) {
+            #if os(Linux)
+                let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: NSUTF8StringEncoding) ?? "Unknown"
+            #else
+                let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
+            #endif
+            throw ConsoleError.backgroundExecute(result, error)
+        }
+
+        #if os(Linux)
+            return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: NSUTF8StringEncoding) ?? ""
+        #else
+            return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        #endif
+    }
+
+    private func execute(_ command: String, input: AnyObject?, output: AnyObject?, error: AnyObject?) throws {
         let task = Task()
 
         task.arguments = ["-c", command]
@@ -97,8 +127,8 @@ public class Terminal: Console {
 
         do {
             // FIXME: tput doesn't work with NSTask
-            let cols = try executeInBackground("\(tput) cols").trim()
-            let lines = try executeInBackground("\(tput) lines").trim()
+            let cols = try subexecute("\(tput) cols").trim()
+            let lines = try subexecute("\(tput) lines").trim()
 
             return (Int(cols) ?? 0, Int(lines) ?? 0)
         } catch {

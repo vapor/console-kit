@@ -23,8 +23,12 @@ class TestConsole: Console {
         //
     }
 
-    func execute(_ command: String, input: IOStream?, output: IOStream?, error: IOStream?) throws {
-        //
+    func execute(_ command: String) throws {
+
+    }
+
+    func subexecute(_ command: String, input: String) throws -> String {
+        return ""
     }
 
     var size: (width: Int, height: Int) {
