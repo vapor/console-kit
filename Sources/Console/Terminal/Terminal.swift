@@ -59,9 +59,9 @@ public class Terminal: Console {
     }
 
     public func execute(_ command: String) throws {
-        let input = FileHandle.standardInput()
-        let output = FileHandle.standardOutput()
-        let error = FileHandle.standardError()
+        let input = FileHandle.withStandardInput
+        let output = FileHandle.withStandardOutput
+        let error = FileHandle.withStandardError
 
         try execute(command, input: input, output: output, error: error)
     }
