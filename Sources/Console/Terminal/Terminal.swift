@@ -89,6 +89,8 @@ public class Terminal: Console {
         #endif
     }
 
+    private var pids: [pid_t] = []
+
     private func execute(_ command: String, input: AnyObject?, output: AnyObject?, error: AnyObject?) throws {
         let task = Task()
 
@@ -101,7 +103,16 @@ public class Terminal: Console {
 
         task.launch()
 
+        pids.append(task.processIdentifier)
+
         task.waitUntilExit()
+
+        for (i, pid) in pids.enumerated() {
+            if pid == task.processIdentifier {
+                pids.remove(at: i)
+                break
+            }
+        }
 
         let result = task.terminationStatus
 
@@ -142,5 +153,15 @@ public class Terminal: Console {
     */
     private func command(_ command: Command) {
         output(command.ansi, newLine: false)
+    }
+
+    public func killTasks() {
+        for pid in pids {
+            kill(pid, SIGINT)
+        }
+    }
+
+    deinit {
+        killTasks()
     }
 }
