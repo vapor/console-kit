@@ -45,7 +45,13 @@ public class Bar {
 
         let message = message ?? "Done"
 
-        collapseBar(message: message, style: .success)
+        #if Simple
+            prepareLine()
+            console.output(title, style: titleStyle, newLine: false)
+            console.output(" [\(message)]", style: .success)
+        #else
+            collapseBar(message: message, style: .success)
+        #endif
     }
 
     func collapseBar(message: String, style: ConsoleStyle) {

@@ -13,7 +13,9 @@
 public class ProgressBar: Bar {
     public var progress: Double {
         didSet {
+            #if !Simple
             update()
+            #endif
         }
     }
 
