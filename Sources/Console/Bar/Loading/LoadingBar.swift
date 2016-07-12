@@ -89,15 +89,17 @@ public class LoadingBar: Bar {
     }
 
     public func start() {
-        do {
-            thread = try Strand { [weak self] in
-                while true {
-                    self?.update()
+        #if !Simple
+            do {
+                thread = try Strand { [weak self] in
+                    while true {
+                        self?.update()
+                    }
                 }
+            } catch {
+                console.info("[Loading]")
             }
-        } catch {
-            console.info("Loading...")
-        }
+        #endif
     }
 
     deinit {
