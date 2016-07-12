@@ -12,4 +12,4 @@ script:
   - swift build -Xswiftc -DSimple
   - swift build --configuration release -Xswiftc -DSimple
   # Test Console
-  - swift test -Xswiftc -DSimple
+  - swift test
