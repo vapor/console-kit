@@ -22,15 +22,15 @@ extension Data {
 }
 
 extension FileHandle {
-    static func standardError() -> FileHandle {
+    static var withStandardError: FileHandle {
         return fileHandleWithStandardError()
     }
 
-    static func standardOutput() -> FileHandle {
+    static var withStandardOutput: FileHandle {
         return fileHandleWithStandardOutput()
     }
 
-    static func standardInput() -> FileHandle {
+    static var withStandardInput: FileHandle {
         return fileHandleWithStandardInput()
     }
 }
