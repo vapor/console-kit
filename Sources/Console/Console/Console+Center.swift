@@ -1,4 +1,4 @@
-extension Console {
+extension ConsoleProtocol {
     public func center(_ string: String, paddingCharacter: Character = " ") -> String {
         // Split the string into lines
         let lines = string.characters.split(separator: Character("\n")).map(String.init)

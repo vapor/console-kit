@@ -1,4 +1,4 @@
-extension Console {
+extension ConsoleProtocol {
     /**
         Requests yes/no confirmation from
         the console.

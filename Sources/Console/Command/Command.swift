@@ -1,7 +1,7 @@
 import Polymorphic
 
 public protocol Command: Runnable {
-    var console: Console { get }
+    var console: ConsoleProtocol { get }
     func run(arguments: [String]) throws
 
     var signature: [Argument] { get }

@@ -1,4 +1,4 @@
-extension Console {
+extension ConsoleProtocol {
     /**
         Runs a group of commands.
      

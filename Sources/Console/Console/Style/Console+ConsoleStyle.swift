@@ -1,4 +1,4 @@
-extension Console {
+extension ConsoleProtocol {
     /**
         Outputs a plain message to the console.
     */

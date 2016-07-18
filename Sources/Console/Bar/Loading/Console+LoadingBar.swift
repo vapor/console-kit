@@ -1,4 +1,4 @@
-extension Console {
+extension ConsoleProtocol {
 	/**
 		Creates a LoadingBar using the console.
 	*/

@@ -13,13 +13,13 @@
 public class ProgressBar: Bar {
     public var progress: Double {
         didSet {
-            #if !Simple
+            #if !NO_ANIMATION
             update()
             #endif
         }
     }
 
-    override init(console: Console, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
+    override init(console: ConsoleProtocol, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
         progress = 0
         super.init(console: console, title: title, width: width, barStyle: barStyle, titleStyle: titleStyle)
     }

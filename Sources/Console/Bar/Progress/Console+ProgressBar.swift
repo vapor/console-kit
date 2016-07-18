@@ -1,4 +1,4 @@
-extension Console {
+extension ConsoleProtocol {
 	/**
 		Creates a progress bar using the console.
 	*/

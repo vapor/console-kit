@@ -9,7 +9,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then eval "$(curl -sL https://gist.githubusercontent.com/kylef/5c0475ff02b7c7671d2a/raw/02090c7ede5a637b76e6df1710e83cd0bbe7dcdf/swiftenv-install.sh)"; fi
 script:
   # Build Console 
-  - swift build -Xswiftc -DSimple
-  - swift build --configuration release -Xswiftc -DSimple
+  - swift build -Xswiftc -DNO_ANIMATION
+  - swift build --configuration release -Xswiftc -DNO_ANIMATION
   # Test Console
   - swift test
