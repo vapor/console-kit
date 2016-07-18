@@ -1,7 +1,7 @@
 import libc
 
 public class Bar {
-    let console: Console
+    let console: ConsoleProtocol
     let title: String
     let width: Int
     let barStyle: ConsoleStyle
@@ -12,7 +12,7 @@ public class Bar {
 
     var mutex: UnsafeMutablePointer<pthread_mutex_t>
 
-    public init(console: Console, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
+    public init(console: ConsoleProtocol, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
         self.console = console
         self.width = width
         self.title = title
@@ -45,7 +45,7 @@ public class Bar {
 
         let message = message ?? "Done"
 
-        #if Simple
+        #if NO_ANIMATION
             prepareLine()
             console.output(title, style: titleStyle, newLine: false)
             console.output(" [\(message)]", style: .success)

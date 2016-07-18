@@ -1,4 +1,4 @@
-extension Console {
+extension ConsoleProtocol {
     public func printUsage(executable: String, commands: [Runnable]) {
         info("Usage: ", newLine: false)
         print("\(executable)", newLine: false)

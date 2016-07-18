@@ -1,7 +1,7 @@
 import libc
 import Foundation
 
-public class Terminal: Console {
+public class Terminal: ConsoleProtocol {
     public enum Error: ErrorProtocol {
         case cancelled
         case execute(Int)

@@ -4,7 +4,7 @@ import Foundation
 /**
     Protocol for powering styled Console I/O.
 */
-public protocol Console {
+public protocol ConsoleProtocol {
     /**
         Outputs a String in the given style to 
         the console. If newLine is true, the next
@@ -61,7 +61,7 @@ public protocol Console {
     var size: (width: Int, height: Int) { get }
 }
 
-extension Console {
+extension ConsoleProtocol {
     /**
         Out method with plain default and newline.
     */

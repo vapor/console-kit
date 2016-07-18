@@ -1,4 +1,4 @@
-extension Console {
+extension ConsoleProtocol {
     /**
         Requests input from the console
         after displaying the desired prompt.

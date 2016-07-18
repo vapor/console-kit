@@ -24,7 +24,7 @@ public class LoadingBar: Bar {
     let cycles: Int
     var running: Bool
 
-    public override init(console: Console, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
+    public override init(console: ConsoleProtocol, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
         current = -1
         inc = 1
         cycles = width
@@ -89,7 +89,7 @@ public class LoadingBar: Bar {
     }
 
     public func start() {
-        #if !Simple
+        #if !NO_ANIMATION
             do {
                 thread = try Strand { [weak self] in
                     while true {
