@@ -117,10 +117,27 @@ Connecting [         •     ]
 
 Travis builds this package on both Ubuntu 14.04 and macOS 10.11. Check out the `.travis.yml` file to see how this package is built and compiled during testing.
 
-## Vapor
+## 🌏 Environment
 
-This wrapper was created to power [Vapor](https://github.com/qutheory/vapor), a Web Framework for Swift. 
+|Console|Xcode|Swift|
+|:-:|:-:|:-:|
+|0.4.x|8.0 Beta **3**|DEVELOPMENT-SNAPSHOT-2016-07-20-qutheory|
+|0.3.x|8.0 beta **2**|3.0-PREVIEW-2|
+|0.2.x|8.0 beta **2**|3.0-PREVIEW-2|
+|0.1.x|7.3.x|DEVELOPMENT-SNAPSHOT-2016-06-20-a|
 
-## Author
+## 📖 Documentation
+
+Visit the Vapor web framework's [documentation](http://docs.qutheory.io) for instructions on how to install Swift 3. 
+
+## 💧 Community
+
+We pride ourselves on providing a diverse and welcoming community. Join your fellow Vapor developers in [our slack](slack.qutheory.io) and take part in the conversation.
+
+## 🔧 Compatibility
+
+Node has been tested on OS X 10.11, Ubuntu 14.04, and Ubuntu 15.10.
+
+## 👥 Author
 
 Created by [Tanner Nelson](https://github.com/tannernelson).
