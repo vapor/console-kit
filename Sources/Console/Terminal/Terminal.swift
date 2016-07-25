@@ -2,7 +2,7 @@ import libc
 import Foundation
 
 public class Terminal: ConsoleProtocol {
-    public enum Error: ErrorProtocol {
+    public enum Error: Swift.Error {
         case cancelled
         case execute(Int)
     }
@@ -59,9 +59,9 @@ public class Terminal: ConsoleProtocol {
     }
 
     public func execute(_ command: String) throws {
-        let input = FileHandle.withStandardInput
-        let output = FileHandle.withStandardOutput
-        let error = FileHandle.withStandardError
+        let input = FileHandle.standardInput
+        let output = FileHandle.standardOutput
+        let error = FileHandle.standardError
 
         try execute(command, input: input, output: output, error: error)
     }
