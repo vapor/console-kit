@@ -22,13 +22,13 @@ public class Bar {
         hasStarted = false
         hasFinished = false
 
-        mutex = UnsafeMutablePointer(allocatingCapacity: 1)
+        mutex = UnsafeMutablePointer.allocate(capacity: 1)
         pthread_mutex_init(mutex, nil)
     }
 
     deinit {
         mutex.deinitialize()
-        mutex.deallocateCapacity(1)
+        mutex.deallocate(capacity: 1)
     }
 
     public func fail(_ message: String? = nil) {
