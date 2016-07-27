@@ -1,4 +1,4 @@
-public enum ConsoleError: ErrorProtocol {
+public enum ConsoleError: Swift.Error {
     case help
     case noExecutable
     case noCommand

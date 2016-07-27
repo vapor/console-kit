@@ -2,7 +2,7 @@ import libc
 import Foundation
 
 public class Terminal: ConsoleProtocol {
-    public enum Error: ErrorProtocol {
+    public enum Error: Swift.Error {
         case cancelled
         case execute(Int)
     }
@@ -59,10 +59,15 @@ public class Terminal: ConsoleProtocol {
     }
 
     public func execute(_ command: String) throws {
-        let input = FileHandle.withStandardInput
-        let output = FileHandle.withStandardOutput
-        let error = FileHandle.withStandardError
-
+        #if os(Linux)
+            let input = FileHandle.standardInput()
+            let output = FileHandle.standardOutput()
+            let error = FileHandle.standardError()
+        #else
+            let input = FileHandle.standardInput
+            let output = FileHandle.standardOutput
+            let error = FileHandle.standardError
+        #endif
         try execute(command, input: input, output: output, error: error)
     }
 
@@ -74,19 +79,11 @@ public class Terminal: ConsoleProtocol {
         do {
             try execute(command, input: input, output: output, error: error)
         } catch ConsoleError.execute(let result) {
-            #if os(Linux)
-                let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: NSUTF8StringEncoding) ?? "Unknown"
-            #else
-                let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
-            #endif
+            let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
             throw ConsoleError.subexecute(result, error)
         }
 
-        #if os(Linux)
-            return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: NSUTF8StringEncoding) ?? ""
-        #else
-            return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-        #endif
+        return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
     }
 
     private var pids: [pid_t] = []
