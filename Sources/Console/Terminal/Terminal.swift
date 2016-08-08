@@ -58,60 +58,60 @@ public class Terminal: ConsoleProtocol {
         return readLine(strippingNewline: true) ?? ""
     }
 
-    public func execute(_ command: String) throws {
-        #if os(Linux)
-            let input = FileHandle.standardInput()
-            let output = FileHandle.standardOutput()
-            let error = FileHandle.standardError()
+    public func execute(_ command: String, input: Int32? = nil, output: Int32? = nil, error: Int32? = nil) throws {
+        let task = Task()
+        var pid = pid_t()
+
+        let args = ["/bin/sh", "-c", command]
+        let argv: [UnsafeMutablePointer<CChar>?] = args.map{ $0.withCString(strdup) }
+        defer { for case let arg? in argv { free(arg) } }
+
+        var environment: [String: String] = [:]
+        #if Xcode
+            let keys = ["SWIFT_EXEC", "HOME", "PATH", "TOOLCHAINS", "DEVELOPER_DIR", "LLVM_PROFILE_FILE"]
         #else
-            let input = FileHandle.standardInput
-            let output = FileHandle.standardOutput
-            let error = FileHandle.standardError
+            let keys = ["SWIFT_EXEC", "HOME", "PATH", "SDKROOT", "TOOLCHAINS", "DEVELOPER_DIR", "LLVM_PROFILE_FILE"]
         #endif
-        try execute(command, input: input, output: output, error: error)
-    }
 
-    public func subexecute(_ command: String, input: String) throws -> String {
-        let output = Pipe()
-        let input = Pipe()
-        let error = Pipe()
-
-        do {
-            try execute(command, input: input, output: output, error: error)
-        } catch ConsoleError.execute(let result) {
-            let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
-            throw ConsoleError.subexecute(result, error)
+        func getenv(_ key: String) -> String? {
+            let out = libc.getenv(key)
+            return out == nil ? nil : String(validatingUTF8: out!)  //FIXME locale may not be UTF8
         }
 
-        return String(data: output.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-    }
-
-    private var pids: [pid_t] = []
-
-    private func execute(_ command: String, input: AnyObject?, output: AnyObject?, error: AnyObject?) throws {
-        let task = Task()
-
-        task.arguments = ["-c", command]
-        task.launchPath = "/bin/sh"
-
-        task.standardInput = input
-        task.standardOutput = output
-        task.standardError = error
-
-        task.launch()
-
-        pids.append(task.processIdentifier)
-
-        task.waitUntilExit()
-
-        for (i, pid) in pids.enumerated() {
-            if pid == task.processIdentifier {
-                pids.remove(at: i)
-                break
+        for key in keys {
+            if environment[key] == nil {
+                environment[key] = getenv(key)
             }
         }
 
-        let result = task.terminationStatus
+        let env: [UnsafeMutablePointer<CChar>?] = environment.map{ "\($0.0)=\($0.1)".withCString(strdup) }
+        defer { for case let arg? in env { free(arg) } }
+
+
+        #if os(macOS)
+            var fileActions: posix_spawn_file_actions_t? = nil
+        #else
+            var fileActions = posix_spawn_file_actions_t()
+        #endif
+
+        posix_spawn_file_actions_init(&fileActions);
+        defer {
+            posix_spawn_file_actions_destroy(&fileActions)
+        }
+
+        if let input = input {
+            posix_spawn_file_actions_adddup2(&fileActions, input, 0)
+        }
+
+        if let output = output {
+            posix_spawn_file_actions_adddup2(&fileActions, output, 1)
+        }
+
+        if let error = error {
+            posix_spawn_file_actions_adddup2(&fileActions, error, 2)
+        }
+
+        let result = posix_spawnp(&pid, argv[0], &fileActions, nil, argv + [nil], env + [nil])
 
         if result == 2 {
             throw ConsoleError.cancelled
@@ -136,8 +136,8 @@ public class Terminal: ConsoleProtocol {
 
         do {
             // FIXME: tput doesn't work with NSTask
-            let cols = try subexecute("\(tput) cols").trim()
-            let lines = try subexecute("\(tput) lines").trim()
+            let cols = try backgroundExecute("\(tput) cols").trim()
+            let lines = try backgroundExecute("\(tput) lines").trim()
 
             return (Int(cols) ?? 0, Int(lines) ?? 0)
         } catch {
@@ -150,15 +150,5 @@ public class Terminal: ConsoleProtocol {
     */
     private func command(_ command: Command) {
         output(command.ansi, newLine: false)
-    }
-
-    public func killTasks() {
-        for pid in pids {
-            kill(pid, SIGINT)
-        }
-    }
-
-    deinit {
-        killTasks()
     }
 }
