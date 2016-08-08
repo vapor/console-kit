@@ -30,7 +30,7 @@ public protocol ConsoleProtocol {
         Executes a task using the supplied 
         FileHandles for IO.
     */
-    func execute(_ command: String, input: Int32?, output: Int32?, error: Int32?) throws
+    func execute(program: String, command: String, input: Int32?, output: Int32?, error: Int32?) throws
 
     /**
         When set, all `confirm(_ prompt:)` methods
@@ -65,7 +65,8 @@ extension ConsoleProtocol {
         #endif
         
         try execute(
-            command,
+            program: "/bin/sh",
+            command: command,
             input: stdin.fileDescriptor,
             output: stdout.fileDescriptor,
             error: stderr.fileDescriptor
@@ -90,7 +91,8 @@ extension ConsoleProtocol {
 
         do {
             try execute(
-                command,
+                program: "/bin/sh",
+                command: command,
                 input: input.fileHandleForReading.fileDescriptor,
                 output: output.fileHandleForWriting.fileDescriptor,
                 error: error.fileHandleForWriting.fileDescriptor

@@ -61,12 +61,12 @@ public class Terminal: ConsoleProtocol {
 
     public var pids: [UnsafeMutablePointer<pid_t>]
 
-    public func execute(_ command: String, input: Int32? = nil, output: Int32? = nil, error: Int32? = nil) throws {
+    public func execute(program: String, command: String, input: Int32? = nil, output: Int32? = nil, error: Int32? = nil) throws {
         let task = Task()
         var pid = UnsafeMutablePointer<pid_t>.allocate(capacity: 1)
         pid.initialize(to: pid_t())
 
-        let args = ["/bin/sh", "-c", command]
+        let args = [program, command]
         let argv: [UnsafeMutablePointer<CChar>?] = args.map{ $0.withCString(strdup) }
         defer { for case let arg? in argv { free(arg) } }
 

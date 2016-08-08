@@ -23,7 +23,7 @@ class TestConsole: ConsoleProtocol {
         //
     }
 
-    func execute(_ command: String, input: Int32?, output: Int32?, error: Int32?) throws {
+    func execute(program: String, command: String, input: Int32?, output: Int32?, error: Int32?) throws {
 
     }
 
