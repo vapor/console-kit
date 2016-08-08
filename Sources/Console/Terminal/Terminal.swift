@@ -59,11 +59,12 @@ public class Terminal: ConsoleProtocol {
         return readLine(strippingNewline: true) ?? ""
     }
 
-    public var pids: [pid_t]
+    public var pids: [UnsafeMutablePointer<pid_t>]
 
     public func execute(_ command: String, input: Int32? = nil, output: Int32? = nil, error: Int32? = nil) throws {
         let task = Task()
-        var pid = pid_t()
+        var pid = UnsafeMutablePointer<pid_t>.allocate(capacity: 1)
+        pid.initialize(to: pid_t())
 
         let args = ["/bin/sh", "-c", command]
         let argv: [UnsafeMutablePointer<CChar>?] = args.map{ $0.withCString(strdup) }
@@ -115,7 +116,7 @@ public class Terminal: ConsoleProtocol {
         }
 
         pids.append(pid)
-        let result = posix_spawnp(&pid, argv[0], &fileActions, nil, argv + [nil], env + [nil])
+        let result = posix_spawnp(pid, argv[0], &fileActions, nil, argv + [nil], env + [nil])
 
         if result == 2 {
             throw ConsoleError.cancelled
