@@ -13,6 +13,7 @@ public class Terminal: ConsoleProtocol {
         Creates an instance of Terminal.
     */
     public init(arguments: [String]) {
+        pids = []
         self.arguments = arguments
     }
 
@@ -57,6 +58,8 @@ public class Terminal: ConsoleProtocol {
     public func input() -> String {
         return readLine(strippingNewline: true) ?? ""
     }
+
+    public var pids: [pid_t]
 
     public func execute(_ command: String, input: Int32? = nil, output: Int32? = nil, error: Int32? = nil) throws {
         let task = Task()
@@ -112,6 +115,7 @@ public class Terminal: ConsoleProtocol {
         }
 
         let result = posix_spawnp(&pid, argv[0], &fileActions, nil, argv + [nil], env + [nil])
+        pids.append(pid)
 
         if result == 2 {
             throw ConsoleError.cancelled
