@@ -30,7 +30,7 @@ public protocol ConsoleProtocol {
         Executes a task using the supplied 
         FileHandles for IO.
     */
-    func execute(program: String, command: String, input: Int32?, output: Int32?, error: Int32?) throws
+    func execute(program: String, arguments: [String], input: Int32?, output: Int32?, error: Int32?) throws
 
     /**
         When set, all `confirm(_ prompt:)` methods
@@ -53,7 +53,7 @@ extension ConsoleProtocol {
 
         - throws: ConsoleError.execute(Int)
     */
-    public func foregroundExecute(_ command: String) throws {
+    public func foregroundExecute(program: String, arguments: [String]) throws {
         #if os(Linux)
             let stdin = FileHandle.standardInput()
             let stdout = FileHandle.standardOutput()
@@ -65,8 +65,8 @@ extension ConsoleProtocol {
         #endif
         
         try execute(
-            program: "/bin/sh",
-            command: command,
+            program: program,
+            arguments: arguments,
             input: stdin.fileDescriptor,
             output: stdout.fileDescriptor,
             error: stderr.fileDescriptor
@@ -84,15 +84,15 @@ extension ConsoleProtocol {
 
         - throws: ConsoleError.subexecute(Int, String)
     */
-    public func backgroundExecute(_ command: String) throws -> String {
+    public func backgroundExecute(program: String, arguments: [String]) throws -> String {
         let input = Pipe()
         let output = Pipe()
         let error = Pipe()
 
         do {
             try execute(
-                program: "/bin/sh",
-                command: command,
+                program: program,
+                arguments: arguments,
                 input: input.fileHandleForReading.fileDescriptor,
                 output: output.fileHandleForWriting.fileDescriptor,
                 error: error.fileHandleForWriting.fileDescriptor

@@ -42,5 +42,4 @@ class ConsoleTests: XCTestCase {
         XCTAssertEqual(response, true)
         XCTAssertEqual(console.outputBuffer, question + "\ny/n>")
     }
-
 }

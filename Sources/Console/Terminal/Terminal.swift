@@ -1,6 +1,8 @@
 import libc
 import Foundation
 
+private var _pids: [UnsafeMutablePointer<pid_t>] = []
+
 public class Terminal: ConsoleProtocol {
     public enum Error: Swift.Error {
         case cancelled
@@ -13,8 +15,19 @@ public class Terminal: ConsoleProtocol {
         Creates an instance of Terminal.
     */
     public init(arguments: [String]) {
-        pids = []
         self.arguments = arguments
+
+        func kill(sig: Int32) {
+            for pid in _pids {
+                _ = libc.kill(pid.pointee, sig)
+            }
+            exit(sig)
+        }
+
+        signal(SIGINT, kill)
+        signal(SIGTERM, kill)
+        signal(SIGQUIT, kill)
+        signal(SIGHUP, kill)
     }
 
     /**
@@ -59,14 +72,11 @@ public class Terminal: ConsoleProtocol {
         return readLine(strippingNewline: true) ?? ""
     }
 
-    public var pids: [UnsafeMutablePointer<pid_t>]
-
-    public func execute(program: String, command: String, input: Int32? = nil, output: Int32? = nil, error: Int32? = nil) throws {
-        let task = Task()
+    public func execute(program: String, arguments: [String], input: Int32? = nil, output: Int32? = nil, error: Int32? = nil) throws {
         var pid = UnsafeMutablePointer<pid_t>.allocate(capacity: 1)
         pid.initialize(to: pid_t())
 
-        let args = [program, command]
+        let args = [program] + arguments
         let argv: [UnsafeMutablePointer<CChar>?] = args.map{ $0.withCString(strdup) }
         defer { for case let arg? in argv { free(arg) } }
 
@@ -115,7 +125,7 @@ public class Terminal: ConsoleProtocol {
             posix_spawn_file_actions_adddup2(&fileActions, error, 2)
         }
 
-        pids.append(pid)
+        _pids.append(pid)
         let result = posix_spawnp(pid, argv[0], &fileActions, nil, argv + [nil], env + [nil])
 
         if result == 2 {
@@ -136,18 +146,9 @@ public class Terminal: ConsoleProtocol {
     }
 
     public var size: (width: Int, height: Int) {
-        // Get the columns and lines from tput
-        let tput = "/usr/bin/tput"
-
-        do {
-            // FIXME: tput doesn't work with NSTask
-            let cols = try backgroundExecute("\(tput) cols").trim()
-            let lines = try backgroundExecute("\(tput) lines").trim()
-
-            return (Int(cols) ?? 0, Int(lines) ?? 0)
-        } catch {
-            return (0, 0)
-        }
+        var w = winsize()
+        _ = ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+        return (Int(w.ws_col), Int(w.ws_row))
     }
 
     /**
