@@ -75,6 +75,11 @@ public class Terminal: ConsoleProtocol {
     public func execute(program: String, arguments: [String], input: Int32? = nil, output: Int32? = nil, error: Int32? = nil) throws {
         var pid = UnsafeMutablePointer<pid_t>.allocate(capacity: 1)
         pid.initialize(to: pid_t())
+        defer {
+            pid.deinitialize()
+            pid.deallocate(capacity: 1)
+        }
+
 
         let args = [program] + arguments
         let argv: [UnsafeMutablePointer<CChar>?] = args.map{ $0.withCString(strdup) }
@@ -89,7 +94,7 @@ public class Terminal: ConsoleProtocol {
 
         func getenv(_ key: String) -> String? {
             let out = libc.getenv(key)
-            return out == nil ? nil : String(validatingUTF8: out!)  //FIXME locale may not be UTF8
+            return out.flatMap { String(validatingUTF8: $0) }
         }
 
         for key in keys {
