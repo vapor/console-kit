@@ -1,5 +1,5 @@
 import libc
-import Strand
+import Core
 
 /**
     A loading bar that indicates ongoing activity.

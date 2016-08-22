@@ -13,7 +13,7 @@ extension ConsoleColor {
         Returns the foreground terminal color 
         code for the ConsoleColor.
     */
-    private var terminalForeground: UInt8 {
+    var terminalForeground: UInt8 {
         switch self {
         case .black:
             return 30
@@ -38,7 +38,7 @@ extension ConsoleColor {
         Returns the background terminal color
         code for the ConsoleColor.
     */
-    private var terminalBackground: UInt8 {
+    var terminalBackground: UInt8 {
         switch self {
         case .black:
             return 40
@@ -64,7 +64,7 @@ extension UInt8 {
     /**
         Converts a UInt8 to an ANSI code.
     */
-    private var ansi: String {
+    var ansi: String {
         return (self.description + "m").ansi
     }
 }
