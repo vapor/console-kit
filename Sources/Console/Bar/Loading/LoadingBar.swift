@@ -1,9 +1,5 @@
+import libc
 import Strand
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin
-#endif
 
 /**
     A loading bar that indicates ongoing activity.

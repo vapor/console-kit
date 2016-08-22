@@ -146,8 +146,16 @@ public class Terminal: ConsoleProtocol {
     }
 
     public var size: (width: Int, height: Int) {
-        var w = winsize()
-        _ = ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+        let p = UnsafeMutablePointer<winsize>.allocate(capacity: 1)
+        p.initialize(to: winsize())
+        defer {
+            p.deinitialize()
+            p.deallocate(capacity: 1)
+        }
+
+        _ = ioctl(STDOUT_FILENO, TIOCGWINSZ, p);
+
+        let w = p.pointee
         return (Int(w.ws_col), Int(w.ws_row))
     }
 
