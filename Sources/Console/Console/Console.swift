@@ -100,7 +100,7 @@ extension ConsoleProtocol {
         } catch ConsoleError.execute(let result) {
             close(error.fileHandleForWriting.fileDescriptor)
             let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
-            throw ConsoleError.subexecute(result, error)
+            throw ConsoleError.backgroundExecute(result, error)
         }
 
         close(output.fileHandleForWriting.fileDescriptor)

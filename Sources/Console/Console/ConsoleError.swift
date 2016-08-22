@@ -7,5 +7,5 @@ public enum ConsoleError: Swift.Error {
     case commandNotFound(String)
     case cancelled
     case execute(Int)
-    case subexecute(Int, String)
+    case backgroundExecute(Int, String)
 }
