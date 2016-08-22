@@ -1,7 +1,6 @@
 import Console
-import Foundation
 
-let console: ConsoleProtocol = Terminal(arguments: ProcessInfo().arguments)
+let console: ConsoleProtocol = Terminal(arguments: CommandLine.arguments)
 
 console.output("Welcome", style: .custom(.red), newLine: false)
 console.output(" to", style: .custom(.yellow), newLine: false)
