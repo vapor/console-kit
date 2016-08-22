@@ -153,7 +153,8 @@ public class Terminal: ConsoleProtocol {
             p.deallocate(capacity: 1)
         }
 
-        _ = ioctl(STDOUT_FILENO, TIOCGWINSZ, p);
+        let pv = UnsafeMutablePointer<Void>(p) // FIXME: Bug on Linux
+        _ = ioctl(STDOUT_FILENO, TIOCGWINSZ, pv);
 
         let w = p.pointee
         return (Int(w.ws_col), Int(w.ws_row))
