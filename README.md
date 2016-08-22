@@ -4,8 +4,12 @@
 
 # Swift Console
 
-![Swift](https://camo.githubusercontent.com/0727f3687a1e263cac101c5387df41048641339c/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f53776966742d332e302d6f72616e67652e7376673f7374796c653d666c6174)
-[![Build Status](https://travis-ci.org/qutheory/console.svg?branch=master)](https://travis-ci.org/qutheory/console)
+![Swift](http://img.shields.io/badge/swift-v3.0--dev.08.18-brightgreen.svg)
+[![Build Status](https://travis-ci.org/vapor/console.svg?branch=master)](https://travis-ci.org/vapor/console)
+[![CircleCI](https://circleci.com/gh/vapor/console.svg?style=shield)](https://circleci.com/gh/vapor/console)
+[![Code Coverage](https://codecov.io/gh/vapor/console/branch/master/graph/badge.svg)](https://codecov.io/gh/vapor/console)
+[![Codebeat](https://codebeat.co/badges/a793ad97-47e3-40d9-82cf-2aafc516ef4e)](https://codebeat.co/projects/github-com-vapor-console)
+[![Slack Status](http://vapor.team/badge.svg)](http://vapor.team)
 
 A Swift wrapper for Console I/O.
 
@@ -121,6 +125,8 @@ Travis builds this package on both Ubuntu 14.04 and macOS 10.11. Check out the `
 
 |Console|Xcode|Swift|
 |:-:|:-:|:-:|
+|0.6.x|8.0 Beta **6**|DEVELOPMENT-SNAPSHOT-2016-08-18-a|
+|0.5.x|8.0 Beta **3**|DEVELOPMENT-SNAPSHOT-2016-07-25-a|
 |0.4.x|8.0 Beta **3**|DEVELOPMENT-SNAPSHOT-2016-07-20-qutheory|
 |0.3.x|8.0 beta **2**|3.0-PREVIEW-2|
 |0.2.x|8.0 beta **2**|3.0-PREVIEW-2|
