@@ -43,6 +43,28 @@ public protocol ConsoleProtocol {
         The size of the console window used for centering.
     */
     var size: (width: Int, height: Int) { get }
+
+    /**
+     Executes a command using the console's POSIX subsystem.
+     The input, output, and error streams will appear
+     as though they are coming from the console program.
+
+     - throws: ConsoleError.execute(Int)
+     */
+    func foregroundExecute(program: String, arguments: [String]) throws
+
+    /**
+     Executes a command using the console's POSIX subsystem.
+     The input, output, and error streams will be input
+     and returned as strings.
+
+     - input: Input argument to method
+     - output: The return string from the method
+     - error: The string in the error enumeration ConsoleError.subexcute
+
+     - throws: ConsoleError.subexecute(Int, String)
+     */
+    func backgroundExecute(program: String, arguments: [String]) throws -> String
 }
 
 extension ConsoleProtocol {
