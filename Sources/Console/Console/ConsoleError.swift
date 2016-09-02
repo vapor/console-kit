@@ -8,4 +8,5 @@ public enum ConsoleError: Swift.Error {
     case cancelled
     case execute(Int)
     case backgroundExecute(Int, String)
+    case fileOrDirectoryNotFound
 }
