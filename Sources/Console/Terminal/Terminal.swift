@@ -133,6 +133,8 @@ public class Terminal: ConsoleProtocol {
         _pids.append(pid)
         let result = posix_spawnp(pid, argv[0], &fileActions, nil, argv + [nil], env + [nil])
 
+        waitpid(pid.pointee, nil, 0)
+
         if result == ENOENT {
             throw ConsoleError.fileOrDirectoryNotFound
         } else if result != 0 {
