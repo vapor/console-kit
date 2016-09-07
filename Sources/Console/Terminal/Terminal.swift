@@ -131,7 +131,14 @@ public class Terminal: ConsoleProtocol {
         }
 
         _pids.append(pid)
-        let result = posix_spawnp(pid, argv[0], &fileActions, nil, argv + [nil], env + [nil])
+        let spawned = posix_spawnp(pid, argv[0], &fileActions, nil, argv + [nil], env + [nil])
+        if spawned != 0 {
+            throw ConsoleError.spawnProcess
+        }
+
+        var result: Int32 = 0
+        _ = waitpid(pid.pointee, &result, 0)
+        result = result / 256
 
         waitpid(pid.pointee, nil, 0)
 
