@@ -1,5 +1,6 @@
 import libc
 import Foundation
+import Core
 
 /**
     Protocol for powering styled Console I/O.
@@ -72,7 +73,6 @@ public protocol ConsoleProtocol {
 }
 
 extension ConsoleProtocol {
-
     public func foregroundExecute(program: String, arguments: [String]) throws {
         #if os(Linux)
             let stdin = FileHandle.standardInput()
@@ -92,8 +92,16 @@ extension ConsoleProtocol {
             error: stderr.fileDescriptor
         )
     }
+    
+    public func foregroundExecute(commands: [String]) throws {
+        try foregroundExecute(program: commands[0], arguments: commands.dropFirst(1).array)
+    }
+    
+    public func foregroundExecute(commands: String...) throws {
+        try foregroundExecute(commands: commands)
+    }
 
-    public func backgroundExecute(program: String, arguments: [String]) throws -> String {
+    public func backgroundExecute(program: String, arguments: [String]) throws -> Bytes {
         let input = Pipe()
         let output = Pipe()
         let error = Pipe()
@@ -113,8 +121,20 @@ extension ConsoleProtocol {
         }
 
         close(output.fileHandleForWriting.fileDescriptor)
-        let data = output.fileHandleForReading.readDataToEndOfFile()
-        return String(data: data, encoding: .utf8) ?? ""
+        return try output.fileHandleForReading.readDataToEndOfFile().makeBytes()
+    }
+    
+    public func backgroundExecute<Type: BytesInitializable>(program: String, arguments: [String]) throws -> Type {
+        let bytes = try backgroundExecute(program: program, arguments: arguments) as Bytes
+        return try Type(bytes: bytes)
+    }
+    
+    public func backgroundExecute<Type: BytesInitializable>(commands: [String]) throws -> Type {
+        return try backgroundExecute(program: commands[0], arguments: commands.dropFirst(1).array)
+    }
+    
+    public func backgroundExecute<Type: BytesInitializable>(commands: String...) throws -> Type {
+        return try backgroundExecute(commands: commands)
     }
 }
 
