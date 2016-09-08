@@ -1,11 +1,6 @@
 import XCTest
 
-#if os(Linux)
-import Glibc
-#else
-import Darwin
-#endif
-
+import libc
 
 @testable import Console
 
