@@ -105,7 +105,7 @@ extension ConsoleProtocol {
         let input = Pipe()
         let output = Pipe()
         let error = Pipe()
-        
+
         do {
             try execute(
                 program: program,
@@ -119,7 +119,7 @@ extension ConsoleProtocol {
             let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
             throw ConsoleError.backgroundExecute(result, error)
         }
-        
+
         close(output.fileHandleForWriting.fileDescriptor)
         return try output.fileHandleForReading.readDataToEndOfFile().makeBytes()
     }
