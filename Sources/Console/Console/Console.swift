@@ -93,11 +93,11 @@ extension ConsoleProtocol {
         )
     }
 
-    public func backgroundExecute(program: String, arguments: [String]) throws -> String {
+    public func backgroundExecuteData(program: String, arguments: [String]) throws -> Data {
         let input = Pipe()
         let output = Pipe()
         let error = Pipe()
-
+        
         do {
             try execute(
                 program: program,
@@ -111,9 +111,13 @@ extension ConsoleProtocol {
             let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
             throw ConsoleError.backgroundExecute(result, error)
         }
-
+        
         close(output.fileHandleForWriting.fileDescriptor)
-        let data = output.fileHandleForReading.readDataToEndOfFile()
+        return output.fileHandleForReading.readDataToEndOfFile()
+    }
+    
+    public func backgroundExecute(program: String, arguments: [String]) throws -> String {
+        let data = try backgroundExecuteData(program: program, arguments: arguments)
         return String(data: data, encoding: .utf8) ?? ""
     }
 }
