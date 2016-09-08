@@ -125,6 +125,7 @@ Travis builds this package on both Ubuntu 14.04 and macOS 10.11. Check out the `
 
 |Console|Xcode|Swift|
 |:-:|:-:|:-:|
+|0.7.x|8.0 GM|DEVELOPMENT-SNAPSHOT-2016-09-06-a|
 |0.6.x|8.0 Beta **6**|DEVELOPMENT-SNAPSHOT-2016-08-18-a|
 |0.5.x|8.0 Beta **3**|DEVELOPMENT-SNAPSHOT-2016-07-25-a|
 |0.4.x|8.0 Beta **3**|DEVELOPMENT-SNAPSHOT-2016-07-20-qutheory|

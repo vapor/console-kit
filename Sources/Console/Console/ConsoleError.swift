@@ -1,3 +1,5 @@
+import Core
+
 public enum ConsoleError: Swift.Error {
     case help
     case noExecutable
@@ -7,7 +9,7 @@ public enum ConsoleError: Swift.Error {
     case commandNotFound(String)
     case cancelled
     case spawnProcess
-    case execute(Int)
-    case backgroundExecute(Int, String)
+    case execute(code: Int)
+    case backgroundExecute(code: Int, error: Bytes, output: Bytes)
     case fileOrDirectoryNotFound
 }

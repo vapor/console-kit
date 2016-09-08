@@ -74,15 +74,9 @@ public protocol ConsoleProtocol {
 
 extension ConsoleProtocol {
     public func foregroundExecute(program: String, arguments: [String]) throws {
-        #if os(Linux)
-            let stdin = FileHandle.standardInput()
-            let stdout = FileHandle.standardOutput()
-            let stderr = FileHandle.standardError()
-        #else
-            let stdin = FileHandle.standardInput
-            let stdout = FileHandle.standardOutput
-            let stderr = FileHandle.standardError
-        #endif
+        let stdin = FileHandle.standardInput
+        let stdout = FileHandle.standardOutput
+        let stderr = FileHandle.standardError
         
         try execute(
             program: program,
@@ -116,8 +110,11 @@ extension ConsoleProtocol {
             )
         } catch ConsoleError.execute(let result) {
             close(error.fileHandleForWriting.fileDescriptor)
-            let error = String(data: error.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? "Unknown"
-            throw ConsoleError.backgroundExecute(result, error)
+            close(output.fileHandleForWriting.fileDescriptor)
+            let error = try error.fileHandleForReading.readDataToEndOfFile().makeBytes()
+            let output = try output.fileHandleForReading.readDataToEndOfFile().makeBytes()
+
+            throw ConsoleError.backgroundExecute(code: result, error: error, output: output)
         }
 
         close(output.fileHandleForWriting.fileDescriptor)

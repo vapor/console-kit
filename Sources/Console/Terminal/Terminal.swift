@@ -145,7 +145,7 @@ public class Terminal: ConsoleProtocol {
         if result == ENOENT {
             throw ConsoleError.fileOrDirectoryNotFound
         } else if result != 0 {
-            throw ConsoleError.execute(Int(result))
+            throw ConsoleError.execute(code: Int(result))
         }
     }
 
