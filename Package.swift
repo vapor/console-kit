@@ -7,8 +7,8 @@ let package = Package(
         // Target(name: "ConsoleExample", dependencies: ["Console"])
     ],
     dependencies: [
-        .Package(url: "https://github.com/vapor/polymorphic.git", majorVersion: 0, minor: 4),
-        .Package(url: "https://github.com/vapor/core.git", majorVersion: 0, minor: 5),
+        .Package(url: "https://github.com/vapor/polymorphic.git", majorVersion: 1),
+        .Package(url: "https://github.com/vapor/core.git", majorVersion: 1),
     ],
     exclude: [
         "Sources/ConsoleExample"
