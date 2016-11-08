@@ -85,8 +85,8 @@ public class Terminal: ConsoleProtocol {
         let argv: [UnsafeMutablePointer<CChar>?] = args.map{ $0.withCString(strdup) }
         defer { for case let arg? in argv { free(arg) } }
 
-        var environment: [String: String] = ProcessInfo().environment
-        
+        var environment: [String: String] = ProcessInfo.processInfo.environment
+
         let env: [UnsafeMutablePointer<CChar>?] = environment.map{ "\($0.0)=\($0.1)".withCString(strdup) }
         defer { for case let arg? in env { free(arg) } }
 
