@@ -85,23 +85,7 @@ public class Terminal: ConsoleProtocol {
         let argv: [UnsafeMutablePointer<CChar>?] = args.map{ $0.withCString(strdup) }
         defer { for case let arg? in argv { free(arg) } }
 
-        var environment: [String: String] = [:]
-        #if Xcode
-            let keys = ["SWIFT_EXEC", "HOME", "PATH", "TOOLCHAINS", "DEVELOPER_DIR", "LLVM_PROFILE_FILE"]
-        #else
-            let keys = ["SWIFT_EXEC", "HOME", "PATH", "SDKROOT", "TOOLCHAINS", "DEVELOPER_DIR", "LLVM_PROFILE_FILE"]
-        #endif
-
-        func getenv(_ key: String) -> String? {
-            let out = libc.getenv(key)
-            return out.flatMap { String(validatingUTF8: $0) }
-        }
-
-        for key in keys {
-            if environment[key] == nil {
-                environment[key] = getenv(key)
-            }
-        }
+        var environment: [String: String] = ProcessInfo.processInfo.environment
 
         let env: [UnsafeMutablePointer<CChar>?] = environment.map{ "\($0.0)=\($0.1)".withCString(strdup) }
         defer { for case let arg? in env { free(arg) } }
