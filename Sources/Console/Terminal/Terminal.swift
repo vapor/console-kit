@@ -48,6 +48,7 @@ public class Terminal: ConsoleProtocol {
         }
 
         Swift.print(output, terminator: terminator)
+        fflush(stdout)
     }
 
     /**
