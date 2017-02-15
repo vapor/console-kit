@@ -1,6 +1,10 @@
 import Polymorphic
 
 extension Bool: Polymorphic {
+    public var bytes: [UInt8]? {
+        return self ? [0x01] : [0x00]
+    }
+
     public var isNull: Bool {
         return false
     }

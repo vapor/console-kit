@@ -111,14 +111,14 @@ extension ConsoleProtocol {
         } catch ConsoleError.execute(let result) {
             close(error.fileHandleForWriting.fileDescriptor)
             close(output.fileHandleForWriting.fileDescriptor)
-            let error = try error.fileHandleForReading.readDataToEndOfFile().makeBytes()
-            let output = try output.fileHandleForReading.readDataToEndOfFile().makeBytes()
+            let error = error.fileHandleForReading.readDataToEndOfFile().makeBytes()
+            let output = output.fileHandleForReading.readDataToEndOfFile().makeBytes()
 
             throw ConsoleError.backgroundExecute(code: result, error: error, output: output)
         }
 
         close(output.fileHandleForWriting.fileDescriptor)
-        return try output.fileHandleForReading.readDataToEndOfFile().makeBytes()
+        return output.fileHandleForReading.readDataToEndOfFile().makeBytes()
     }
     
     public func backgroundExecute<Type: BytesInitializable>(program: String, arguments: [String]) throws -> Type {
