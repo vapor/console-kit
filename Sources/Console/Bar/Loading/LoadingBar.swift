@@ -13,12 +13,11 @@ import Core
     finish()
         Loading Item [Done]
 */
-public class LoadingBar: Bar {
-    var thread: Strand?
+public final class LoadingBar: Bar {
     var current: Int
     var inc: Int
     let cycles: Int
-    var running: Bool
+    private var running: Bool
 
     public override init(console: ConsoleProtocol, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
         current = -1
@@ -55,11 +54,6 @@ public class LoadingBar: Bar {
 
     func stop() {
         running = false
-        do {
-            try thread?.cancel()
-        } catch {
-            //
-        }
     }
 
     override var bar: String {
@@ -86,14 +80,11 @@ public class LoadingBar: Bar {
 
     public func start() {
         #if !NO_ANIMATION
-            do {
-                thread = try Strand { [weak self] in
-                    while true {
-                        self?.update()
-                    }
+            background { [weak self] in
+                guard let welf = self else { return }
+                while welf.running {
+                    self?.update()
                 }
-            } catch {
-                console.info("[Loading]")
             }
         #endif
     }
