@@ -12,71 +12,43 @@ extension ConsoleProtocol {
         to the commands.
     */
     public func run(_ group: Group, arguments: [String]) throws {
-        var group = group
-
-        var iterator = arguments.values.makeIterator()
         let isHelp = arguments.options["help"]?.bool ?? false
-
-        var commands = group.commands
-        var executable = group.id
-        var foundCommand: Command? = nil
-
-        while foundCommand == nil {
-            guard let id = iterator.next() else {
-                // no command and no more values
-                printUsage(executable: executable, commands: commands)
-                if isHelp {
-                    // group help was requested
-                    printHelp(executable: executable, group: group)
-                    throw ConsoleError.help
-                } else {
-                    // cannot run groups
-                    throw ConsoleError.noCommand
-                }
-            }
-
-            guard let runnable = commands.filter({ $0.id == id }).first else {
+        
+        let commands = group.commands
+        let executable = group.id
+        
+        for argument in arguments.values {
+            
+            guard let runnable = commands.filter({ $0.id == argument }).first else {
                 // value doesn't match any runnable items
                 printUsage(executable: executable, commands: commands)
-                throw ConsoleError.commandNotFound(id)
+                throw ConsoleError.commandNotFound(argument)
             }
-
-            if let command = runnable as? Command {
-                // got a command
-                foundCommand = command
-            } else if let g = runnable as? Group {
-                // got a group of commands
-                commands = g.commands
-                executable = "\(executable) \(g.id)"
-                group = g
+            
+            guard let command = runnable as? Command else {
+                // no command was given
+                throw ConsoleError.noCommand
             }
-        }
-
-        guard let command = foundCommand else {
-            // no command was given
-            throw ConsoleError.noCommand
-        }
-
-        if isHelp {
-            // command help was requested
-            printHelp(executable: executable, command: command)
-            throw ConsoleError.help
-        } else {
-            // command should attempt to run
-            var passThrough = arguments.values.dropFirst()
-
-            // verify there are enough values to satisfy the signature
-            if passThrough.count < command.signature.values.count {
-                command.printUsage(executable: executable)
-                throw ConsoleError.insufficientArguments
+            
+            if isHelp {
+                // command help was requested
+                printHelp(executable: executable, command: command)
+                throw ConsoleError.help
+            } else {
+                // command should attempt to run
+                
+                let passThrough = arguments.options.map { (name, value) in
+                    return "--\(name)=\(value)"
+                }
+                
+                // verify there are enough values to satisfy the signature
+                if passThrough.count < command.signature.values.count {
+                    command.printUsage(executable: executable)
+                    throw ConsoleError.insufficientArguments
+                }
+                
+                try command.run(arguments: Array(passThrough))
             }
-
-            // pass through options
-            for (name, value) in arguments.options {
-                passThrough.append("--\(name)=\(value)")
-            }
-
-            try command.run(arguments: Array(passThrough))
         }
     }
 
