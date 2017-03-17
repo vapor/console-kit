@@ -1,8 +1,6 @@
-import Polymorphic
-
 extension Sequence where Iterator.Element == String {
-    public var options: [String: Polymorphic] {
-        var options: [String: Polymorphic] = [:]
+    public var options: [String: String] {
+        var options: [String: String] = [:]
 
         for option in filter({ $0.hasPrefix("--") }) {
             let parts = option.characters.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
@@ -18,7 +16,7 @@ extension Sequence where Iterator.Element == String {
             if token.count == 2 {
                 options[name] = String(token[1])
             } else {
-                options[name] = true
+                options[name] = true.string
             }
         }
         
@@ -33,7 +31,7 @@ extension Sequence where Iterator.Element == String {
         return ""
     }
 
-    public func option(_ name: String) -> Polymorphic? {
+    public func option(_ name: String) -> String? {
         return options[name]
     }
 

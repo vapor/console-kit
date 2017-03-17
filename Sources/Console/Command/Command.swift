@@ -1,5 +1,3 @@
-import Polymorphic
-
 public protocol Command: Runnable {
     var console: ConsoleProtocol { get }
     func run(arguments: [String]) throws
