@@ -11,24 +11,17 @@
         Loading Item [Done]
 */
 public class ProgressBar: Bar {
-    public var progress: Double {
+    public var progress: Double = 0 {
         didSet {
-            #if !NO_ANIMATION
-            update()
-            #endif
+            if animated { update() }
         }
-    }
-
-    override init(console: ConsoleProtocol, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
-        progress = 0
-        super.init(console: console, title: title, width: width, barStyle: barStyle, titleStyle: titleStyle)
     }
 
     public override func update() {
         super.update()
     }
 
-    override var bar: String {
+    public override var bar: String {
         let result: Double = progress * Double(width)
         if result.isNaN || result.isInfinite {
             return "[ NaN or Infinite Value ]"
@@ -51,7 +44,7 @@ public class ProgressBar: Bar {
         return string
     }
 
-    override var status: String {
+    public override var status: String {
         let result: Double = progress * 100.0
         if result.isNaN || result.isInfinite {
             return ""
