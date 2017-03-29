@@ -15,7 +15,7 @@ extension ConsoleProtocol {
         var group = group
 
         var iterator = arguments.values.makeIterator()
-        let isHelp = arguments.options["help"]?.bool ?? false
+        let isHelp = arguments.flag("help")
 
         var commands = group.commands
         var executable = group.id

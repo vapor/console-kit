@@ -6,8 +6,16 @@ extension ConsoleProtocol {
         title: String = "",
         width: Int = 25,
         barStyle: ConsoleStyle = .info,
-        titleStyle: ConsoleStyle = .plain
+        titleStyle: ConsoleStyle = .plain,
+        animated: Bool = true
     ) -> LoadingBar {
-        return LoadingBar(console: self, title: title, width: width, barStyle: barStyle, titleStyle: titleStyle)
+        return LoadingBar(
+            console: self,
+            title: title,
+            width: width,
+            barStyle: barStyle,
+            titleStyle: titleStyle,
+            animated: animated
+        )
     }
 }

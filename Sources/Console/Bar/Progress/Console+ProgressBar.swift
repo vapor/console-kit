@@ -6,8 +6,16 @@ extension ConsoleProtocol {
         title: String = "",
         width: Int = 25,
         barStyle: ConsoleStyle = .info,
-        titleStyle: ConsoleStyle = .plain
+        titleStyle: ConsoleStyle = .plain,
+        animated: Bool = true
     ) -> ProgressBar {
-        return ProgressBar(console: self, title: title, width: width, barStyle: barStyle, titleStyle: titleStyle)
+        return ProgressBar(
+            console: self,
+            title: title,
+            width: width,
+            barStyle: barStyle,
+            titleStyle: titleStyle,
+            animated: animated
+        )
     }
 }

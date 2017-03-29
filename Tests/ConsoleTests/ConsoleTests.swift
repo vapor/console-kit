@@ -21,7 +21,7 @@ class ConsoleTests: XCTestCase {
         let response = console.ask(question)
 
         XCTAssertEqual(response, name)
-        XCTAssertEqual(console.outputBuffer, question + "\n>")
+        XCTAssertEqual(console.outputBuffer, question + "\n> ")
     }
 
     func testConfirm() {
@@ -35,6 +35,6 @@ class ConsoleTests: XCTestCase {
         let response = console.confirm(question)
 
         XCTAssertEqual(response, true)
-        XCTAssertEqual(console.outputBuffer, question + "\ny/n>")
+        XCTAssertEqual(console.outputBuffer, question + "\ny/n> ")
     }
 }

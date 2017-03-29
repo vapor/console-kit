@@ -19,7 +19,14 @@ public final class LoadingBar: Bar {
     let cycles: Int
     private var running: Bool
 
-    public override init(console: ConsoleProtocol, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
+    public override init(
+        console: ConsoleProtocol,
+        title: String,
+        width: Int,
+        barStyle: ConsoleStyle,
+        titleStyle: ConsoleStyle,
+        animated: Bool = true
+    ) {
         current = -1
         inc = 1
         cycles = width
@@ -79,14 +86,14 @@ public final class LoadingBar: Bar {
     }
 
     public func start() {
-        #if !NO_ANIMATION
+        if animated {
             background { [weak self] in
                 guard let welf = self else { return }
                 while welf.running {
                     self?.update()
                 }
             }
-        #endif
+        }
     }
 
     deinit {

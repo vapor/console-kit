@@ -10,6 +10,6 @@ public enum ConsoleError: Swift.Error {
     case cancelled
     case spawnProcess
     case execute(code: Int)
-    case backgroundExecute(code: Int, error: Bytes, output: Bytes)
+    case backgroundExecute(code: Int, error: String, output: String)
     case fileOrDirectoryNotFound
 }

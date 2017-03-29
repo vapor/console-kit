@@ -6,18 +6,32 @@ public class Bar {
     let width: Int
     let barStyle: ConsoleStyle
     let titleStyle: ConsoleStyle
+    let animated: Bool
 
     var hasStarted: Bool
     var hasFinished: Bool
 
     var mutex: UnsafeMutablePointer<pthread_mutex_t>
 
-    public init(console: ConsoleProtocol, title: String, width: Int, barStyle: ConsoleStyle, titleStyle: ConsoleStyle) {
+    public init(
+        console: ConsoleProtocol,
+        title: String,
+        width: Int,
+        barStyle: ConsoleStyle,
+        titleStyle: ConsoleStyle,
+        animated: Bool = true
+    ) {
         self.console = console
         self.width = width
         self.title = title
         self.barStyle = barStyle
         self.titleStyle = titleStyle
+
+        #if NO_ANIMATION
+            self.animated = false
+        #else
+            self.animated = animated
+        #endif
 
         hasStarted = false
         hasFinished = false
@@ -45,13 +59,13 @@ public class Bar {
 
         let message = message ?? "Done"
 
-        #if NO_ANIMATION
+        if animated {
+            collapseBar(message: message, style: .success)
+        } else {
             prepareLine()
             console.output(title, style: titleStyle, newLine: false)
             console.output(" [\(message)]", style: .success)
-        #else
-            collapseBar(message: message, style: .success)
-        #endif
+        }
     }
 
     func collapseBar(message: String, style: ConsoleStyle) {

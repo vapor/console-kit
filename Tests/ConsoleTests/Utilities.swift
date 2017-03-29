@@ -2,7 +2,6 @@ import XCTest
 import Console
 
 class TestConsole: ConsoleProtocol {
-
     var inputBuffer: String = ""
     var outputBuffer: String = ""
 

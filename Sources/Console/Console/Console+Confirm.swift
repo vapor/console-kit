@@ -9,9 +9,9 @@ extension ConsoleProtocol {
         while result != "y" && result != "yes" && result != "n" && result != "no" {
             output(prompt, style: style)
             if i >= 1 {
-                output("[y]es or [n]o>", style: style, newLine: false)
+                output("[y]es or [n]o> ", style: style, newLine: false)
             } else {
-                output("y/n>", style: style, newLine: false)
+                output("y/n> ", style: style, newLine: false)
             }
 
             // Defaults for all confirms for headless environments

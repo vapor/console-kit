@@ -114,7 +114,7 @@ extension ConsoleProtocol {
             let error = error.fileHandleForReading.readDataToEndOfFile().makeBytes()
             let output = output.fileHandleForReading.readDataToEndOfFile().makeBytes()
 
-            throw ConsoleError.backgroundExecute(code: result, error: error, output: output)
+            throw ConsoleError.backgroundExecute(code: result, error: error.makeString(), output: output.makeString())
         }
 
         close(output.fileHandleForWriting.fileDescriptor)
