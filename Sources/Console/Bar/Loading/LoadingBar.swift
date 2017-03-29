@@ -100,6 +100,9 @@ public final class LoadingBar: Bar {
                     self?.update()
                 }
             }
+        } else {
+            prepareLine()
+            console.output(title, style: titleStyle)
         }
     }
 

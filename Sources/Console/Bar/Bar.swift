@@ -48,7 +48,13 @@ public class Bar {
     public func fail(_ message: String? = nil) {
         let message = message ?? "Failed"
 
-        collapseBar(message: message, style: .error)
+        if animated {
+            collapseBar(message: message, style: .error)
+        } else {
+            prepareLine()
+            console.output(title, style: titleStyle, newLine: false)
+            console.output(" [\(message)]", style: .error)
+        }
     }
 
     public func finish(_ message: String? = nil) {
