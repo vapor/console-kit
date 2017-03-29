@@ -32,7 +32,14 @@ public final class LoadingBar: Bar {
         cycles = width
         running = true
 
-        super.init(console: console, title: title, width: width, barStyle: barStyle, titleStyle: titleStyle)
+        super.init(
+            console: console,
+            title: title,
+            width: width,
+            barStyle: barStyle,
+            titleStyle: titleStyle,
+            animated: animated
+        )
     }
 
     public override func finish(_ message: String? = nil) {
