@@ -51,7 +51,6 @@ public class Bar {
         if animated {
             collapseBar(message: message, style: .error)
         } else {
-            prepareLine()
             console.output(title, style: titleStyle, newLine: false)
             console.output(" [\(message)]", style: .error)
         }
@@ -68,7 +67,6 @@ public class Bar {
         if animated {
             collapseBar(message: message, style: .success)
         } else {
-            prepareLine()
             console.output(title, style: titleStyle, newLine: false)
             console.output(" [\(message)]", style: .success)
         }

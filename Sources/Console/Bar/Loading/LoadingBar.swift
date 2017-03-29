@@ -101,7 +101,6 @@ public final class LoadingBar: Bar {
                 }
             }
         } else {
-            prepareLine()
             console.output(title, style: titleStyle)
         }
     }
