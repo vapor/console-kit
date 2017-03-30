@@ -101,7 +101,7 @@ public final class LoadingBar: Bar {
                 }
             }
         } else {
-            console.output(title, style: titleStyle)
+            console.info("\(title) ...")
         }
     }
 
