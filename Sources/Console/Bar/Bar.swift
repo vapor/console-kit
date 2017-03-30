@@ -46,6 +46,11 @@ public class Bar {
     }
 
     public func fail(_ message: String? = nil) {
+        guard !hasFinished else {
+            return
+        }
+        hasFinished = true
+
         let message = message ?? "Failed"
 
         if animated {
