@@ -18,10 +18,7 @@ public class Terminal: ConsoleProtocol {
     */
     public init(arguments: [String]) {
         self.arguments = arguments
-        updateKillCommands()
-    }
 
-    private func updateKillCommands() {
         func kill(sig: Int32) {
             _killListeners.forEach { listener in
                 listener(sig)
