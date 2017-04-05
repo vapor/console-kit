@@ -12,7 +12,6 @@ public class Terminal: ConsoleProtocol {
 
     public let arguments: [String]
 
-
     /**
         Creates an instance of Terminal.
     */
