@@ -5,6 +5,10 @@ class TestConsole: ConsoleProtocol {
     var inputBuffer: String = ""
     var outputBuffer: String = ""
 
+    var size: (width: Int, height: Int) {
+        return (0, 0)
+    }
+    
     func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
         outputBuffer += string
         if newLine {
@@ -26,7 +30,7 @@ class TestConsole: ConsoleProtocol {
 
     }
 
-    var size: (width: Int, height: Int) {
-        return (0, 0)
+    func registerKillListener(_ listener: @escaping (Int32) -> Void) {
+
     }
 }
