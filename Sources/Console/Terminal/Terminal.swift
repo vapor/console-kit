@@ -2,6 +2,7 @@ import libc
 import Foundation
 
 private var _pids: [UnsafeMutablePointer<pid_t>] = []
+private var _killListeners: [(Int32) -> Void] = []
 
 public class Terminal: ConsoleProtocol {
     public enum Error: Swift.Error {
@@ -10,14 +11,22 @@ public class Terminal: ConsoleProtocol {
     }
 
     public let arguments: [String]
-    
+
+
     /**
         Creates an instance of Terminal.
     */
     public init(arguments: [String]) {
         self.arguments = arguments
+        updateKillCommands()
+    }
 
+    private func updateKillCommands() {
         func kill(sig: Int32) {
+            _killListeners.forEach { listener in
+                listener(sig)
+            }
+
             for pid in _pids {
                 _ = libc.kill(pid.pointee, sig)
             }
@@ -155,5 +164,9 @@ public class Terminal: ConsoleProtocol {
     */
     private func command(_ command: Command) {
         output(command.ansi, newLine: false)
+    }
+
+    public func registerKillListener(_ listener: @escaping (Int32) -> Void) {
+        _killListeners.append(listener)
     }
 }
