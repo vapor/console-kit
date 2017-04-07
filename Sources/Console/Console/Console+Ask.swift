@@ -3,12 +3,17 @@ extension ConsoleProtocol {
         Requests input from the console
         after displaying the desired prompt.
     */
-    public func ask(_ prompt: String, style: ConsoleStyle = .info) -> String {
+    public func ask(_ prompt: String, style: ConsoleStyle = .info, secure: Bool = false) -> String {
         output(prompt, style: style)
         output("> ", style: style, newLine: false)
-        return input()
+        if secure {
+            return secureInput()
+        } else {
+            return input()
+        }
     }
 }
+
 extension ConsoleProtocol {
     public func askList(withTitle title: String, from list: [String]) -> String? {
         info(title)
