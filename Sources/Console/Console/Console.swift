@@ -2,73 +2,61 @@ import libc
 import Foundation
 import Core
 
-/**
-    Protocol for powering styled Console I/O.
-*/
+
+/// Protocol for powering styled Console I/O.
 public protocol ConsoleProtocol {
-    /**
-        Outputs a String in the given style to 
-        the console. If newLine is true, the next
-        output will appear on a new line.
-    */
+    /// Outputs a String in the given style to
+    /// the console. If newLine is true, the next
+    /// output will appear on a new line.
     func output(_ string: String, style: ConsoleStyle, newLine: Bool)
 
-    /**
-        Returns a String of input read from the
-        console until a line feed character was found.
-     
-        The line feed character should not be included.
-    */
+    /// Returns a String of input read from the
+    /// console until a line feed character was found.
+    ///
+    /// The line feed character should not be included.
     func input() -> String
 
-    /**
-        Clears previously printed Console outputs
-        according to the ConsoleClear type given.
-    */
+    /// Returns a string of input read from the console
+    /// until a line feed character was found,
+    /// hides entry for security
+    func secureInput() -> String
+
+    /// Clears previously printed Console outputs
+    /// according to the ConsoleClear type given.
     func clear(_ clear: ConsoleClear)
 
-    /**
-        Executes a task using the supplied 
-        FileHandles for IO.
-    */
+    /// Executes a task using the supplied
+    /// FileHandles for IO.
     func execute(program: String, arguments: [String], input: Int32?, output: Int32?, error: Int32?) throws
 
-    /**
-        When set, all `confirm(_ prompt:)` methods
-        will return the value. When nil, the confirm
-        calls will wait for input from `input()`
-    */
+    /// When set, all `confirm(_ prompt:)` methods
+    /// will return the value. When nil, the confirm
+    /// calls will wait for input from `input()`
     var confirmOverride: Bool? { get }
 
-    /**
-        The size of the console window used for centering.
-    */
+    /// The size of the console window used for centering.
     var size: (width: Int, height: Int) { get }
 
-    /**
-        Executes a command using the console's POSIX subsystem.
-        The input, output, and error streams will appear
-        as though they are coming from the console program.
-     
-        - parameter program: Program to be executed
-        - parameter arguments: Input arguments to the program
-
-        - throws: ConsoleError.execute(Int)
-     */
+    /// Executes a command using the console's POSIX subsystem.
+    /// The input, output, and error streams will appear
+    /// as though they are coming from the console program.
+    ///
+    /// - parameter program: Program to be executed
+    /// - parameter arguments: Input arguments to the program
+    ///
+    /// - throws: ConsoleError.execute(Int)
     func foregroundExecute(program: String, arguments: [String]) throws
 
-    /**
-        Executes a command using the console's POSIX subsystem.
-        The input, output, and error streams will be input
-        and returned as strings.
+    /// Executes a command using the console's POSIX subsystem.
+    /// The input, output, and error streams will be input
+    /// and returned as strings.
+    ///
+    /// - parameter program: Program to be executed
+    /// - parameter arguments: Input arguments to the program
 
-        - parameter program: Program to be executed
-        - parameter arguments: Input arguments to the program
-
-        - throws: ConsoleError.subexecute(Int, String)
-
-        - returns: The return string from the method
-     */
+    /// - throws: ConsoleError.subexecute(Int, String)
+    ///
+    /// - returns: The return string from the method
     func backgroundExecute(program: String, arguments: [String]) throws -> String
 
     /// Upon a console instance being killed for example w/ ctrl+c
@@ -136,6 +124,10 @@ extension ConsoleProtocol {
     
     public func backgroundExecute<Type: BytesInitializable>(commands: String...) throws -> Type {
         return try backgroundExecute(commands: commands)
+    }
+
+    public func registerKillListener(_ listener: @escaping (Int32) -> Void) {
+
     }
 }
 

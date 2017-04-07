@@ -71,11 +71,19 @@ public class Terminal: ConsoleProtocol {
         #endif
     }
 
-    /**
-        Reads a line of input from the terminal.
-    */
     public func input() -> String {
         return readLine(strippingNewline: true) ?? ""
+    }
+
+    public func secureInput() -> String {
+        // http://stackoverflow.com/a/30878869/2611971
+        let entry: UnsafeMutablePointer<Int8> = getpass("")
+        let pointer: UnsafePointer<CChar> = .init(entry)
+        var pass = String(validatingUTF8: pointer) ?? ""
+        if pass.hasSuffix("\n") {
+            pass = pass.makeBytes().dropLast().makeString()
+        }
+        return pass
     }
 
     public func execute(program: String, arguments: [String], input: Int32? = nil, output: Int32? = nil, error: Int32? = nil) throws {
