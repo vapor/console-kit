@@ -29,6 +29,9 @@ extension ConsoleProtocol {
                     // group help was requested
                     printHelp(executable: executable, group: group)
                     throw ConsoleError.help
+                } else if let fallback = group.fallback {
+                    foundCommand = fallback
+                    break
                 } else {
                     // cannot run groups
                     throw ConsoleError.noCommand
