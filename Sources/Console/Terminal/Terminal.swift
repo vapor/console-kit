@@ -4,7 +4,7 @@ import Foundation
 private var _pids: [UnsafeMutablePointer<pid_t>] = []
 private var _killListeners: [(Int32) -> Void] = []
 
-public class Terminal: ConsoleProtocol {
+public final class Terminal: ConsoleProtocol {
     public enum Error: Swift.Error {
         case cancelled
         case execute(Int)
