@@ -2,12 +2,12 @@
     <img src="https://cloud.githubusercontent.com/assets/1977704/25430020/53681c6c-2a7b-11e7-9568-5abe0d6b89ae.png" width="320" alt="Fluent">
     <br>
     <br>
-    <a href="http://beta.docs.vapor.codes/console/package/">
+    <a href="https://docs.vapor.codes/console/package/">
         <img src="http://img.shields.io/badge/read_the-docs-92A8D1.svg" alt="Documentation">
     </a>
     <a href="http://vapor.team">
         <img src="http://vapor.team/badge.svg" alt="Slack Team">
-    </a>
+    </a> g
     <a href="LICENSE">
         <img src="http://img.shields.io/badge/license-MIT-brightgreen.svg" alt="MIT License">
     </a>

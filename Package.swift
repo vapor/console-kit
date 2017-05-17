@@ -7,7 +7,7 @@ let package = Package(
         // Target(name: "ConsoleExample", dependencies: ["Console"])
     ],
     dependencies: [
-        .Package(url: "https://github.com/vapor/core.git", Version(2,0,0, prereleaseIdentifiers: ["beta"])),
+        .Package(url: "https://github.com/vapor/core.git", majorVersion: 2),
     ],
     exclude: [
         "Sources/ConsoleExample"
