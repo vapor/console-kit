@@ -32,6 +32,5 @@ extension ConsoleProtocol {
     */
     public func error(_ string: String = "", newLine: Bool = true) {
         output(string, style: .error, newLine: newLine)
-
     }
 }

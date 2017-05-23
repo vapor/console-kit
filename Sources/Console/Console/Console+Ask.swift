@@ -6,11 +6,7 @@ extension ConsoleProtocol {
     public func ask(_ prompt: String, style: ConsoleStyle = .info, secure: Bool = false) -> String {
         output(prompt, style: style)
         output("> ", style: style, newLine: false)
-        if secure {
-            return secureInput()
-        } else {
-            return input()
-        }
+        return input(secure: secure)
     }
 }
 
