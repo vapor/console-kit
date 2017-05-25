@@ -35,67 +35,10 @@ public final class Terminal: ConsoleProtocol {
         signal(SIGHUP, kill)
     }
 
-    public func stream(_ stream: ConsoleStream) -> String? {
-        switch stream {
-        case .clear(let clear):
-            #if !Xcode
-                switch clear {
-                case .line:
-                    command(.cursorUp)
-                    command(.eraseLine)
-                case .screen:
-                    command(.eraseScreen)
-                }
-            #endif
-        case .input(let secure):
-            if secure {
-                // http://stackoverflow.com/a/30878869/2611971
-                let entry: UnsafeMutablePointer<Int8> = getpass("")
-                let pointer: UnsafePointer<CChar> = .init(entry)
-                guard var pass = String(validatingUTF8: pointer) else {
-                    return nil
-                }
-                if pass.hasSuffix("\n") {
-                    pass = pass.makeBytes().dropLast().makeString()
-                }
-                return pass
-            } else {
-                return readLine(strippingNewline: true)
-            }
-        case .output(let string, let style, let newLine):
-            let terminator = newLine ? "\n" : ""
-            
-            let output: String
-            if let color = style.terminalColor {
-                #if !Xcode
-                    output = string.terminalColorize(color)
-                #else
-                    output = string
-                #endif
-            } else {
-                output = string
-            }
-            
-            Swift.print(output, terminator: terminator)
-            fflush(stdout)
-        case .error(let error, let newLine):
-            let output = newLine ? error + "\n" : error
-            
-            guard let data = output.data(using: .utf8) else {
-                return nil
-            }
-            
-            FileHandle.standardError.write(data)
-        }
-        
-        return nil
-    }
-    /**
-        Prints styled output to the terminal.
-    */
-    private func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
+    /// Prints styled output to the terminal.
+    public func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
         var lines = 0
-        if string.characters.count > size.width {
+        if string.characters.count > size.width && size.width > 0 {
             lines = (string.characters.count / size.width) + 1
         }
         if newLine {
@@ -120,10 +63,8 @@ public final class Terminal: ConsoleProtocol {
         fflush(stdout)
     }
 
-    /**
-        Clears text from the terminal window.
-    */
-    private func clear(_ clear: ConsoleClear) {
+    /// Clears text from the terminal window.
+    public func clear(_ clear: ConsoleClear) {
         #if !Xcode
         switch clear {
         case .line:
@@ -137,12 +78,12 @@ public final class Terminal: ConsoleProtocol {
         #endif
     }
 
-    private func input() -> String {
+    public func input() -> String {
         didOutputLines(count: 1)
         return readLine(strippingNewline: true) ?? ""
     }
 
-    private func secureInput() -> String {
+    public func secureInput() -> String {
         didOutputLines(count: 1)
         // http://stackoverflow.com/a/30878869/2611971
         let entry: UnsafeMutablePointer<Int8> = getpass("")
@@ -157,27 +98,11 @@ public final class Terminal: ConsoleProtocol {
     public func execute(
         program: String,
         arguments: [String],
-        input: ExecuteStream? = nil,
-        output: ExecuteStream? = nil,
-        error: ExecuteStream? = nil
+        input: Int32?,
+        output: Int32?,
+        error: Int32?
     ) throws {
-        let process = Process()
-        process.environment = ProcessInfo.processInfo.environment
-        process.launchPath = program.hasPrefix("/") ? program : "/usr/bin/\(program)"
-        process.arguments = arguments
-        process.standardInput = input?.either
-        process.standardOutput = output?.either
-        process.standardError = error?.either
-        process.launch()
-        
-        process.waitUntilExit()
-        let status = process.terminationStatus
-        
-        if status != 0 {
-            throw ConsoleError.execute(code: Int(status))
-        }
-        
-        /*var pid = UnsafeMutablePointer<pid_t>.allocate(capacity: 1)
+        var pid = UnsafeMutablePointer<pid_t>.allocate(capacity: 1)
         pid.initialize(to: pid_t())
         defer {
             pid.deinitialize()
@@ -234,7 +159,7 @@ public final class Terminal: ConsoleProtocol {
             throw ConsoleError.fileOrDirectoryNotFound
         } else if result != 0 {
             throw ConsoleError.execute(code: Int(result))
-        }*/
+        }
     }
 
     public var confirmOverride: Bool? {
