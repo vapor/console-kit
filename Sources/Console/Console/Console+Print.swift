@@ -1,11 +1,11 @@
 extension ConsoleProtocol {
-    private func printUsage(executable: String) {
+    public func printUsage(executable: String) {
         info("Usage: ", newLine: false)
         print("\(executable) ", newLine: false)
         warning("command")
     }
     
-    private func printRunnable(_ commands: [Runnable]) {
+    public func printRunnable(_ commands: [Runnable]) {
         info("Commands:")
         
         var maxWidth = 0
@@ -73,7 +73,7 @@ extension ConsoleProtocol {
         command.printSignatureHelp()
     }
 
-    private func printHelp(_ help: [String]) {
+    public func printHelp(_ help: [String]) {
         for help in help {
             print(help)
         }
