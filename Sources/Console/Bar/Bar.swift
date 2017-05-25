@@ -116,8 +116,23 @@ public class Bar {
     public func update() {
         pthread_mutex_lock(mutex)
         prepareLine()
+        
+        let total = title.characters.count + 1 + width + status.characters.count + 2 + 3
+        let trimmedTitle: String
+        if console.size.width < total {
+            var diff = total - console.size.width
+            if diff > title.characters.count {
+                diff = title.characters.count
+            }
+            diff = diff * -1
+            trimmedTitle = title.substring(
+                to: title.index(title.endIndex, offsetBy: diff)
+            ) + "..."
+        } else {
+            trimmedTitle = title
+        }
 
-        console.output(title + " ", style: titleStyle, newLine: false)
+        console.output(trimmedTitle + " ", style: titleStyle, newLine: false)
         console.output(bar, style: barStyle, newLine: false)
         console.output(status, style: titleStyle)
         pthread_mutex_unlock(mutex)

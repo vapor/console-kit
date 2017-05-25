@@ -35,10 +35,17 @@ public final class Terminal: ConsoleProtocol {
         signal(SIGHUP, kill)
     }
 
-    /**
-        Prints styled output to the terminal.
-    */
+    /// Prints styled output to the terminal.
     public func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
+        var lines = 0
+        if string.characters.count > size.width && size.width > 0 {
+            lines = (string.characters.count / size.width) + 1
+        }
+        if newLine {
+            lines += 1
+        }
+        didOutputLines(count: lines)
+        
         let terminator = newLine ? "\n" : ""
 
         let output: String
@@ -56,13 +63,13 @@ public final class Terminal: ConsoleProtocol {
         fflush(stdout)
     }
 
-    /**
-        Clears text from the terminal window.
-    */
+    /// Clears text from the terminal window.
     public func clear(_ clear: ConsoleClear) {
         #if !Xcode
         switch clear {
         case .line:
+            didOutputLines(count: -1)
+            // Swift.print("CLEAR LINE")
             command(.cursorUp)
             command(.eraseLine)
         case .screen:
@@ -72,10 +79,12 @@ public final class Terminal: ConsoleProtocol {
     }
 
     public func input() -> String {
+        didOutputLines(count: 1)
         return readLine(strippingNewline: true) ?? ""
     }
 
     public func secureInput() -> String {
+        didOutputLines(count: 1)
         // http://stackoverflow.com/a/30878869/2611971
         let entry: UnsafeMutablePointer<Int8> = getpass("")
         let pointer: UnsafePointer<CChar> = .init(entry)
@@ -86,7 +95,13 @@ public final class Terminal: ConsoleProtocol {
         return pass
     }
 
-    public func execute(program: String, arguments: [String], input: Int32? = nil, output: Int32? = nil, error: Int32? = nil) throws {
+    public func execute(
+        program: String,
+        arguments: [String],
+        input: Int32?,
+        output: Int32?,
+        error: Int32?
+    ) throws {
         var pid = UnsafeMutablePointer<pid_t>.allocate(capacity: 1)
         pid.initialize(to: pid_t())
         defer {
@@ -173,4 +188,7 @@ public final class Terminal: ConsoleProtocol {
     public func registerKillListener(_ listener: @escaping (Int32) -> Void) {
         _killListeners.append(listener)
     }
+    
+    
+    public var extend: [String: Any] = [:]
 }

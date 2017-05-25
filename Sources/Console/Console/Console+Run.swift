@@ -24,7 +24,6 @@ extension ConsoleProtocol {
         while foundCommand == nil {
             guard let id = iterator.next() else {
                 // no command and no more values
-                printUsage(executable: executable, commands: commands)
                 if isHelp {
                     // group help was requested
                     printHelp(executable: executable, group: group)
@@ -40,7 +39,7 @@ extension ConsoleProtocol {
 
             guard let runnable = commands.filter({ $0.id == id }).first else {
                 // value doesn't match any runnable items
-                printUsage(executable: executable, commands: commands)
+                printHelp(executable: executable, group: group)
                 throw ConsoleError.commandNotFound(id)
             }
 
