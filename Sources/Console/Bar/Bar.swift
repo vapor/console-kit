@@ -125,9 +125,7 @@ public class Bar {
                 diff = title.characters.count
             }
             diff = diff * -1
-            trimmedTitle = title.substring(
-                to: title.index(title.endIndex, offsetBy: diff)
-            ) + "..."
+            trimmedTitle = title[..<title.index(title.endIndex, offsetBy: diff)] + "..."
         } else {
             trimmedTitle = title
         }
