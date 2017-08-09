@@ -125,7 +125,13 @@ public class Bar {
                 diff = title.characters.count
             }
             diff = diff * -1
+            #if swift(>=4)
             trimmedTitle = title[..<title.index(title.endIndex, offsetBy: diff)] + "..."
+            #else 
+            trimmedTitle = title.substring(
+                to: title.index(title.endIndex, offsetBy: diff)
+            ) + "..."
+            #endif
         } else {
             trimmedTitle = title
         }
