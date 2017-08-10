@@ -2,3 +2,4 @@
 Packages
 *.xcodeproj
 Package.pins
+Package.resolved
