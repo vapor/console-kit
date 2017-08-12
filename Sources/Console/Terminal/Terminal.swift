@@ -1,30 +1,18 @@
 import libc
 import Foundation
+import Core
 
-private var _pids: [UnsafeMutablePointer<pid_t>] = []
-private var _killListeners: [(Int32) -> Void] = []
+private var _pids: [pid_t] = []
 
-public final class Terminal: ConsoleProtocol {
-    public enum Error: Swift.Error {
-        case cancelled
-        case execute(Int)
-    }
+/// Generic console that uses a mixture of Swift standard
+/// library and Foundation code to fulfull protocol requirements.
+public final class Terminal: Console {
+    public var extend: [String: Any] = [:]
 
-    public let arguments: [String]
-
-    /**
-        Creates an instance of Terminal.
-    */
-    public init(arguments: [String]) {
-        self.arguments = arguments
-
+    public init() {
         func kill(sig: Int32) {
-            _killListeners.forEach { listener in
-                listener(sig)
-            }
-
             for pid in _pids {
-                _ = libc.kill(pid.pointee, sig)
+                _ = libc.kill(pid, sig)
             }
             exit(sig)
         }
@@ -35,160 +23,112 @@ public final class Terminal: ConsoleProtocol {
         signal(SIGHUP, kill)
     }
 
-    /// Prints styled output to the terminal.
-    public func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
-        var lines = 0
-        if string.characters.count > size.width && size.width > 0 {
-            lines = (string.characters.count / size.width) + 1
-        }
-        if newLine {
-            lines += 1
-        }
-        didOutputLines(count: lines)
-        
-        let terminator = newLine ? "\n" : ""
+    @discardableResult
+    public func action(_ action: ConsoleAction) throws -> String? {
+        switch action {
+        case .clear(let clear):
+            switch clear {
+            case .line:
+                try command(.cursorUp)
+                try command(.eraseLine)
+            case .screen:
+                try command(.eraseScreen)
+            }
+        case .error(let string, let newLine):
+            let output = newLine ? string + "\n" : string
+            guard let data = output.data(using: .utf8) else {
+                throw ConsoleError(identifier: "errorData", reason: "Could not convert error to data")
+            }
+            FileHandle.standardError.write(data)
+        case .input(let isSecure):
+            if isSecure {
+                // http://stackoverflow.com/a/30878869/2611971
+                let entry: UnsafeMutablePointer<Int8> = getpass("")
+                let pointer: UnsafePointer<CChar> = .init(entry)
+                guard var pass = String(validatingUTF8: pointer) else {
+                    return nil
+                }
+                if pass.hasSuffix("\n") {
+                    pass = pass.makeBytes().dropLast().makeString()
+                }
+                return pass
+            } else {
+                return readLine(strippingNewline: true)
+            }
+        case .output(let string, let style, let newLine):
+            let terminator = newLine ? "\n" : ""
 
-        let output: String
-        if let color = style.terminalColor {
-            #if !Xcode
+            let output: String
+            if let color = style.terminalColor {
                 output = string.terminalColorize(color)
-            #else
+            } else {
                 output = string
-            #endif
-        } else {
-            output = string
-        }
+            }
 
-        Swift.print(output, terminator: terminator)
-        fflush(stdout)
-    }
+            Swift.print(output, terminator: terminator)
+            fflush(stdout)
+        case .execute(let program, let arguments, let input, let output, let error):
+            var program = program
+            if !program.hasPrefix("/") {
+                let res = try backgroundExecute(program: "/bin/sh", arguments: ["-c", "which \(program)"]) as String
+                program = res.trimmingCharacters(in: .whitespaces)
+            }
+            // print(program + " " + arguments.joined(separator: " "))
+            let process = Process()
+            process.environment = ProcessInfo.processInfo.environment
+            process.launchPath = program
+            process.arguments = arguments
+            process.standardInput = input?.either
+            process.standardOutput = output?.either
+            process.standardError = error?.either
+            process.qualityOfService = .userInteractive
 
-    /// Clears text from the terminal window.
-    public func clear(_ clear: ConsoleClear) {
-        #if !Xcode
-        switch clear {
-        case .line:
-            didOutputLines(count: -1)
-            // Swift.print("CLEAR LINE")
-            command(.cursorUp)
-            command(.eraseLine)
-        case .screen:
-            command(.eraseScreen)
-        }
-        #endif
-    }
+            process.launch()
+            _pids.append(process.processIdentifier)
 
-    public func input() -> String {
-        didOutputLines(count: 1)
-        return readLine(strippingNewline: true) ?? ""
-    }
+            process.waitUntilExit()
+            let status = process.terminationStatus
 
-    public func secureInput() -> String {
-        didOutputLines(count: 1)
-        // http://stackoverflow.com/a/30878869/2611971
-        let entry: UnsafeMutablePointer<Int8> = getpass("")
-        let pointer: UnsafePointer<CChar> = .init(entry)
-        var pass = String(validatingUTF8: pointer) ?? ""
-        if pass.hasSuffix("\n") {
-            pass = pass.makeBytes().dropLast().makeString()
-        }
-        return pass
-    }
-
-    public func execute(
-        program: String,
-        arguments: [String],
-        input: Int32?,
-        output: Int32?,
-        error: Int32?
-    ) throws {
-        var pid = UnsafeMutablePointer<pid_t>.allocate(capacity: 1)
-        pid.initialize(to: pid_t())
-        defer {
-            pid.deinitialize()
-            pid.deallocate(capacity: 1)
-        }
-
-
-        let args = [program] + arguments
-        let argv: [UnsafeMutablePointer<CChar>?] = args.map{ $0.withCString(strdup) }
-        defer { for case let arg? in argv { free(arg) } }
-
-        var environment: [String: String] = ProcessInfo.processInfo.environment
-
-        let env: [UnsafeMutablePointer<CChar>?] = environment.map{ "\($0.0)=\($0.1)".withCString(strdup) }
-        defer { for case let arg? in env { free(arg) } }
-
-
-        #if os(macOS)
-            var fileActions: posix_spawn_file_actions_t? = nil
-        #else
-            var fileActions = posix_spawn_file_actions_t()
-        #endif
-
-        posix_spawn_file_actions_init(&fileActions);
-        defer {
-            posix_spawn_file_actions_destroy(&fileActions)
-        }
-
-        if let input = input {
-            posix_spawn_file_actions_adddup2(&fileActions, input, 0)
-        }
-
-        if let output = output {
-            posix_spawn_file_actions_adddup2(&fileActions, output, 1)
-        }
-
-        if let error = error {
-            posix_spawn_file_actions_adddup2(&fileActions, error, 2)
-        }
-
-        _pids.append(pid)
-        let spawned = posix_spawnp(pid, argv[0], &fileActions, nil, argv + [nil], env + [nil])
-        if spawned != 0 {
-            throw ConsoleError.spawnProcess
-        }
-
-        var result: Int32 = 0
-        _ = waitpid(pid.pointee, &result, 0)
-        result = result / 256
-
-        waitpid(pid.pointee, nil, 0)
-
-        if result == ENOENT {
-            throw ConsoleError.fileOrDirectoryNotFound
-        } else if result != 0 {
-            throw ConsoleError.execute(code: Int(result))
-        }
-    }
-
-    public var confirmOverride: Bool? {
-        if arguments.contains("-y") {
-            return true
-        } else if arguments.contains("-n") {
-            return false
+            if status != 0 {
+                throw ConsoleError(identifier: "executeFailed", reason: "Execution failed. Status code: \(Int(status))")
+            }
         }
 
         return nil
     }
 
+    /// See: Console.size
     public var size: (width: Int, height: Int) {
         var w = winsize()
         _ = ioctl(STDOUT_FILENO, UInt(TIOCGWINSZ), &w);
         return (Int(w.ws_col), Int(w.ws_row))
     }
-
-    /**
-        Runs an ansi coded command.
-    */
-    private func command(_ command: Command) {
-        output(command.ansi, newLine: false)
-    }
-
-    public func registerKillListener(_ listener: @escaping (Int32) -> Void) {
-        _killListeners.append(listener)
-    }
-    
-    
-    public var extend: [String: Any] = [:]
 }
+
+// MARK: utility
+
+extension ConsoleStyle {
+    /// Returns the terminal console color
+    /// for the ConsoleStyle.
+    fileprivate var terminalColor: ConsoleColor? {
+        let color: ConsoleColor?
+
+        switch self {
+        case .plain:
+            color = nil
+        case .info:
+            color = .cyan
+        case .warning:
+            color = .yellow
+        case .error:
+            color = .red
+        case .success:
+            color = .green
+        case .custom(let c):
+            color = c
+        }
+
+        return color
+    }
+}
+

@@ -1,40 +1,37 @@
 import XCTest
-
-import libc
-
-@testable import Console
+import Console
 
 class ConsoleTests: XCTestCase {
-    static let allTests = [
-        ("testAsk", testAsk),
-        ("testConfirm", testConfirm),
-    ]
-
-    func testAsk() {
+    func testAsk() throws {
         let console = TestConsole()
 
         let name = "Test Name"
         let question = "What is your name?"
 
-        console.inputBuffer = name
+        console.input = name
 
-        let response = console.ask(question)
+        let response = try console.ask(question)
 
         XCTAssertEqual(response, name)
-        XCTAssertEqual(console.outputBuffer, question + "\n> ")
+        XCTAssertEqual(console.output, question + "\n> ")
     }
 
-    func testConfirm() {
+    func testConfirm() throws {
         let console = TestConsole()
 
         let name = "y"
         let question = "Do you want to continue?"
 
-        console.inputBuffer = name
+        console.input = name
 
-        let response = console.confirm(question)
+        let response = try console.confirm(question)
 
         XCTAssertEqual(response, true)
-        XCTAssertEqual(console.outputBuffer, question + "\ny/n> ")
+        XCTAssertEqual(console.output, question + "\ny/n> ")
     }
+
+    static let allTests = [
+        ("testAsk", testAsk),
+        ("testConfirm", testConfirm),
+    ]
 }
