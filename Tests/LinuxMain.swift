@@ -5,7 +5,7 @@ import XCTest
 @testable import CommandTests
 
 XCTMain([
-    testCase(ConsoleTests.allTests)
+    testCase(ConsoleTests.allTests),
     testCase(CommandTests.allTests)
 ])
 
