@@ -1,4 +1,4 @@
-import Consoles
+import Console
 
 let console: Console = Terminal()
 

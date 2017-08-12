@@ -1,15 +1,21 @@
+// swift-tools-version:4.0
 import PackageDescription
 
 let package = Package(
     name: "Console",
-    targets: [
-        Target(name: "Console"),
-        // Target(name: "ConsoleExample", dependencies: ["Console"])
+    products: [
+        .library(name: "Console", targets: ["Console"]),
+        .library(name: "Command", targets: ["Command"]),
     ],
     dependencies: [
-        .Package(url: "https://github.com/vapor/core.git", majorVersion: 2),
+        // Core utilities
+        .package(url: "https://github.com/vapor/core.git", .branch("beta")),
     ],
-    exclude: [
-        "Sources/ConsoleExample"
+    targets: [
+        .target(name: "Console", dependencies: ["Core"]),
+        .testTarget(name: "ConsoleTests", dependencies: ["Console"]),
+        .target(name: "Command", dependencies: ["Console"]),
+        .testTarget(name: "CommandTests", dependencies: ["Command"]),
+        .target(name: "ConsoleExample", dependencies: ["Console"]),
     ]
 )
