@@ -1,9 +1,10 @@
 extension Sequence where Iterator.Element == String {
     public var options: [String: String] {
+        var iteration = Array(self.enumerated())
         var options: [String: String] = [:]
 
-        for option in filter({ $0.hasPrefix("--") }) {
-            let parts = option.characters.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
+        for option in iteration.filter({ $0.element.hasPrefix("--") }) {
+            let parts = option.element.characters.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
 
             guard parts.count == 3 else {
                 continue
@@ -18,13 +19,32 @@ extension Sequence where Iterator.Element == String {
             } else {
                 options[name] = true.string
             }
+            iteration.remove(at: option.offset)
+        }
+        
+        for option in iteration.filter({ $0.element.hasPrefix("-") }) {
+            let parts = option.element.characters.split(separator: "-", maxSplits: 1, omittingEmptySubsequences: false)
+            
+            guard parts.count == 2 else {
+                continue
+            }
+            
+            let token = parts[1].split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+            
+            let name = String(token[0])
+            
+            if token.count == 1 {
+                options[name] = String(token[0])
+            } else {
+                options[name] = true.string
+            }
         }
         
         return options
     }
 
     public var values: [String] {
-        return filter { !$0.hasPrefix("--") }
+        return filter { !$0.hasPrefix("-") }
     }
 
     public func argument(_ name: String) throws -> String {
