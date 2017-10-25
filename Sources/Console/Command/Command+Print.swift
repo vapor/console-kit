@@ -8,7 +8,7 @@ extension Command {
         }
 
         for option in signature.options {
-            let short = option.short != nil ? "-\(option.short!)" : ""
+            let short = option.short != nil ? " -\(option.short!)" : ""
             console.success("[--\(option.name)\(short)] ", newLine: false)
         }
         print("")
