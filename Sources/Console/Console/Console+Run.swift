@@ -74,7 +74,13 @@ extension ConsoleProtocol {
             }
 
             // pass through options
-            for (name, value) in arguments.options {
+            for (var name, value) in arguments.options {
+                if name.count == 1 {
+                    // Get the full flag name from the short version
+                    name = command.signature.flatMap({ $0 as? Option })
+                        .filter({ $0.short == Character(name) })
+                        .first?.name ?? name
+                }
                 passThrough.append("--\(name)=\(value)")
             }
 
