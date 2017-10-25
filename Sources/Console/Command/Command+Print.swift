@@ -52,15 +52,16 @@ extension Command {
         
         console.info("Options:")
         for opt in opts {
-            let shortLength = opt.short != nil ? 2 : 0
+            let shortLength = opt.short != nil ? 3 : 0
+            let longFlagDashLength = 2
             console.print(String(
-                repeating: " ", count: width - opt.name.characters.count - shortLength),
+                repeating: " ", count: width - opt.name.characters.count - longFlagDashLength - shortLength),
                 newLine: false
             )
             if let short = opt.short {
-                console.success("\(opt.name) \(short)", newLine: false)
+                console.success("-\(short) --\(opt.name)", newLine: false)
             } else {
-                console.success(opt.name, newLine: false)
+                console.success("--\(opt.name)", newLine: false)
             }
             
             for (i, help) in opt.help.enumerated() {
