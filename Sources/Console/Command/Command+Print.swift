@@ -52,11 +52,16 @@ extension Command {
         
         console.info("Options:")
         for opt in opts {
+            let shortLength = opt.short != nil ? 2 : 0
             console.print(String(
-                repeating: " ", count: width - opt.name.characters.count),
+                repeating: " ", count: width - opt.name.characters.count - shortLength),
                 newLine: false
             )
-            console.success(opt.name, newLine: false)
+            if let short = opt.short {
+                console.success("\(opt.name) \(short)", newLine: false)
+            } else {
+                console.success(opt.name, newLine: false)
+            }
             
             for (i, help) in opt.help.enumerated() {
                 console.print(" ", newLine: false)
