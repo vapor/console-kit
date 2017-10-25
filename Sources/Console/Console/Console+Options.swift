@@ -1,32 +1,34 @@
+import Foundation
+
 extension Sequence where Iterator.Element == String {
     public var options: [String: String] {
-        var iteration = Array(self.enumerated())
+        let longs = self.filter({ $0.hasPrefix("--") })
+        let shorts = self.filter({ !$0.hasPrefix("--") }).filter({ $0.hasPrefix("-") })
         var options: [String: String] = [:]
-
-        for option in iteration.filter({ $0.element.hasPrefix("--") }) {
-            let parts = option.element.characters.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
-
+        
+        longs.forEach { (element) in
+            let parts = element.characters.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
+            
             guard parts.count == 3 else {
-                continue
+                return
             }
-
+            
             let token = parts[2].split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
-
+            
             let name = String(token[0])
-
+            
             if token.count == 2 {
                 options[name] = String(token[1])
             } else {
-                options[name] = true.string
+                options[name] = "true"
             }
-            iteration.remove(at: option.offset)
         }
         
-        for option in iteration.filter({ $0.element.hasPrefix("-") }) {
-            let parts = option.element.characters.split(separator: "-", maxSplits: 1, omittingEmptySubsequences: false)
+        shorts.forEach { (element) in
+            let parts = element.characters.split(separator: "-", maxSplits: 1, omittingEmptySubsequences: false)
             
             guard parts.count == 2 else {
-                continue
+                return
             }
             
             let token = parts[1].split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
@@ -34,9 +36,9 @@ extension Sequence where Iterator.Element == String {
             let name = String(token[0])
             
             if token.count == 2 {
-                options[name] = String(token[0])
+                options[name] = String(token[1])
             } else {
-                options[name] = true.string
+                options[name] = "true"
             }
         }
         
