@@ -15,14 +15,7 @@ extension Command {
     }
 
     public func printSignatureHelp() {
-        var maxWidth = 0
-        for runnable in signature {
-            let count = runnable.name.characters.count
-            if count > maxWidth {
-                maxWidth = count
-            }
-        }
-        
+        let maxWidth = getSignitureLength()
         let leadingSpace = 2
         let width = maxWidth + leadingSpace
         
@@ -76,5 +69,20 @@ extension Command {
             }
 
         }
+    }
+    
+    fileprivate func getSignitureLength() -> Int {
+        var maxWidth = 2
+        let shortLength = 3
+        for runnable in signature {
+            var count = runnable.name.characters.count
+            if let _ = runnable as? Option {
+                count += shortLength
+            }
+            if count > maxWidth {
+                maxWidth = count
+            }
+        }
+        return maxWidth
     }
 }
