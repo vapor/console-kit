@@ -33,7 +33,7 @@ extension Sequence where Iterator.Element == String {
             
             let name = String(token[0])
             
-            if token.count == 1 {
+            if token.count == 2 {
                 options[name] = String(token[0])
             } else {
                 options[name] = true.string
