@@ -15,7 +15,7 @@ extension Command {
     }
 
     public func printSignatureHelp() {
-        let width = getSignitureLength(withPadding: 2)
+        let width = getSignatureLength(withPadding: 2)
         
         let vals = signature.flatMap { $0 as? Value }
         let opts = signature.flatMap { $0 as? Option }
@@ -69,7 +69,7 @@ extension Command {
         }
     }
     
-    fileprivate func getSignitureLength(withPadding padding: Int) -> Int {
+    fileprivate func getSignatureLength(withPadding padding: Int) -> Int {
         var maxWidth = 0
         let shortLength = 3
         for runnable in signature {
