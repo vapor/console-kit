@@ -82,6 +82,6 @@ extension Command {
             }
         }
         // Add 2 for the dashes before the flag name
-        return maxWidth + 2
+        return maxWidth + padding + 2
     }
 }
