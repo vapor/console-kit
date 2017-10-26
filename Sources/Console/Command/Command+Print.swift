@@ -15,9 +15,7 @@ extension Command {
     }
 
     public func printSignatureHelp() {
-        let maxWidth = getSignitureLength()
-        let leadingSpace = 2
-        let width = maxWidth + leadingSpace
+        let width = getSignitureLength(withPadding: 2)
         
         let vals = signature.flatMap { $0 as? Value }
         let opts = signature.flatMap { $0 as? Option }
@@ -71,8 +69,8 @@ extension Command {
         }
     }
     
-    fileprivate func getSignitureLength() -> Int {
-        var maxWidth = 2
+    fileprivate func getSignitureLength(withPadding padding: Int) -> Int {
+        var maxWidth = 0
         let shortLength = 3
         for runnable in signature {
             var count = runnable.name.characters.count
@@ -83,6 +81,7 @@ extension Command {
                 maxWidth = count
             }
         }
-        return maxWidth
+        // Add 2 for the dashes before the flag name
+        return maxWidth + 2
     }
 }
