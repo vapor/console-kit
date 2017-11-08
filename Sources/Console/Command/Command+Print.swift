@@ -8,7 +8,8 @@ extension Command {
         }
 
         for option in signature.options {
-            console.success("[--\(option.name)] ", newLine: false)
+            let short = option.short != nil ? " -\(option.short!)" : ""
+            console.success("[--\(option.name)\(short)] ", newLine: false)
         }
         print("")
     }
@@ -16,7 +17,7 @@ extension Command {
     public func printSignatureHelp() {
         var maxWidth = 0
         for runnable in signature {
-            let count = runnable.name.characters.count
+            let count = runnable.name.count
             if count > maxWidth {
                 maxWidth = count
             }
@@ -31,7 +32,7 @@ extension Command {
         console.info("Arugments:")
         for val in vals {
             console.print(String(
-                repeating: " ", count: width - val.name.characters.count),
+                repeating: " ", count: width - val.name.count),
                 newLine: false
             )
             console.warning(val.name, newLine: false)
@@ -51,11 +52,16 @@ extension Command {
         
         console.info("Options:")
         for opt in opts {
+            let shortLength = opt.short != nil ? 2 : 0
             console.print(String(
-                repeating: " ", count: width - opt.name.characters.count),
+                repeating: " ", count: width - opt.name.count - shortLength),
                 newLine: false
             )
-            console.success(opt.name, newLine: false)
+            if let short = opt.short {
+                console.success("\(opt.name) \(short)", newLine: false)
+            } else {
+                console.success(opt.name, newLine: false)
+            }
             
             for (i, help) in opt.help.enumerated() {
                 console.print(" ", newLine: false)
