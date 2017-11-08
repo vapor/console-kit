@@ -7,7 +7,7 @@ extension Sequence where Iterator.Element == String {
         var options: [String: String] = [:]
         
         longs.forEach { (element) in
-            let parts = element.characters.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
+            let parts = element.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
             
             guard parts.count == 3 else {
                 return
@@ -25,7 +25,7 @@ extension Sequence where Iterator.Element == String {
         }
         
         shorts.forEach { (element) in
-            let parts = element.characters.split(separator: "-", maxSplits: 1, omittingEmptySubsequences: false)
+            let parts = element.split(separator: "-", maxSplits: 1, omittingEmptySubsequences: false)
             
             guard parts.count == 2 else {
                 return
