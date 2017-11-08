@@ -3,7 +3,7 @@ extension Sequence where Iterator.Element == String {
         var options: [String: String] = [:]
 
         for option in filter({ $0.hasPrefix("--") }) {
-            let parts = option.characters.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
+            let parts = option.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
 
             guard parts.count == 3 else {
                 continue

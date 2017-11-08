@@ -16,7 +16,7 @@ extension Command {
     public func printSignatureHelp() {
         var maxWidth = 0
         for runnable in signature {
-            let count = runnable.name.characters.count
+            let count = runnable.name.count
             if count > maxWidth {
                 maxWidth = count
             }
@@ -31,7 +31,7 @@ extension Command {
         console.info("Arugments:")
         for val in vals {
             console.print(String(
-                repeating: " ", count: width - val.name.characters.count),
+                repeating: " ", count: width - val.name.count),
                 newLine: false
             )
             console.warning(val.name, newLine: false)
@@ -52,7 +52,7 @@ extension Command {
         console.info("Options:")
         for opt in opts {
             console.print(String(
-                repeating: " ", count: width - opt.name.characters.count),
+                repeating: " ", count: width - opt.name.count),
                 newLine: false
             )
             console.success(opt.name, newLine: false)
