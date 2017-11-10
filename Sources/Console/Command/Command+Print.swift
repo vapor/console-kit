@@ -28,7 +28,7 @@ extension Command {
         let vals = signature.flatMap { $0 as? Value }
         let opts = signature.flatMap { $0 as? Option }
         
-        console.info("Arugments:")
+        console.info("Arguments:")
         for val in vals {
             console.print(String(
                 repeating: " ", count: width - val.name.characters.count),
