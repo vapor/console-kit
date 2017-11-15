@@ -8,22 +8,14 @@ extension Command {
         }
 
         for option in signature.options {
-            console.success("[--\(option.name)] ", newLine: false)
+            let short = option.short != nil ? " -\(option.short!)" : ""
+            console.success("[--\(option.name)\(short)] ", newLine: false)
         }
         print("")
     }
 
     public func printSignatureHelp() {
-        var maxWidth = 0
-        for runnable in signature {
-            let count = runnable.name.characters.count
-            if count > maxWidth {
-                maxWidth = count
-            }
-        }
-        
-        let leadingSpace = 2
-        let width = maxWidth + leadingSpace
+        let width = getSignatureLength(withPadding: 2)
         
         let vals = signature.flatMap { $0 as? Value }
         let opts = signature.flatMap { $0 as? Option }
@@ -51,11 +43,17 @@ extension Command {
         
         console.info("Options:")
         for opt in opts {
+            let shortLength = opt.short != nil ? 3 : 0
+            let longFlagDashLength = 2
             console.print(String(
-                repeating: " ", count: width - opt.name.characters.count),
+                repeating: " ", count: width - opt.name.characters.count - longFlagDashLength - shortLength),
                 newLine: false
             )
-            console.success(opt.name, newLine: false)
+            if let short = opt.short {
+                console.success("-\(short) --\(opt.name)", newLine: false)
+            } else {
+                console.success("--\(opt.name)", newLine: false)
+            }
             
             for (i, help) in opt.help.enumerated() {
                 console.print(" ", newLine: false)
@@ -69,5 +67,21 @@ extension Command {
             }
 
         }
+    }
+    
+    fileprivate func getSignatureLength(withPadding padding: Int) -> Int {
+        var maxWidth = 0
+        let shortLength = 3
+        for runnable in signature {
+            var count = runnable.name.characters.count
+            if let _ = runnable as? Option {
+                count += shortLength
+            }
+            if count > maxWidth {
+                maxWidth = count
+            }
+        }
+        // Add 2 for the dashes before the flag name
+        return maxWidth + padding + 2
     }
 }
