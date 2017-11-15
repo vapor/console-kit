@@ -20,6 +20,7 @@ extension ConsoleProtocol {
         var commands = group.commands
         var executable = group.id
         var foundCommand: Command? = nil
+        var passThrough = arguments.values.dropFirst()
 
         while foundCommand == nil {
             guard let id = iterator.next() else {
@@ -51,6 +52,9 @@ extension ConsoleProtocol {
                 commands = g.commands
                 executable = "\(executable) \(g.id)"
                 group = g
+                
+                // Remove the first id from the arguments so a command id is not found instead of a value with the `value(_:, arguments)` method.
+                passThrough = passThrough.dropFirst()
             }
         }
 
@@ -65,7 +69,6 @@ extension ConsoleProtocol {
             throw ConsoleError.help
         } else {
             // command should attempt to run
-            var passThrough = arguments.values.dropFirst()
 
             // verify there are enough values to satisfy the signature
             if passThrough.count < command.signature.values.count {
