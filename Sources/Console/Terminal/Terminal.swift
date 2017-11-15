@@ -38,8 +38,8 @@ public final class Terminal: ConsoleProtocol {
     /// Prints styled output to the terminal.
     public func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
         var lines = 0
-        if string.characters.count > size.width && size.width > 0 {
-            lines = (string.characters.count / size.width) + 1
+        if string.count > size.width && size.width > 0 {
+            lines = (string.count / size.width) + 1
         }
         if newLine {
             lines += 1

@@ -20,10 +20,10 @@ extension Command {
         let vals = signature.flatMap { $0 as? Value }
         let opts = signature.flatMap { $0 as? Option }
         
-        console.info("Arugments:")
+        console.info("Arguments:")
         for val in vals {
             console.print(String(
-                repeating: " ", count: width - val.name.characters.count),
+                repeating: " ", count: width - val.name.count),
                 newLine: false
             )
             console.warning(val.name, newLine: false)
@@ -46,7 +46,7 @@ extension Command {
             let shortLength = opt.short != nil ? 3 : 0
             let longFlagDashLength = 2
             console.print(String(
-                repeating: " ", count: width - opt.name.characters.count - longFlagDashLength - shortLength),
+                repeating: " ", count: width - opt.name.count - longFlagDashLength - shortLength),
                 newLine: false
             )
             if let short = opt.short {
@@ -74,7 +74,7 @@ extension Command {
         let shortLength = 3
         let flagPrefixWidth = 2
         for runnable in signature {
-            var count = runnable.name.characters.count
+            var count = runnable.name.count
             if let _ = runnable as? Option {
                 count += shortLength
                 count += flagPrefixWidth
