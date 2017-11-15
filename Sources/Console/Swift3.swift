@@ -5,16 +5,19 @@
             return characters.count
         }
 
-        internal subscript(_ index: Int) -> Character {
+        internal subscript(_ index: String.CharacterView.Index) -> Character {
             get { return characters[index] }
         }
 
         // index(message.characters.startIndex, offsetBy: j)
-        internal func index(_ start: Int, offsetBy offset: Int) -> Range {
+        internal func index(
+            _ start: String.CharacterView.Index, 
+            offsetBy offset: String.CharacterView.IndexDistance
+        ) -> String.CharacterView.Index {
             return characters.index(start, offsetBy: offset)
         }
 
-        internal var startIndex: Int {
+        internal var startIndex: String.CharacterView.Index {
             return characters.startIndex
         }
 
