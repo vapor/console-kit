@@ -1,7 +1,7 @@
 extension ConsoleProtocol {
     public func center(_ string: String, paddingCharacter: Character = " ") -> String {
         // Split the string into lines
-        let lines = string.characters.split(separator: Character("\n")).map(String.init)
+        let lines = string.split(separator: Character("\n")).map(String.init)
         return center(lines).joined(separator: "\n")
     }
     
@@ -16,8 +16,8 @@ extension ConsoleProtocol {
         // Find the longest line
         var longestLine = 0
         for line in lines {
-            if line.characters.count > longestLine {
-                longestLine = line.characters.count
+            if line.count > longestLine {
+                longestLine = line.count
             }
         }
 
