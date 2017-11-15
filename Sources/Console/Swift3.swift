@@ -28,5 +28,10 @@
         internal var last: Character? {
             return characters.last
         }
+
+        // element.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
+        internal func split(separator: Character, maxSplits: Int, omittingEmptySubsequences: Bool) -> [String] {
+            return characters.split(separator: separator, maxSplits: maxSplits, omittingEmptySubsequences: omittingEmptySubsequences)
+        }
     }
 #endif
