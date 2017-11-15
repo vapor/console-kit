@@ -1,22 +1,44 @@
+import Foundation
+
 extension Sequence where Iterator.Element == String {
     public var options: [String: String] {
+        let longs = self.filter({ $0.hasPrefix("--") })
+        let shorts = self.filter({ !$0.hasPrefix("--") }).filter({ $0.hasPrefix("-") })
         var options: [String: String] = [:]
-
-        for option in filter({ $0.hasPrefix("--") }) {
-            let parts = option.characters.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
-
+        
+        longs.forEach { (element) in
+            let parts = element.characters.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
+            
             guard parts.count == 3 else {
-                continue
+                return
             }
-
+            
             let token = parts[2].split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
-
+            
             let name = String(token[0])
-
+            
             if token.count == 2 {
                 options[name] = String(token[1])
             } else {
-                options[name] = true.string
+                options[name] = "true"
+            }
+        }
+        
+        shorts.forEach { (element) in
+            let parts = element.characters.split(separator: "-", maxSplits: 1, omittingEmptySubsequences: false)
+            
+            guard parts.count == 2 else {
+                return
+            }
+            
+            let token = parts[1].split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+            
+            let name = String(token[0])
+            
+            if token.count == 2 {
+                options[name] = String(token[1])
+            } else {
+                options[name] = "true"
             }
         }
         
@@ -24,7 +46,7 @@ extension Sequence where Iterator.Element == String {
     }
 
     public var values: [String] {
-        return filter { !$0.hasPrefix("--") }
+        return filter { !$0.hasPrefix("-") }
     }
 
     public func argument(_ name: String) throws -> String {
