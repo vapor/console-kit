@@ -72,16 +72,18 @@ extension Command {
     fileprivate func getSignatureLength(withPadding padding: Int) -> Int {
         var maxWidth = 0
         let shortLength = 3
+        let flagPrefixWidth = 2
         for runnable in signature {
             var count = runnable.name.characters.count
             if let _ = runnable as? Option {
                 count += shortLength
+                count += flagPrefixWidth
             }
             if count > maxWidth {
                 maxWidth = count
             }
         }
         // Add 2 for the dashes before the flag name
-        return maxWidth + padding + 2
+        return maxWidth + padding
     }
 }
