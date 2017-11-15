@@ -30,7 +30,7 @@
         }
 
         // element.split(separator: "-", maxSplits: 2, omittingEmptySubsequences: false)
-        internal func split(separator: Character, maxSplits: Int? = nil, omittingEmptySubsequences: Bool = false) -> [String.CharacterView.SubSequence] {
+        internal func split(separator: Character, maxSplits: Int = Int.max, omittingEmptySubsequences: Bool = false) -> [String.CharacterView.SubSequence] {
             return characters.split(separator: separator, maxSplits: maxSplits, omittingEmptySubsequences: omittingEmptySubsequences)
         }
     }
