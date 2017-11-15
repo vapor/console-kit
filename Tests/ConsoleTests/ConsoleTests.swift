@@ -51,6 +51,7 @@ class ConsoleTests: XCTestCase {
         )
     }
 
+    #if swift(>=4)
     func testProgressBar() {
         let console = TestConsole()
         let progressBar = console.progressBar(title: "copying")
@@ -65,4 +66,5 @@ class ConsoleTests: XCTestCase {
             copying [=========================] 100%
             """ + "\n")
     }
+    #endif
 }

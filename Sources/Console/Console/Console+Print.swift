@@ -10,7 +10,7 @@ extension ConsoleProtocol {
         
         var maxWidth = 0
         for runnable in commands {
-            let count = runnable.id.characters.count
+            let count = runnable.id.count
             if count > maxWidth {
                 maxWidth = count
             }
@@ -21,7 +21,7 @@ extension ConsoleProtocol {
         
         for runnable in commands {
             print(String(
-                repeating: " ", count: width - runnable.id.characters.count),
+                repeating: " ", count: width - runnable.id.count),
                   newLine: false
             )
             warning(runnable.id, newLine: false)

@@ -79,26 +79,26 @@ public class Bar {
 
     func collapseBar(message: String, style: ConsoleStyle) {
         pthread_mutex_lock(mutex)
-        for i in 0 ..< (width - message.characters.count) {
+        for i in 0 ..< (width - message.count) {
             prepareLine()
 
             console.output(title, style: titleStyle, newLine: false)
 
-            let rate = (width - message.characters.count) / message.characters.count
+            let rate = (width - message.count) / message.count
             let charactersShowing = i / rate
 
 
             var newBar: String = " ["
             for j in 0 ..< charactersShowing {
-                let index = message.characters.index(message.characters.startIndex, offsetBy: j)
-                newBar.append(message.characters[index])
+                let index = message.index(message.startIndex, offsetBy: j)
+                newBar.append(message[index])
             }
             console.output(newBar, style: style, newLine: false)
 
             var oldBar = ""
             for _ in 0 ..< (width - i - 1 - charactersShowing) {
-                let index = bar.characters.index(bar.characters.endIndex, offsetBy: -2)
-                oldBar.append(bar.characters[index])
+                let index = bar.index(bar.endIndex, offsetBy: -2)
+                oldBar.append(bar[index])
             }
             oldBar.append("]")
 
@@ -117,12 +117,12 @@ public class Bar {
         pthread_mutex_lock(mutex)
         prepareLine()
         
-        let total = title.characters.count + 1 + width + status.characters.count + 2 + 3
+        let total = title.count + 1 + width + status.count + 2 + 3
         let trimmedTitle: String
         if console.size.width < total {
             var diff = total - console.size.width
-            if diff > title.characters.count {
-                diff = title.characters.count
+            if diff > title.count {
+                diff = title.count
             }
             diff = diff * -1
             #if swift(>=4)
