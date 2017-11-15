@@ -7,7 +7,7 @@ class TestConsole: ConsoleProtocol {
     var outputBuffer: String = ""
 
     var size: (width: Int, height: Int) {
-        return (0, 0)
+        return (80, 25)
     }
     
     func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
