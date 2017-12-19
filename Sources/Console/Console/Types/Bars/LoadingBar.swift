@@ -1,5 +1,5 @@
-import libc
-import Core
+import COperatingSystem
+import Dispatch
 
 /// A loading bar that indicates ongoing activity.
 ///
@@ -18,7 +18,7 @@ public final class LoadingBar: Bar {
     private var running: Bool
 
     override init(
-        console: Console,
+        console: OutputConsole & ClearableConsole,
         title: String,
         width: Int,
         barStyle: ConsoleStyle,
@@ -40,17 +40,17 @@ public final class LoadingBar: Bar {
         )
     }
 
-    public override func finish(_ message: String? = nil) throws {
+    public override func finish(_ message: String? = nil) {
         stop()
-        try super.finish(message)
+        super.finish(message)
     }
 
-    public override func fail(_ message: String? = nil) throws {
+    public override func fail(_ message: String? = nil) {
         stop()
-        try super.fail(message)
+        super.fail(message)
     }
 
-    override func update() throws {
+    override func update() {
         if current == -1 {
             current = 0
         } else {
@@ -61,7 +61,7 @@ public final class LoadingBar: Bar {
             return
         }
 
-        try super.update()
+        super.update()
     }
 
     func stop() {
@@ -90,21 +90,21 @@ public final class LoadingBar: Bar {
         return string
     }
 
-    public func start() throws {
+    public func start() {
         if animated {
-            background { [weak self] in
+            DispatchQueue.global().async { [weak self] in
                 guard let welf = self else { return }
                 while welf.running {
-                    try? self?.update()
+                    self?.update()
                 }
             }
         } else {
-            try console.info("\(title) ...")
+            console.info("\(title) ...")
         }
     }
 
     deinit {
-        try? finish()
+        finish()
     }
 }
 

@@ -1,13 +1,11 @@
-extension Console {
+extension ClearableConsole {
     public func pushEphemeral() {
         depth += 1
-        // Swift.print("PUSH \(depth)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         levels[depth] = 0
     }
 
     public func popEphemeral() throws {
         let lines = levels[depth] ?? 0
-        // Swift.print("POP \(depth) = \(lines)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         guard lines > 0 else {
             levels[depth] = nil
             depth -= 1
@@ -15,7 +13,7 @@ extension Console {
         }
 
         for _ in 0..<lines {
-            try clear(.line)
+            clear(.line)
         }
 
         // remember to reset depth after or else
@@ -38,8 +36,6 @@ extension Console {
         guard depth > 0 else {
             return
         }
-
-        // Swift.print("DID OUTPUT \(depth): +\(count)")
 
         if let existing = levels[depth] {
             levels[depth] = existing + count

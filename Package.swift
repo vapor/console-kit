@@ -8,14 +8,19 @@ let package = Package(
         .library(name: "Command", targets: ["Command"]),
     ],
     dependencies: [
-        // Core utilities
+        // Swift Promises, Futures, and Streams.
+        .package(url: "https://github.com/vapor/async.git", .branch("beta")),
+
+        // Core extensions, type-aliases, and functions that facilitate common tasks.
         .package(url: "https://github.com/vapor/core.git", .branch("beta")),
+
+        // Service container and configuration system.
+        .package(url: "https://github.com/vapor/service.git", .branch("beta")),
     ],
     targets: [
-        .target(name: "Console", dependencies: ["Core"]),
-        .testTarget(name: "ConsoleTests", dependencies: ["Console"]),
+        .target(name: "Console", dependencies: ["Async", "COperatingSystem", "Service"]),
         .target(name: "Command", dependencies: ["Console"]),
+        .testTarget(name: "ConsoleTests", dependencies: ["Console"]),
         .testTarget(name: "CommandTests", dependencies: ["Command"]),
-        .target(name: "ConsoleExample", dependencies: ["Console"]),
     ]
 )

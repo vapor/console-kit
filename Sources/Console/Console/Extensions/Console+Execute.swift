@@ -3,25 +3,25 @@ import Foundation
 
 // MARK: Foreground
 
-extension Console {
+extension ExecuteConsole {
     /// Execute the program using standard IO.
     public func foregroundExecute(program: String, arguments: [String]) throws {
         let stdin = FileHandle.standardInput
         let stdout = FileHandle.standardOutput
         let stderr = FileHandle.standardError
 
-        try action(.execute(
+        try execute(
             program: program,
             arguments: arguments,
             input: .fileHandle(stdin),
             output: .fileHandle(stdout),
             error: .fileHandle(stderr)
-        ))
+        )
     }
 
     /// Execute a program using an array of commands.
     public func foregroundExecute(commands: [String]) throws {
-        try foregroundExecute(program: commands[0], arguments: commands.dropFirst(1).array)
+        try foregroundExecute(program: commands[0], arguments: Array(commands.dropFirst(1)))
     }
 
     /// Execute a program using a variadic array.
@@ -32,20 +32,20 @@ extension Console {
 
 // MARK: Background
 
-extension Console {
+extension ExecuteConsole {
     /// Execute the program in the background, returning the result of the run as bytes.
     public func backgroundExecute(program: String, arguments: [String]) throws -> Data {
         let input = Pipe()
         let output = Pipe()
         let error = Pipe()
 
-        try action(.execute(
+        try execute(
             program: program,
             arguments: arguments,
             input: .pipe(input),
             output: .pipe(output),
             error: .pipe(error)
-        ))
+        )
 
         let bytes = output
             .fileHandleForReading
@@ -65,7 +65,7 @@ extension Console {
 
     /// Execute the program in the background, intiailizing a type with the returned bytes.
     public func backgroundExecute(commands: [String]) throws -> String {
-        return try backgroundExecute(program: commands[0], arguments: commands.dropFirst(1).array)
+        return try backgroundExecute(program: commands[0], arguments: Array(commands.dropFirst(1)))
     }
 
     /// Execute the program in the background, intiailizing a type with the returned bytes.

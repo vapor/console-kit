@@ -1,112 +1,38 @@
 import Console
 
+/// Parsed input to a command.
 public struct Input {
-    public var executable: String
-    public var arguments: [String]
-    public var options: [String: String]
+    /// The name of the executable.
+    public let executable: String
 
-    public init(raw: [String]) throws {
-        guard raw.count > 0 else {
-            throw ConsoleError(identifier: "executableRequired", reason: "At least one argument is required.")
+    /// All arguments stored by name.
+    /// note: use `argument` method instead.
+    internal let arguments: [String: String]
+
+    /// All options stored by name.
+    public let options: [String: String]
+
+    /// Retrieve the argument with the given name or throws an error.
+    public func argument(_ name: String) throws -> String {
+        guard let arg = arguments[name] else {
+            throw CommandError(
+                identifier: "missingArgument",
+                reason: "No argument named `\(name)` exists in the command signature."
+            )
         }
-        executable = raw[0]
 
-        let raw = Array(raw.dropFirst())
-        arguments = Input.parseArguments(from: raw)
-        options = try Input.parseOptions(from: raw)
+        return arg
     }
 
-    public static func parseArguments(from raw: [String]) -> [String] {
-        return raw.flatMap { arg in
-            guard !arg.hasPrefix("--") else {
-                return nil
-            }
-            return arg
-        }
-    }
-
-    public static func parseOptions(from raw: [String]) throws -> [String: String] {
-        var options: [String: String] = [:]
-
-        for arg in raw {
-            guard arg.hasPrefix("--") else {
-                continue
-            }
-
-            let val: String
-
-            let parts = arg.dropFirst(2).split(separator: "=", maxSplits: 1).map(String.init)
-            switch parts.count {
-            case 1:
-                val = "true"
-            case 2:
-                val = parts[1]
-            default:
-                throw ConsoleError(identifier: "invalidOption", reason: "Option \(arg) is incorrectly formatted.")
-            }
-
-            options[parts[0]] = val
+    /// Retrieves the option with the supplied name or throws an error.
+    public func requireOption(_ name: String) throws -> String {
+        guard let option = options[name] else {
+            throw CommandError(
+                identifier: "missingOption",
+                reason: "Option `\(name)` is required and was not supplied."
+            )
         }
 
-        return options
-    }
-
-
-}
-
-extension Input {
-    mutating func validate(using signature: GroupSignature) throws -> GroupInput {
-        var validatedOptions: [String: String] = [:]
-
-        // ensure we don't have any unexpected options
-        for key in options.keys {
-            guard signature.options.contains(where: { $0.name == key }) else {
-                throw ConsoleError(identifier: "unexpectedOptions", reason: "Unexpected option `\(key)`.")
-            }
-        }
-
-        // set all options to value or default
-        for opt in signature.options {
-            validatedOptions[opt.name] = options[opt.name] ?? opt.`default`
-        }
-
-        return .init(
-            executable: executable,
-            options: validatedOptions
-        )
-    }
-
-    mutating func validate(using signature: CommandSignature) throws -> CommandInput {
-        guard arguments.count <= signature.arguments.count else {
-            throw ConsoleError(identifier: "unexpectedArguments", reason: "Too many arguments supplied.")
-        }
-
-        var validatedArguments: [String: String] = [:]
-        for arg in signature.arguments {
-            guard let argument = arguments.pop() else {
-                throw ConsoleError(identifier: "insufficientArguments", reason: "Insufficient arguments supplied.")
-            }
-            validatedArguments[arg.name] = argument
-        }
-
-        var validatedOptions: [String: String] = [:]
-
-        // ensure we don't have any unexpected options
-        for key in options.keys {
-            guard signature.options.contains(where: { $0.name == key }) else {
-                throw ConsoleError(identifier: "unexpectedOptions", reason: "Unexpected option `\(key)`.")
-            }
-        }
-
-        // set all options to value or default
-        for opt in signature.options {
-            validatedOptions[opt.name] = options[opt.name] ?? opt.`default`
-        }
-
-        return .init(
-            executable: executable,
-            arguments: validatedArguments,
-            options: validatedOptions
-        )
+        return option
     }
 }

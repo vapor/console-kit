@@ -1,7 +1,7 @@
-import libc
+import COperatingSystem
 
 public class Bar {
-    let console: Console
+    let console: OutputConsole & ClearableConsole
     let title: String
     let width: Int
     let barStyle: ConsoleStyle
@@ -14,7 +14,7 @@ public class Bar {
     var mutex: UnsafeMutablePointer<pthread_mutex_t>
 
     init(
-        console: Console,
+        console: OutputConsole & ClearableConsole,
         title: String,
         width: Int,
         barStyle: ConsoleStyle,
@@ -45,7 +45,7 @@ public class Bar {
         mutex.deallocate(capacity: 1)
     }
 
-    public func fail(_ message: String? = nil) throws {
+    public func fail(_ message: String? = nil) {
         guard !hasFinished else {
             return
         }
@@ -54,14 +54,14 @@ public class Bar {
         let message = message ?? "Failed"
 
         if animated {
-            try collapseBar(message: message, style: .error)
+            collapseBar(message: message, style: .error)
         } else {
-            try console.output(title, style: titleStyle, newLine: false)
-            try console.output(" [\(message)]", style: .error)
+            console.output(title, style: titleStyle, newLine: false)
+            console.output(" [\(message)]", style: .error)
         }
     }
 
-    public func finish(_ message: String? = nil) throws {
+    public func finish(_ message: String? = nil) {
         guard !hasFinished else {
             return
         }
@@ -70,59 +70,59 @@ public class Bar {
         let message = message ?? "Done"
 
         if animated {
-            try collapseBar(message: message, style: .success)
+            collapseBar(message: message, style: .success)
         } else {
-            try console.output(title, style: titleStyle, newLine: false)
-            try console.output(" [\(message)]", style: .success)
+            console.output(title, style: titleStyle, newLine: false)
+            console.output(" [\(message)]", style: .success)
         }
     }
 
-    func collapseBar(message: String, style: ConsoleStyle) throws {
+    func collapseBar(message: String, style: ConsoleStyle) {
         pthread_mutex_lock(mutex)
-        for i in 0 ..< (width - message.characters.count) {
-            try prepareLine()
+        for i in 0 ..< (width - message.count) {
+            prepareLine()
 
-            try console.output(title, style: titleStyle, newLine: false)
+            console.output(title, style: titleStyle, newLine: false)
 
-            let rate = (width - message.characters.count) / message.characters.count
+            let rate = (width - message.count) / message.count
             let charactersShowing = i / rate
 
 
             var newBar: String = " ["
             for j in 0 ..< charactersShowing {
-                let index = message.characters.index(message.characters.startIndex, offsetBy: j)
-                newBar.append(message.characters[index])
+                let index = message.index(message.startIndex, offsetBy: j)
+                newBar.append(message[index])
             }
-            try console.output(newBar, style: style, newLine: false)
+            console.output(newBar, style: style, newLine: false)
 
             var oldBar = ""
             for _ in 0 ..< (width - i - 1 - charactersShowing) {
-                let index = bar.characters.index(bar.characters.endIndex, offsetBy: -2)
-                oldBar.append(bar.characters[index])
+                let index = bar.index(bar.endIndex, offsetBy: -2)
+                oldBar.append(bar[index])
             }
             oldBar.append("]")
 
-            try console.output(oldBar, style: barStyle, newLine: true)
+            console.output(oldBar, style: barStyle, newLine: true)
 
-            console.wait(seconds: 0.01)
+            console.blockingWait(seconds: 0.01)
         }
 
-        try prepareLine()
-        try console.output(title, style: titleStyle, newLine: false)
-        try console.output(" [\(message)]", style: style)
+        prepareLine()
+        console.output(title, style: titleStyle, newLine: false)
+        console.output(" [\(message)]", style: style)
         pthread_mutex_unlock(mutex)
     }
 
-    func update() throws {
+    func update() {
         pthread_mutex_lock(mutex)
-        try prepareLine()
+        prepareLine()
 
-        let total = title.characters.count + 1 + width + status.characters.count + 2 + 3
+        let total = title.count + 1 + width + status.count + 2 + 3
         let trimmedTitle: String
         if console.size.width < total {
             var diff = total - console.size.width
-            if diff > title.characters.count {
-                diff = title.characters.count
+            if diff > title.count {
+                diff = title.count
             }
             diff = diff * -1
             #if swift(>=4)
@@ -136,15 +136,15 @@ public class Bar {
             trimmedTitle = title
         }
 
-        try console.output(trimmedTitle + " ", style: titleStyle, newLine: false)
-        try console.output(bar, style: barStyle, newLine: false)
-        try console.output(status, style: titleStyle)
+        console.output(trimmedTitle + " ", style: titleStyle, newLine: false)
+        console.output(bar, style: barStyle, newLine: false)
+        console.output(status, style: titleStyle)
         pthread_mutex_unlock(mutex)
     }
 
-    func prepareLine() throws {
+    func prepareLine() {
         if hasStarted {
-            try console.clear(.line)
+            console.clear(.line)
         } else {
             hasStarted = true
         }
