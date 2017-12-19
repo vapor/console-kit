@@ -6,6 +6,7 @@ let package = Package(
     products: [
         .library(name: "Console", targets: ["Console"]),
         .library(name: "Command", targets: ["Command"]),
+        .library(name: "Logging", targets: ["Logging"]),
     ],
     dependencies: [
         // Swift Promises, Futures, and Streams.
@@ -22,5 +23,6 @@ let package = Package(
         .target(name: "Command", dependencies: ["Console"]),
         .testTarget(name: "ConsoleTests", dependencies: ["Console"]),
         .testTarget(name: "CommandTests", dependencies: ["Command"]),
+        .target(name: "Logging", dependencies: []),
     ]
 )
