@@ -19,7 +19,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/service.git", .branch("beta")),
     ],
     targets: [
-        .target(name: "Console", dependencies: ["Async", "COperatingSystem", "Service"]),
+        .target(name: "Console", dependencies: ["Async", "Bits", "COperatingSystem", "Service"]),
         .target(name: "Command", dependencies: ["Console"]),
         .testTarget(name: "ConsoleTests", dependencies: ["Console"]),
         .testTarget(name: "CommandTests", dependencies: ["Command"]),
