@@ -68,6 +68,7 @@ public struct CommandInput {
                     // ensure it's non-nil and not an option
                     if next?.hasPrefix("-") == false {
                         supplied = next
+                        arguments[i + 1] = nil
                     } else {
                         supplied = nil
                     }
