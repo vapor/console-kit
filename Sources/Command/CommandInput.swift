@@ -20,7 +20,7 @@ public struct CommandInput {
 
     /// Parses the option from input, returning nil if it could
     /// not be found or throwing an error if invalid input is detected.
-    mutating func parse(option: CommandOption) throws -> String? {
+    public mutating func parse(option: CommandOption) throws -> String? {
         // create a temporary [String?] array so it's
         // easier to mark positions as "consumed"
         var arguments = self.arguments.map { $0 as String? }
@@ -92,7 +92,7 @@ public struct CommandInput {
 
     /// Parses the argument from input, returning `nil` if it
     /// could not be found.
-    mutating func parse(argument: CommandArgument) throws -> String? {
+    public mutating func parse(argument: CommandArgument) throws -> String? {
         // create a temporary [String?] array so it's
         // easier to mark positions as "consumed"
         var arguments = self.arguments.map { $0 as String? }
