@@ -7,8 +7,12 @@ class CommandTests: XCTestCase {
         let console = Terminal()
         let group = TestGroup()
 
-        try! console.run(group, arguments: ["vapor", "sub", "test", "--help"])
-        print(console.output)
+        var input = CommandInput(arguments: ["vapor", "sub", "test", "--help"])
+        do {
+            try console.run(group, input: &input)
+        } catch {
+            XCTFail("\(error)")
+        }
     }
 
     static var allTests = [
