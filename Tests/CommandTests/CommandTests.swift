@@ -7,7 +7,8 @@ class CommandTests: XCTestCase {
         let console = Terminal()
         let group = TestGroup()
 
-        try! console.run(group, arguments: ["vapor", "sub", "test", "--help"])
+        var input = CommandInput(arguments: ["vapor", "sub", "test", "--help"])
+        try! console.run(group, input: &input)
         print(console.output)
     }
 

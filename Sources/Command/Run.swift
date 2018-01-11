@@ -3,46 +3,35 @@ import Console
 extension Console {
     /// Runs a command or group of commands on this console using
     /// the supplied arguments.
-    public func run(_ runnable: Runnable, arguments: [String]) throws {
-        var input = try ParsedInput.parse(from: arguments)
-        try run(runnable, with: &input)
-    }
+    public func run(_ runnable: CommandRunnable, input: inout CommandInput) throws {
 
-    /// Runs a command with the parsed console input.
-    private func run(_ runnable: Runnable, with input: inout ParsedInput) throws {
         // try to run subcommand first
-        if let group = runnable as? Group {
-            if let name = input.arguments.popFirst() {
-                guard let chosen = group.commands[name] else {
+        switch runnable.type {
+        case .group(let commands):
+            if let name = try input.parse(argument: .argument(name: "subcommand")) {
+                guard let subcommand = commands[name] else {
                     throw CommandError(
-                        identifier: "unknownRunnable",
-                        reason: "Unknown argument `\(name)`."
+                        identifier: "unknownCommand",
+                        reason: "Unknown command `\(name)`"
                     )
                 }
                 // executable should include all subcommands
                 // to get to the desired command
-                input.executable += " " + name
-                return try run(chosen, with: &input)
+                input.executablePath.append(name)
+                return try run(subcommand, input: &input)
             }
+        case .command: break
         }
 
-        if input.options["help"] == "true" {
-            try outputHelp(for: runnable, executable: input.executable)
-        } else {
-            let arguments: [Argument]
-            if let command = runnable as? Command {
-                arguments = command.arguments
-            } else {
-                arguments = []
-            }
-
-            let commandInput = try input.generateInput(
-                arguments: arguments,
-                options: runnable.options
+        if let help = try input.parse(option: .flag(name: "help")) {
+            assert(help == "true")
+            try outputHelp(
+                for: runnable,
+                executable: input.executablePath.joined(separator: " ")
             )
-            try runnable.run(using: self, with: commandInput)
+        } else {
+            let context = try CommandContext.make(from: &input, console: self, for: runnable)
+            try runnable.run(using: context)
         }
     }
 }
-
-

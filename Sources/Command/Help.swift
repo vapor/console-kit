@@ -2,18 +2,19 @@ import Console
 
 extension OutputConsole {
     /// Outputs help for a command.
-    public func outputHelp(for runnable: Runnable, executable: String) throws {
+    public func outputHelp(for runnable: CommandRunnable, executable: String) throws {
         info("Usage: ", newLine: false)
         print(executable + " ", newLine: false)
 
-        if let _ = runnable as? Group {
-            warning("<command> ", newLine: false)
-        }
-        if let command = runnable as? Command {
-            for arg in command.arguments {
+        switch runnable.type {
+        case .command(let arguments):
+            for arg in arguments {
                 warning("<" + arg.name + "> ", newLine: false)
             }
+        case .group:
+            warning("<command> ", newLine: false)
         }
+
         for opt in runnable.options {
             success("[--" + opt.name + "] ", newLine: false)
         }
@@ -25,11 +26,12 @@ extension OutputConsole {
         }
 
         var names = runnable.options.map { $0.name }
-        if let group = runnable as? Group {
-            names += group.commands.keys
-        }
-        if let command = runnable as? Command {
-            names += command.arguments.map { $0.name }
+
+        switch runnable.type {
+        case .command(let arguments):
+            names += arguments.map { $0.name }
+        case .group(let commands):
+            names += commands.keys
         }
 
         let padding = names.longestCount + 2
@@ -49,10 +51,12 @@ extension OutputConsole {
             }
         }
 
-        if let group = runnable as? Group {
-            if group.commands.count > 0 {
+        switch runnable.type {
+        case .command: break
+        case .group(let commands):
+            if commands.count > 0 {
                 success("Commands:")
-                for (key, runnable) in group.commands {
+                for (key, runnable) in commands {
                     outputHelpListItem(
                         name: key,
                         help: runnable.help,
@@ -76,7 +80,9 @@ extension OutputConsole {
             }
         }
 
-        if let _ = runnable as? Group {
+        switch runnable.type {
+        case .command: break
+        case .group:
             print()
             print("Use `\(executable) ", newLine: false)
             warning("<command>", newLine: false)
