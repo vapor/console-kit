@@ -1,18 +1,22 @@
 /// Raw input for commands. Use this to parse options and arguments
 /// for the command context.
 public struct CommandInput {
-    var arguments: [String]
-
+    /// Global CommandLine input from Foundation.
     public static var commandLine = CommandInput(arguments: CommandLine.arguments)
 
-    var executablePath: [String]
+    /// The input's raw arguments.
+    public var arguments: [String]
 
+    /// The current executable path
+    public var executablePath: [String]
+
+    /// Create a new CommandInput.
     public init(arguments: [String]) {
+        guard arguments.count >= 1 else { fatalError("At least one argument (the executable path) is required") }
         var arguments = arguments
         executablePath = [arguments.popFirst()!]
         self.arguments = arguments
     }
-
 
     /// Parses the option from input, returning nil if it could
     /// not be found or throwing an error if invalid input is detected.
