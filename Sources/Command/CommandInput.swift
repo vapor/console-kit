@@ -102,7 +102,8 @@ public struct CommandInput {
             guard let arg = arg else { continue }
 
             guard !arg.hasPrefix("-") else {
-                continue
+                // all options should have been parsed first
+                return nil
             }
 
             arguments[i] = nil

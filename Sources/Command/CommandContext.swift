@@ -51,6 +51,10 @@ public struct CommandContext {
         var parsedArguments: [String: String] = [:]
         var parsedOptions: [String: String] = [:]
 
+        for opt in runnable.options {
+            parsedOptions[opt.name] = try input.parse(option: opt)
+        }
+
         let arguments: [CommandArgument]
         switch runnable.type {
         case .command(let a): arguments = a
@@ -67,9 +71,6 @@ public struct CommandContext {
             parsedArguments[arg.name] = value
         }
 
-        for opt in runnable.options {
-            parsedOptions[opt.name] = try input.parse(option: opt)
-        }
 
         guard input.arguments.count == 0 else {
             throw CommandError(
