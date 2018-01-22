@@ -87,7 +87,7 @@ public final class Terminal: Console {
         var program = program
         if !program.hasPrefix("/") {
             let res = try backgroundExecute(program: "/bin/sh", arguments: ["-c", "which \(program)"]) as String
-            program = res.trimmingCharacters(in: .whitespaces)
+            program = res.trimmingCharacters(in: .whitespacesAndNewlines)
         }
         // print(program + " " + arguments.joined(separator: " "))
         let process = Process()
