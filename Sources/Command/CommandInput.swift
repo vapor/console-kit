@@ -24,7 +24,7 @@ public struct CommandInput {
         // create a temporary [String?] array so it's
         // easier to mark positions as "consumed"
         var arguments = self.arguments.map { $0 as String? }
-        defer { self.arguments = arguments.flatMap { $0 } }
+        defer { self.arguments = arguments.compactMap { $0 } }
 
         for (i, arg) in arguments.enumerated() {
             guard var arg = arg else { continue }
@@ -97,7 +97,7 @@ public struct CommandInput {
         // create a temporary [String?] array so it's
         // easier to mark positions as "consumed"
         var arguments = self.arguments.map { $0 as String? }
-        defer { self.arguments = arguments.flatMap { $0 } }
+        defer { self.arguments = arguments.compactMap { $0 } }
 
         for (i, arg) in arguments.enumerated() {
             guard let arg = arg else { continue }
