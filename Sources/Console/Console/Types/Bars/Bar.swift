@@ -41,8 +41,8 @@ public class Bar {
     }
 
     deinit {
-        mutex.deinitialize()
-        mutex.deallocate(capacity: 1)
+        mutex.deinitialize(count: 1)
+        mutex.deallocate()
     }
 
     public func fail(_ message: String? = nil) {
