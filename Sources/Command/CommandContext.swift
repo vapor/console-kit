@@ -27,7 +27,7 @@ public struct CommandContext {
     /// Use `.options` to access in a non-required manner.
     public func requireOption(_ name: String) throws -> String {
         guard let value = options[name] else {
-            throw CommandError(identifier: "optionRequired", reason: "Option `\(name)` is required.")
+            throw CommandError(identifier: "optionRequired", reason: "Option `\(name)` is required.", source: .capture())
         }
 
         return value
@@ -37,7 +37,7 @@ public struct CommandContext {
     /// the argument was not properly declared in your signature.
     public func argument(_ name: String) throws -> String {
         guard let value = arguments[name] else {
-            throw CommandError(identifier: "argumentRequired", reason: "Argument `\(name)` is required.")
+            throw CommandError(identifier: "argumentRequired", reason: "Argument `\(name)` is required.", source: .capture())
         }
         return value
     }
@@ -65,7 +65,8 @@ public struct CommandContext {
             guard let value = try input.parse(argument: arg) else {
                 throw CommandError(
                     identifier: "argumentRequired",
-                    reason: "Argument `\(arg.name)` is required."
+                    reason: "Argument `\(arg.name)` is required.",
+                    source: .capture()
                 )
             }
             parsedArguments[arg.name] = value
@@ -75,7 +76,8 @@ public struct CommandContext {
         guard input.arguments.count == 0 else {
             throw CommandError(
                 identifier: "excessInput",
-                reason: "Too many arguments or unsupported options were supplied: \(input.arguments)"
+                reason: "Too many arguments or unsupported options were supplied: \(input.arguments)",
+                source: .capture()
             )
         }
 

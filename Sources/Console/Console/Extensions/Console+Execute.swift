@@ -58,7 +58,7 @@ extension ExecuteConsole {
     public func backgroundExecute(program: String, arguments: [String]) throws -> String {
         let data = try backgroundExecute(program: program, arguments: arguments) as Data
         guard let string = String(data: data, encoding: .utf8) else {
-            throw ConsoleError(identifier: "executeString", reason: "Could not convert `Data` to `String`: \(data)")
+            throw ConsoleError(identifier: "executeString", reason: "Could not convert `Data` to `String`: \(data)", source: .capture())
         }
         return string
     }

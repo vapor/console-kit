@@ -80,7 +80,8 @@ public struct CommandInput {
                 guard let value = supplied ?? d else {
                     throw CommandError(
                         identifier: "optionValueRequired",
-                        reason: "A value is required for option `\(option.name)`"
+                        reason: "A value is required for option `\(option.name)`",
+                        source: .capture()
                     )
                 }
 

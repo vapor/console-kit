@@ -12,7 +12,8 @@ extension Console {
                 guard let subcommand = commands[name] else {
                     throw CommandError(
                         identifier: "unknownCommand",
-                        reason: "Unknown command `\(name)`"
+                        reason: "Unknown command `\(name)`",
+                        source: .capture()
                     )
                 }
                 // executable should include all subcommands

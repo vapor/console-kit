@@ -119,7 +119,8 @@ public final class Terminal: Console {
         if status != 0 {
             throw ConsoleError(
                 identifier: "executeFailed",
-                reason: "Execution failed. Status code: \(Int(status))"
+                reason: "Execution failed. Status code: \(Int(status))",
+                source: .capture()
             )
         }
     }
