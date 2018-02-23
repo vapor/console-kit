@@ -1,42 +1,42 @@
-import XCTest
+import Async
 import Console
+import Service
 
-class TestConsole: ConsoleProtocol {
+final class TestConsole: Console {
+    var output: String
+    var input: String
+    var error: String
+    var extend: Extend
 
-    var inputBuffer: String = ""
-    var outputBuffer: String = ""
+    init() {
+        self.output = ""
+        self.input = ""
+        self.error = ""
+        self.extend = Extend()
+    }
+
+    func clear(_ type: ConsoleClear) {
+
+    }
+
+    func execute(program: String, arguments: [String], input: ExecuteStream?, output: ExecuteStream?, error: ExecuteStream?) throws {
+    }
+
+    func input(isSecure: Bool) -> String {
+        let t = input
+        input = ""
+        return t
+    }
+
+    func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
+        self.output += string + (newLine ? "\n" : "")
+    }
+
+    func report(error: String, newLine: Bool) {
+        self.error += error + (newLine ? "\n" : "")
+    }
 
     var size: (width: Int, height: Int) {
-        return (80, 25)
-    }
-    
-    func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
-        outputBuffer += string
-        if newLine {
-            outputBuffer += "\n"
-        }
-    }
-
-    func input() -> String {
-        let input = inputBuffer
-        inputBuffer = ""
-        return input
-    }
-
-    func secureInput() -> String {
-        return input()
-    }
-
-
-    func clear(_ clear: ConsoleClear) {
-        //
-    }
-
-    func execute(program: String, arguments: [String], input: Int32?, output: Int32?, error: Int32?) throws {
-
-    }
-
-    func registerKillListener(_ listener: @escaping (Int32) -> Void) {
-
+        return (640, 320)
     }
 }
