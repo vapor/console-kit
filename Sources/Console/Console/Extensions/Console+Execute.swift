@@ -32,34 +32,60 @@ extension ExecuteConsole {
 
 // MARK: Background
 
+/// Result from a raw background execution.
+public struct BackgroundExecuteResult {
+    /// Error that was thrown while executing, if there was one.
+    public var error: Error?
+    /// Data from `stdout` stream.
+    public var standardOutput: Data
+    /// Data from `stderr` stream.
+    public var standardError: Data
+}
+
 extension ExecuteConsole {
     /// Execute the program in the background, returning the result of the run as bytes.
-    public func backgroundExecute(program: String, arguments: [String]) throws -> Data {
-        let input = Pipe()
-        let output = Pipe()
-        let error = Pipe()
+    public func backgroundExecuteRaw(program: String, arguments: [String], input: ExecuteStream? = nil) throws -> BackgroundExecuteResult {
+        let stdin = input ?? .pipe(Pipe())
+        let stdout = Pipe()
+        let stderr = Pipe()
 
-        try execute(
-            program: program,
-            arguments: arguments,
-            input: .pipe(input),
-            output: .pipe(output),
-            error: .pipe(error)
+        var e: Error?
+
+        do {
+            try execute(
+                program: program,
+                arguments: arguments,
+                input: stdin,
+                output: .pipe(stdout),
+                error: .pipe(stderr)
+            )
+        } catch {
+            e = error
+        }
+
+        return BackgroundExecuteResult(
+            error: e,
+            standardOutput: stdout.fileHandleForReading.readDataToEndOfFile(),
+            standardError: stderr.fileHandleForReading.readDataToEndOfFile()
         )
-
-        let bytes = output
-            .fileHandleForReading
-            .readDataToEndOfFile()
-
-        return bytes
     }
 
     /// Execute the program in the background, intiailizing a type with the returned bytes.
-    public func backgroundExecute(program: String, arguments: [String]) throws -> String {
-        let data = try backgroundExecute(program: program, arguments: arguments) as Data
-        guard let string = String(data: data, encoding: .utf8) else {
-            throw ConsoleError(identifier: "executeString", reason: "Could not convert `Data` to `String`: \(data)", source: .capture())
+    public func backgroundExecute(program: String, arguments: [String], input: String? = nil) throws -> String {
+        let stdin = Pipe()
+        if let input = input {
+            stdin.fileHandleForWriting.write(Data(input.utf8))
         }
+        let result = try backgroundExecuteRaw(program: program, arguments: arguments, input: .pipe(stdin))
+
+        if let error = result.error {
+            throw error
+        }
+
+        guard let string = String(data: result.standardOutput, encoding: .utf8) else {
+            throw ConsoleError(identifier: "executeString", reason: "Could not convert Data to String", source: .capture())
+        }
+
         return string
     }
 
