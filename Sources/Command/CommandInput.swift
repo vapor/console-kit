@@ -43,13 +43,13 @@ public struct CommandInput {
                     continue
                 }
 
+                // remove this option and update the args
+                _ = arg.remove(at: index)
+                arguments[i] = arg
+
                 if arg.count == 1 {
                     // if just the `-` left, remove this arg
                     arguments[i] = nil
-                } else {
-                    // remove this option and update the args
-                    _ = arg.remove(at: index)
-                    arguments[i] = arg
                 }
             } else {
                 // not an option
