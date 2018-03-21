@@ -31,7 +31,7 @@ jobs:
     steps:
       - run:
           name: Clone Vapor
-          command: git clone -b nio https://github.com/vapor/vapor.git
+          command: git clone -b master https://github.com/vapor/vapor.git
           working_directory: ~/
       - run:
           name: Switch Vapor to this Console revision
