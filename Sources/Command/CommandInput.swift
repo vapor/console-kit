@@ -1,9 +1,8 @@
+import Service
+
 /// Raw input for commands. Use this to parse options and arguments
 /// for the command context.
 public struct CommandInput {
-    /// Global CommandLine input from Foundation.
-    public static var commandLine = CommandInput(arguments: CommandLine.arguments)
-
     /// The input's raw arguments.
     public var arguments: [String]
 
@@ -115,4 +114,54 @@ public struct CommandInput {
         return nil
     }
 }
+
+// MARK: Environment
+
+extension Environment {
+    /// Exposes the `Environment`'s `arguments` property as a `CommandInput`.
+    public var commandInput: CommandInput {
+        get { return CommandInput(arguments: arguments) }
+        set { arguments = newValue.executablePath + newValue.arguments }
+    }
+
+    /// Detects the environment from `CommandLine.arguments`. Invokes `detect(from:)`.
+    /// - parameters:
+    ///     - arguments: Command line arguments to detect environment from.
+    /// - returns: The detected environment, or default env.
+    public static func detect(arguments: [String] = CommandLine.arguments) throws -> Environment {
+        var commandInput = CommandInput(arguments: arguments)
+        return try Environment.detect(from: &commandInput)
+    }
+}
+
+extension Environment {
+    /// Detects the environment from `CommandInput`. Parses the `--env` flag.
+    /// - parameters:
+    ///     - arguments: `CommandInput` to parse `--env` flag from.
+    /// - returns: The detected environment, or default env.
+    public static func detect(from commandInput: inout CommandInput) throws -> Environment {
+        if let value = try commandInput.parse(option: .value(name: "env")) {
+            let name: String
+            let isRelease: Bool
+            switch value {
+            case "prod", "production":
+                name = "production"
+                isRelease = true
+            case "dev", "development":
+                name = "development"
+                isRelease = false
+            case "test", "testing":
+                name = "testing"
+                isRelease = false
+            default:
+                name = value
+                isRelease = false
+            }
+            return .init(name: name, isRelease: isRelease, arguments: commandInput.arguments)
+        } else {
+            return .init(name: "development", isRelease: false, arguments: commandInput.arguments)
+        }
+    }
+}
+
 
