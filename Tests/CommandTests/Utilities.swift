@@ -16,12 +16,13 @@ final class TestGroup: CommandGroup {
 
     let help = ["This is a test grouping!"]
 
-    func run(using context: CommandContext) throws {
+    func run(using context: CommandContext) throws -> Future<Void> {
         if context.options["version"] == "true" {
             context.console.print("v2.0")
         } else {
             throw "unknown"
         }
+        return .done(on: context.container)
     }
 }
 
@@ -36,12 +37,13 @@ final class SubGroup: CommandGroup {
 
     let help = ["This is a test sub grouping!"]
 
-    func run(using context: CommandContext) throws {
+    func run(using context: CommandContext) throws -> Future<Void> {
         if context.options["version"] == "true" {
             context.console.print("v2.0")
         } else {
             throw "unknown"
         }
+        return .done(on: context.container)
     }
 }
 
@@ -59,9 +61,10 @@ final class TestCommand: Command {
 
     let help = ["This is a test command"]
 
-    func run(using context: CommandContext) throws {
+    func run(using context: CommandContext) throws -> Future<Void> {
         let foo = try context.argument("foo")
         let bar = try context.requireOption("bar")
         context.console.info("Foo: \(foo) Bar: \(bar)")
+        return .done(on: context.container)
     }
 }
