@@ -1,4 +1,5 @@
 import Console
+import Service
 
 /// Contains required data for running a command
 /// such as the console and input.
@@ -12,15 +13,20 @@ public struct CommandContext {
     /// The parsed options (according to declared signature).
     public var options: [String: String]
 
+    /// The container this command is running on.
+    public var container: Container
+
     /// Create a new `CommandContext`.
     public init(
         console: Console,
         arguments: [String: String],
-        options: [String: String]
+        options: [String: String],
+        on container: Container
     ) {
         self.console = console
         self.arguments = arguments
         self.options = options
+        self.container = container
     }
 
     /// Requires an option, returning the value or throwing.
@@ -46,7 +52,8 @@ public struct CommandContext {
     static func make(
         from input: inout CommandInput,
         console: Console,
-        for runnable: CommandRunnable
+        for runnable: CommandRunnable,
+        on container: Container
     ) throws -> CommandContext {
         var parsedArguments: [String: String] = [:]
         var parsedOptions: [String: String] = [:]
@@ -84,7 +91,8 @@ public struct CommandContext {
         return CommandContext(
             console: console,
             arguments: parsedArguments,
-            options: parsedOptions
+            options: parsedOptions,
+            on: container
         )
     }
 }
