@@ -1,3 +1,4 @@
+import Async
 import Console
 
 /// Capable of being run on a console.
@@ -14,7 +15,7 @@ public protocol CommandRunnable {
     var type: CommandRunnableType { get }
 
     /// Runs the command against the supplied input.
-    func run(using context: CommandContext) throws
+    func run(using context: CommandContext) throws -> Future<Void>
 }
 
 /// Supported runnable types.

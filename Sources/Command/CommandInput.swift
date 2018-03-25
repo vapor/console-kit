@@ -157,9 +157,9 @@ extension Environment {
                 name = value
                 isRelease = false
             }
-            return .init(name: name, isRelease: isRelease, arguments: commandInput.arguments)
+            return .init(name: name, isRelease: isRelease, arguments: commandInput.executablePath + commandInput.arguments)
         } else {
-            return .init(name: "development", isRelease: false, arguments: commandInput.arguments)
+            return .init(name: "development", isRelease: false, arguments: commandInput.executablePath + commandInput.arguments)
         }
     }
 }
