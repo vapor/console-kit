@@ -132,35 +132,25 @@ extension Environment {
         var commandInput = CommandInput(arguments: arguments)
         return try Environment.detect(from: &commandInput)
     }
-}
 
-extension Environment {
     /// Detects the environment from `CommandInput`. Parses the `--env` flag.
     /// - parameters:
     ///     - arguments: `CommandInput` to parse `--env` flag from.
     /// - returns: The detected environment, or default env.
     public static func detect(from commandInput: inout CommandInput) throws -> Environment {
+        var env: Environment
         if let value = try commandInput.parse(option: .value(name: "env")) {
-            let name: String
-            let isRelease: Bool
             switch value {
-            case "prod", "production":
-                name = "production"
-                isRelease = true
-            case "dev", "development":
-                name = "development"
-                isRelease = false
-            case "test", "testing":
-                name = "testing"
-                isRelease = false
-            default:
-                name = value
-                isRelease = false
+            case "prod", "production": env = .production
+            case "dev", "development": env = .development
+            case "test", "testing": env = .testing
+            default: env = .init(name: value, isRelease: false)
             }
-            return .init(name: name, isRelease: isRelease, arguments: commandInput.executablePath + commandInput.arguments)
         } else {
-            return .init(name: "development", isRelease: false, arguments: commandInput.executablePath + commandInput.arguments)
+            env = .development
         }
+        env.commandInput = commandInput
+        return env
     }
 }
 
