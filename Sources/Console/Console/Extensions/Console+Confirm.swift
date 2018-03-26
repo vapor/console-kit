@@ -26,7 +26,7 @@ extension OutputConsole where Self: InputConsole {
         return result == "y" || result == "yes"
     }
 
-    var confirmOverride: Bool? {
+    public var confirmOverride: Bool? {
         get { return extend["confirmOverride"] as? Bool }
         set { extend["confirmOverride"] = newValue }
     }
