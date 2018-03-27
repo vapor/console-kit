@@ -16,7 +16,11 @@ extension OutputConsole {
         }
 
         for opt in runnable.options {
-            success("[--" + opt.name + "] ", newLine: false)
+            if let short = opt.short {
+                success("[--\(opt.name),-\(short)] ", newLine: false)
+            } else {
+                success("[--\(opt.name)] ", newLine: false)
+            }
         }
         print()
         print()

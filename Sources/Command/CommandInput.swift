@@ -28,11 +28,21 @@ public struct CommandInput {
         for (i, arg) in arguments.enumerated() {
             guard var arg = arg else { continue }
 
-            if arg.hasPrefix("--") {
+            var deprecatedFlagFormat = false
+
+            if arg.hasPrefix("--\(option.name)=") {
+                // deprecated option support
+                print("[Deprecated] --option=value syntax is deprecated. Please use --option value (with no =) instead.")
+                deprecatedFlagFormat = true
+                
+                // remove this option from the command input
+                arguments[i] = nil
+            } else if arg.hasPrefix("--") {
                 // check if option matches
                 guard arg == "--\(option.name)" else {
                     continue
                 }
+
                 // remove this option from the command input
                 arguments[i] = nil
             } else if let short = option.short, arg.hasPrefix("-") {
@@ -61,19 +71,26 @@ public struct CommandInput {
             case .value(let d):
                 let supplied: String?
 
-                // check if the next arg is available
-                if i + 1 < arguments.count {
-                    let next = arguments[i + 1]
-                    // ensure it's non-nil and not an option
-                    if next?.hasPrefix("-") == false {
-                        supplied = next
-                        arguments[i + 1] = nil
+                if deprecatedFlagFormat {
+                    // parse --option=flag syntax
+                    let parts = arg.split(separator: "=", maxSplits: 2, omittingEmptySubsequences: false)
+                    supplied = String(parts[1])
+                } else {
+                    // check if the next arg is available
+                    if i + 1 < arguments.count {
+                        let next = arguments[i + 1]
+                        // ensure it's non-nil and not an option
+                        if next?.hasPrefix("-") == false {
+                            supplied = next
+                            arguments[i + 1] = nil
+                        } else {
+                            supplied = nil
+                        }
                     } else {
                         supplied = nil
                     }
-                } else {
-                    supplied = nil
                 }
+
 
                 // value options need either a supplied value or a default
                 guard let value = supplied ?? d else {
