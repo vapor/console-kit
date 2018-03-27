@@ -8,7 +8,7 @@ public struct ConfiguredCommands: Service {
     /// If set, this is the default top-level command that should run if no other commands are specified.
     public let defaultCommand: CommandRunnable?
 
-    /// Creates a new `ConfiguredCommands` struct. This is usually done by calling `resolvle(for:)` on `CommandConfig`.
+    /// Creates a new `ConfiguredCommands` struct. This is usually done by calling `resolve(for:)` on `CommandConfig`.
     ///
     /// - parameters:
     ///     - commands: Top-level available commands, stored by unique name.
