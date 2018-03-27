@@ -24,7 +24,7 @@ class ConsoleTests: XCTestCase {
 
         console.input = name
 
-        let response = try console.confirm(question)
+        let response = console.confirm(question)
 
         XCTAssertEqual(response, true)
         XCTAssertEqual(console.output, question + "\ny/n> ")
