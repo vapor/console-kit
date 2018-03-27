@@ -16,7 +16,7 @@ private var _pids: [pid_t] = []
 private var _pidLock = NSLock()
 
 /// Generic console that uses a mixture of Swift standard
-/// library and Foundation code to fulfull protocol requirements.
+/// library and Foundation code to fulfill protocol requirements.
 public final class Terminal: Console {
     /// See Extendable.extend
     public var extend: Extend
