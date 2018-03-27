@@ -1,6 +1,7 @@
 import Async
 import Console
 import Command
+import Service
 
 extension String: Error {}
 
@@ -56,7 +57,7 @@ final class TestCommand: Command {
     ]
 
     let options: [CommandOption] = [
-        .value(name: "bar", help: ["Add a bar if you so desire", "Try passing it"])
+        .value(name: "bar", short: "b", help: ["Add a bar if you so desire", "Try passing it"])
     ]
 
     let help = ["This is a test command"]
@@ -68,3 +69,38 @@ final class TestCommand: Command {
         return .done(on: context.container)
     }
 }
+
+final class TestConsole: Console {
+    var testInputQueue: [String]
+    var testOutputQueue: [String]
+    var extend: Extend
+
+    init() {
+        self.testInputQueue = []
+        self.testOutputQueue = []
+        self.extend = [:]
+    }
+
+    func input(isSecure: Bool) -> String {
+        return testInputQueue.popLast() ?? ""
+    }
+
+    func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
+        testOutputQueue.insert(string + (newLine ? "\n" : ""), at: 0)
+    }
+
+    func report(error: String, newLine: Bool) {
+        //
+    }
+
+    func clear(_ type: ConsoleClear) {
+        //
+    }
+
+    func execute(program: String, arguments: [String], input: ExecuteStream?, output: ExecuteStream?, error: ExecuteStream?) throws {
+        //
+    }
+
+    var size: (width: Int, height: Int) { return (0, 0) }
+}
+

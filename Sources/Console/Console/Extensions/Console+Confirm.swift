@@ -1,7 +1,7 @@
 extension OutputConsole where Self: InputConsole {
     /// Requests yes/no confirmation from
     /// the console.
-    public func confirm(_ prompt: String, style: ConsoleStyle = .info) throws -> Bool {
+    public func confirm(_ prompt: String, style: ConsoleStyle = .info) -> Bool {
         var i = 0
         var result = ""
         while result != "y" && result != "yes" && result != "n" && result != "no" {
