@@ -6,6 +6,13 @@ extension Console {
     /// Runs a command or group of commands on this console using
     /// the supplied arguments.
     public func run(_ runnable: CommandRunnable, input: inout CommandInput, on container: Container) throws -> Future<Void> {
+        // check -n and -y flags.
+        if try input.parse(option: .flag(name: "no", short: "n", help: ["Automatically answers 'no' to all confirmiations."])) == "true" {
+            confirmOverride = false
+        } else if try input.parse(option: .flag(name: "yes", short: "y", help: ["Automatically answers 'yes' to all confirmiations."])) == "true" {
+            confirmOverride = true
+        }
+
         // try to run subcommand first
         switch runnable.type {
         case .group(let commands):
