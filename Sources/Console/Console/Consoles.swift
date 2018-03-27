@@ -3,7 +3,7 @@ import Service
 /// Protocol for powering styled Console I/O.
 public protocol BaseConsole: Extendable {
     /// The size of the console window used for
-    /// calculating lines printed and centering tet.
+    /// calculating lines printed and centering text.
     var size: (width: Int, height: Int) { get }
 }
 
