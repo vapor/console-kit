@@ -2,7 +2,7 @@ import Console
 
 extension Console {
     /// Outputs help for a command.
-    public func outputHelp(for runnable: CommandRunnable, executable: String) throws {
+    public func outputHelp(for runnable: CommandRunnable, executable: String) {
         output("Usage: ".consoleText(.info) + executable.consoleText() + " ", newLine: false)
 
         switch runnable.type {
@@ -22,10 +22,13 @@ extension Console {
             }
         }
         print()
-        print()
 
-        for help in runnable.help {
-            print(help)
+        if !runnable.help.isEmpty {
+            print()
+
+            for help in runnable.help {
+                print(help)
+            }
         }
 
         var names = runnable.options.map { $0.name }
@@ -39,9 +42,9 @@ extension Console {
 
         let padding = names.longestCount + 2
 
-        print()
         if let command = runnable as? Command {
             if command.arguments.count > 0 {
+                print()
                 output("Arguments:".consoleText(.info))
                 for arg in command.arguments {
                     outputHelpListItem(
@@ -58,6 +61,7 @@ extension Console {
         case .command: break
         case .group(let commands):
             if commands.count > 0 {
+                print()
                 output("Commands:".consoleText(.success))
                 for (key, runnable) in commands {
                     outputHelpListItem(
@@ -70,9 +74,9 @@ extension Console {
             }
         }
 
-        print()
         if runnable.options.count > 0 {
-            output("Options:".consoleText(.success))
+            print()
+            output("Options:".consoleText(.info))
             for opt in runnable.options {
                 outputHelpListItem(
                     name: opt.name,
@@ -95,11 +99,15 @@ extension Console {
 
     private func outputHelpListItem(name: String, help: [String], style: ConsoleStyle, padding: Int) {
         output(name.leftPad(to: padding - name.count).consoleText(style), newLine: false)
-        for (i, help) in help.enumerated() {
-            if i == 0 {
-                print(help.leftPad(to: 1))
-            } else {
-                print(help.leftPad(to: padding + 1))
+        if help.isEmpty {
+            print(" n/a")
+        } else {
+            for (i, help) in help.enumerated() {
+                if i == 0 {
+                    print(help.leftPad(to: 1))
+                } else {
+                    print(help.leftPad(to: padding + 1))
+                }
             }
         }
     }

@@ -1,4 +1,28 @@
-/// A collection of `ConsoleTextFragment`.
+extension String {
+    /// Converts this `String` to `ConsoleText`.
+    ///
+    ///     console.output("Hello, " + "world!".consoleText(color: .green))
+    ///
+    /// See `ConsoleStyle` for more information.
+    public func consoleText(_ style: ConsoleStyle = .plain) -> ConsoleText {
+        return [ConsoleTextFragment(string: self, style: style)]
+    }
+
+    /// Converts this `String` to `ConsoleText`.
+    ///
+    ///     console.output("Hello, " + "world!".consoleText(color: .green))
+    ///
+    /// See `ConsoleStyle` for more information.
+    public func consoleText(color: ConsoleColor? = nil, background: ConsoleColor? = nil, isBold: Bool = false) -> ConsoleText {
+        let style = ConsoleStyle(color: color, background: background, isBold: isBold)
+        return consoleText(style)
+    }
+}
+
+/// A collection of `ConsoleTextFragment`s. Represents stylized text that can be outputted
+/// to a `Console`.
+///
+/// See `Console.output(_:newLine:)` for more information.
 public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, ExpressibleByStringLiteral, CustomStringConvertible {
     /// See `Collection`.
     public var startIndex: Int {
@@ -28,7 +52,11 @@ public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, Ex
 
     /// See `ExpressibleByStringLiteral`.
     public init(stringLiteral string: String) {
-        self.fragments = [.init(string: string)]
+        if string.count > 0 {
+            self.fragments = [.init(string: string)]
+        } else {
+            self.fragments = []
+        }
     }
 
     /// One or more `ConsoleTextFragment`s making up this `ConsoleText.
@@ -47,32 +75,21 @@ public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, Ex
     public static let newLine: ConsoleText = "\n"
 }
 
-public struct ConsoleTextFragment {
-    public var string: String
-    public var style: ConsoleStyle
+// MARK: Operators
 
-    /// Creates a new `ConsoleTextFragment`.
-    public init(string: String, style: ConsoleStyle = .plain) {
-        self.string = string
-        self.style = style
-    }
-}
-
+/// Appends a `ConsoleText` to another `ConsoleText`.
+///
+///     let text: ConsoleText = "Hello, " + "world!"
+///
 public func +(lhs: ConsoleText, rhs: ConsoleText) -> ConsoleText {
     return ConsoleText(fragments: lhs.fragments + rhs.fragments)
 }
 
-
+/// Appends a `ConsoleText` to another `ConsoleText` in-place.
+///
+///     var text: ConsoleText = "Hello, "
+///     text += "world!"
+///
 public func +=(lhs: inout ConsoleText, rhs: ConsoleText) {
     lhs = lhs + rhs
-}
-
-extension String {
-    public func consoleText(_ style: ConsoleStyle = .plain) -> ConsoleText {
-        return [ConsoleTextFragment(string: self, style: style)]
-    }
-    public func consoleText(color: ConsoleColor? = nil, background: ConsoleColor? = nil, isBold: Bool = false) -> ConsoleText {
-        let style = ConsoleStyle(color: color, background: background, isBold: isBold)
-        return consoleText(style)
-    }
 }

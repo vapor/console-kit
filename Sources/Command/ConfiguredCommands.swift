@@ -17,4 +17,15 @@ public struct ConfiguredCommands: Service {
         self.commands = commands
         self.defaultCommand = defaultCommand
     }
+
+    /// Creates a `CommandGroup` for this `ConfiguredCommands`.
+    ///
+    ///
+    ///
+    /// - parameters:
+    ///     - help: Optional help messages to include.
+    /// - returns: A `CommandGroup` with commands and defaultCommand configured.
+    public func group(help: [String] = []) -> CommandGroup {
+        return BasicCommandGroup(commands: commands, defaultCommand: defaultCommand, help: help)
+    }
 }

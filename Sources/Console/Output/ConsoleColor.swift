@@ -1,10 +1,12 @@
-/// Underlying colors for console styles.
-/// - Note: Normal and bright colors are represented here
-/// separately instead of as a flag on `ConsoleStyle`
-/// basically because "that's how ANSI colors work". It's
-/// a little conceptually weird, but so are terminal
-/// control codes.
+/// Supported colors for creating a `ConsoleStyle` for `ConsoleText`.
+///
+/// - note: Normal and bright colors are represented here separately instead of as a flag on `ConsoleStyle`
+///         basically because "that's how ANSI colors work". It's a little conceptually weird, but so are terminal
+///         control codes.
+///
 public enum ConsoleColor {
+    // MARK: Normal
+
     case black
     case red
     case green
@@ -13,7 +15,9 @@ public enum ConsoleColor {
     case magenta
     case cyan
     case white
-    
+
+    // MARK: Bright
+
     case brightBlack
     case brightRed
     case brightGreen
@@ -22,6 +26,8 @@ public enum ConsoleColor {
     case brightMagenta
     case brightCyan
     case brightWhite
+
+    // MARK: Custom
     
     /// A color from the predefined 256-color palette
     case palette(UInt8)

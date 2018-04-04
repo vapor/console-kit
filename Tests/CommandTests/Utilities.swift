@@ -70,6 +70,44 @@ final class TestCommand: Command {
     }
 }
 
+
+struct CowsayCommand: Command {
+    var arguments: [CommandArgument] {
+        return [.argument(name: "message")]
+    }
+
+    var options: [CommandOption] {
+        return [
+            .value(name: "eyes", short: "e"),
+            .value(name: "tongue", short: "t"),
+        ]
+    }
+
+    var help: [String] {
+        return ["Generates ASCII picture of a cow with a message."]
+    }
+
+    func run(using context: CommandContext) throws -> Future<Void> {
+        let message = try context.argument("message")
+        let eyes = context.options["eyes"] ?? "oo"
+        let padding = String(repeating: "-", count: message.count)
+        var text: String = """
+         \(padding)
+        < \(message) >
+         \(padding)
+                \   ^__^
+                 \  (\(eyes)\_______
+                    (__)\       )\/\
+                        ||----w |
+                        ||     ||
+        """
+
+        context.console.print(text)
+        return .done(on: context.container)
+    }
+}
+
+
 final class TestConsole: Console {
     var testInputQueue: [String]
     var testOutputQueue: [String]

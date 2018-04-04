@@ -16,13 +16,13 @@ let package = Package(
         .package(url: "https://github.com/vapor/service.git", from: "1.0.0"),
     ],
     targets: [
-        .target(name: "Console", dependencies: ["Core", "COperatingSystem", "Service"]),
+        .target(name: "Console", dependencies: ["Core", "COperatingSystem", "Logging", "Service"]),
         .target(name: "Command", dependencies: ["Console"]),
         .testTarget(name: "ConsoleTests", dependencies: ["Console"]),
         .testTarget(name: "CommandTests", dependencies: ["Command"]),
         .target(name: "Logging", dependencies: ["Core"]),
 
 
-        .target(name: "Development", dependencies: ["Console"]),
+        .target(name: "Development", dependencies: ["Command", "Console", "Logging"]),
     ]
 )

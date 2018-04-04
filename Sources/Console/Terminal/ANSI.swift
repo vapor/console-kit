@@ -41,6 +41,7 @@ enum ANSISGRCommand {
 }
 
 extension Terminal {
+    /// Performs an `ANSICommand`.
     func command(_ command: ANSICommand) {
         Swift.print(command.ansi, terminator: "")
     }

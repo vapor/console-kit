@@ -3,7 +3,7 @@
 
 // add to core
 extension Thread {
-    static func async(work: @escaping () -> Void) {
+    public static func async(work: @escaping () -> Void) {
         if #available(OSX 10.12, *) {
             Thread.detachNewThread(work)
         } else {
