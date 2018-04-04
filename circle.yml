@@ -43,12 +43,31 @@ jobs:
           working_directory: ~/vapor
 
 
+  linux-fluent:
+    docker:
+      - image: codevapor/swift:4.1
+    steps:
+      - run:
+          name: Clone Fluent
+          command: git clone -b master https://github.com/vapor/fluent.git
+          working_directory: ~/
+      - run:
+          name: Switch Fluent to this Console revision
+          command: swift package edit Console --revision $CIRCLE_SHA1
+          working_directory: ~/fluent
+      - run:
+          name: Run Fluent unit tests
+          command: swift test
+          working_directory: ~/fluent
+
+
 workflows:
   version: 2
   tests:
     jobs:
       - linux
       - linux-vapor
+      - linux-fluent
       # - macos
 
   nightly:
