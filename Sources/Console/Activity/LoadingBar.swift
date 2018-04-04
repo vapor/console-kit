@@ -1,4 +1,5 @@
 extension Console {
+    /// Creates a new `LoadingBar`-based `ActivityIndicator`.
     ///
     ///     let loadingBar = console.loadingBar(title: "Loading")
     ///     background {
@@ -9,6 +10,9 @@ extension Console {
     ///     // start the loading bar and wait for it to finish
     ///     try loadingBar.start(on: ...).wait()
     ///
+    /// - parameters:
+    ///     - title: Title to display alongside the loading bar.
+    /// - returns: An `ActivityIndicator` that can start and stop the loading bar.
     public func loadingBar(title: String) -> ActivityIndicator<LoadingBar> {
         return LoadingBar(title: title).newActivity(for: self)
     }
