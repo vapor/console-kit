@@ -2,6 +2,12 @@ import Console
 
 let console = Terminal()
 
+console.confirmOverride = true
+
+if !console.confirm("Delete everything?") {
+    console.warning("I won't do it....")
+}
+
 do {
     var text: ConsoleText = ""
     text += "Bold".consoleText(isBold: true)
@@ -16,6 +22,9 @@ do {
         + "green".consoleText(color: .green, background: .blue)
     console.output(text)
 }
+
+let color = console.choose("Favorite color?", from: ["Pink", "Blue"])
+console.output("You chose: " + color.consoleText())
 
 console.print("a")
 console.pushEphemeral()

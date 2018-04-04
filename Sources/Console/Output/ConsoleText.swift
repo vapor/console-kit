@@ -26,7 +26,7 @@ public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, Ex
     }
 
 
-    /// See `ExpressibleByArrayLiteral`.
+    /// See `ExpressibleByStringLiteral`.
     public init(stringLiteral string: String) {
         self.fragments = [.init(string: string)]
     }

@@ -79,7 +79,7 @@ class ConsoleTests: XCTestCase {
 
         console.input = name
 
-        let response = console.confirm(question)
+        let response = console.confirm(question.consoleText(.info))
 
         XCTAssertEqual(response, true)
         XCTAssertEqual(console.output, question + "\ny/n> ")

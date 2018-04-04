@@ -1,15 +1,38 @@
 extension Console {
-    /// Requests yes/no confirmation from
-    /// the console.
-    public func confirm(_ prompt: String, style: ConsoleStyle = .info) -> Bool {
+    /// Requests yes / no confirmation from the user after a prompt.
+    ///
+    ///     if console.confirm("Delete everything?") {
+    ///         console.warning("Deleting everything!")
+    ///     } else {
+    ///         console.print("OK, I won't.")
+    ///     }
+    ///
+    /// The above code outputs:
+    ///
+    ///     Delete everything?
+    ///     > no
+    ///     OK, I won't.
+    ///
+    /// This method will attempt to convert the response into a `Bool` using `String.bool`.
+    /// It will continue to ask until the result is a proper format, providing additional help after
+    /// a few failed attempts.
+    ///
+    /// See `Console.confirmOverride` for enabling automatic answers to all confirmation prompts.
+    ///
+    /// - parameters:
+    ///     - prompt: `ConsoleText` to display before the confirmation input.
+    /// - returns: `true` if the user answered yes, false if no.
+    public func confirm(_ prompt: ConsoleText) -> Bool {
         var i = 0
         var result = ""
-        while result != "y" && result != "yes" && result != "n" && result != "no" {
-            output(prompt.consoleText(style))
+
+        /// continue to ask until the result can be converted to a bool
+        while result.bool == nil {
+            output(prompt)
             if i >= 1 {
-                output("[y]es or [n]o> ".consoleText(style), newLine: false)
+                output("[y]es or [n]o> ".consoleText(.info), newLine: false)
             } else {
-                output("y/n> ".consoleText(style), newLine: false)
+                output("y/n> ".consoleText(.info), newLine: false)
             }
 
             // Defaults for all confirms for headless environments
@@ -23,9 +46,10 @@ extension Console {
             i += 1
         }
 
-        return result == "y" || result == "yes"
+        return result.bool!
     }
 
+    /// If set, all calls to `confirm(_:)` will use this value instead of asking the user.
     public var confirmOverride: Bool? {
         get { return extend.get(\Self.confirmOverride, default: nil) }
         set { extend.set(\Self.confirmOverride, to: newValue) }

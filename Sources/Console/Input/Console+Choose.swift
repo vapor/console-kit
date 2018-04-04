@@ -1,21 +1,62 @@
 extension Console {
-    /// Choose an item from the supplied array.
-    /// Each item will be converted to a string via CustomStringConvertible.
-    public func choose<T>(title: String, from array: [T]) throws -> T
+    /// Prompts the user to choose an item from the supplied array. The chosen item will be returned.
+    ///
+    ///     let color = console.choose("Favorite color?", from: ["Pink", "Blue"])
+    ///     console.output("You chose: " + color.consoleText())
+    ///
+    /// The above code will output:
+    ///
+    ///     Favorite color?
+    ///     1: Pink
+    ///     2: Blue
+    ///     >
+    ///
+    /// Upon answering, the prompt and options will be cleared from the console and only the output will remain:
+    ///
+    ///     You chose: Blue
+    ///
+    /// This method calls `choose(_:from:display:)` using `CustomStringConvertible` to display each element.
+    ///
+    /// - parameters:
+    ///     - prompt: `ConsoleText` prompt to display to the user before listing options.
+    ///     - array: Array of `CustomStringConvertible` items to choose from.
+    /// - returns: Element from `array` that the user chose.
+    public func choose<T>(_ prompt: ConsoleText, from array: [T]) -> T
         where T: CustomStringConvertible
     {
-        return try choose(title: title, from: array, display: { $0.description })
+        return choose(prompt, from: array, display: { $0.description.consoleText() })
     }
 
-    /// Choose an item from the supplied array, using the closure to
-    /// convert each item to a string.
-    public func choose<T>(title: String, from array: [T], display: (T) -> String) throws -> T {
-        output(title.consoleText(.info))
+    /// Prompts the user to choose an item from the supplied array. The chosen item will be returned.
+    ///
+    ///     let color = console.choose("Favorite color?", from: ["Pink", "Blue"])
+    ///     console.output("You chose: " + color.consoleText())
+    ///
+    /// The above code will output:
+    ///
+    ///     Favorite color?
+    ///     1: Pink
+    ///     2: Blue
+    ///     >
+    ///
+    /// Upon answering, the prompt and options will be cleared from the console and only the output will remain:
+    ///
+    ///     You chose: Blue
+    ///
+    /// See `choose(_:from:)` which uses `CustomStringConvertible` to display each element.
+    ///
+    /// - parameters:
+    ///     - prompt: `ConsoleText` prompt to display to the user before listing options.
+    ///     - array: Array of `CustomStringConvertible` items to choose from.
+    ///     - display: A closure for converting each element of `array` to a `ConsoleText` for display.
+    /// - returns: Element from `array` that the user chose.
+    public func choose<T>(_ prompt: ConsoleText, from array: [T], display: (T) -> ConsoleText) -> T {
+        output(prompt)
         array.enumerated().forEach { idx, item in
             let offset = idx + 1
             output("\(offset): ".consoleText(.info), newLine: false)
             let description = display(item)
-            output(description.consoleText(.plain))
+            output(description)
         }
 
         var res: T?
