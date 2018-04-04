@@ -21,5 +21,8 @@ let package = Package(
         .testTarget(name: "ConsoleTests", dependencies: ["Console"]),
         .testTarget(name: "CommandTests", dependencies: ["Command"]),
         .target(name: "Logging", dependencies: ["Core"]),
+
+
+        .target(name: "Development", dependencies: ["Console"]),
     ]
 )

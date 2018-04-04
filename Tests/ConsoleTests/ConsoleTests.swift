@@ -35,6 +35,28 @@ class ConsoleTests: XCTestCase {
         try foo.start(on: worker).wait()
     }
 
+    func testEphemeral() {
+        // for some reason, piping through test output doesn't work correctly
+        // but this code works great if running directly in an executable
+
+        // added here anyway to verify that the code snippet in doc blocks actually compiles
+        let console = Terminal()
+        console.print("a")
+        console.pushEphemeral()
+        console.print("b")
+        console.print("c")
+        console.pushEphemeral()
+        console.print("d")
+        console.print("e")
+        console.print("f")
+        console.blockingWait(seconds: 1)
+        console.popEphemeral() // removes "d", "e", and "f" lines
+        console.print("g")
+        console.blockingWait(seconds: 1)
+        console.popEphemeral() // removes "b", "c", and "g" lines
+        // just "a" has been printed now
+    }
+
     func testAsk() throws {
         let console = TestConsole()
 
