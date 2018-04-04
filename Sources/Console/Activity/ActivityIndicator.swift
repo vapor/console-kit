@@ -1,5 +1,3 @@
-import Dispatch
-
 extension ActivityIndicatorType {
     /// Creates a new `ActivityIndicator` for this `ActivityIndicatorType`.
     ///
@@ -29,9 +27,9 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
     public var activity: A
     private let console: Console
     private var state: ActivityIndicatorState
-    private var background: DispatchWorkItem?
     private var isActive: Bool
 
+    /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.
     init(activity: A, console: Console) {
         self.console = console
         self.state = .ready
@@ -39,10 +37,18 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
         self.isActive = false
     }
 
+    /// Starts the `ActivityIndicator`. Usually this means beginning the associated "loading" animation.
+    ///
+    /// Once started, `ActivityIndicator` will continue to redraw the `ActivityIndicatorType` at a fixed
+    /// refresh rate passing `ActivityIndicatorState.active`.
+    ///
+    /// - parameters:
+    ///     - worker: `EventLoop` to create the returned `Future` on.
+    /// - returns: A `Future` that completes when the `ActivityIndicator` is finished (fail or succeed).
     public func start(on worker: Worker) -> Future<Void> {
         isActive = true
         let promise = worker.eventLoop.newPromise(Void.self)
-        let background = DispatchWorkItem {
+        Thread.async {
             var tick: UInt = 0
             while self.isActive {
                 defer { tick = tick &+ 1 }
@@ -55,26 +61,32 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
             }
             promise.succeed()
         }
-
-        DispatchQueue.global().async(execute: background)
-        self.background = background
         return promise.futureResult
     }
 
+    /// Stops the `ActivityIndicator`, yielding a failed / error appearance.
+    ///
+    /// Passes `ActivityIndicatorState.failure` to the `ActivityIndicatorType`.
+    ///
+    /// Must be called after `start(on:)` and completes the future returned by that method.
     public func fail() {
         stop()
-        activity.outputActivityIndicator(to: console, state: .fail)
+        activity.outputActivityIndicator(to: console, state: .failure)
     }
 
+    /// Stops the `ActivityIndicator`, yielding a success / done appearance.
+    ///
+    /// Passes `ActivityIndicatorState.success` to the `ActivityIndicatorType`.
+    ///
+    /// Must be called after `start(on:)` and completes the future returned by that method.
     public func succeed() {
         stop()
-        activity.outputActivityIndicator(to: console, state: .done)
+        activity.outputActivityIndicator(to: console, state: .success)
     }
 
+    /// Stops the output refreshing and clears the console.
     private func stop() {
         isActive = false
         console.popEphemeral()
-        background?.cancel()
-        background = nil
     }
 }

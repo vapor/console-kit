@@ -32,10 +32,10 @@ extension ActivityBar {
         case .active(let tick):
             bar = renderActiveBar(tick: tick)
             barStyle = .info
-        case .done:
+        case .success:
             bar = "[Done]"
             barStyle = .success
-        case .fail:
+        case .failure:
             bar = "[Failed]"
             barStyle = .error
         }

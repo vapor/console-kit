@@ -1,16 +1,54 @@
 extension Console {
-    /// Creates a progress bar using the console.
+    /// Creates a new `ProgressBar`-based `ActivityIndicator`.
+    ///
+    ///     Downloading [========                ]
+    ///
+    /// The `=` characters represent the value of `ProgressBar.currentProgress` from 0...1
+    ///
+    ///     let progressBar = console.progressBar(title: "Downloading")
+    ///     background {
+    ///         // increment the progress bar by 10% every 1/4 second
+    ///         // once progress is 100%, trigger success
+    ///         while true {
+    ///             if progressBar.activity.currentProgress >= 1 { break }
+    ///             progressBar.activity.currentProgress += 0.1
+    ///             console.blockingWait(seconds: 0.25)
+    ///         }
+    ///         progressBar.succeed()
+    ///     }
+    ///     // start the progress bar and wait for it to finish
+    ///     try progressBar.start(on: ...).wait()
+    ///
+    /// - parameters:
+    ///     - title: Title to display alongside the loading bar.
+    /// - returns: An `ActivityIndicator` that can start and stop the loading bar.
     public func progressBar(title: String) -> ActivityIndicator<ProgressBar> {
         return ProgressBar(title: title, currentProgress: 0).newActivity(for: self)
     }
 }
 
-
+/// Progress-style implementation of `ActivityBar`.
+///
+///     Downloading [========                ]
+///
+/// The `=` characters represent the value of `ProgressBar.currentProgress` from 0...1
+///
+/// See `Console.progressBar(title:)` to create one.
 public struct ProgressBar: ActivityBar {
+    /// Defines the width of all `ProgressBar`s in characters.
     public static var width: Int = 25
+
+    /// See `ActivityBar`.
     public var title: String
+
+    /// Controls how the `ProgressBar` is rendered.
+    ///
+    /// Valid values are between 0 and 1.
+    ///
+    /// When `1`, the progress bar is full. When `0`, it is empty.
     public var currentProgress: Double
 
+    /// See `ActivityBar`.
     public func renderActiveBar(tick: UInt) -> String {
         let current = min(max(currentProgress, 0.0), 1.0)
 

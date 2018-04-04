@@ -1,6 +1,10 @@
 extension Console {
     /// Creates a new `LoadingBar`-based `ActivityIndicator`.
     ///
+    ///     Loading [        •             ]
+    ///
+    /// The `•` character will bounce from left to right while the bar is active.
+    ///
     ///     let loadingBar = console.loadingBar(title: "Loading")
     ///     background {
     ///         // complete the loading bar after 3 seconds
@@ -18,10 +22,21 @@ extension Console {
     }
 }
 
+/// Loading-style implementation of `ActivityBar`.
+///
+///     Loading [        •             ]
+///
+/// The `•` character will bounce from left to right while the bar is active.
+///
+/// See `Console.loadingBar(title:)` to create one.
 public struct LoadingBar: ActivityBar {
+    /// Defines the width of all `LoadingBar`s in characters.
     public static var width: Int = 25
+
+    /// See `ActivityBar`.
     public var title: String
 
+    /// See `ActivityBar`.
     public func renderActiveBar(tick: UInt) -> String {
         let period = LoadingBar.width - 1
         let offset = Int(tick) % period
