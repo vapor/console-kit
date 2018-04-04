@@ -4,7 +4,7 @@ extension Console {
         levels[depth] = 0
     }
 
-    public func popEphemeral() throws {
+    public func popEphemeral() {
         let lines = levels[depth] ?? 0
         guard lines > 0 else {
             levels[depth] = nil
