@@ -16,7 +16,7 @@ public protocol Console: Extendable {
     /// Outputs a String in the given style to
     /// the console. If newLine is true, the next
     /// output will appear on a new line.
-    func output(_ string: String, style: ConsoleStyle, newLine: Bool)
+    func output(_ text: ConsoleText, newLine: Bool)
 
     /// Outputs an error
     func report(error: String, newLine: Bool)
@@ -31,11 +31,6 @@ extension Console {
     /// note: Defaults to non secure input.
     public func input() -> String {
         return input(isSecure: false)
-    }
-
-    /// See OutputConsole.output
-    public func output(_ string: String, style: ConsoleStyle) {
-        self.output(string, style: style, newLine: true)
     }
 }
 

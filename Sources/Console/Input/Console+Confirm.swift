@@ -5,17 +5,17 @@ extension Console {
         var i = 0
         var result = ""
         while result != "y" && result != "yes" && result != "n" && result != "no" {
-            output(prompt, style: style)
+            output(prompt.consoleText(style))
             if i >= 1 {
-                output("[y]es or [n]o> ", style: style, newLine: false)
+                output("[y]es or [n]o> ".consoleText(style), newLine: false)
             } else {
-                output("y/n> ", style: style, newLine: false)
+                output("y/n> ".consoleText(style), newLine: false)
             }
 
             // Defaults for all confirms for headless environments
             if let override = confirmOverride {
                 let message = override ? "yes" : "no"
-                output(message, style: .warning)
+                output(message.consoleText(.warning))
                 return override
             }
 

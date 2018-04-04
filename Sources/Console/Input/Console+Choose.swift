@@ -10,17 +10,17 @@ extension Console {
     /// Choose an item from the supplied array, using the closure to
     /// convert each item to a string.
     public func choose<T>(title: String, from array: [T], display: (T) -> String) throws -> T {
-        info(title)
+        output(title.consoleText(.info))
         array.enumerated().forEach { idx, item in
             let offset = idx + 1
-            info("\(offset): ", newLine: false)
+            output("\(offset): ".consoleText(.info), newLine: false)
             let description = display(item)
-            print(description)
+            output(description.consoleText(.plain))
         }
 
         var res: T?
         while res == nil {
-            output("> ", style: .plain, newLine: false)
+            output("> ".consoleText(.info), newLine: false)
             let raw = input()
             guard let idx = Int(raw), (1...array.count).contains(idx) else {
                 // .count is implicitly offset, no need to adjust

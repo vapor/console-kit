@@ -35,9 +35,6 @@ extension Console {
 ///
 /// See `Console.progressBar(title:)` to create one.
 public struct ProgressBar: ActivityBar {
-    /// Defines the width of all `ProgressBar`s in characters.
-    public static var width: Int = 25
-
     /// See `ActivityBar`.
     public var title: String
 
@@ -49,7 +46,7 @@ public struct ProgressBar: ActivityBar {
     public var currentProgress: Double
 
     /// See `ActivityBar`.
-    public func renderActiveBar(tick: UInt) -> String {
+    public func renderActiveBar(tick: UInt, width: Int) -> ConsoleText {
         let current = min(max(currentProgress, 0.0), 1.0)
 
         let left = Int(current * Double(ProgressBar.width))
@@ -60,6 +57,6 @@ public struct ProgressBar: ActivityBar {
         barComponents.append(.init(repeating: "=", count: Int(left)))
         barComponents.append(.init(repeating: " ", count: Int(right)))
         barComponents.append("]")
-        return barComponents.joined(separator: "")
+        return barComponents.joined(separator: "").consoleText(.info)
     }
 }

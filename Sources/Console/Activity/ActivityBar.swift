@@ -17,30 +17,31 @@ public protocol ActivityBar: ActivityIndicatorType {
     ///     - tick: Increments each time this method is called. Use this number to
     ///             change the activity bar's appearance over time.
     /// - returns: Rendered activity bar.
-    func renderActiveBar(tick: UInt) -> String
+    func renderActiveBar(tick: UInt, width: Int) -> ConsoleText
 }
 
 extension ActivityBar {
     /// See `ActivityIndicatorType`.
     public func outputActivityIndicator(to console: Console, state: ActivityIndicatorState) {
-        let bar: String
-        let barStyle: ConsoleStyle
+        let bar: ConsoleText
         switch state {
-        case .ready:
-            bar = "[]"
-            barStyle = .plain
-        case .active(let tick):
-            bar = renderActiveBar(tick: tick)
-            barStyle = .info
-        case .success:
-            bar = "[Done]"
-            barStyle = .success
-        case .failure:
-            bar = "[Failed]"
-            barStyle = .error
+        case .ready: bar = "[]"
+        case .active(let tick): bar = renderActiveBar(tick: tick, width: Self.width)
+        case .success: bar = "[Done]".consoleText(.success)
+        case .failure: bar = "[Failed]".consoleText(.error)
         }
+        console.output(title.consoleText(.plain) + " " + bar)
+    }
+}
 
-        console.output("\(title) ", style: .plain, newLine: false)
-        console.output(bar, style: barStyle)
+
+/// Defines the width of all `ActivityBar`s in characters.
+private var _width: Int = 25
+
+extension ActivityBar {
+    /// Defines the width of all `ActivityBar`s in characters.
+    public static var width: Int {
+        get { return _width }
+        set { _width = newValue}
     }
 }

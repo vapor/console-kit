@@ -48,24 +48,30 @@ public final class Terminal: Console {
     }
 
     /// See OutputConsole.output
-    public func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
+    public func output(_ text: ConsoleText, newLine: Bool) {
         var lines = 0
-        let count = string.count
-        if count > size.width && count > 0 && size.width > 0 {
-            lines += (count / size.width) + 1
+        for fragment in text.fragments {
+            let strings = fragment.string.split(separator: "\n")
+            for string in strings {
+                let count = string.count
+                if count > size.width && count > 0 && size.width > 0 {
+                    lines += (count / size.width) + 1
+                }
+            }
+            /// add line for each fragment
+            lines += strings.count - 1
         }
-        if newLine {
-            lines += 1
-        }
+        if newLine { lines += 1 }
+
         didOutputLines(count: lines)
 
         let terminator = newLine ? "\n" : ""
 
         let output: String
         if applyStyle {
-            output = string.terminalStylize(style)
+            output = text.terminalStylize()
         } else {
-            output = string
+            output = text.description
         }
 
         Swift.print(output, terminator: terminator)

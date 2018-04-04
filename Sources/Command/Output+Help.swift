@@ -3,23 +3,22 @@ import Console
 extension Console {
     /// Outputs help for a command.
     public func outputHelp(for runnable: CommandRunnable, executable: String) throws {
-        info("Usage: ", newLine: false)
-        print(executable + " ", newLine: false)
+        output("Usage: ".consoleText(.info) + executable.consoleText() + " ", newLine: false)
 
         switch runnable.type {
         case .command(let arguments):
             for arg in arguments {
-                warning("<" + arg.name + "> ", newLine: false)
+                output(("<" + arg.name + "> ").consoleText(.warning), newLine: false)
             }
         case .group:
-            warning("<command> ", newLine: false)
+            output("<command> ".consoleText(.warning), newLine: false)
         }
 
         for opt in runnable.options {
             if let short = opt.short {
-                success("[--\(opt.name),-\(short)] ", newLine: false)
+                output("[--\(opt.name),-\(short)] ".consoleText(.success), newLine: false)
             } else {
-                success("[--\(opt.name)] ", newLine: false)
+                output("[--\(opt.name)] ".consoleText(.success), newLine: false)
             }
         }
         print()
@@ -43,7 +42,7 @@ extension Console {
         print()
         if let command = runnable as? Command {
             if command.arguments.count > 0 {
-                info("Arguments:")
+                output("Arguments:".consoleText(.info))
                 for arg in command.arguments {
                     outputHelpListItem(
                         name: arg.name,
@@ -59,7 +58,7 @@ extension Console {
         case .command: break
         case .group(let commands):
             if commands.count > 0 {
-                success("Commands:")
+                output("Commands:".consoleText(.success))
                 for (key, runnable) in commands {
                     outputHelpListItem(
                         name: key,
@@ -73,7 +72,7 @@ extension Console {
 
         print()
         if runnable.options.count > 0 {
-            success("Options:")
+            output("Options:".consoleText(.success))
             for opt in runnable.options {
                 outputHelpListItem(
                     name: opt.name,
@@ -89,13 +88,13 @@ extension Console {
         case .group:
             print()
             print("Use `\(executable) ", newLine: false)
-            warning("<command>", newLine: false)
+            output("<command>".consoleText(.warning), newLine: false)
             print(" --help` for more information on a command.")
         }
     }
 
     private func outputHelpListItem(name: String, help: [String], style: ConsoleStyle, padding: Int) {
-        output(name.leftPad(to: padding - name.count), style: style, newLine: false)
+        output(name.leftPad(to: padding - name.count).consoleText(style), newLine: false)
         for (i, help) in help.enumerated() {
             if i == 0 {
                 print(help.leftPad(to: 1))

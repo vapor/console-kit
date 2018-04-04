@@ -30,15 +30,12 @@ extension Console {
 ///
 /// See `Console.loadingBar(title:)` to create one.
 public struct LoadingBar: ActivityBar {
-    /// Defines the width of all `LoadingBar`s in characters.
-    public static var width: Int = 25
-
     /// See `ActivityBar`.
     public var title: String
 
     /// See `ActivityBar`.
-    public func renderActiveBar(tick: UInt) -> String {
-        let period = LoadingBar.width - 1
+    public func renderActiveBar(tick: UInt, width: Int) -> ConsoleText {
+        let period = width - 1
         let offset = Int(tick) % period
         let reverse = Int(tick) % (period * 2) >= period
 
@@ -61,6 +58,6 @@ public struct LoadingBar: ActivityBar {
         barComponents.append("•")
         barComponents.append(.init(repeating: " ", count: right))
         barComponents.append("]")
-        return barComponents.joined(separator: "")
+        return barComponents.joined(separator: "").consoleText(.info)
     }
 }

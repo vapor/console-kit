@@ -9,6 +9,6 @@ extension Console {
         case .group(let commands): autocomplete += commands.keys
         }
         autocomplete += runnable.options.map { "--" + $0.name }
-        output(autocomplete.joined(separator: " "), style: .plain)
+        print(autocomplete.joined(separator: " "))
     }
 }

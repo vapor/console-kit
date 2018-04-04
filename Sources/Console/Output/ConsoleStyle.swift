@@ -9,7 +9,7 @@ public struct ConsoleStyle {
     let background: ConsoleColor?
     let isBold: Bool
     
-    public init(color: ConsoleColor?, background: ConsoleColor? = nil, isBold: Bool = false) {
+    public init(color: ConsoleColor? = nil, background: ConsoleColor? = nil, isBold: Bool = false) {
         self.color = color
         self.background = background
         self.isBold = isBold

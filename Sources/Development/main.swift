@@ -1,6 +1,22 @@
 import Console
 
 let console = Terminal()
+
+do {
+    var text: ConsoleText = ""
+    text += "Bold".consoleText(isBold: true)
+    text += " not bold "
+    text += "green".consoleText(color: .green, background: .blue)
+    console.output(text)
+}
+
+do {
+    let text = "Bold".consoleText(isBold: true)
+        + " not bold "
+        + "green".consoleText(color: .green, background: .blue)
+    console.output(text)
+}
+
 console.print("a")
 console.pushEphemeral()
 console.print("b")

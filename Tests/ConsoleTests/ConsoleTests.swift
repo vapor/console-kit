@@ -65,7 +65,7 @@ class ConsoleTests: XCTestCase {
 
         console.input = name
 
-        let response = console.ask(question)
+        let response = console.ask(question.consoleText(.plain))
 
         XCTAssertEqual(response, name)
         XCTAssertEqual(console.output, question + "\n> ")

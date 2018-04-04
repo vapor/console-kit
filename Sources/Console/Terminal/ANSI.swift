@@ -46,6 +46,16 @@ extension Terminal {
     }
 }
 
+extension ConsoleText {
+    /// Wraps a string in the ANSI codes indicated
+    /// by the style specification
+    func terminalStylize() -> String {
+        return fragments
+            .map { $0.string.terminalStylize($0.style) }
+            .joined()
+    }
+}
+
 extension String {
     /// Wraps a string in the ANSI codes indicated
     /// by the style specification
