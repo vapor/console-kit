@@ -97,10 +97,6 @@ final class TestConsole: Console {
         //
     }
 
-    func execute(program: String, arguments: [String], input: ExecuteStream?, output: ExecuteStream?, error: ExecuteStream?) throws {
-        //
-    }
-
     var size: (width: Int, height: Int) { return (0, 0) }
 }
 

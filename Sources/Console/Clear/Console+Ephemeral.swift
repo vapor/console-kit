@@ -1,4 +1,4 @@
-extension ClearableConsole {
+extension Console {
     public func pushEphemeral() {
         depth += 1
         levels[depth] = 0
@@ -23,13 +23,13 @@ extension ClearableConsole {
     }
 
     private var depth: Int {
-        get { return extend["ephemeral-depth"] as? Int ?? 0 }
-        set { extend["ephemeral-depth"] = newValue }
+        get { return extend.get(\Self.depth, default: 0) }
+        set { extend.set(\Self.depth, to: newValue) }
     }
 
     private var levels: [Int: Int] {
-        get { return extend["ephemeral-levels"] as? [Int: Int] ?? [:] }
-        set { extend["ephemeral-levels"] = newValue }
+        get { return extend.get(\Self.levels, default: [:]) }
+        set { extend.set(\Self.levels, to: newValue) }
     }
 
     internal func didOutputLines(count: Int) {

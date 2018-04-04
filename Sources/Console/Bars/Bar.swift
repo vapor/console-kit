@@ -1,49 +1,33 @@
 import COperatingSystem
 
-public class Bar {
-    let console: OutputConsole & ClearableConsole
-    let title: String
-    let width: Int
-    let barStyle: ConsoleStyle
-    let titleStyle: ConsoleStyle
-    let animated: Bool
+public protocol ActivityIndicator {
+    var console: Console { get }
+    var title: String { get }
+    var barStyle: ConsoleStyle { get }
+    var titleStyle: ConsoleStyle { get }
+}
 
-    var hasStarted: Bool
-    var hasFinished: Bool
+public protocol ActivityBar: ActivityIndicator {
+    var width: Int { get }
+}
 
-    var mutex: UnsafeMutablePointer<pthread_mutex_t>
+final class ActivityIndicatorContext {
+    var state: ActivityIndicatorState
+    var indicator: ActivityIndicator
 
-    init(
-        console: OutputConsole & ClearableConsole,
-        title: String,
-        width: Int,
-        barStyle: ConsoleStyle,
-        titleStyle: ConsoleStyle,
-        animated: Bool = true
-    ) {
-        self.console = console
-        self.width = width
-        self.title = title
-        self.barStyle = barStyle
-        self.titleStyle = titleStyle
-
-        #if NO_ANIMATION
-            self.animated = false
-        #else
-            self.animated = animated
-        #endif
-
-        hasStarted = false
-        hasFinished = false
-
-        mutex = UnsafeMutablePointer.allocate(capacity: 1)
-        pthread_mutex_init(mutex, nil)
+    init(indicator: ActivityIndicator) {
+        self.state = .ready
+        self.indicator = indicator
     }
+}
 
-    deinit {
-        mutex.deinitialize(count: 1)
-        mutex.deallocate()
-    }
+enum ActivityIndicatorState {
+    case ready
+    case done
+    case fail
+}
+
+extension ActivityBar {
 
     public func fail(_ message: String? = nil) {
         guard !hasFinished else {

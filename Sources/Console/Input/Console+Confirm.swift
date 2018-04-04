@@ -1,4 +1,4 @@
-extension OutputConsole where Self: InputConsole {
+extension Console {
     /// Requests yes/no confirmation from
     /// the console.
     public func confirm(_ prompt: String, style: ConsoleStyle = .info) -> Bool {
@@ -27,7 +27,7 @@ extension OutputConsole where Self: InputConsole {
     }
 
     public var confirmOverride: Bool? {
-        get { return extend["confirmOverride"] as? Bool }
-        set { extend["confirmOverride"] = newValue }
+        get { return extend.get(\Self.confirmOverride, default: nil) }
+        set { extend.set(\Self.confirmOverride, to: newValue) }
     }
 }

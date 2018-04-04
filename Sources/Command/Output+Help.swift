@@ -1,6 +1,6 @@
 import Console
 
-extension OutputConsole {
+extension Console {
     /// Outputs help for a command.
     public func outputHelp(for runnable: CommandRunnable, executable: String) throws {
         info("Usage: ", newLine: false)

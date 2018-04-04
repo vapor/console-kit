@@ -1,7 +1,6 @@
-extension OutputConsole where Self: ClearableConsole {
+extension Console {
     /// Creates a progress bar using the console.
-    public func progressBar(
-        title: String = "",
+    public func progressBar(title: String = "",
         width: Int = 25,
         barStyle: ConsoleStyle = .info,
         titleStyle: ConsoleStyle = .plain,

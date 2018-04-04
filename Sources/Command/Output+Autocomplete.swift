@@ -1,6 +1,6 @@
 import Console
 
-extension OutputConsole {
+extension Console {
     /// Outputs autocomplete for a command.
     public func outputAutocomplete(for runnable: CommandRunnable, executable: String) throws {
         var autocomplete: [String] = []

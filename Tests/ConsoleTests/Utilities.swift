@@ -18,10 +18,7 @@ final class TestConsole: Console {
     func clear(_ type: ConsoleClear) {
 
     }
-
-    func execute(program: String, arguments: [String], input: ExecuteStream?, output: ExecuteStream?, error: ExecuteStream?) throws {
-    }
-
+    
     func input(isSecure: Bool) -> String {
         let t = input
         input = ""

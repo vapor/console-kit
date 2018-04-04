@@ -1,4 +1,4 @@
-extension OutputConsole where Self: InputConsole, Self: ClearableConsole {
+extension Console {
     /// Choose an item from the supplied array.
     /// Each item will be converted to a string via CustomStringConvertible.
     public func choose<T>(title: String, from array: [T]) throws -> T

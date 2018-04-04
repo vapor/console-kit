@@ -1,16 +1,8 @@
-import COperatingSystem
-
-extension BaseConsole {
-    public func blockingWait(seconds: Double) {
-        let factor = 1000 * 1000
-        let microseconds = seconds * Double(factor)
-        usleep(useconds_t(microseconds))
-    }
-}
-
 // MARK: Style
 
-extension OutputConsole {
+extension Console {
+    // MARK: Output
+
     /// Outputs a plain message to the console.
     public func print(_ string: String = "", newLine: Bool = true) {
         output(string, style: .plain, newLine: newLine)

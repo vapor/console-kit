@@ -1,4 +1,4 @@
-extension InputConsole where Self: OutputConsole {
+extension Console {
     /// Requests input from the console
     /// after displaying the desired prompt.
     public func ask(_ prompt: String, style: ConsoleStyle = .info, isSecure: Bool = false) -> String {

@@ -1,20 +1,3 @@
-import Async
-import COperatingSystem
-import Foundation
-import Service
-
-/// global static array of running PIDs.
-/// unfortunately we must keep track of processes that
-/// have been spun up by this program in case it gets a signal.
-/// If we don't manually kill all running processes that
-/// we have launched, they will continue running.
-private var _pids: [pid_t] = []
-
-/// This lock ensures the array is never accessed
-/// unsafely. This unfortunately means Terminal's execute
-/// functions are not usable where non-blocking concurrency is critical.
-private var _pidLock = NSLock()
-
 /// Generic console that uses a mixture of Swift standard
 /// library and Foundation code to fulfill protocol requirements.
 public final class Terminal: Console {
@@ -31,19 +14,7 @@ public final class Terminal: Console {
 
     /// Create a new Terminal.
     public init() {
-        func kill(sig: Int32) {
-            for pid in _pids {
-                _ = COperatingSystem.kill(pid, sig)
-            }
-            exit(sig)
-        }
-
-        self.extend = Extend()
-
-        signal(SIGINT, kill)
-        signal(SIGTERM, kill)
-        signal(SIGQUIT, kill)
-        signal(SIGHUP, kill)
+        self.extend = [:]
     }
 
     /// See ClearableConsole.clear
@@ -73,55 +44,6 @@ public final class Terminal: Console {
             return pass
         } else {
             return readLine(strippingNewline: true) ?? ""
-        }
-    }
-
-    /// See ExecuteConsole.output
-    public func execute(
-        program: String,
-        arguments: [String],
-        input: ExecuteStream?,
-        output: ExecuteStream?,
-        error: ExecuteStream?
-    ) throws {
-        var program = program
-        if !program.hasPrefix("/") {
-            let res = try backgroundExecute(program: "/bin/sh", arguments: ["-c", "which \(program)"]) as String
-            program = res.trimmingCharacters(in: .whitespacesAndNewlines)
-        }
-        // print(program + " " + arguments.joined(separator: " "))
-        let process = Process()
-        process.environment = ProcessInfo.processInfo.environment
-        process.launchPath = program
-        process.arguments = arguments
-        process.standardInput = input?.either
-        process.standardOutput = output?.either
-        process.standardError = error?.either
-        process.qualityOfService = .userInteractive
-
-        process.launch()
-
-        _pidLock.lock()
-        _pids.append(process.processIdentifier)
-        _pidLock.unlock()
-
-        process.waitUntilExit()
-        let status = process.terminationStatus
-
-        _pidLock.lock()
-        for (i, pid) in _pids.enumerated() {
-            if pid == process.processIdentifier {
-                _pids.remove(at: i)
-            }
-        }
-        _pidLock.unlock()
-
-        if status != 0 {
-            throw ConsoleError(
-                identifier: "executeFailed",
-                reason: "Execution failed. Status code: \(Int(status))",
-                source: .capture()
-            )
         }
     }
 

@@ -18,7 +18,7 @@ public final class LoadingBar: Bar {
     private var running: Bool
 
     override init(
-        console: OutputConsole & ClearableConsole,
+        console: Console,
         title: String,
         width: Int,
         barStyle: ConsoleStyle,
