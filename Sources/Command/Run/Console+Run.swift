@@ -1,10 +1,16 @@
-import Async
-import Console
-import Service
-
 extension Console {
-    /// Runs a command or group of commands on this console using
-    /// the supplied arguments.
+    /// Runs a `CommandRunnable` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
+    ///
+    ///     try console.run(group, input: &env.commandInput, on: container).wait()
+    ///
+    /// The `CommandInput` will be mutated, removing any used `CommandOption`s and `CommandArgument`s. If any excess input is left
+    /// over after checking the command's signature, an error will be thrown.
+    ///
+    /// - parameters:
+    ///     - runnable: `CommandGroup` or `Command` to run.
+    ///     - input: Mutable `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
+    ///     - container: `Container` to provide `EventLoop` access and services.
+    /// - returns: A `Future` that will complete when the command finishes.
     public func run(_ runnable: CommandRunnable, input: inout CommandInput, on container: Container) -> Future<Void> {
         do {
             return try _run(runnable, input: &input, on: container)
@@ -17,6 +23,8 @@ extension Console {
     }
 
     /// Runs the command, throwing if no commands are available.
+    ///
+    /// See `Console.run(...)`.
     private func _run(_ runnable: CommandRunnable, input: inout CommandInput, on container: Container) throws -> Future<Void> {
         // check -n and -y flags.
         if try input.parse(option: .flag(name: "no", short: "n", help: ["Automatically answers 'no' to all confirmiations."])) == "true" {

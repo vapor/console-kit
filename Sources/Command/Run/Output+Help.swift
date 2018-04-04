@@ -1,7 +1,6 @@
-import Console
-
 extension Console {
-    /// Outputs help for a command.
+    /// Outputs help for a `CommandRunnable`, this is called automatically when `--help` is
+    /// passed or when input validation fails.
     public func outputHelp(for runnable: CommandRunnable, executable: String) {
         output("Usage: ".consoleText(.info) + executable.consoleText() + " ", newLine: false)
 

@@ -1,9 +1,5 @@
-import Async
-import Console
-
-/// Capable of being run on a console.
-/// Note: this base protocol should not be used directly.
-/// Conform to Command or Group instead.
+/// Capable of being run on a `Console` using `Console.run(...)`.
+/// - note: This base protocol should not be used directly. Conform to `Command` or `CommandGroup` instead.
 public protocol CommandRunnable {
     /// The supported options.
     var options: [CommandOption] { get }

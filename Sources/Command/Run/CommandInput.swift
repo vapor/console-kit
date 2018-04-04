@@ -1,15 +1,13 @@
-import Service
-
-/// Raw input for commands. Use this to parse options and arguments
-/// for the command context.
+/// Raw input for commands. Use this to parse options and arguments for the command context.
 public struct CommandInput {
-    /// The input's raw arguments.
+    /// The `CommandInput`'s raw arguments. This array will be mutated as arguments and options
+    /// are parsed from the `CommandInput`.
     public var arguments: [String]
 
-    /// The current executable path
+    /// The current executable path.
     public var executablePath: [String]
 
-    /// Create a new CommandInput.
+    /// Create a new `CommandInput`.
     public init(arguments: [String]) {
         guard arguments.count >= 1 else { fatalError("At least one argument (the executable path) is required") }
         var arguments = arguments
@@ -17,8 +15,17 @@ public struct CommandInput {
         self.arguments = arguments
     }
 
-    /// Parses the option from input, returning nil if it could
+    /// Parses the option from input, returning `nil` if it could
     /// not be found or throwing an error if invalid input is detected.
+    ///
+    ///     var input = CommandInput(arguments: ["exec", "--foo", "bar", "baz"])
+    ///     print(input.arguments) // ["--foo", "bar", "baz"]
+    ///     let foo = try input.parse(option: .value(name: "foo")
+    ///     print(foo) // Optional("bar")
+    ///     print(input.arguments) // ["baz"]
+    ///
+    /// - parameters:
+    ///     - option: The `CommandOption` to parse from this `CommandInput`.
     public mutating func parse(option: CommandOption) throws -> String? {
         // create a temporary [String?] array so it's
         // easier to mark positions as "consumed"
@@ -108,8 +115,16 @@ public struct CommandInput {
         return nil
     }
 
-    /// Parses the argument from input, returning `nil` if it
-    /// could not be found.
+    /// Parses the argument from input, returning `nil` if it could not be found.
+    ///
+    ///     var input = CommandInput(arguments: ["exec", "--foo", "bar", "baz"])
+    ///     print(input.arguments) // ["--foo", "bar", "baz"]
+    ///     let message = try input.parse(argument: .argument(name: "message")
+    ///     print(message) // Optional("baz")
+    ///     print(input.arguments) // ["--foo", "bar"]
+    ///
+    /// - parameters:
+    ///     - argument: The `CommandArgument` to parse from this `CommandInput`.
     public mutating func parse(argument: CommandArgument) throws -> String? {
         // create a temporary [String?] array so it's
         // easier to mark positions as "consumed"

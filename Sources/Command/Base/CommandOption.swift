@@ -35,10 +35,14 @@ public struct CommandOption {
 /// Supported option types.
 public enum CommandOptionType {
     /// Normal option. Requires a value if supplied and there is no default.
-    /// --branch beta
+    ///
+    ///     --branch beta
+    ///
     case value(default: String?)
     /// Flag option. Does not support a value. If supplied, the value is true.
-    /// --xcode
+    ///
+    ///     --xcode
+    ///
     case flag
 }
 

@@ -1,10 +1,10 @@
-import Console
 import Service
 
-/// Contains required data for running a command
-/// such as the console and input.
+/// Contains required data for running a command such as the `Console` and `CommandInput`.
+///
+/// See `CommandRunnable` for more information.
 public struct CommandContext {
-    /// The console this command was run on.
+    /// The `Console` this command was run on.
     public var console: Console
 
     /// The parsed arguments (according to declared signature).
@@ -30,7 +30,13 @@ public struct CommandContext {
     }
 
     /// Requires an option, returning the value or throwing.
+    ///
+    ///     let option = try context.requireOption("foo")
+    ///
     /// Use `.options` to access in a non-required manner.
+    ///
+    /// - parameters:
+    ///     - name: Name of the `CommandOption` to fetch.
     public func requireOption(_ name: String) throws -> String {
         guard let value = options[name] else {
             throw CommandError(identifier: "optionRequired", reason: "Option `\(name)` is required.", source: .capture())
@@ -41,6 +47,11 @@ public struct CommandContext {
 
     /// Accesses an argument by name. This will only throw if
     /// the argument was not properly declared in your signature.
+    ///
+    ///     let arg = try context.argument("message")
+    ///
+    /// - parameters:
+    ///     - name: Name of the `CommandArgument` to fetch.
     public func argument(_ name: String) throws -> String {
         guard let value = arguments[name] else {
             throw CommandError(identifier: "argumentRequired", reason: "Argument `\(name)` is required.", source: .capture())

@@ -44,11 +44,12 @@ config.use(CowsayCommand(), as: "cowsay")
 
 let console = Terminal()
 let worker = EmbeddedEventLoop()
-let container = BasicContainer(config: .init(), environment: .testing, services: .init(), on: worker)
-var input = CommandInput(arguments: CommandLine.arguments)
+
+var env = Environment.testing
+let container = BasicContainer(config: .init(), environment: env, services: .init(), on: worker)
 
 let group = try config.resolve(for: container).group()
-try console.run(group, input: &input, on: container).wait()
+try console.run(group, input: &env.commandInput, on: container).wait()
 
 exit(0)
 

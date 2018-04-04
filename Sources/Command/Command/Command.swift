@@ -41,9 +41,10 @@
 ///         }
 ///     }
 ///
-/// Use `console.run(_:input:on)` to run a `CommandRunnable`.
 ///
-/// - note: If you are using Vapor, use `CommandConfig` to register commands.
+/// Use `CommandConfig` to register commands and create a `CommandGroup`.
+///
+/// - note: You can also use `console.run(...)` to run a `CommandRunnable` manually.
 ///
 /// Here is a simple example of the command in action, assuming it has been registered as `"cowsay"`.
 ///
@@ -70,7 +71,9 @@
 ///                        ||     ||
 ///
 public protocol Command: CommandRunnable {
-    /// This command's required arguments.
+    /// This command's required `CommandArgument`s.
+    ///
+    /// See `CommandArgument` for more information.
     var arguments: [CommandArgument] { get }
 }
 

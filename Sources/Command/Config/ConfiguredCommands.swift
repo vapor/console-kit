@@ -20,7 +20,12 @@ public struct ConfiguredCommands: Service {
 
     /// Creates a `CommandGroup` for this `ConfiguredCommands`.
     ///
-    ///
+    ///     var env = Environment.testing
+    ///     let container: Container = ...
+    ///     var config = CommandConfig()
+    ///     config.use(CowsayCommand(), as: "cowsay")
+    ///     let group = try config.resolve(for: container).group()
+    ///     try console.run(group, input: &env.commandInput, on: container).wait()
     ///
     /// - parameters:
     ///     - help: Optional help messages to include.

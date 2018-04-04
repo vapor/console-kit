@@ -1,7 +1,7 @@
 import Console
 
 extension Console {
-    /// Outputs autocomplete for a command.
+    /// Outputs autocomplete data for a supplied `CommandRunnable`.
     public func outputAutocomplete(for runnable: CommandRunnable, executable: String) throws {
         var autocomplete: [String] = []
         switch runnable.type {
