@@ -1,4 +1,3 @@
-
 /// All log levels
 public enum LogLevel: ExpressibleByStringLiteral, CustomStringConvertible {
     /// Verbose logs are used to log tiny, usually irrelevant information.
@@ -57,7 +56,7 @@ public enum LogLevel: ExpressibleByStringLiteral, CustomStringConvertible {
         self = .custom(value)
     }
 
-    /// See CustomStringConvertible.description
+    /// See `CustomStringConvertible`
     public var description: String {
         switch self {
         case .custom(let s): return s.uppercased()

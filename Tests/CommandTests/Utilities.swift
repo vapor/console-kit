@@ -65,7 +65,7 @@ final class TestCommand: Command {
     func run(using context: CommandContext) throws -> Future<Void> {
         let foo = try context.argument("foo")
         let bar = try context.requireOption("bar")
-        context.console.info("Foo: \(foo) Bar: \(bar)")
+        context.console.output("Foo: \(foo) Bar: \(bar)".consoleText(.info))
         return .done(on: context.container)
     }
 }
@@ -85,8 +85,8 @@ final class TestConsole: Console {
         return testInputQueue.popLast() ?? ""
     }
 
-    func output(_ string: String, style: ConsoleStyle, newLine: Bool) {
-        testOutputQueue.insert(string + (newLine ? "\n" : ""), at: 0)
+    func output(_ text: ConsoleText, newLine: Bool) {
+        testOutputQueue.insert(text.description + (newLine ? "\n" : ""), at: 0)
     }
 
     func report(error: String, newLine: Bool) {
@@ -94,10 +94,6 @@ final class TestConsole: Console {
     }
 
     func clear(_ type: ConsoleClear) {
-        //
-    }
-
-    func execute(program: String, arguments: [String], input: ExecuteStream?, output: ExecuteStream?, error: ExecuteStream?) throws {
         //
     }
 

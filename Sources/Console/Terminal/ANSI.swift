@@ -41,8 +41,20 @@ enum ANSISGRCommand {
 }
 
 extension Terminal {
+    /// Performs an `ANSICommand`.
     func command(_ command: ANSICommand) {
+        guard enableCommands else { return }
         Swift.print(command.ansi, terminator: "")
+    }
+}
+
+extension ConsoleText {
+    /// Wraps a string in the ANSI codes indicated
+    /// by the style specification
+    func terminalStylize() -> String {
+        return fragments
+            .map { $0.string.terminalStylize($0.style) }
+            .joined()
     }
 }
 
