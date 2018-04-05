@@ -1,24 +1,31 @@
-import Service
-
 /// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `CommandConfig`.
-public struct ConfiguredCommands: Service {
+public struct Commands: Service, ExpressibleByDictionaryLiteral {
     /// Top-level available commands, stored by unique name.
     public let commands: [String: CommandRunnable]
 
     /// If set, this is the default top-level command that should run if no other commands are specified.
-    public let defaultCommand: CommandRunnable?
+    public let defaultCommand: String?
 
     /// Creates a new `ConfiguredCommands` struct. This is usually done by calling `resolve(for:)` on `CommandConfig`.
     ///
     /// - parameters:
     ///     - commands: Top-level available commands, stored by unique name.
     ///     - defaultCommand: If set, this is the default top-level command that should run if no other commands are specified.
-    public init(commands: [String: CommandRunnable] = [:], defaultCommand: CommandRunnable? = nil) {
+    public init(commands: [String: CommandRunnable] = [:], defaultCommand: String? = nil) {
         self.commands = commands
         self.defaultCommand = defaultCommand
     }
 
-    /// Creates a `CommandGroup` for this `ConfiguredCommands`.
+    /// See `ExpressibleByDictionaryLiteral`.
+    public init(dictionaryLiteral elements: (String, CommandRunnable)...) {
+        var commands: [String: CommandRunnable] = [:]
+        for (key, val) in elements {
+            commands[key] = val
+        }
+        self.init(commands: commands, defaultCommand: nil)
+    }
+
+    /// Creates a `CommandGroup` for this `Commands`.
     ///
     ///     var env = Environment.testing
     ///     let container: Container = ...
@@ -31,6 +38,6 @@ public struct ConfiguredCommands: Service {
     ///     - help: Optional help messages to include.
     /// - returns: A `CommandGroup` with commands and defaultCommand configured.
     public func group(help: [String] = []) -> CommandGroup {
-        return BasicCommandGroup(commands: commands, defaultCommand: defaultCommand, help: help)
+        return BasicCommandGroup(commands: self, help: help)
     }
 }

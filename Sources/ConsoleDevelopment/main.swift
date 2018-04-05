@@ -4,13 +4,15 @@ import Logging
 
 struct CowsayCommand: Command {
     var arguments: [CommandArgument] {
-        return [.argument(name: "message")]
+        return []
+        // return [.argument(name: "message")]
     }
 
     var options: [CommandOption] {
         return [
             .value(name: "eyes", short: "e", help: ["Change cow's eyes", "'oo' by default"]),
             .value(name: "tongue", short: "t"),
+            .value(name: "message", short: "m"),
         ]
     }
 
@@ -19,7 +21,8 @@ struct CowsayCommand: Command {
     }
 
     func run(using context: CommandContext) throws -> Future<Void> {
-        let message = try context.argument("message")
+        // let message = try context.argument("message")
+        let message = context.options["message"] ?? "hi"
         let eyes = context.options["eyes"] ?? "oo"
         let tongue = context.options["tongue"] ?? " "
         let padding = String(repeating: "-", count: message.count)
@@ -39,7 +42,7 @@ struct CowsayCommand: Command {
 }
 
 var config = CommandConfig()
-config.use(CowsayCommand(), as: "cowsay")
+config.use(CowsayCommand(), as: "cowsay", isDefault: true)
 
 
 let console = Terminal()

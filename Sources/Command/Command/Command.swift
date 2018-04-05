@@ -78,7 +78,7 @@ public protocol Command: CommandRunnable {
 }
 
 extension Command {
-    /// See CommandRunnable.type
+    /// See `CommandRunnable`
     public var type: CommandRunnableType {
         return .command(arguments: arguments)
     }

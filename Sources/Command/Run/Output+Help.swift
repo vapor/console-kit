@@ -1,7 +1,7 @@
 extension Console {
     /// Outputs help for a `CommandRunnable`, this is called automatically when `--help` is
     /// passed or when input validation fails.
-    public func outputHelp(for runnable: CommandRunnable, executable: String) {
+    internal func outputHelp(for runnable: CommandRunnable, executable: String) {
         output("Usage: ".consoleText(.info) + executable.consoleText() + " ", newLine: false)
 
         switch runnable.type {
@@ -36,7 +36,7 @@ extension Console {
         case .command(let arguments):
             names += arguments.map { $0.name }
         case .group(let commands):
-            names += commands.keys
+            names += commands.commands.keys
         }
 
         let padding = names.longestCount + 2
@@ -59,13 +59,26 @@ extension Console {
         switch runnable.type {
         case .command: break
         case .group(let commands):
-            if commands.count > 0 {
+            if commands.commands.count > 0 {
                 print()
                 output("Commands:".consoleText(.success))
-                for (key, runnable) in commands {
+                for (key, runnable) in commands.commands {
+                    var help: [String]
+                    if key == commands.defaultCommand {
+                        if runnable.help.count > 0 {
+                            help = ["(default) " + runnable.help[0]]
+                            if runnable.help.count > 1 {
+                                help += runnable.help[1...]
+                            }
+                        } else {
+                            help = ["(default) n/a"]
+                        }
+                    } else {
+                        help = runnable.help
+                    }
                     outputHelpListItem(
                         name: key,
-                        help: runnable.help,
+                        help: help,
                         style: .warning,
                         padding: padding
                     )
@@ -92,7 +105,7 @@ extension Console {
             print()
             print("Use `\(executable) ", newLine: false)
             output("<command>".consoleText(.warning), newLine: false)
-            print(" --help` for more information on a command.")
+            output(" [--help,-h]".consoleText(.success) + "` for more information on a command.")
         }
     }
 

@@ -11,9 +11,6 @@
 ///
 /// You can create your own `CommandGroup` if you want to support custom `CommandOptions`.
 public protocol CommandGroup: CommandRunnable {
-    /// A dictionary of runnable commands.
-    typealias Commands = [String: CommandRunnable]
-
     /// This group's subcommands.
     var commands: Commands { get }
 }

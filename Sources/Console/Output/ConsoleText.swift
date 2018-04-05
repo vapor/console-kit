@@ -22,6 +22,8 @@ extension String {
 /// A collection of `ConsoleTextFragment`s. Represents stylized text that can be outputted
 /// to a `Console`.
 ///
+///     let text: ConsoleText = "Hello, " + "world".consoleText(color: .green)
+///
 /// See `Console.output(_:newLine:)` for more information.
 public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, ExpressibleByStringLiteral, CustomStringConvertible {
     /// See `Collection`.
@@ -72,6 +74,7 @@ public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, Ex
         return fragments[position]
     }
 
+    /// `\n` character with plain styling.
     public static let newLine: ConsoleText = "\n"
 }
 

@@ -1,3 +1,4 @@
+/// Adds the ability to run `Command`s on a `Console`.
 extension Console {
     /// Runs a `CommandRunnable` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
     ///
@@ -37,7 +38,7 @@ extension Console {
         switch runnable.type {
         case .group(let commands):
             if let name = try input.parse(argument: .argument(name: "subcommand")) {
-                guard let subcommand = commands[name] else {
+                guard let subcommand = commands.commands[name] else {
                     throw CommandError(
                         identifier: "unknownCommand",
                         reason: "Unknown command `\(name)`",
@@ -52,7 +53,7 @@ extension Console {
         case .command: break
         }
 
-        if let help = try input.parse(option: .flag(name: "help")) {
+        if let help = try input.parse(option: .flag(name: "help", short: "h")) {
             assert(help == "true")
             outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
             return .done(on: container)
@@ -61,6 +62,24 @@ extension Console {
             try outputAutocomplete(for: runnable, executable: input.executablePath.joined(separator: " "))
             return .done(on: container)
         } else {
+            // try to run the default command first
+            switch runnable.type {
+            case .group(let commands):
+                if let defaultCommand = commands.defaultCommand {
+                    guard let subcommand = commands.commands[defaultCommand] else {
+                        throw CommandError(
+                            identifier: "defaultCommand",
+                            reason: "Unknown default command `\(defaultCommand)`",
+                            source: .capture()
+                        )
+                    }
+                    let exec = input.executablePath.joined()
+                    output("Running default command: ".consoleText(.info) + exec.consoleText() + " " + defaultCommand.consoleText(.warning))
+                    return run(subcommand, input: &input, on: container)
+                }
+            case .command: break
+            }
+
             let context = try CommandContext.make(from: &input, console: self, for: runnable, on: container)
             return try runnable.run(using: context)
         }

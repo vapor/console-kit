@@ -17,7 +17,7 @@ public protocol CommandRunnable {
 /// Supported runnable types.
 public enum CommandRunnableType {
     /// See `CommandGroup`
-    case group(commands: [String: CommandRunnable])
+    case group(commands: Commands)
     /// See `Command`
     case command(arguments: [CommandArgument])
 }

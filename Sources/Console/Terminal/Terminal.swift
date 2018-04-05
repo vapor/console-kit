@@ -1,10 +1,11 @@
 /// Generic console that uses a mixture of Swift standard
 /// library and Foundation code to fulfill protocol requirements.
 public final class Terminal: Console {
-    /// See Extendable.extend
+    /// See `Console`
     public var extend: Extend
-    
-    internal var applyStyle: Bool {
+
+    /// Dynamically exclude ANSI commands when in Xcode since it doesn't support them.
+    internal var enableCommands: Bool {
         #if Xcode
             return false
         #else
@@ -17,7 +18,7 @@ public final class Terminal: Console {
         self.extend = [:]
     }
 
-    /// See ClearableConsole.clear
+    /// See `Console`
     public func clear(_ type: ConsoleClear) {
         switch type {
         case .line:
@@ -28,7 +29,7 @@ public final class Terminal: Console {
         }
     }
 
-    /// See InputConsole.input
+    /// See `Console`
     public func input(isSecure: Bool) -> String {
         didOutputLines(count: 1)
         if isSecure {
@@ -47,7 +48,7 @@ public final class Terminal: Console {
         }
     }
 
-    /// See OutputConsole.output
+    /// See `Console`
     public func output(_ text: ConsoleText, newLine: Bool) {
         var lines = 0
         for fragment in text.fragments {
@@ -68,24 +69,23 @@ public final class Terminal: Console {
         let terminator = newLine ? "\n" : ""
 
         let output: String
-        if applyStyle {
+        if enableCommands {
             output = text.terminalStylize()
         } else {
             output = text.description
         }
-
         Swift.print(output, terminator: terminator)
         fflush(stdout)
     }
 
-    /// See ErrorConsole.error
+    /// See `Console`
     public func report(error: String, newLine: Bool) {
         let output = newLine ? error + "\n" : error
         let data = output.data(using: .utf8) ?? Data()
         FileHandle.standardError.write(data)
     }
 
-    /// See: BaseConsole.size
+    /// See `Console`
     public var size: (width: Int, height: Int) {
         var w = winsize()
         _ = ioctl(STDOUT_FILENO, UInt(TIOCGWINSZ), &w);

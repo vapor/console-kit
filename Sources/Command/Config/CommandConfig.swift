@@ -17,7 +17,7 @@ public struct CommandConfig: Service {
     private var commands: [String: LazyCommand]
 
     /// The default runnable
-    private var defaultCommand: LazyCommand?
+    private var defaultCommand: String?
 
     /// Create a new `CommandConfig`.
     public init() {
@@ -38,7 +38,7 @@ public struct CommandConfig: Service {
     public mutating func use(_ command: CommandRunnable, as name: String, isDefault: Bool = false) {
         commands[name] = { _ in command }
         if isDefault {
-            defaultCommand = { _ in command }
+            defaultCommand = name
         }
     }
 
@@ -56,7 +56,7 @@ public struct CommandConfig: Service {
     public mutating func use<R>(_ command: R.Type, as name: String, isDefault: Bool = false) where R: CommandRunnable {
         commands[name] = { try $0.make(R.self) }
         if isDefault {
-            defaultCommand = { try $0.make(R.self) }
+            defaultCommand = name
         }
     }
 
@@ -66,14 +66,11 @@ public struct CommandConfig: Service {
     ///     - container: `Container` to use for creating lazily initialized commands.
     /// - returns: `Commands` struct which contains initialized commands.
     /// - throws: Errors creating the lazy commands from the container.
-    public func resolve(for container: Container) throws -> ConfiguredCommands {
+    public func resolve(for container: Container) throws -> Commands {
         let commands = try self.commands.mapValues { lazy -> CommandRunnable in
             return try lazy(container)
         }
 
-        return try .init(
-            commands: commands,
-            defaultCommand: defaultCommand.flatMap { try $0(container) }
-        )
+        return .init(commands: commands, defaultCommand: defaultCommand)
     }
 }

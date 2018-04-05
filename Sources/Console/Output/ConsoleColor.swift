@@ -7,24 +7,40 @@
 public enum ConsoleColor {
     // MARK: Normal
 
+    /// Black
     case black
+    /// Red
     case red
+    /// Green
     case green
+    /// Yellow
     case yellow
+    /// Blue
     case blue
+    /// Magenta
     case magenta
+    /// Cyan
     case cyan
+    /// White
     case white
 
     // MARK: Bright
 
+    /// Bright black
     case brightBlack
+    /// Bright red
     case brightRed
+    /// Bright green
     case brightGreen
+    /// Bright yellow
     case brightYellow
+    /// Bright blue
     case brightBlue
+    /// Bright magenta
     case brightMagenta
+    /// Bright cyan
     case brightCyan
+    /// Bright white
     case brightWhite
 
     // MARK: Custom

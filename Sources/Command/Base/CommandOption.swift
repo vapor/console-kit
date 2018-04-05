@@ -30,9 +30,9 @@ public struct CommandOption {
     }
 }
 
-/// MARK: Type
+// MARK: Type
 
-/// Supported option types.
+/// Supported `CommandOption` types.
 public enum CommandOptionType {
     /// Normal option. Requires a value if supplied and there is no default.
     ///
