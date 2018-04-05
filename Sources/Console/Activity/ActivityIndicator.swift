@@ -24,9 +24,16 @@ extension ActivityIndicatorType {
 ///     try loadingBar.start(on: ...).wait()
 ///
 public final class ActivityIndicator<A> where A: ActivityIndicatorType {
+    /// The generic `ActivityIndicatorType` powering this `ActivityIndicator`.
     public var activity: A
+
+    /// The `Console` this `ActivityIndicator` is running on.
     private let console: Console
+
+    /// Current state.
     private var state: ActivityIndicatorState
+
+    /// Used to stop the background refresh thread.
     private var isActive: Bool
 
     /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.

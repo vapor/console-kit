@@ -1,8 +1,5 @@
-/// Representation of a style for outputting to a Console in different colors with differing attributes. A few
-/// suggested default styles are provided.
-///
-/// A `nil` `color` means "don't change the color".
-/// A `nil` `background` means "don't change the background".
+/// Representation of a style for outputting to a Console in different colors with differing attributes.
+/// A few suggested default styles are provided.
 public struct ConsoleStyle {
     /// Optional text color. If `nil`, text is plain.
     public let color: ConsoleColor?
