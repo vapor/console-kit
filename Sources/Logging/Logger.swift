@@ -17,32 +17,32 @@ public protocol Logger {
 extension Logger {
     /// Verbose logs are used to log tiny, usually irrelevant information.
     /// They are helpful when tracing specific lines of code and their results
-    public func verbose(_ encodable: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
-        self.log(encodable, at: .verbose, file: file, function: function, line: line, column: column)
+    public func verbose(_ string: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
+        self.log(string, at: .verbose, file: file, function: function, line: line, column: column)
     }
     
     /// Debug logs are used to debug problems
-    public func debug(_ encodable: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
-        self.log(encodable, at: .debug, file: file, function: function, line: line, column: column)
+    public func debug(_ string: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
+        self.log(string, at: .debug, file: file, function: function, line: line, column: column)
     }
     
     /// Info logs are used to indicate a specific infrequent event occurring.
-    public func info(_ encodable: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
-        self.log(encodable, at: .info, file: file, function: function, line: line, column: column)
+    public func info(_ string: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
+        self.log(string, at: .info, file: file, function: function, line: line, column: column)
     }
     
     /// Warnings are used to indicate something should be fixed but may not have to be solved yet
-    public func warning(_ encodable: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
-        self.log(encodable, at: .warning, file: file, function: function, line: line, column: column)
+    public func warning(_ string: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
+        self.log(string, at: .warning, file: file, function: function, line: line, column: column)
     }
     
     /// Error, indicates something went wrong and a part of the execution was failed.
-    public func error(_ encodable: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
-        self.log(encodable, at: .error, file: file, function: function, line: line, column: column)
+    public func error(_ string: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
+        self.log(string, at: .error, file: file, function: function, line: line, column: column)
     }
     
     /// Fatal errors/crashes, execution should/must be cancelled.
-    public func fatal(_ encodable: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
-        self.log(encodable, at: .fatal, file: file, function: function, line: line, column: column)
+    public func fatal(_ string: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column) {
+        self.log(string, at: .fatal, file: file, function: function, line: line, column: column)
     }
 }
