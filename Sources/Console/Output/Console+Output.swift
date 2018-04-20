@@ -17,7 +17,7 @@ extension Console {
     ///     - string: `String` to print.
     ///     - style: `ConsoleStyle` to use for the `string`.
     ///     - newLine: If `true`, the next output will be on a new line.
-    public func output(_ string: String, style: ConsoleStyle, newLine: Bool = false) {
+    public func output(_ string: String, style: ConsoleStyle, newLine: Bool = true) {
         self.output(string.consoleText(style), newLine: newLine)
     }
 
