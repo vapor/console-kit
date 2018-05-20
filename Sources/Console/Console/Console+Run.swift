@@ -80,9 +80,15 @@ extension ConsoleProtocol {
             for (var name, value) in arguments.options {
                 if name.count == 1 {
                     // Get the full flag name from the short version
+                    #if swift(>=4.1)
+                    name = command.signature.compactMap({ $0 as? Option })
+                        .filter({ $0.short == Character(name) })
+                        .first?.name ?? name
+                    #else
                     name = command.signature.flatMap({ $0 as? Option })
                         .filter({ $0.short == Character(name) })
                         .first?.name ?? name
+                    #endif
                 }
                 passThrough.append("--\(name)=\(value)")
             }

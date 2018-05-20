@@ -41,8 +41,13 @@ public class Bar {
     }
 
     deinit {
+        #if swift(>=4.1)
+        mutex.deinitialize(count: 1)
+        mutex.deallocate()
+        #else
         mutex.deinitialize()
         mutex.deallocate(capacity: 1)
+        #endif
     }
 
     public func fail(_ message: String? = nil) {

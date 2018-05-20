@@ -17,8 +17,13 @@ extension Command {
     public func printSignatureHelp() {
         let width = getSignatureLength(withPadding: 2)
         
+        #if swift(>=4.1)
+        let vals = signature.compactMap { $0 as? Value }
+        let opts = signature.compactMap { $0 as? Option }
+        #else
         let vals = signature.flatMap { $0 as? Value }
         let opts = signature.flatMap { $0 as? Option }
+        #endif
         
         console.info("Arguments:")
         for val in vals {

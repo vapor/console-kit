@@ -105,8 +105,13 @@ public final class Terminal: ConsoleProtocol {
         var pid = UnsafeMutablePointer<pid_t>.allocate(capacity: 1)
         pid.initialize(to: pid_t())
         defer {
+            #if swift(>=4.1)
+            pid.deinitialize(count: 1)
+            pid.deallocate()
+            #else
             pid.deinitialize()
             pid.deallocate(capacity: 1)
+            #endif
         }
 
 
