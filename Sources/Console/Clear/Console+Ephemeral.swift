@@ -102,15 +102,17 @@ extension Console {
     ///
     /// Calling `popEphemeral()` will decrement this number.
     private var depth: Int {
-        get { return extend.get(\Self.depth, default: 0) }
-        set { extend.set(\Self.depth, to: newValue) }
+        get { return extend.get("\\Console.depth", default: 0) }
+        set { extend.set("\\Console.depth", to: newValue) }
     }
 
+    
+    
     /// Stores how many lines have been outputted at each depth.
     ///
     /// Calling `didOutputLines(count:)` will increase this number for the current depth.
     private var levels: [Int: Int] {
-        get { return extend.get(\Self.levels, default: [:]) }
-        set { extend.set(\Self.levels, to: newValue) }
+        get { return extend.get("\\Console.levels", default: [:]) }
+        set { extend.set("\\Console.levels", to: newValue) }
     }
 }
