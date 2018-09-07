@@ -7,7 +7,11 @@ extension Console {
         switch runnable.type {
         case .command(let arguments):
             for arg in arguments {
-                output(("<" + arg.name + "> ").consoleText(.warning), newLine: false)
+                if arg.optional {
+                    output(("[<" + arg.name + ">] ").consoleText(.warning), newLine: false)
+                } else {
+                    output(("<" + arg.name + "> ").consoleText(.warning), newLine: false)
+                }
             }
         case .group:
             output("<command> ".consoleText(.warning), newLine: false)

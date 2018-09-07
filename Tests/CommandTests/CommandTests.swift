@@ -12,13 +12,15 @@ class CommandTests: XCTestCase {
         var input = CommandInput(arguments: ["vapor", "sub", "test", "--help"])
         try console.run(group, input: &input, on: container).wait()
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
-        Usage: vapor sub test <foo> [--bar,-b]\u{20}
+        Usage: vapor sub test <foo> [<baz>] [--bar,-b]\u{20}
 
         This is a test command
 
         Arguments:
           foo A foo is required
               An error will occur if none exists
+          baz A baz is optional
+              No error will occur if it is not passed in
 
         Options:
           bar Add a bar if you so desire
@@ -63,10 +65,23 @@ class CommandTests: XCTestCase {
         """)
     }
 
+    func testOptionlArg()throws {
+        let console = TestConsole()
+        let group = TestGroup()
+        let container = BasicContainer(config: .init(), environment: .testing, services: .init(), on: EmbeddedEventLoop())
+        var input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "bazvalue", "--bar=baz"])
+        try console.run(group, input: &input, on: container).wait()
+        XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
+        Baz: bazvalue Foo: foovalue Bar: baz
+
+        """)
+    }
+    
     static var allTests = [
         ("testHelp", testHelp),
         ("testFlag", testFlag),
         ("testShortFlag", testShortFlag),
         ("testDeprecatedFlag", testDeprecatedFlag),
+        ("testOptionlArg", testOptionlArg)
     ]
 }

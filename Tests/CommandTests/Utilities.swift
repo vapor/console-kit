@@ -53,6 +53,10 @@ final class TestCommand: Command {
         .argument(
             name: "foo",
             help: ["A foo is required", "An error will occur if none exists"]
+        ),
+        .optional(
+            name: "baz",
+            help: ["A baz is optional", "No error will occur if it is not passed in"]
         )
     ]
 
@@ -63,9 +67,17 @@ final class TestCommand: Command {
     let help = ["This is a test command"]
 
     func run(using context: CommandContext) throws -> Future<Void> {
+        let bazText: String
+        
         let foo = try context.argument("foo")
         let bar = try context.requireOption("bar")
-        context.console.output("Foo: \(foo) Bar: \(bar)".consoleText(.info))
+        if let baz = context.arguments["baz"] {
+            bazText = "Baz: \(baz) "
+        } else {
+            bazText = ""
+        }
+        
+        context.console.output((bazText + "Foo: \(foo) Bar: \(bar)").consoleText(.info), newLine: true)
         return .done(on: context.container)
     }
 }

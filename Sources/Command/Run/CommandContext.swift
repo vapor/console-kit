@@ -80,14 +80,18 @@ public struct CommandContext {
         }
 
         for arg in arguments {
-            guard let value = try input.parse(argument: arg) else {
-                throw CommandError(
-                    identifier: "argumentRequired",
-                    reason: "Argument `\(arg.name)` is required.",
-                    source: .capture()
-                )
+            if arg.optional {
+                parsedArguments[arg.name] = try input.parse(argument: arg)
+            } else {
+                guard let value = try input.parse(argument: arg) else {
+                    throw CommandError(
+                        identifier: "argumentRequired",
+                        reason: "Argument `\(arg.name)` is required.",
+                        source: .capture()
+                    )
+                }
+                parsedArguments[arg.name] = value
             }
-            parsedArguments[arg.name] = value
         }
 
 
