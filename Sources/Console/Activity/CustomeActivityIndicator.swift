@@ -63,9 +63,9 @@ extension Console {
 /// See `Console.activity(frames:success:failure:color:)` to make one.
 public struct CustomActivityIndicator: ActivityIndicatorType {
     
-    /// The text that will be output on the indicator ticks, each frame corresponding to a single tick in a range of `1 - count(frames)`.
+    /// The text that will be output on the indicator ticks, each frame corresponding to a single tick in a range of `0...(frames.count - 1)`.
     ///
-    /// The index of the current frame is figured using the equation `(tick - 1) % count(frames)`, allowing the indicator to run indefinitely.
+    /// The index of the current frame is figured using the equation `tick % frames.count`, allowing the indicator to run indefinitely.
     public let frames: [ConsoleText]
     
     /// The text to be output with the `.success` style if the indicator is succeeded.
@@ -105,9 +105,7 @@ public struct CustomActivityIndicator: ActivityIndicatorType {
         
         switch state {
         case .ready: output = frames[0]
-        case let .active(tick):
-            let frame = (Int(tick) - 1) % frames.count
-            output = frames[frame]
+        case let .active(tick): output = frames[Int(tick) % frames.count]
         case .success: output = self.success.consoleText(.success)
         case .failure: output = self.failure.consoleText(.error)
         }
