@@ -23,7 +23,7 @@ extension Console {
     ///   - color: The color of text when the frames are displayed. The default value is `.cyan`.
     ///
     /// - Returns: An `ActivityIndicator` that can start and stop the indicator.
-    public func activity(
+    public func customActivity(
         frames: [String], success: String = "[Done]", failure: String = "[Failed]", color: ConsoleColor = .cyan
     ) -> ActivityIndicator<CustomActivityIndicator> {
         return CustomActivityIndicator(frames: frames, success: success, failure: failure, color: color).newActivity(for: self)
@@ -51,7 +51,7 @@ extension Console {
     ///   - failure: The string to replace the indicator with when the operation fails: The default value is `[Failed]`.
     ///
     /// - Returns: An `ActivityIndicator` that can start and stop the indicator.
-    public func activity(
+    public func customActivity(
         frames: [ConsoleText], success: String = "[Done]", failure: String = "[Failed]"
     ) -> ActivityIndicator<CustomActivityIndicator> {
         return CustomActivityIndicator(frames: frames, success: success, failure: failure).newActivity(for: self)

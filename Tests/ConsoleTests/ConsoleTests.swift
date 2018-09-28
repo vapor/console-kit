@@ -39,7 +39,7 @@ class ConsoleTests: XCTestCase {
         let console = Terminal()
         let worker = EmbeddedEventLoop()
         
-        let indicator = console.activity(frames: ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"])
+        let indicator = console.customActivity(frames: ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"])
         
         DispatchQueue.global().async {
             console.blockingWait(seconds: 3)
