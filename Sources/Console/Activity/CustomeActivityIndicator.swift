@@ -25,8 +25,8 @@ extension Console {
     /// - Returns: An `ActivityIndicator` that can start and stop the indicator.
     public func customActivity(
         frames: [String], success: String = "[Done]", failure: String = "[Failed]", color: ConsoleColor = .cyan
-    ) -> ActivityIndicator<CustomActivityIndicator> {
-        return CustomActivityIndicator(frames: frames, success: success, failure: failure, color: color).newActivity(for: self)
+    ) -> ActivityIndicator<CustomActivity> {
+        return CustomActivity(frames: frames, success: success, failure: failure, color: color).newActivity(for: self)
     }
     
     /// Creates an activity indicator with custom frames that are iterated over.
@@ -53,15 +53,15 @@ extension Console {
     /// - Returns: An `ActivityIndicator` that can start and stop the indicator.
     public func customActivity(
         frames: [ConsoleText], success: String = "[Done]", failure: String = "[Failed]"
-    ) -> ActivityIndicator<CustomActivityIndicator> {
-        return CustomActivityIndicator(frames: frames, success: success, failure: failure).newActivity(for: self)
+    ) -> ActivityIndicator<CustomActivity> {
+        return CustomActivity(frames: frames, success: success, failure: failure).newActivity(for: self)
     }
 }
 
 /// An activity indicator with customizable frames and success and failure messages.
 ///
 /// See `Console.activity(frames:success:failure:color:)` to make one.
-public struct CustomActivityIndicator: ActivityIndicatorType {
+public struct CustomActivity: ActivityIndicatorType {
     
     /// The text that will be output on the indicator ticks, each frame corresponding to a single tick in a range of `0...(frames.count - 1)`.
     ///
