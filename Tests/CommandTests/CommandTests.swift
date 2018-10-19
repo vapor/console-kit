@@ -12,7 +12,7 @@ class CommandTests: XCTestCase {
         var input = CommandInput(arguments: ["vapor", "sub", "test", "--help"])
         try console.run(group, input: &input, on: container).wait()
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
-Usage: vapor sub test <foo> [--bar,-b] [--default,-d]
+Usage: vapor sub test <foo> [--bar,-b] [--default,-d]\u{20}
 
 This is a test command
 
