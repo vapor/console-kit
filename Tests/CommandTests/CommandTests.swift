@@ -12,19 +12,20 @@ class CommandTests: XCTestCase {
         var input = CommandInput(arguments: ["vapor", "sub", "test", "--help"])
         try console.run(group, input: &input, on: container).wait()
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
-        Usage: vapor sub test <foo> [--bar,-b]\u{20}
+Usage: vapor sub test <foo> [--bar,-b] [--default,-d]
 
-        This is a test command
+This is a test command
 
-        Arguments:
-          foo A foo is required
-              An error will occur if none exists
+Arguments:
+      foo A foo is required
+          An error will occur if none exists
 
-        Options:
-          bar Add a bar if you so desire
-              Try passing it
+Options:
+      bar Add a bar if you so desire
+          Try passing it
+  default Default option with default value
 
-        """)
+""")
     }
 
     func testFlag() throws {
@@ -34,7 +35,7 @@ class CommandTests: XCTestCase {
         var input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "--bar", "baz"])
         try console.run(group, input: &input, on: container).wait()
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
-        Foo: foovalue Bar: baz
+        Foo: foovalue Bar: baz Default: default
 
         """)
     }
@@ -46,7 +47,7 @@ class CommandTests: XCTestCase {
         var input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "-b", "baz"])
         try console.run(group, input: &input, on: container).wait()
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
-        Foo: foovalue Bar: baz
+        Foo: foovalue Bar: baz Default: default
 
         """)
     }
@@ -58,7 +59,7 @@ class CommandTests: XCTestCase {
         var input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "--bar=baz"])
         try console.run(group, input: &input, on: container).wait()
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
-        Foo: foovalue Bar: baz
+        Foo: foovalue Bar: baz Default: default
 
         """)
     }

@@ -6,10 +6,7 @@ import Service
 extension String: Error {}
 
 final class TestGroup: CommandGroup {
-    let commands: Commands = [
-        "test": TestCommand(),
-        "sub": SubGroup()
-    ]
+    var commands: Commands
 
     let options: [CommandOption] = [
         .value(name: "version", help: ["Prints the version"])
@@ -24,6 +21,17 @@ final class TestGroup: CommandGroup {
             throw "unknown"
         }
         return .done(on: context.container)
+    }
+
+    init(commands: Commands = [:]) {
+        if commands.commands.isEmpty {
+            self.commands = [
+                "test": TestCommand(),
+                "sub": SubGroup()
+            ]
+        } else {
+            self.commands = commands
+        }
     }
 }
 
@@ -57,7 +65,9 @@ final class TestCommand: Command {
     ]
 
     let options: [CommandOption] = [
-        .value(name: "bar", short: "b", help: ["Add a bar if you so desire", "Try passing it"])
+        .value(name: "bar", short: "b", help: ["Add a bar if you so desire", "Try passing it"]),
+        .value(name: "default", short: "d", default: "default", help: ["Default option with default value"])
+
     ]
 
     let help = ["This is a test command"]
@@ -65,7 +75,8 @@ final class TestCommand: Command {
     func run(using context: CommandContext) throws -> Future<Void> {
         let foo = try context.argument("foo")
         let bar = try context.requireOption("bar")
-        context.console.output("Foo: \(foo) Bar: \(bar)".consoleText(.info))
+        let defaultValue = try context.requireOption("default")
+        context.console.output("Foo: \(foo) Bar: \(bar) Default: \(defaultValue)".consoleText(.info))
         return .done(on: context.container)
     }
 }
