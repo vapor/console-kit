@@ -70,10 +70,13 @@ public struct CommandContext {
         var parsedOptions: [String: String] = [:]
 
         for opt in runnable.options {
-            parsedOptions[opt.name] = try input.parse(option: opt)
-            
-            if case let CommandOptionType.value(defaultValue) = opt.type, defaultValue != nil  {
-                parsedOptions[opt.name] = defaultValue
+            if let parsedValue = try input.parse(option: opt) {
+                parsedOptions[opt.name] = parsedValue
+            } else {
+                // fallback to default, if provided.
+                if case let CommandOptionType.value(defaultValue) = opt.type, defaultValue != nil  {
+                    parsedOptions[opt.name] = defaultValue
+                }
             }
         }
 

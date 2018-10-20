@@ -64,6 +64,18 @@ Options:
         """)
     }
 
+    func testDefaultOptionShouldBeOverwritten() throws {
+        let console = TestConsole()
+        let group = TestGroup()
+        let container = BasicContainer(config: .init(), environment: .testing, services: .init(), on: EmbeddedEventLoop())
+        var input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "--bar=baz", "--default=nondefault"])
+        try console.run(group, input: &input, on: container).wait()
+        XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
+        Foo: foovalue Bar: baz Default: nondefault
+
+        """)
+    }
+
     static var allTests = [
         ("testHelp", testHelp),
         ("testFlag", testFlag),
