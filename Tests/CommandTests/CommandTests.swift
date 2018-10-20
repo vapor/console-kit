@@ -81,5 +81,6 @@ Options:
         ("testFlag", testFlag),
         ("testShortFlag", testShortFlag),
         ("testDeprecatedFlag", testDeprecatedFlag),
+        ("testDefaultOptionShouldBeOverwritten", testDefaultOptionShouldBeOverwritten)
     ]
 }
