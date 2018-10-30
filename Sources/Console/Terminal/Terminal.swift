@@ -52,7 +52,7 @@ public final class Terminal: Console {
     public func output(_ text: ConsoleText, newLine: Bool) {
         var lines = 0
         for fragment in text.fragments {
-            let strings = fragment.string.split(separator: "\n")
+            let strings = fragment.string.split(separator: "\n", omittingEmptySubsequences: false)
             for string in strings {
                 let count = string.count
                 if count > size.width && count > 0 && size.width > 0 {
