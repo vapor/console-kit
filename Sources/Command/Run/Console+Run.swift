@@ -16,7 +16,9 @@ extension Console {
         do {
             return try _run(runnable, input: &input, on: container)
         } catch {
-            outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
+            if error is CommandError {
+                outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
+            }
             return Future.map(on: container) {
                 throw error
             }
