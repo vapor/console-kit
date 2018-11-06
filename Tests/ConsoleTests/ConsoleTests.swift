@@ -100,6 +100,7 @@ class ConsoleTests: XCTestCase {
     }
 
     static let allTests = [
+        ("testCustomIndicator", testCustomIndicator),
         ("testAsk", testAsk),
         ("testConfirm", testConfirm),
     ]
