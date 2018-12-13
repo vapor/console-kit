@@ -1,5 +1,5 @@
 /// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `CommandConfig`.
-public struct Commands: Service, ExpressibleByDictionaryLiteral {
+public struct Commands: ExpressibleByDictionaryLiteral {
     /// Top-level available commands, stored by unique name.
     public let commands: [String: CommandRunnable]
 

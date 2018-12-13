@@ -1,10 +1,10 @@
-import XCTest
 import Console
+import NIO
+import XCTest
 
 class ConsoleTests: XCTestCase {
     func testLoading() throws {
-        let console = Terminal()
-        let worker = EmbeddedEventLoop()
+        let console = Terminal(on: MultiThreadedEventLoopGroup(numberOfThreads: 1).next())
         let foo = console.loadingBar(title: "Loading")
 
         DispatchQueue.global().async {
@@ -12,12 +12,11 @@ class ConsoleTests: XCTestCase {
             foo.succeed()
         }
 
-        try foo.start(on: worker).wait()
+        try foo.start().wait()
     }
 
     func testProgress() throws {
-        let console = Terminal()
-        let worker = EmbeddedEventLoop()
+        let console = Terminal(on: MultiThreadedEventLoopGroup(numberOfThreads: 1).next())
         let foo = console.progressBar(title: "Progress")
 
         DispatchQueue.global().async {
@@ -32,12 +31,11 @@ class ConsoleTests: XCTestCase {
             }
         }
 
-        try foo.start(on: worker).wait()
+        try foo.start().wait()
     }
 
     func testCustomIndicator()throws {
-        let console = Terminal()
-        let worker = EmbeddedEventLoop()
+        let console = Terminal(on: MultiThreadedEventLoopGroup(numberOfThreads: 1).next())
         
         let indicator = console.customActivity(frames: ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"])
         
@@ -46,7 +44,7 @@ class ConsoleTests: XCTestCase {
             indicator.succeed()
         }
         
-        try indicator.start(on: worker).wait()
+        try indicator.start().wait()
     }
     
     func testEphemeral() {
@@ -54,7 +52,7 @@ class ConsoleTests: XCTestCase {
         // but this code works great if running directly in an executable
 
         // added here anyway to verify that the code snippet in doc blocks actually compiles
-        let console = Terminal()
+        let console = Terminal(on: EmbeddedEventLoop())
         console.print("a")
         console.pushEphemeral()
         console.print("b")

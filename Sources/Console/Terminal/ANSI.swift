@@ -1,5 +1,3 @@
-import Bits
-
 /// Terminal ANSI commands
 enum ANSICommand {
     case eraseScreen

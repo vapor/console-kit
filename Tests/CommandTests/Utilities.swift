@@ -1,7 +1,6 @@
-import Async
 import Console
 import Command
-import Service
+import NIO
 
 extension String: Error {}
 
@@ -17,13 +16,13 @@ final class TestGroup: CommandGroup {
 
     let help = ["This is a test grouping!"]
 
-    func run(using context: CommandContext) throws -> Future<Void> {
+    func run(using context: CommandContext) throws -> EventLoopFuture<Void> {
         if context.options["version"] == "true" {
             context.console.print("v2.0")
         } else {
             throw "unknown"
         }
-        return .done(on: context.container)
+        return context.eventLoop.makeSucceededFuture(result: ())
     }
 }
 
@@ -38,13 +37,13 @@ final class SubGroup: CommandGroup {
 
     let help = ["This is a test sub grouping!"]
 
-    func run(using context: CommandContext) throws -> Future<Void> {
+    func run(using context: CommandContext) throws -> EventLoopFuture<Void> {
         if context.options["version"] == "true" {
             context.console.print("v2.0")
         } else {
             throw "unknown"
         }
-        return .done(on: context.container)
+        return context.eventLoop.makeSucceededFuture(result: ())
     }
 }
 
@@ -62,23 +61,25 @@ final class TestCommand: Command {
 
     let help = ["This is a test command"]
 
-    func run(using context: CommandContext) throws -> Future<Void> {
+    func run(using context: CommandContext) throws -> EventLoopFuture<Void> {
         let foo = try context.argument("foo")
         let bar = try context.requireOption("bar")
         context.console.output("Foo: \(foo) Bar: \(bar)".consoleText(.info))
-        return .done(on: context.container)
+        return context.eventLoop.makeSucceededFuture(result: ())
     }
 }
 
 final class TestConsole: Console {
     var testInputQueue: [String]
     var testOutputQueue: [String]
-    var extend: Extend
+    var eventLoop: EventLoop
+    var userInfo: [AnyHashable : Any]
 
     init() {
         self.testInputQueue = []
         self.testOutputQueue = []
-        self.extend = [:]
+        self.userInfo = [:]
+        self.eventLoop = EmbeddedEventLoop()
     }
 
     func input(isSecure: Bool) -> String {

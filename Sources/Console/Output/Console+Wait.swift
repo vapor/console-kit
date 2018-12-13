@@ -1,4 +1,8 @@
-import COperatingSystem
+#if os(Linux)
+import Glibc
+#else
+import Darwin.C
+#endif
 
 extension Console {
     /// Blocks the current thread for the specified number of seconds.

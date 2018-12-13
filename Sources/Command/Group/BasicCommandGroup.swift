@@ -1,3 +1,5 @@
+import NIO
+
 /// A basic `CommandGroup` implementation.
 internal struct BasicCommandGroup: CommandGroup {
     /// See `CommandGroup`.
@@ -20,6 +22,6 @@ internal struct BasicCommandGroup: CommandGroup {
     /// See `CommandGroup`.
     func run(using context: CommandContext) throws -> EventLoopFuture<Void> {
         // should never run
-        return .done(on: context.container)
+        return context.eventLoop.makeSucceededFuture(result: ())
     }
 }

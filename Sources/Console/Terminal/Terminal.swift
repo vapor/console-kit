@@ -1,8 +1,19 @@
+#if os(Linux)
+import Glibc
+#else
+import Darwin.C
+#endif
+import Foundation
+import NIO
+
 /// Generic console that uses a mixture of Swift standard
 /// library and Foundation code to fulfill protocol requirements.
 public final class Terminal: Console {
     /// See `Console`
-    public var extend: Extend
+    public var eventLoop: EventLoop
+    
+    /// See `Console`
+    public var userInfo: [AnyHashable: Any]
 
     /// Dynamically exclude ANSI commands when in Xcode since it doesn't support them.
     internal var enableCommands: Bool {
@@ -14,8 +25,9 @@ public final class Terminal: Console {
     }
 
     /// Create a new Terminal.
-    public init() {
-        self.extend = [:]
+    public init(on eventLoop: EventLoop) {
+        self.userInfo = [:]
+        self.eventLoop = eventLoop
     }
 
     /// See `Console`

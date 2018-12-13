@@ -27,7 +27,7 @@ extension Console {
         var result = ""
 
         /// continue to ask until the result can be converted to a bool
-        while result.bool == nil {
+        while Bool(yn: result) == nil {
             output(prompt)
             if i >= 1 {
                 output("[y]es or [n]o> ".consoleText(.info), newLine: false)
@@ -46,12 +46,22 @@ extension Console {
             i += 1
         }
 
-        return result.bool!
+        return Bool(yn: result)!
     }
 
     /// If set, all calls to `confirm(_:)` will use this value instead of asking the user.
     public var confirmOverride: Bool? {
-        get { return extend.get(\Self.confirmOverride, default: nil) }
-        set { extend.set(\Self.confirmOverride, to: newValue) }
+        get { return self.userInfo["confirmOverride"] as? Bool }
+        set { self.userInfo["confirmOverride"] = newValue }
+    }
+}
+
+private extension Bool {
+    init?(yn: String) {
+        switch yn.lowercased() {
+        case "y", "yes": self = true
+        case "n", "no": self = false
+        default: return nil
+        }
     }
 }

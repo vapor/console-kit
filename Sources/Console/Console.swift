@@ -1,3 +1,5 @@
+import NIO
+
 /// Protocol for powering styled Console I/O.
 ///
 /// # Output
@@ -34,7 +36,7 @@
 ///
 /// Get the `Console`'s current size using the `size` property.
 ///
-public protocol Console: Extendable {
+public protocol Console: class {
     /// The size of the `Console` window. Used for calculating lines printed and centering text.
     var size: (width: Int, height: Int) { get }
 
@@ -72,4 +74,8 @@ public protocol Console: Extendable {
     ///     - error: Error `String` to output.
     ///     - newLine: If `true`, the next error will be on a new line.
     func report(error: String, newLine: Bool)
+    
+    var eventLoop: EventLoop { get }
+    
+    var userInfo: [AnyHashable: Any] { get set } 
 }

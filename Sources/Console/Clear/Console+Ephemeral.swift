@@ -86,15 +86,15 @@ extension Console {
     ///
     /// This method should only be used by `Console` implementations.
     public func didOutputLines(count: Int) {
-        guard depth > 0 else {
+        guard self.depth > 0 else {
             // not in an ephemeral state
             return
         }
 
-        if let existing = levels[depth] {
-            levels[depth] = existing + count
+        if let existing = levels[self.depth] {
+            self.levels[self.depth] = existing + count
         } else {
-            levels[depth] = count
+            self.levels[self.depth] = count
         }
     }
 
@@ -102,15 +102,15 @@ extension Console {
     ///
     /// Calling `popEphemeral()` will decrement this number.
     private var depth: Int {
-        get { return extend.get(\Self.depth, default: 0) }
-        set { extend.set(\Self.depth, to: newValue) }
+        get { return (self.userInfo["depth"] as? Int) ?? 0 }
+        set { self.userInfo["depth"] = newValue }
     }
 
     /// Stores how many lines have been outputted at each depth.
     ///
     /// Calling `didOutputLines(count:)` will increase this number for the current depth.
     private var levels: [Int: Int] {
-        get { return extend.get(\Self.levels, default: [:]) }
-        set { extend.set(\Self.levels, to: newValue) }
+        get { return (userInfo["levels"] as? [Int: Int]) ?? [:] }
+        set { self.userInfo["levels"] = newValue }
     }
 }

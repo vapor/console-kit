@@ -1,18 +1,19 @@
-import Async
 import Console
-import Service
+import NIO
 
 final class TestConsole: Console {
     var output: String
     var input: String
     var error: String
-    var extend: Extend
+    var userInfo: [AnyHashable : Any]
+    var eventLoop: EventLoop
 
     init() {
         self.output = ""
         self.input = ""
         self.error = ""
-        self.extend = Extend()
+        self.userInfo = [:]
+        self.eventLoop = EmbeddedEventLoop()
     }
 
     func clear(_ type: ConsoleClear) {

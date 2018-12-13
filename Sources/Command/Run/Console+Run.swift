@@ -1,3 +1,6 @@
+import Console
+import NIO
+
 /// Adds the ability to run `Command`s on a `Console`.
 extension Console {
     /// Runs a `CommandRunnable` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
@@ -10,25 +13,22 @@ extension Console {
     /// - parameters:
     ///     - runnable: `CommandGroup` or `Command` to run.
     ///     - input: Mutable `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
-    ///     - container: `Container` to provide `EventLoop` access and services.
     /// - returns: A `Future` that will complete when the command finishes.
-    public func run(_ runnable: CommandRunnable, input: inout CommandInput, on container: Container) -> Future<Void> {
+    public func run(_ runnable: CommandRunnable, input: inout CommandInput) -> EventLoopFuture<Void> {
         do {
-            return try _run(runnable, input: &input, on: container)
+            return try _run(runnable, input: &input)
         } catch {
             if error is CommandError {
                 outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
             }
-            return Future.map(on: container) {
-                throw error
-            }
+            return self.eventLoop.makeFailedFuture(error: error)
         }
     }
 
     /// Runs the command, throwing if no commands are available.
     ///
     /// See `Console.run(...)`.
-    private func _run(_ runnable: CommandRunnable, input: inout CommandInput, on container: Container) throws -> Future<Void> {
+    private func _run(_ runnable: CommandRunnable, input: inout CommandInput) throws -> EventLoopFuture<Void> {
         // check -n and -y flags.
         if try input.parse(option: .flag(name: "no", short: "n", help: ["Automatically answers 'no' to all confirmiations."])) == "true" {
             confirmOverride = false
@@ -43,14 +43,13 @@ extension Console {
                 guard let subcommand = commands.commands[name] else {
                     throw CommandError(
                         identifier: "unknownCommand",
-                        reason: "Unknown command `\(name)`",
-                        source: .capture()
+                        reason: "Unknown command `\(name)`"
                     )
                 }
                 // executable should include all subcommands
                 // to get to the desired command
                 input.executablePath.append(name)
-                return run(subcommand, input: &input, on: container)
+                return run(subcommand, input: &input)
             }
         case .command: break
         }
@@ -58,11 +57,11 @@ extension Console {
         if let help = try input.parse(option: .flag(name: "help", short: "h")) {
             assert(help == "true")
             outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
-            return .done(on: container)
+            return self.eventLoop.makeSucceededFuture(result: ())
         } else if let autocomplete = try input.parse(option: .flag(name: "autocomplete")) {
             assert(autocomplete == "true")
             try outputAutocomplete(for: runnable, executable: input.executablePath.joined(separator: " "))
-            return .done(on: container)
+            return self.eventLoop.makeSucceededFuture(result: ())
         } else {
             // try to run the default command first
             switch runnable.type {
@@ -71,18 +70,17 @@ extension Console {
                     guard let subcommand = commands.commands[defaultCommand] else {
                         throw CommandError(
                             identifier: "defaultCommand",
-                            reason: "Unknown default command `\(defaultCommand)`",
-                            source: .capture()
+                            reason: "Unknown default command `\(defaultCommand)`"
                         )
                     }
                     let exec = input.executablePath.joined()
                     output("Running default command: ".consoleText(.info) + exec.consoleText() + " " + defaultCommand.consoleText(.warning))
-                    return run(subcommand, input: &input, on: container)
+                    return run(subcommand, input: &input)
                 }
             case .command: break
             }
 
-            let context = try CommandContext.make(from: &input, console: self, for: runnable, on: container)
+            let context = try CommandContext.make(from: &input, console: self, for: runnable)
             return try runnable.run(using: context)
         }
     }
