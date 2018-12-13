@@ -75,11 +75,20 @@ public protocol Command: CommandRunnable {
     ///
     /// See `CommandArgument` for more information.
     var arguments: [CommandArgument] { get }
+    
+    /// When `true`, excess arguments and unknown options will trigger an error.
+    /// Defaults to `true`.
+    var isStrict: Bool { get }
 }
 
 extension Command {
     /// See `CommandRunnable`
     public var type: CommandRunnableType {
         return .command(arguments: arguments)
+    }
+    
+    /// See `Command`.
+    public var isStrict: Bool {
+        return true
     }
 }

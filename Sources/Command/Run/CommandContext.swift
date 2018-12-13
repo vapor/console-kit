@@ -12,6 +12,9 @@ public struct CommandContext {
 
     /// The parsed options (according to declared signature).
     public var options: [String: String]
+    
+    /// Extraneous arguments that did not match the commands defined arguments.
+    public var excess: [String]
 
     /// The container this command is running on.
     public var container: Container
@@ -21,11 +24,13 @@ public struct CommandContext {
         console: Console,
         arguments: [String: String],
         options: [String: String],
+        excess: [String] = [],
         on container: Container
     ) {
         self.console = console
         self.arguments = arguments
         self.options = options
+        self.excess = excess
         self.container = container
     }
 
@@ -64,6 +69,7 @@ public struct CommandContext {
         from input: inout CommandInput,
         console: Console,
         for runnable: CommandRunnable,
+        isStrict: Bool,
         on container: Container
     ) throws -> CommandContext {
         var parsedArguments: [String: String] = [:]
@@ -91,7 +97,7 @@ public struct CommandContext {
         }
 
 
-        guard input.arguments.count == 0 else {
+        guard !isStrict || input.arguments.count == 0 else {
             throw CommandError(
                 identifier: "excessInput",
                 reason: "Too many arguments or unsupported options were supplied: \(input.arguments)",
@@ -103,6 +109,7 @@ public struct CommandContext {
             console: console,
             arguments: parsedArguments,
             options: parsedOptions,
+            excess: input.arguments,
             on: container
         )
     }

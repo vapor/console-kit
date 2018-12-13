@@ -82,7 +82,13 @@ extension Console {
             case .command: break
             }
 
-            let context = try CommandContext.make(from: &input, console: self, for: runnable, on: container)
+            let context = try CommandContext.make(
+                from: &input,
+                console: self,
+                for: runnable,
+                isStrict: (runnable as? Command)?.isStrict ?? true,
+                on: container
+            )
             return try runnable.run(using: context)
         }
     }
