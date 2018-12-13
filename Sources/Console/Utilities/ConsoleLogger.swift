@@ -24,7 +24,7 @@ public final class ConsoleLogger: Logger {
 
 extension LogLevel {
     /// Converts log level to console style
-    fileprivate var style: ConsoleStyle {
+    public var style: ConsoleStyle {
         switch self {
         case .custom, .verbose, .debug: return .plain
         case .error, .fatal: return .error
