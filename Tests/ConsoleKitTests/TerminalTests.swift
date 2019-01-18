@@ -1,5 +1,5 @@
 import XCTest
-@testable import Console
+@testable import ConsoleKit
 
 class TerminalTests: XCTestCase {
     

@@ -1,5 +1,3 @@
-import NIO
-
 /// Protocol for powering styled Console I/O.
 ///
 /// # Output
@@ -75,7 +73,7 @@ public protocol Console: class {
     ///     - newLine: If `true`, the next error will be on a new line.
     func report(error: String, newLine: Bool)
     
-    var eventLoop: EventLoop { get }
+    var eventLoopGroup: EventLoopGroup { get }
     
     var userInfo: [AnyHashable: Any] { get set } 
 }

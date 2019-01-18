@@ -1,5 +1,4 @@
-import Console
-import NIO
+import ConsoleKit
 import XCTest
 
 class ConsoleTests: XCTestCase {
@@ -75,12 +74,12 @@ class ConsoleTests: XCTestCase {
         let name = "Test Name"
         let question = "What is your name?"
 
-        console.input = name
+        console.testInputQueue.append(name)
 
         let response = console.ask(question.consoleText(.plain))
 
         XCTAssertEqual(response, name)
-        XCTAssertEqual(console.output, question + "\n> ")
+        XCTAssertEqual(console.testOutputQueue.reversed().joined(), question + "\n> ")
     }
 
     func testConfirm() throws {
@@ -89,12 +88,12 @@ class ConsoleTests: XCTestCase {
         let name = "y"
         let question = "Do you want to continue?"
 
-        console.input = name
+        console.testInputQueue.append(name)
 
         let response = console.confirm(question.consoleText(.info))
 
         XCTAssertEqual(response, true)
-        XCTAssertEqual(console.output, question + "\ny/n> ")
+        XCTAssertEqual(console.testOutputQueue.reversed().joined(), question + "\ny/n> ")
     }
 
     static let allTests = [

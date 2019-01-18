@@ -1,6 +1,3 @@
-import Console
-import NIO
-
 /// Adds the ability to run `Command`s on a `Console`.
 extension Console {
     /// Runs a `CommandRunnable` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
@@ -21,7 +18,7 @@ extension Console {
             if error is CommandError {
                 outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
             }
-            return self.eventLoop.makeFailedFuture(error: error)
+            return self.eventLoopGroup.next().makeFailedFuture(error: error)
         }
     }
 
@@ -57,11 +54,11 @@ extension Console {
         if let help = try input.parse(option: .flag(name: "help", short: "h")) {
             assert(help == "true")
             outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
-            return self.eventLoop.makeSucceededFuture(result: ())
+            return self.eventLoopGroup.next().makeSucceededFuture(result: ())
         } else if let autocomplete = try input.parse(option: .flag(name: "autocomplete")) {
             assert(autocomplete == "true")
             try outputAutocomplete(for: runnable, executable: input.executablePath.joined(separator: " "))
-            return self.eventLoop.makeSucceededFuture(result: ())
+            return self.eventLoopGroup.next().makeSucceededFuture(result: ())
         } else {
             // try to run the default command first
             switch runnable.type {

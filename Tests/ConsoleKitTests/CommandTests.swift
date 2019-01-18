@@ -1,5 +1,4 @@
-import Command
-import Console
+import ConsoleKit
 import XCTest
 
 class CommandTests: XCTestCase {

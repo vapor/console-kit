@@ -10,7 +10,7 @@ import NIO
 /// library and Foundation code to fulfill protocol requirements.
 public final class Terminal: Console {
     /// See `Console`
-    public var eventLoop: EventLoop
+    public let eventLoopGroup: EventLoopGroup
     
     /// See `Console`
     public var userInfo: [AnyHashable: Any]
@@ -25,9 +25,9 @@ public final class Terminal: Console {
     }
 
     /// Create a new Terminal.
-    public init(on eventLoop: EventLoop) {
+    public init(on eventLoopGroup: EventLoopGroup) {
         self.userInfo = [:]
-        self.eventLoop = eventLoop
+        self.eventLoopGroup = eventLoopGroup
     }
 
     /// See `Console`

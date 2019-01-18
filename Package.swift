@@ -1,20 +1,17 @@
-// swift-tools-version:4.2
+// swift-tools-version:5.0
 import PackageDescription
 
 let package = Package(
-    name: "console",
+    name: "console-kit",
     products: [
-        .library(name: "Console", targets: ["Console"]),
-        .library(name: "Command", targets: ["Command"]),
+        .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-nio.git", .branch("master")),
     ],
     targets: [
-        .target(name: "Console", dependencies: ["NIO"]),
-        .target(name: "Command", dependencies: ["Console", "NIO"]),
-        .testTarget(name: "ConsoleTests", dependencies: ["Console"]),
-        .testTarget(name: "CommandTests", dependencies: ["Command"]),
-        .target(name: "ConsoleDevelopment", dependencies: ["Command", "Console"]),
+        .target(name: "ConsoleKit", dependencies: ["NIO"]),
+        .testTarget(name: "ConsoleKitTests", dependencies: ["ConsoleKit"]),
+        .target(name: "ConsoleKitExample", dependencies: ["ConsoleKit"]),
     ]
 )

@@ -38,12 +38,15 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
     private var task: RepeatedTask?
     
     private var promise: EventLoopPromise<Void>?
+    
+    private let eventLoop: EventLoop
 
     /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.
     init(activity: A, console: Console) {
         self.console = console
         self.state = .ready
         self.activity = activity
+        self.eventLoop = console.eventLoopGroup.next()
     }
 
     /// Starts the `ActivityIndicator`. Usually this means beginning the associated "loading" animation.
@@ -53,9 +56,9 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
     ///
     /// - returns: A `Future` that completes when the `ActivityIndicator` is finished (fail or succeed).
     public func start() -> EventLoopFuture<Void> {
-        let promise = self.console.eventLoop.makePromise(of: Void.self)
+        let promise = self.eventLoop.makePromise(of: Void.self)
         var tick: UInt = 0
-        self.task = self.console.eventLoop.scheduleRepeatedTask(initialDelay: .seconds(0), delay: .milliseconds(40)) { task -> Void in
+        self.task = self.eventLoop.scheduleRepeatedTask(initialDelay: .seconds(0), delay: .milliseconds(40)) { task -> Void in
             if tick > 0 {
                 self.console.popEphemeral()
             }

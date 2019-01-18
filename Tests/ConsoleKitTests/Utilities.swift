@@ -1,5 +1,4 @@
-import Console
-import Command
+import ConsoleKit
 import NIO
 
 extension String: Error {}
@@ -72,14 +71,14 @@ final class TestCommand: Command {
 final class TestConsole: Console {
     var testInputQueue: [String]
     var testOutputQueue: [String]
-    var eventLoop: EventLoop
+    var eventLoopGroup: EventLoopGroup
     var userInfo: [AnyHashable : Any]
-
+    
     init() {
         self.testInputQueue = []
         self.testOutputQueue = []
         self.userInfo = [:]
-        self.eventLoop = EmbeddedEventLoop()
+        self.eventLoopGroup = EmbeddedEventLoop()
     }
 
     func input(isSecure: Bool) -> String {

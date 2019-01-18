@@ -1,5 +1,3 @@
-import Console
-
 extension Console {
     /// Outputs autocomplete data for a supplied `CommandRunnable`.
     internal func outputAutocomplete(for runnable: CommandRunnable, executable: String) throws {

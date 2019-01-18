@@ -1,6 +1,3 @@
-import Console
-import NIO
-
 /// Contains required data for running a command such as the `Console` and `CommandInput`.
 ///
 /// See `CommandRunnable` for more information.
@@ -13,11 +10,8 @@ public struct CommandContext {
 
     /// The parsed options (according to declared signature).
     public var options: [String: String]
-
-    /// The container this command is running on.
-    public var eventLoop: EventLoop {
-        return self.console.eventLoop
-    }
+    
+    public let eventLoop: EventLoop
 
     /// Create a new `CommandContext`.
     public init(
@@ -28,6 +22,7 @@ public struct CommandContext {
         self.console = console
         self.arguments = arguments
         self.options = options
+        self.eventLoop = console.eventLoopGroup.next()
     }
 
     /// Requires an option, returning the value or throwing.

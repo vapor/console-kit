@@ -1,5 +1,3 @@
-import Console
-
 extension Console {
     /// Outputs help for a `CommandRunnable`, this is called automatically when `--help` is
     /// passed or when input validation fails.
