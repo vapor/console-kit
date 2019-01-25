@@ -5,7 +5,7 @@
     <a href="https://docs.vapor.codes/3.0/console/getting-started/">
         <img src="http://img.shields.io/badge/read_the-docs-2196f3.svg" alt="Documentation">
     </a>
-    <a href="https://discord.gg/vapor">
+    <a href="http://http://vapor.team">
         <img src="https://img.shields.io/discord/431917998102675485.svg" alt="Team Chat">
     </a>
     <a href="LICENSE">
