@@ -35,6 +35,20 @@ class ConsoleTests: XCTestCase {
         try foo.start(on: worker).wait()
     }
 
+    func testCustomIndicator()throws {
+        let console = Terminal()
+        let worker = EmbeddedEventLoop()
+        
+        let indicator = console.customActivity(frames: ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"])
+        
+        DispatchQueue.global().async {
+            console.blockingWait(seconds: 3)
+            indicator.succeed()
+        }
+        
+        try indicator.start(on: worker).wait()
+    }
+    
     func testEphemeral() {
         // for some reason, piping through test output doesn't work correctly
         // but this code works great if running directly in an executable
@@ -86,6 +100,7 @@ class ConsoleTests: XCTestCase {
     }
 
     static let allTests = [
+        ("testCustomIndicator", testCustomIndicator),
         ("testAsk", testAsk),
         ("testConfirm", testConfirm),
     ]
