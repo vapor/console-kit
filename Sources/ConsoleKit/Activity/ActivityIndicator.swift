@@ -93,7 +93,7 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
     /// Stops the output refreshing and clears the console.
     private func stop() {
         self.task!.cancel()
-        self.promise!.succeed(result: ())
+        self.promise!.succeed(())
         console.popEphemeral()
     }
 }
