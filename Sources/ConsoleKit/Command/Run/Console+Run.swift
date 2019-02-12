@@ -18,7 +18,7 @@ extension Console {
             if error is CommandError {
                 outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
             }
-            return self.eventLoopGroup.next().makeFailedFuture(error: error)
+            return self.eventLoopGroup.next().makeFailedFuture(error)
         }
     }
 
@@ -54,11 +54,11 @@ extension Console {
         if let help = try input.parse(option: .flag(name: "help", short: "h")) {
             assert(help == "true")
             outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
-            return self.eventLoopGroup.next().makeSucceededFuture(result: ())
+            return self.eventLoopGroup.next().makeSucceededFuture(())
         } else if let autocomplete = try input.parse(option: .flag(name: "autocomplete")) {
             assert(autocomplete == "true")
             try outputAutocomplete(for: runnable, executable: input.executablePath.joined(separator: " "))
-            return self.eventLoopGroup.next().makeSucceededFuture(result: ())
+            return self.eventLoopGroup.next().makeSucceededFuture(())
         } else {
             // try to run the default command first
             switch runnable.type {

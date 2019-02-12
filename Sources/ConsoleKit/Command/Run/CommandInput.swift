@@ -55,7 +55,7 @@ public struct CommandInput {
             } else if let short = option.short, arg.hasPrefix("-") {
                 // has `-` prefix but not `--`
                 // check if contains short name
-                guard let index = arg.index(of: short) else {
+                guard let index = arg.firstIndex(of: short) else {
                     continue
                 }
 

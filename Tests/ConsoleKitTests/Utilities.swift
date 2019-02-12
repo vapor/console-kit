@@ -21,7 +21,7 @@ final class TestGroup: CommandGroup {
         } else {
             throw "unknown"
         }
-        return context.eventLoop.makeSucceededFuture(result: ())
+        return context.eventLoop.makeSucceededFuture(())
     }
 }
 
@@ -42,7 +42,7 @@ final class SubGroup: CommandGroup {
         } else {
             throw "unknown"
         }
-        return context.eventLoop.makeSucceededFuture(result: ())
+        return context.eventLoop.makeSucceededFuture(())
     }
 }
 
@@ -64,7 +64,7 @@ final class TestCommand: Command {
         let foo = try context.argument("foo")
         let bar = try context.requireOption("bar")
         context.console.output("Foo: \(foo) Bar: \(bar)".consoleText(.info))
-        return context.eventLoop.makeSucceededFuture(result: ())
+        return context.eventLoop.makeSucceededFuture(())
     }
 }
 

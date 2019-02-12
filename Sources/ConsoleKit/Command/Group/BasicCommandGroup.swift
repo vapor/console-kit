@@ -22,6 +22,6 @@ internal struct BasicCommandGroup: CommandGroup {
     /// See `CommandGroup`.
     func run(using context: CommandContext) throws -> EventLoopFuture<Void> {
         // should never run
-        return context.eventLoop.makeSucceededFuture(result: ())
+        return context.eventLoop.makeSucceededFuture(())
     }
 }
