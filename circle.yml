@@ -1,84 +1,23 @@
 version: 2
 
 jobs:
-  macos:
-    macos:
-      xcode: "9.2"
+  linux:
+    docker:
+      - image: vapor/swift:5.0
     steps:
       - checkout
       - run: swift build
       - run: swift test
-
-  linux:
+  linux-release:
     docker:
-      - image: codevapor/swift:4.1
+      - image: vapor/swift:5.0
     steps:
       - checkout
-      - run: 
-          name: Compile code
-          command: swift build
-      - run: 
-          name: Run unit tests
-          command: swift test
-      - run: 
-          name: Compile code with optimizations
-          command: swift build -c release
-
-
-  linux-vapor:
-    docker:
-      - image: codevapor/swift:4.1
-    steps:
-      - run:
-          name: Clone Vapor
-          command: git clone -b master https://github.com/vapor/vapor.git
-          working_directory: ~/
-      - run:
-          name: Switch Vapor to this Console revision
-          command: swift package edit Console --revision $CIRCLE_SHA1
-          working_directory: ~/vapor
-      - run:
-          name: Run Vapor unit tests
-          command: swift test
-          working_directory: ~/vapor
-
-
-  linux-fluent:
-    docker:
-      - image: codevapor/swift:4.1
-    steps:
-      - run:
-          name: Clone Fluent
-          command: git clone -b master https://github.com/vapor/fluent.git
-          working_directory: ~/
-      - run:
-          name: Switch Fluent to this Console revision
-          command: swift package edit Console --revision $CIRCLE_SHA1
-          working_directory: ~/fluent
-      - run:
-          name: Run Fluent unit tests
-          command: swift test
-          working_directory: ~/fluent
-
+      - run: swift build -c release
 
 workflows:
   version: 2
   tests:
     jobs:
       - linux
-      - linux-vapor
-      - linux-fluent
-      # - macos
-
-  nightly:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - linux
-      # - macos
-      
+      - linux-release
