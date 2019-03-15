@@ -1,3 +1,13 @@
+/// A type-erased `Argument`.
+public protocol AnyArgument {
+    
+    /// The argument's unique name.
+    var name: String { get }
+    
+    /// The arguments's help text when `--help` is passed in.
+    var help: String? { get }
+}
+
 /// An argument for a console command
 ///
 ///     exec command <arg>
@@ -23,7 +33,7 @@
 ///     }
 ///
 /// See `Command` for more information.
-public struct Argument<T> where T: LosslessStringConvertible {
+public struct Argument<T>: AnyArgument where T: LosslessStringConvertible {
     private let nameInit: () -> String
     private let helpInit: () -> String?
     
