@@ -6,6 +6,9 @@ public protocol AnyArgument {
     
     /// The arguments's help text when `--help` is passed in.
     var help: String? { get }
+    
+    /// The type that the argument value gets decoded to.
+    var type: LosslessStringConvertible.Type { get }
 }
 
 /// An argument for a console command
@@ -57,5 +60,12 @@ public struct Argument<T>: AnyArgument where T: LosslessStringConvertible {
     /// The arguments's help text when `--help` is passed in.
     public var help: String? {
         return self.helpInit()
+    }
+    
+    /// The type that the argument value gets decoded to.
+    ///
+    /// Required by `AnyArgument`.
+    public var type: LosslessStringConvertible.Type {
+        return T.self
     }
 }
