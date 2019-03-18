@@ -1,4 +1,6 @@
-public protocol Inputs { }
+public protocol Inputs {
+    init()
+}
 
 extension Inputs {
     
