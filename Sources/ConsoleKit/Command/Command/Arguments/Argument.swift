@@ -36,8 +36,18 @@ public protocol AnyArgument {
 ///
 /// See `Command` for more information.
 public struct Argument<T>: AnyArgument where T: LosslessStringConvertible {
-    private let nameInit: () -> String
-    private let helpInit: () -> String?
+    /// The argument's unique name.
+    public let name: String
+    
+    /// The arguments's help text when `--help` is passed in.
+    public let help: String?
+    
+    /// The type that the argument value gets decoded to.
+    ///
+    /// Required by `AnyArgument`.
+    public var type: LosslessStringConvertible.Type {
+        return T.self
+    }
     
     /// Creates a new `Argument`
     ///
@@ -46,25 +56,8 @@ public struct Argument<T>: AnyArgument where T: LosslessStringConvertible {
     /// - Parameters:
     ///   - name: The argument's unique name. Use this to get the argument value from the `CommandContext`.
     ///   - help: The arguments's help text when `--help` is passed in.
-    public init(name: @escaping @autoclosure () -> String, help: @escaping @autoclosure () -> String? = nil) {
-        self.nameInit = name
-        self.helpInit = help
-    }
-    
-    /// The argument's unique name.
-    public var name: String {
-        return self.nameInit()
-    }
-    
-    /// The arguments's help text when `--help` is passed in.
-    public var help: String? {
-        return self.helpInit()
-    }
-    
-    /// The type that the argument value gets decoded to.
-    ///
-    /// Required by `AnyArgument`.
-    public var type: LosslessStringConvertible.Type {
-        return T.self
+    public init(name: String, help: String? = nil) {
+        self.name = name
+        self.help = help
     }
 }

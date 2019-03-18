@@ -18,9 +18,21 @@ public protocol AnyOption {
 ///     exec command [--opt -o]
 ///
 public struct Option<T>: AnyOption where T: LosslessStringConvertible {
-    private let nameInit: () -> String
-    private let helpInit: () -> String?
-    private let shortInit: () -> Character?
+    /// The option's unique name.
+    public let name: String
+    
+    /// The option's short flag.
+    public let help: String?
+    
+    /// The option's help text when `--help` is passed in.
+    public let short: Character?
+    
+    /// The type that the option value gets decoded to.
+    ///
+    /// Required by `AnyOption`.
+    public var type: LosslessStringConvertible.Type {
+        return T.self
+    }
     
     /// Creates a new `Option`
     ///
@@ -31,35 +43,13 @@ public struct Option<T>: AnyOption where T: LosslessStringConvertible {
     ///   - short: The short-hand for the flag that can be passed in to the command call.
     ///   - help: The option's help text when `--help` is passed in.
     public init(
-        name: @escaping @autoclosure () -> String,
-        short: @escaping @autoclosure () -> Character? = nil,
-        help: @escaping @autoclosure () -> String? = nil
+        name: String,
+        short: Character? = nil,
+        help: String? = nil
     ) {
-        self.nameInit = name
-        self.shortInit = short
-        self.helpInit = help
-    }
-    
-    /// The option's unique name.
-    public var name: String {
-        return self.nameInit()
-    }
-    
-    /// The option's short flag.
-    public var short: Character? {
-        return self.shortInit()
-    }
-    
-    /// The option's help text when `--help` is passed in.
-    public var help: String? {
-        return self.helpInit()
-    }
-    
-    /// The type that the option value gets decoded to.
-    ///
-    /// Required by `AnyOption`.
-    public var type: LosslessStringConvertible.Type {
-        return T.self
+        self.name = name
+        self.short = short
+        self.help = help
     }
 }
 
