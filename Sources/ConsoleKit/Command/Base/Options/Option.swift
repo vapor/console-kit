@@ -1,6 +1,5 @@
 /// A type-erased `Option`.
 public protocol AnyOption {
-    
     /// The option's unique name.
     var name: String { get }
     

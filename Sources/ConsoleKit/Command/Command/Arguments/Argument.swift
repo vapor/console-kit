@@ -1,6 +1,5 @@
 /// A type-erased `Argument`.
 public protocol AnyArgument {
-    
     /// The argument's unique name.
     var name: String { get }
     
