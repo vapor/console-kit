@@ -26,7 +26,7 @@ public struct CommandInput {
     ///
     /// - parameters:
     ///     - option: The `CommandOption` to parse from this `CommandInput`.
-    public mutating func parse(option: CommandOption) throws -> String? {
+    public mutating func parse(option: AnyOption) throws -> String? {
         // create a temporary [String?] array so it's
         // easier to mark positions as "consumed"
         var arguments = self.arguments.map { $0 as String? }
@@ -54,7 +54,7 @@ public struct CommandInput {
                 arguments[i] = nil
             } else if let short = option.short, arg.hasPrefix("-") {
                 // has `-` prefix but not `--`
-                if case .value = option.type {
+                if case .value = option.optionType {
                     // If we want to extract a _value_, the argument should match exactly, and the desired value will be
                     // the following argument.
                     guard arg == "-\(short)" else {
@@ -65,7 +65,7 @@ public struct CommandInput {
                     arguments[i] = nil
                 } else {
                     // If we want extract a flag, it just needs to be anywhere in the option string to match.
-                    guard let index = arg.index(of: short) else {
+                    guard let index = arg.firstIndex(of: short) else {
                         continue
                     }
                     
@@ -84,7 +84,7 @@ public struct CommandInput {
             }
 
             // if we reach here, the option was found
-            switch option.type {
+            switch option.optionType {
             case .flag: return "true"
             case .value(let d):
                 let supplied: String?
@@ -135,7 +135,7 @@ public struct CommandInput {
     ///
     /// - parameters:
     ///     - argument: The `CommandArgument` to parse from this `CommandInput`.
-    public mutating func parse(argument: CommandArgument) throws -> String? {
+    public mutating func parse(argument: AnyArgument) throws -> String? {
         // create a temporary [String?] array so it's
         // easier to mark positions as "consumed"
         var arguments = self.arguments.map { $0 as String? }
