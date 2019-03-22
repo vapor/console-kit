@@ -19,7 +19,7 @@ internal struct BasicCommandGroup: CommandGroup {
     }
 
     /// See `CommandGroup`.
-    func run(using context: CommandContext<Signature>) throws -> EventLoopFuture<Void> {
+    func run(using context: CommandContext<BasicCommandGroup>) throws -> EventLoopFuture<Void> {
         // should never run
         return context.eventLoop.makeSucceededFuture(())
     }

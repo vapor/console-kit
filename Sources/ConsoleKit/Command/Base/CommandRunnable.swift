@@ -2,6 +2,9 @@ import NIO
 
 /// A type-erased `CommandRunnable`.
 public protocol AnyCommandRunnable {
+    /// An instance of the type that represents the command's valid inputs/signature.
+    static var inputs: Inputs { get }
+    
     /// Text that will be displayed when `--help` is passed.
     var help: String? { get }
     
@@ -22,11 +25,31 @@ public protocol CommandRunnable: AnyCommandRunnable {
     /// are the command's accepted arguments and options.
     associatedtype Signature: Inputs
     
+    /// An instance of the type that represents the command's valid signature.
+    ///
+    /// The type-specific implementation of `AnyCommandRunnable.inputs`.
+    static var signature: Signature { get }
+    
     /// Runs the command against the supplied input.
-    func run(using context: CommandContext<Signature>) throws -> EventLoopFuture<Void>
+    func run(using context: CommandContext<Self>) throws -> EventLoopFuture<Void>
 }
 
 extension CommandRunnable {
+    
+    /// The default implementation of `AnyCommandRunnable.inputs`.
+    ///
+    /// - Returns: The `CommandRunnable.signature` value.
+    static var inputs: Inputs {
+        return self.signature
+    }
+    
+    /// The default implementation of `CommandRunnable.signature`.
+    ///
+    /// - Returns: A new instance of `CommandRunnable.Signature`.
+    static var signature: Signature {
+        return Signature()
+    }
+    
     /// The default implementation for `AnyCommandRunnable.runt(using:)`.
     ///
     /// The context passed in is cast to `CommandContext<Signature>`, which is then passed into
@@ -34,7 +57,7 @@ extension CommandRunnable {
     ///
     /// - Throws: `ConsoleError.invalidSignature` is the context type-cast fails.
     func run<S>(using context: CommandContext<S>) throws -> EventLoopFuture<Void> where S: Inputs {
-        guard let signitureContext = context as? CommandContext<Signature> else {
+        guard let signitureContext = context as? CommandContext<Self> else {
             throw ConsoleError(
                 identifier: "invalidSignature",
                 reason: "Command signature type `\(S.self)` not convertible to `\(Signature.self)`"
