@@ -60,8 +60,8 @@ public struct Option<T>: AnyOption where T: LosslessStringConvertible {
     public init(
         name: String,
         short: Character? = nil,
-        help: String? = nil,
-        type: OptionType = .flag
+        type: OptionType = .flag,
+        help: String? = nil
     ) {
         self.name = name
         self.short = short
@@ -80,13 +80,13 @@ public struct Option<T>: AnyOption where T: LosslessStringConvertible {
     ///   - default: The default value for the option. Defaults to `nil`.
     ///
     /// - Returns: A `.value` type `Option` instance created with the values passed in.
-    public static func value<T>(
+    public static func value(
         name: String,
         short: Character? = nil,
-        help: String? = nil,
-        default: T? = nil
+        default: T? = nil,
+        help: String? = nil
     ) -> Option<T> {
-        return Option<T>(name: name, short: short, help: help, type: .value(default: `default`?.description))
+        return Option<T>(name: name, short: short, type: .value(default: `default`?.description), help: help)
     }
     
     /// Creates an `Option` instance with the `optionType` as `.flat`
@@ -99,8 +99,8 @@ public struct Option<T>: AnyOption where T: LosslessStringConvertible {
     ///   - help: The option's help text when `--help` is passed in.
     ///
     /// - Returns: A `.flag` type `Option` instance created with the values passed in.
-    public static func flag<T>(name: String, short: Character? = nil, help: String? = nil) -> Option<T> {
-        return Option<T>(name: name, short: short, help: help, type: .flag)
+    public static func flag(name: String, short: Character? = nil, help: String? = nil) -> Option<T> {
+        return Option<T>(name: name, short: short, type: .flag, help: help)
     }
 }
 
