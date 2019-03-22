@@ -98,10 +98,4 @@ class ConsoleTests: XCTestCase {
         XCTAssertEqual(response, true)
         XCTAssertEqual(console.output, question + "\ny/n> ")
     }
-
-    static let allTests = [
-        ("testCustomIndicator", testCustomIndicator),
-        ("testAsk", testAsk),
-        ("testConfirm", testConfirm),
-    ]
 }

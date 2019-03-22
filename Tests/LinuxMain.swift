@@ -1,12 +1,10 @@
-#if os(Linux)
-
 import XCTest
-@testable import ConsoleTests
-@testable import CommandTests
 
-XCTMain([
-    testCase(ConsoleTests.allTests),
-    testCase(CommandTests.allTests)
-])
+import CommandTests
+import ConsoleTests
 
-#endif
+var tests = [XCTestCaseEntry]()
+tests += CommandTests.__allTests()
+tests += ConsoleTests.__allTests()
+
+XCTMain(tests)
