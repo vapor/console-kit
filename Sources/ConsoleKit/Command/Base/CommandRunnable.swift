@@ -39,14 +39,14 @@ extension CommandRunnable {
     /// The default implementation of `AnyCommandRunnable.inputs`.
     ///
     /// - Returns: The `CommandRunnable.signature` value.
-    static var inputs: Inputs {
+    public static var inputs: Inputs {
         return self.signature
     }
     
     /// The default implementation of `CommandRunnable.signature`.
     ///
     /// - Returns: A new instance of `CommandRunnable.Signature`.
-    static var signature: Signature {
+    public static var signature: Signature {
         return Signature()
     }
     
@@ -56,7 +56,7 @@ extension CommandRunnable {
     /// the `CommandRunable.run(using:)` method.
     ///
     /// - Throws: `ConsoleError.invalidSignature` is the context type-cast fails.
-    func run(using anyContext: AnyCommandContext) throws -> EventLoopFuture<Void> {
+    public func run(using anyContext: AnyCommandContext) throws -> EventLoopFuture<Void> {
         let context = anyContext.context(command: Self.self)
         return try self.run(using: context)
     }
