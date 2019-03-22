@@ -45,16 +45,5 @@ class TerminalTests: XCTestCase {
             "\u{001b}[0;37;48;2;100;100;100mTEST\u{001b}[0m"
         )
     }
-
-    static let allTests = [
-        ("testStylizeForeground", testStylizeForeground),
-        ("testStylizeBackground", testStylizeBackground),
-        ("testStylizeBold", testStylizeBold),
-        ("testStylizeOnlyBold", testStylizeOnlyBold),
-        ("testStylizeAllAttrs", testStylizeAllAttrs),
-        ("testStylizePlain", testStylizePlain),
-        ("testStylizePaletteColor", testStylizePaletteColor),
-        ("testStylizeRGBColor", testStylizeRGBColor),
-    ]
 }
 
