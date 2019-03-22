@@ -84,47 +84,47 @@ public struct CommandContext<Command> where Command: CommandRunnable {
         return value
     }
 
-//    /// Creates a CommandContext, parsing the values from the supplied CommandInput.
-//    static func make(
-//        from input: inout CommandInput,
-//        console: Console,
-//        for runnable: CommandRunnable
-//    ) throws -> CommandContext {
-//        var parsedArguments: [String: String] = [:]
-//        var parsedOptions: [String: String] = [:]
-//
-//        for opt in runnable.options {
-//            parsedOptions[opt.name] = try input.parse(option: opt)
-//        }
-//
-//        let arguments: [CommandArgument]
-//        switch runnable.type {
-//        case .command(let a): arguments = a
-//        case .group: arguments = []
-//        }
-//
-//        for arg in arguments {
-//            guard let value = try input.parse(argument: arg) else {
-//                throw CommandError(
-//                    identifier: "argumentRequired",
-//                    reason: "Argument `\(arg.name)` is required."
-//                )
-//            }
-//            parsedArguments[arg.name] = value
-//        }
-//
-//
-//        guard input.arguments.count == 0 else {
-//            throw CommandError(
-//                identifier: "excessInput",
-//                reason: "Too many arguments or unsupported options were supplied: \(input.arguments)"
-//            )
-//        }
-//
-//        return CommandContext(
-//            console: console,
-//            arguments: parsedArguments,
-//            options: parsedOptions
-//        )
-//    }
+    /// Creates a CommandContext, parsing the values from the supplied CommandInput.
+    static func make<Runnable>(
+        from input: inout CommandInput,
+        console: Console,
+        for runnable: Runnable
+    ) throws -> CommandContext<Runnable> where Runnable: CommandRunnable {
+        var parsedArguments: [String: String] = [:]
+        var parsedOptions: [String: String] = [:]
+
+        for opt in Runnable.signature.options {
+            parsedOptions[opt.name] = try input.parse(option: opt)
+        }
+
+        let arguments: [AnyArgument]
+        switch runnable.type {
+        case .command(let a): arguments = a
+        case .group: arguments = []
+        }
+
+        for arg in arguments {
+            guard let value = try input.parse(argument: arg) else {
+                throw CommandError(
+                    identifier: "argumentRequired",
+                    reason: "Argument `\(arg.name)` is required."
+                )
+            }
+            parsedArguments[arg.name] = value
+        }
+
+
+        guard input.arguments.count == 0 else {
+            throw CommandError(
+                identifier: "excessInput",
+                reason: "Too many arguments or unsupported options were supplied: \(input.arguments)"
+            )
+        }
+
+        return CommandContext<Runnable>(
+            console: console,
+            arguments: parsedArguments,
+            options: parsedOptions
+        )
+    }
 }
