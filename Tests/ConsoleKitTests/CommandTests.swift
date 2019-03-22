@@ -61,12 +61,4 @@ class CommandTests: XCTestCase {
 
         """)
     }
-
-    static var allTests = [
-        ("testHelp", testHelp),
-        ("testFlag", testFlag),
-        ("testShortFlag", testShortFlag),
-        ("testShortFlagNeedsToMatchExactly", testShortFlagNeedsToMatchExactly),
-        ("testDeprecatedFlag", testDeprecatedFlag),
-    ]
 }
