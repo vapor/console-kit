@@ -31,7 +31,7 @@ jobs:
     steps:
       - run:
           name: Clone Vapor
-          command: git clone -b master https://github.com/vapor/vapor.git
+          command: git clone -b 3 https://github.com/vapor/vapor.git
           working_directory: ~/
       - run:
           name: Switch Vapor to this Console revision
@@ -49,7 +49,7 @@ jobs:
     steps:
       - run:
           name: Clone Fluent
-          command: git clone -b master https://github.com/vapor/fluent.git
+          command: git clone -b 3 https://github.com/vapor/fluent.git
           working_directory: ~/
       - run:
           name: Switch Fluent to this Console revision
@@ -81,4 +81,3 @@ workflows:
     jobs:
       - linux
       # - macos
-      
