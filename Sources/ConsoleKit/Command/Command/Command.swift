@@ -81,10 +81,3 @@ extension AnyCommand {
 ///                        ||     ||
 ///
 public protocol Command: AnyCommand, CommandRunnable { }
-
-extension Command {
-    /// See `AnyCommandRunnable`.
-    public var type: CommandRunnableType {
-        return .command(arguments: Self.signature.arguments)
-    }
-}
