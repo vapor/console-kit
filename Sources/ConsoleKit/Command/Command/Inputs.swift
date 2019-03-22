@@ -1,4 +1,14 @@
+/// The structure of the inputs that a command can take
+///
+///     struct Signature: Intpus:
+///         let name = Argument<String>(name: "name")
+///     }
 public protocol Inputs {
+    
+    /// Creates a new instance of `Self`.
+    ///
+    /// This is required so a `CommandRunnable` can create an instance on the fly
+    /// to things such as output help messages or fetch an argument value.
     init()
 }
 
