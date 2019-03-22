@@ -66,6 +66,7 @@ class CommandTests: XCTestCase {
         ("testHelp", testHelp),
         ("testFlag", testFlag),
         ("testShortFlag", testShortFlag),
+        ("testShortFlagNeedsToMatchExactly", testShortFlagNeedsToMatchExactly),
         ("testDeprecatedFlag", testDeprecatedFlag),
     ]
 }
