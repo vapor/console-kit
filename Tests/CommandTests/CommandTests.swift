@@ -63,10 +63,9 @@ class CommandTests: XCTestCase {
         """)
     }
 
-    static var allTests = [
-        ("testHelp", testHelp),
-        ("testFlag", testFlag),
-        ("testShortFlag", testShortFlag),
-        ("testDeprecatedFlag", testDeprecatedFlag),
-    ]
+    func testShortFlagNeedsToMatchExactly() throws {
+        var input = CommandInput(arguments: ["vapor", "sub", "test", "-x", "exact", "-y_not_exact", "not_exact"])
+        XCTAssertEqual(try input.parse(option: .value(name: "xShort", short: "x")), "exact")
+        XCTAssertNil(try input.parse(option: .value(name: "yShort", short: "y")))
+    }
 }

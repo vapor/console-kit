@@ -54,18 +54,29 @@ public struct CommandInput {
                 arguments[i] = nil
             } else if let short = option.short, arg.hasPrefix("-") {
                 // has `-` prefix but not `--`
-                // check if contains short name
-                guard let index = arg.index(of: short) else {
-                    continue
-                }
-
-                // remove this option and update the args
-                _ = arg.remove(at: index)
-                arguments[i] = arg
-
-                if arg.count == 1 {
-                    // if just the `-` left, remove this arg
+                if case .value = option.type {
+                    // If we want to extract a _value_, the argument should match exactly, and the desired value will be
+                    // the following argument.
+                    guard arg == "-\(short)" else {
+                        continue
+                    }
+                    
+                    // remove this option from the command input
                     arguments[i] = nil
+                } else {
+                    // If we want extract a flag, it just needs to be anywhere in the option string to match.
+                    guard let index = arg.index(of: short) else {
+                        continue
+                    }
+                    
+                    // remove this option and update the args
+                    _ = arg.remove(at: index)
+                    arguments[i] = arg
+                    
+                    if arg.count == 1 {
+                        // if just the `-` left, remove this arg
+                        arguments[i] = nil
+                    }
                 }
             } else {
                 // not an option
