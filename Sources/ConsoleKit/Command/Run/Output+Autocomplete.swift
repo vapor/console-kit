@@ -1,15 +1,12 @@
 extension Console {
     /// Outputs autocomplete data for a supplied `CommandRunnable`.
-    internal func outputAutocomplete<Runnable>(
-        for runnable: Runnable,
-        executable: String
-    ) throws where Runnable: CommandRunnable {
+    internal func outputAutocomplete(for runnable: AnyCommandRunnable, executable: String) throws {
         var autocomplete: [String] = []
         switch runnable.type {
         case .command(let arguments): autocomplete += arguments.map { $0.name }
         case .group(let commands): autocomplete += commands.commands.keys
         }
-        autocomplete += Runnable.signature.options.map { "--" + $0.name }
+        autocomplete += type(of: runnable).inputs.options.map { "--" + $0.name }
         output(autocomplete.joined(separator: " "), style: .plain)
     }
 }
