@@ -4,7 +4,7 @@ public protocol Inputs {
 
 extension Inputs {
     
-    /// Gets all the `Argument` propeties from a `Inputs` struct.
+    /// Gets all the `Argument` propeties from an `Inputs` struct.
     ///
     /// Because the `Argument` struct is generic, we have to type-erase it and use `AnyArgument`.
     var arguments: [AnyArgument] {
@@ -14,7 +14,7 @@ extension Inputs {
         }
     }
     
-    /// Gets all the `Option` propeties from a `Inputs` struct.
+    /// Gets all the `Option` propeties from an `Inputs` struct.
     ///
     /// Because the `Option` struct is generic, we have to type-erase it and use `AnyOption`.
     var options: [AnyOption] {
