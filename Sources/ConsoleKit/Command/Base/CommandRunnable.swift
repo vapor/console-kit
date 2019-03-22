@@ -12,7 +12,7 @@ public protocol AnyCommandRunnable {
     var type: CommandRunnableType { get }
     
     /// Runs the command against the supplied input.
-    func run<S>(using context: CommandContext<S>) throws -> EventLoopFuture<Void> where S: Inputs
+    func run(using context: AnyCommandContext) throws -> EventLoopFuture<Void>
 }
 
 /// Capable of being run on a `Console` using `Console.run(...)`.
@@ -56,14 +56,9 @@ extension CommandRunnable {
     /// the `CommandRunable.run(using:)` method.
     ///
     /// - Throws: `ConsoleError.invalidSignature` is the context type-cast fails.
-    func run<S>(using context: CommandContext<S>) throws -> EventLoopFuture<Void> where S: Inputs {
-        guard let signitureContext = context as? CommandContext<Self> else {
-            throw ConsoleError(
-                identifier: "invalidSignature",
-                reason: "Command signature type `\(S.self)` not convertible to `\(Signature.self)`"
-            )
-        }
-        return try self.run(using: signitureContext)
+    func run(using anyContext: AnyCommandContext) throws -> EventLoopFuture<Void> {
+        let context = anyContext.context(command: Self.self)
+        return try self.run(using: context)
     }
 }
 
