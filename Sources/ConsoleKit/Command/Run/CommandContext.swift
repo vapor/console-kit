@@ -98,6 +98,8 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     
     public let eventLoop: EventLoop
     
+    internal let signature: Command.Signature
+    
     /// Create a new `CommandContext`.
     public init(
         console: Console,
@@ -108,6 +110,7 @@ public struct CommandContext<Command> where Command: CommandRunnable {
         self.arguments = arguments
         self.options = options
         self.eventLoop = console.eventLoopGroup.next()
+        self.signature = Command.signature
     }
 
     /// Gets an option passed into the command.
@@ -117,10 +120,11 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     ///     let option = try context.option(\.foo)
     ///
     /// - Parameter path: The key-path of an `Option` in the parent command's `Signiture` to fetch.
-    public func option<T>(_ path: KeyPath<Command.Signature, Option<T>>)throws -> T?
+    public func option<T>(_ path: KeyPath<Command.Signature, OptionGenerator<T>>)throws -> T?
         where T: LosslessStringConvertible
     {
-        guard let raw = self.options[Command.signature[keyPath: path].name] else {
+        let option = try self.signature[keyPath: path].generator(self.signature)
+        guard let raw = self.options[option.name] else {
             return nil
         }
         guard let value = T.init(raw) else {
@@ -136,12 +140,12 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     /// Use `.option(_:)` to access in a non-required manner.
     ///
     /// - Parameter path: The key-path of an `Option` in the parent command's `Signiture` to fetch.
-    public func requireOption<T>(_ path: KeyPath<Command.Signature, Option<T>>) throws -> T
+    public func requireOption<T>(_ path: KeyPath<Command.Signature, OptionGenerator<T>>) throws -> T
         where T: LosslessStringConvertible
     {
         guard let option = try self.option(path) else {
-            let name = Command.signature[keyPath: path].name
-            throw CommandError(identifier: "optionRequired", reason: "Option `\(name)` is required.")
+            let option = try self.signature[keyPath: path].generator(self.signature)
+            throw CommandError(identifier: "optionRequired", reason: "Option `\(option.name)` is required.")
         }
 
         return option
@@ -153,12 +157,12 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     ///     let message = try context.argument(\.message)
     ///
     /// - Parameter path: The key-path of an `Argument` in the parent command's `Signiture` to fetch.
-    public func argument<T>(_ path: KeyPath<Command.Signature, Argument<T>>) throws -> T
+    public func argument<T>(_ path: KeyPath<Command.Signature, ArgumentGenerator<T>>) throws -> T
         where T: LosslessStringConvertible
     {
-        let name = Command.signature[keyPath: path].name
-        guard let raw = arguments[name] else {
-            throw CommandError(identifier: "argumentRequired", reason: "Argument `\(name)` is required.")
+        let argument = try self.signature[keyPath: path].generator(self.signature)
+        guard let raw = arguments[argument.name] else {
+            throw CommandError(identifier: "argumentRequired", reason: "Argument `\(argument.name)` is required.")
         }
         guard let value = T.init(raw) else {
             throw CommandError(identifier: "typeMismatch", reason: "Unable to convert `\(raw)` to type `\(T.self)`")

@@ -5,7 +5,7 @@ extension String: Error {}
 
 final class TestGroup: CommandGroup {
     struct Signature: Inputs {
-        let version = Option<Bool>.value(name: "version", help: "Prints the version")
+        let version = Signature.flag(help: "Prints the version")
     }
     
     let commands: Commands = [
@@ -27,7 +27,7 @@ final class TestGroup: CommandGroup {
 
 final class SubGroup: CommandGroup {
     struct Signature: Inputs {
-        let version = Option<Bool>.value(name: "version", help: "Prints the version")
+        let version = Signature.flag(help: "Prints the version")
     }
     
     let commands: Commands = [
@@ -48,12 +48,12 @@ final class SubGroup: CommandGroup {
 
 final class TestCommand: Command {
     struct Signature: Inputs {
-        let foo = Argument<String>(name: "foo", help: """
+        let foo = Signature.argument(String.self, help: """
         A foo is required
         An error will occur if none exists
         """)
         
-        let bar = Option<String>.value(name: "bar", short: "b", help: """
+        let bar = Signature.option(String.self, short: "b", help: """
         Add a bar if you so desire
         Try passing it
         """)
