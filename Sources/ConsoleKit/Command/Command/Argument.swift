@@ -10,24 +10,6 @@ public protocol AnyArgument {
     var type: LosslessStringConvertible.Type { get }
 }
 
-/// A type-erased `ArgumentGenerator`.
-public protocol AnyArgumentGenerator {
-    
-    /// Creates an `Argument` instance using metadata from an `Inputs` instance.
-    var anyGenerator: (Inputs)throws -> AnyArgument { get }
-}
-
-/// Creates an `Argument` instance from a `Command.Signature`.
-public struct ArgumentGenerator<Value>: AnyArgumentGenerator where Value: LosslessStringConvertible {
-    internal let id: UInt8
-    internal let generator: (Inputs)throws -> Argument<Value>
-    
-    /// See `AnyArgumentGenerator.anyGenerator`.
-    public var anyGenerator: (Inputs)throws -> AnyArgument {
-        return self.generator
-    }
-}
-
 /// An argument for a console command
 ///
 ///     exec command <arg>

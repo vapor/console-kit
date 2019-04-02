@@ -16,24 +16,6 @@ public protocol AnyOption {
     var type: LosslessStringConvertible.Type { get }
 }
 
-/// A type-erased `OptionGenerator`.
-public protocol AnyOptionGenerator {
-    
-    /// Creates an `Option` instance using metadata from an `Inputs` instance.
-    var anyGenerator: (Inputs)throws -> AnyOption { get }
-}
-
-/// Creates an `Option` instance from a `Command.Signature`.
-public struct OptionGenerator<Value>: AnyOptionGenerator where Value: LosslessStringConvertible {
-    internal let id: UInt8
-    internal let generator: (Inputs)throws -> Option<Value>
-    
-    /// See `AnyOptionGeneratoranyGenerator`.
-    public var anyGenerator: (Inputs) throws -> AnyOption {
-        return self.generator
-    }
-}
-
 /// A supported option for a command.
 ///
 ///     exec command [--opt -o]
@@ -85,6 +67,40 @@ public struct Option<T>: AnyOption where T: LosslessStringConvertible {
         self.short = short
         self.help = help
         self.optionType = type
+    }
+    
+    /// Creates an `Option` instance with the `optionType` as `.value`
+    ///
+    ///     Option<Int>.value(name: "result", short: "r", help: "The number of results to fetch", default: 100)
+    ///
+    /// - Parameters:
+    ///   - name: The option's unique name. Use this to get the option value from the `CommandContext`.
+    ///   - short: The short-hand for the flag that can be passed in to the command call.
+    ///   - help: The option's help text when `--help` is passed in.
+    ///   - default: The default value for the option. Defaults to `nil`.
+    ///
+    /// - Returns: A `.value` type `Option` instance created with the values passed in.
+    public static func value(
+        name: String,
+        short: Character? = nil,
+        default: T? = nil,
+        help: String? = nil
+    ) -> Option<T> {
+        return Option<T>(name: name, short: short, type: .value(default: `default`?.description), help: help)
+    }
+    
+    /// Creates an `Option` instance with the `optionType` as `.flat`
+    ///
+    ///     Option<Bool>.value(name: "verbose", short: "v", help: "Output debug logs")
+    ///
+    /// - Parameters:
+    ///   - name: The option's unique name. Use this to get the option value from the `CommandContext`.
+    ///   - short: The short-hand for the flag that can be passed in to the command call.
+    ///   - help: The option's help text when `--help` is passed in.
+    ///
+    /// - Returns: A `.flag` type `Option` instance created with the values passed in.
+    public static func flag(name: String, short: Character? = nil, help: String? = nil) -> Option<T> {
+        return Option<T>(name: name, short: short, type: .flag, help: help)
     }
 }
 

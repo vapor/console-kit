@@ -83,21 +83,21 @@ extension Console {
     }
 }
 
-extension Option {
+extension AnyOption {
     fileprivate static var no: Option<Bool> {
-        return .init(name: "no", short: "n", type: .flag, help: "Automatically answers 'no' to all confirmiations.")
+        return .flag(name: "no", short: "n", help: "Automatically answers 'no' to all confirmiations.")
     }
     
     fileprivate static var yes: Option<Bool> {
-        return .init(name: "yes", short: "y", type: .flag, help: "Automatically answers 'yes' to all confirmiations.")
+        return .flag(name: "yes", short: "y", help: "Automatically answers 'yes' to all confirmiations.")
     }
     
     fileprivate static var help: Option<Bool> {
-        return .init(name: "help", short: "h", type: .flag)
+        return .flag(name: "help", short: "h")
     }
     
     fileprivate static var autocomplete: Option<Bool> {
-        return .init(name: "autocomplete", type: .flag)
+        return .flag(name: "autocomplete")
     }
 }
 
