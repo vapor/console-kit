@@ -75,5 +75,5 @@ public protocol Console: class {
     
     var eventLoopGroup: EventLoopGroup { get }
     
-    var userInfo: [AnyHashable: Any] { get set } 
+    subscript(userInfo key: AnyHashable) -> Any? { get set }
 }

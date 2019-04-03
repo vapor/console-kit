@@ -5,6 +5,7 @@ import Darwin.C
 #endif
 import Foundation
 import NIO
+import NIOConcurrencyHelpers
 
 /// Generic console that uses a mixture of Swift standard
 /// library and Foundation code to fulfill protocol requirements.
@@ -13,7 +14,21 @@ public final class Terminal: Console {
     public let eventLoopGroup: EventLoopGroup
     
     /// See `Console`
-    public var userInfo: [AnyHashable: Any]
+    private var userInfo: [AnyHashable: Any]
+    private var _userInfoLock = Lock()
+    
+    public subscript(userInfo key: AnyHashable) -> Any? {
+        get {
+            return _userInfoLock.withLock {
+                return userInfo[key]
+            }
+        }
+        set {
+            _userInfoLock.withLockVoid {
+                userInfo[key] = newValue
+            }
+        }
+    }
 
     /// Dynamically exclude ANSI commands when in Xcode since it doesn't support them.
     internal var enableCommands: Bool {

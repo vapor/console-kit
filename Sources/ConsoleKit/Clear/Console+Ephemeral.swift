@@ -102,15 +102,15 @@ extension Console {
     ///
     /// Calling `popEphemeral()` will decrement this number.
     private var depth: Int {
-        get { return (self.userInfo["depth"] as? Int) ?? 0 }
-        set { self.userInfo["depth"] = newValue }
+        get { return (self[userInfo: "depth"] as? Int) ?? 0 }
+        set { self[userInfo: "depth"] = newValue }
     }
 
     /// Stores how many lines have been outputted at each depth.
     ///
     /// Calling `didOutputLines(count:)` will increase this number for the current depth.
     private var levels: [Int: Int] {
-        get { return (userInfo["levels"] as? [Int: Int]) ?? [:] }
-        set { self.userInfo["levels"] = newValue }
+        get { return (self[userInfo: "levels"] as? [Int: Int]) ?? [:] }
+        set { self[userInfo: "levels"] = newValue }
     }
 }

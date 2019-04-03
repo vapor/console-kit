@@ -51,8 +51,8 @@ extension Console {
 
     /// If set, all calls to `confirm(_:)` will use this value instead of asking the user.
     public var confirmOverride: Bool? {
-        get { return self.userInfo["confirmOverride"] as? Bool }
-        set { self.userInfo["confirmOverride"] = newValue }
+        get { return self[userInfo: "confirmOverride"] as? Bool }
+        set { self[userInfo: "confirmOverride"] = newValue }
     }
 }
 

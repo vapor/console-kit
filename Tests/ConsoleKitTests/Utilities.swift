@@ -72,7 +72,16 @@ final class TestConsole: Console {
     var testInputQueue: [String]
     var testOutputQueue: [String]
     var eventLoopGroup: EventLoopGroup
-    var userInfo: [AnyHashable : Any]
+    private var userInfo: [AnyHashable : Any]
+    
+    subscript(userInfo key: AnyHashable) -> Any? {
+        get {
+            return userInfo[key]
+        }
+        set {
+            userInfo[key] = newValue
+        }
+    }
     
     init() {
         self.testInputQueue = []
