@@ -7,7 +7,8 @@ let package = Package(
         .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0-convergence"),
+        // 🚀
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
     ],
     targets: [
         .target(name: "ConsoleKit", dependencies: ["NIO"]),
