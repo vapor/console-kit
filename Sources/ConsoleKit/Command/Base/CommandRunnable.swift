@@ -1,5 +1,3 @@
-import NIO
-
 /// Capable of being run on a `Console` using `Console.run(...)`.
 /// - note: This base protocol should not be used directly. Conform to `Command` or `CommandGroup` instead.
 public protocol CommandRunnable {
@@ -13,7 +11,7 @@ public protocol CommandRunnable {
     var type: CommandRunnableType { get }
 
     /// Runs the command against the supplied input.
-    func run(using context: CommandContext) throws -> EventLoopFuture<Void>
+    func run(using context: CommandContext) throws
 }
 
 /// Supported runnable types.

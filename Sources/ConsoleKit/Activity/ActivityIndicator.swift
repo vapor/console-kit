@@ -1,4 +1,4 @@
-import NIO
+import Dispatch
 
 extension ActivityIndicatorType {
     /// Creates a new `ActivityIndicator` for this `ActivityIndicatorType`.
@@ -35,39 +35,34 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
     /// Current state.
     private var state: ActivityIndicatorState
     
-    private var task: RepeatedTask?
-    
-    private var promise: EventLoopPromise<Void>?
-    
-    private let eventLoop: EventLoop
+    private var task: DispatchWorkItem?
 
     /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.
     init(activity: A, console: Console) {
         self.console = console
         self.state = .ready
         self.activity = activity
-        self.eventLoop = console.eventLoopGroup.next()
     }
 
     /// Starts the `ActivityIndicator`. Usually this means beginning the associated "loading" animation.
     ///
     /// Once started, `ActivityIndicator` will continue to redraw the `ActivityIndicatorType` at a fixed
     /// refresh rate passing `ActivityIndicatorState.active`.
-    ///
-    /// - returns: A `Future` that completes when the `ActivityIndicator` is finished (fail or succeed).
-    public func start() -> EventLoopFuture<Void> {
-        let promise = self.eventLoop.makePromise(of: Void.self)
-        var tick: UInt = 0
-        self.task = self.eventLoop.scheduleRepeatedTask(initialDelay: .seconds(0), delay: .milliseconds(40)) { task -> Void in
-            if tick > 0 {
-                self.console.popEphemeral()
+    public func start() {
+        let item = DispatchWorkItem {
+            var tick: UInt = 0
+            while true {
+                usleep(40_000)
+                if tick > 0 {
+                    self.console.popEphemeral()
+                }
+                self.console.pushEphemeral()
+                self.activity.outputActivityIndicator(to: self.console, state: .active(tick: tick))
+                tick = tick &+ 1
             }
-            self.console.pushEphemeral()
-            self.activity.outputActivityIndicator(to: self.console, state: .active(tick: tick))
-            tick = tick &+ 1
         }
-        self.promise = promise
-        return promise.futureResult
+        DispatchQueue.global().async(execute: item)
+        self.task = item
     }
 
     /// Stops the `ActivityIndicator`, yielding a failed / error appearance.
@@ -93,7 +88,7 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
     /// Stops the output refreshing and clears the console.
     private func stop() {
         self.task!.cancel()
-        self.promise!.succeed(())
+        self.task = nil
         console.popEphemeral()
     }
 }

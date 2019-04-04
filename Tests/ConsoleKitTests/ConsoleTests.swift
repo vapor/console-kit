@@ -3,19 +3,19 @@ import XCTest
 
 class ConsoleTests: XCTestCase {
     func testLoading() throws {
-        let console = Terminal(on: MultiThreadedEventLoopGroup(numberOfThreads: 1).next())
+        let console = Terminal()
         let foo = console.loadingBar(title: "Loading")
 
         DispatchQueue.global().async {
-            console.blockingWait(seconds: 2.5)
+            console.wait(seconds: 2.5)
             foo.succeed()
         }
 
-        try foo.start().wait()
+        foo.start()
     }
 
     func testProgress() throws {
-        let console = Terminal(on: MultiThreadedEventLoopGroup(numberOfThreads: 1).next())
+        let console = Terminal()
         let foo = console.progressBar(title: "Progress")
 
         DispatchQueue.global().async {
@@ -25,25 +25,25 @@ class ConsoleTests: XCTestCase {
                     break
                 } else {
                     foo.activity.currentProgress += 0.1
-                    console.blockingWait(seconds: 0.1)
+                    console.wait(seconds: 0.1)
                 }
             }
         }
 
-        try foo.start().wait()
+        foo.start()
     }
 
     func testCustomIndicator()throws {
-        let console = Terminal(on: MultiThreadedEventLoopGroup(numberOfThreads: 1).next())
+        let console = Terminal()
         
         let indicator = console.customActivity(frames: ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"])
         
         DispatchQueue.global().async {
-            console.blockingWait(seconds: 3)
+            console.wait(seconds: 3)
             indicator.succeed()
         }
         
-        try indicator.start().wait()
+        indicator.start()
     }
     
     func testEphemeral() {
@@ -51,7 +51,7 @@ class ConsoleTests: XCTestCase {
         // but this code works great if running directly in an executable
 
         // added here anyway to verify that the code snippet in doc blocks actually compiles
-        let console = Terminal(on: EmbeddedEventLoop())
+        let console = Terminal()
         console.print("a")
         console.pushEphemeral()
         console.print("b")
@@ -60,10 +60,10 @@ class ConsoleTests: XCTestCase {
         console.print("d")
         console.print("e")
         console.print("f")
-        console.blockingWait(seconds: 1)
+        console.wait(seconds: 1)
         console.popEphemeral() // removes "d", "e", and "f" lines
         console.print("g")
-        console.blockingWait(seconds: 1)
+        console.wait(seconds: 1)
         console.popEphemeral() // removes "b", "c", and "g" lines
         // just "a" has been printed now
     }
