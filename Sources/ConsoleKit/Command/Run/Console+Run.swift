@@ -2,7 +2,7 @@
 extension Console {
     /// Runs a `CommandRunnable` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
     ///
-    ///     try console.run(group, input: &env.commandInput, on: container).wait()
+    ///     try console.run(group, input: &env.commandInput, on: container)
     ///
     /// The `CommandInput` will be mutated, removing any used `CommandOption`s and `CommandArgument`s. If any excess input is left
     /// over after checking the command's signature, an error will be thrown.
@@ -10,13 +10,12 @@ extension Console {
     /// - parameters:
     ///     - runnable: `CommandGroup` or `Command` to run.
     ///     - input: Mutable `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
-    /// - returns: A `Future` that will complete when the command finishes.
     public func run(_ runnable: CommandRunnable, input: inout CommandInput) throws {
         do {
-            return try _run(runnable, input: &input)
+            return try self._run(runnable, input: &input)
         } catch {
             if error is CommandError {
-                outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
+                self.outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
             }
             throw error
         }
@@ -28,9 +27,9 @@ extension Console {
     private func _run(_ runnable: CommandRunnable, input: inout CommandInput) throws {
         // check -n and -y flags.
         if try input.parse(option: .flag(name: "no", short: "n", help: ["Automatically answers 'no' to all confirmiations."])) == "true" {
-            confirmOverride = false
+            self.confirmOverride = false
         } else if try input.parse(option: .flag(name: "yes", short: "y", help: ["Automatically answers 'yes' to all confirmiations."])) == "true" {
-            confirmOverride = true
+            self.confirmOverride = true
         }
 
         // try to run subcommand first
@@ -46,17 +45,17 @@ extension Console {
                 // executable should include all subcommands
                 // to get to the desired command
                 input.executablePath.append(name)
-                try run(subcommand, input: &input)
+                try self._run(subcommand, input: &input)
             }
         case .command: break
         }
 
         if let help = try input.parse(option: .flag(name: "help", short: "h")) {
             assert(help == "true")
-            outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
+            self.outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
         } else if let autocomplete = try input.parse(option: .flag(name: "autocomplete")) {
             assert(autocomplete == "true")
-            try outputAutocomplete(for: runnable, executable: input.executablePath.joined(separator: " "))
+            try self.outputAutocomplete(for: runnable, executable: input.executablePath.joined(separator: " "))
         } else {
             // try to run the default command first
             switch runnable.type {
@@ -69,8 +68,8 @@ extension Console {
                         )
                     }
                     let exec = input.executablePath.joined()
-                    output("Running default command: ".consoleText(.info) + exec.consoleText() + " " + defaultCommand.consoleText(.warning))
-                    try run(subcommand, input: &input)
+                    self.output("Running default command: ".consoleText(.info) + exec.consoleText() + " " + defaultCommand.consoleText(.warning))
+                    try self._run(subcommand, input: &input)
                 }
             case .command: break
             }
