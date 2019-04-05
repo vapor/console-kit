@@ -35,7 +35,7 @@ public protocol AnyArgument {
 ///     }
 ///
 /// See `Command` for more information.
-public struct Argument<T>: AnyArgument where T: LosslessStringConvertible {
+public struct Argument<Value>: AnyArgument where Value: LosslessStringConvertible {
     /// The argument's unique name.
     public let name: String
     
@@ -46,7 +46,7 @@ public struct Argument<T>: AnyArgument where T: LosslessStringConvertible {
     ///
     /// Required by `AnyArgument`.
     public var type: LosslessStringConvertible.Type {
-        return T.self
+        return Value.self
     }
     
     /// Creates a new `Argument`

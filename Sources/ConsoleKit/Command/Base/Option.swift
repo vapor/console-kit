@@ -20,7 +20,7 @@ public protocol AnyOption {
 ///
 ///     exec command [--opt -o]
 ///
-public struct Option<T>: AnyOption where T: LosslessStringConvertible {
+public struct Option<Value>: AnyOption where Value: LosslessStringConvertible {
     /// The option's unique name.
     public let name: String
     
@@ -45,7 +45,7 @@ public struct Option<T>: AnyOption where T: LosslessStringConvertible {
     ///
     /// Required by `AnyOption`.
     public var type: LosslessStringConvertible.Type {
-        return T.self
+        return Value.self
     }
     
     /// Creates a new `Option`
@@ -83,10 +83,10 @@ public struct Option<T>: AnyOption where T: LosslessStringConvertible {
     public static func value(
         name: String,
         short: Character? = nil,
-        default: T? = nil,
+        default: Value? = nil,
         help: String? = nil
-    ) -> Option<T> {
-        return Option<T>(name: name, short: short, type: .value(default: `default`?.description), help: help)
+    ) -> Option<Value> {
+        return Option<Value>(name: name, short: short, type: .value(default: `default`?.description), help: help)
     }
     
     /// Creates an `Option` instance with the `optionType` as `.flat`
@@ -99,8 +99,8 @@ public struct Option<T>: AnyOption where T: LosslessStringConvertible {
     ///   - help: The option's help text when `--help` is passed in.
     ///
     /// - Returns: A `.flag` type `Option` instance created with the values passed in.
-    public static func flag(name: String, short: Character? = nil, help: String? = nil) -> Option<T> {
-        return Option<T>(name: name, short: short, type: .flag, help: help)
+    public static func flag(name: String, short: Character? = nil, help: String? = nil) -> Option<Value> {
+        return Option<Value>(name: name, short: short, type: .flag, help: help)
     }
 }
 
