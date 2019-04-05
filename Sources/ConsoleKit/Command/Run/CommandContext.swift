@@ -96,8 +96,6 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     /// The parsed options (according to declared signature).
     public var options: [String: String]
     
-    public let eventLoop: EventLoop
-    
     /// Create a new `CommandContext`.
     public init(
         console: Console,
@@ -107,7 +105,6 @@ public struct CommandContext<Command> where Command: CommandRunnable {
         self.console = console
         self.arguments = arguments
         self.options = options
-        self.eventLoop = console.eventLoopGroup.next()
     }
 
     /// Gets an option passed into the command.

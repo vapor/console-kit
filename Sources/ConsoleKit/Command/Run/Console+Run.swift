@@ -25,7 +25,7 @@ extension Console {
     /// Runs the command, throwing if no commands are available.
     ///
     /// See `Console.run(...)`.
-    private func _run(_ runnable: CommandRunnable, input: inout CommandInput) throws {
+    private func _run(_ runnable: AnyCommandRunnable, input: inout CommandInput) throws {
         // check -n and -y flags.
         if try input.parse(option: Option<Bool>.no) == "true" {
             confirmOverride = false
