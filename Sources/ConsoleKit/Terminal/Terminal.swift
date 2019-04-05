@@ -4,14 +4,10 @@ import Glibc
 import Darwin.C
 #endif
 import Foundation
-import NIO
 
 /// Generic console that uses a mixture of Swift standard
 /// library and Foundation code to fulfill protocol requirements.
 public final class Terminal: Console {
-    /// See `Console`
-    public let eventLoopGroup: EventLoopGroup
-    
     /// See `Console`
     public var userInfo: [AnyHashable: Any]
 
@@ -25,9 +21,8 @@ public final class Terminal: Console {
     }
 
     /// Create a new Terminal.
-    public init(on eventLoopGroup: EventLoopGroup) {
+    public init() {
         self.userInfo = [:]
-        self.eventLoopGroup = eventLoopGroup
     }
 
     /// See `Console`

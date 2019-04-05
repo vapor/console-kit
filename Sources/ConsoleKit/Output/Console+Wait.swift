@@ -13,7 +13,7 @@ extension Console {
     ///
     /// - parameters:
     ///     - seconds: The number of seconds to wait for.
-    public func blockingWait(seconds: Double) {
+    public func wait(seconds: Double) {
         let factor = 1000 * 1000
         let microseconds = seconds * Double(factor)
         usleep(useconds_t(microseconds))
