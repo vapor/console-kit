@@ -73,7 +73,5 @@ public protocol Console: class {
     ///     - newLine: If `true`, the next error will be on a new line.
     func report(error: String, newLine: Bool)
     
-    var eventLoopGroup: EventLoopGroup { get }
-    
     var userInfo: [AnyHashable: Any] { get set } 
 }
