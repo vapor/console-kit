@@ -1,5 +1,3 @@
-import NIO
-
 /// A type-erased `CommandRunnable`.
 public protocol AnyCommandRunnable {
     /// An instance of the type that represents the command's valid inputs/signature.
