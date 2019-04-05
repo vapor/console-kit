@@ -1,5 +1,4 @@
 import ConsoleKit
-import NIO
 
 extension String: Error {}
 
@@ -15,13 +14,10 @@ final class TestGroup: CommandGroup {
 
     let help: String? = "This is a test grouping!"
 
-    func run(using context: CommandContext<TestGroup>) throws -> EventLoopFuture<Void> {
+    func run(using context: CommandContext<TestGroup>) throws {
         if try context.option(\.version) ?? false {
             context.console.print("v2.0")
-        } else {
-            throw "unknown"
         }
-        return context.eventLoop.makeSucceededFuture(())
     }
 }
 
@@ -36,13 +32,10 @@ final class SubGroup: CommandGroup {
 
     let help: String? = "This is a test sub grouping!"
 
-    func run(using context: CommandContext<SubGroup>) throws -> EventLoopFuture<Void> {
+    func run(using context: CommandContext<SubGroup>) throws {
         if try context.option(\.version) ?? false {
             context.console.print("v2.0")
-        } else {
-            throw "unknown"
         }
-        return context.eventLoop.makeSucceededFuture(())
     }
 }
 
@@ -61,25 +54,22 @@ final class TestCommand: Command {
 
     let help: String? = "This is a test command"
 
-    func run(using context: CommandContext<TestCommand>) throws -> EventLoopFuture<Void> {
+    func run(using context: CommandContext<TestCommand>) throws {
         let foo = try context.argument(\.foo)
         let bar = try context.requireOption(\.bar)
         context.console.output("Foo: \(foo) Bar: \(bar)".consoleText(.info))
-        return context.eventLoop.makeSucceededFuture(())
     }
 }
 
 final class TestConsole: Console {
     var testInputQueue: [String]
     var testOutputQueue: [String]
-    var eventLoopGroup: EventLoopGroup
     var userInfo: [AnyHashable : Any]
     
     init() {
         self.testInputQueue = []
         self.testOutputQueue = []
         self.userInfo = [:]
-        self.eventLoopGroup = EmbeddedEventLoop()
     }
 
     func input(isSecure: Bool) -> String {

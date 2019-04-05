@@ -6,12 +6,9 @@ let package = Package(
     products: [
         .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
     ],
-    dependencies: [
-        // 🚀
-        .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
-    ],
+    dependencies: [ ],
     targets: [
-        .target(name: "ConsoleKit", dependencies: ["NIO"]),
+        .target(name: "ConsoleKit", dependencies: []),
         .testTarget(name: "ConsoleKitTests", dependencies: ["ConsoleKit"]),
         .target(name: "ConsoleKitExample", dependencies: ["ConsoleKit"]),
     ]

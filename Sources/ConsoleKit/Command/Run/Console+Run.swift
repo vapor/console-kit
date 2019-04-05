@@ -11,21 +11,21 @@ extension Console {
     ///     - runnable: `CommandGroup` or `Command` to run.
     ///     - input: Mutable `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
     /// - returns: A `Future` that will complete when the command finishes.
-    public func run(_ runnable: AnyCommandRunnable, input: inout CommandInput) -> EventLoopFuture<Void> {
+    public func run(_ runnable: AnyCommandRunnable, input: inout CommandInput) throws {
         do {
             return try _run(runnable, input: &input)
         } catch {
             if error is CommandError {
                 outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
             }
-            return self.eventLoopGroup.next().makeFailedFuture(error)
+            throw error
         }
     }
 
     /// Runs the command, throwing if no commands are available.
     ///
     /// See `Console.run(...)`.
-    private func _run(_ runnable: AnyCommandRunnable, input: inout CommandInput) throws -> EventLoopFuture<Void> {
+    private func _run(_ runnable: CommandRunnable, input: inout CommandInput) throws {
         // check -n and -y flags.
         if try input.parse(option: Option<Bool>.no) == "true" {
             confirmOverride = false
@@ -46,7 +46,7 @@ extension Console {
                 // executable should include all subcommands
                 // to get to the desired command
                 input.executablePath.append(name)
-                return run(subcommand, input: &input)
+                try run(subcommand, input: &input)
             }
         case .command: break
         }
@@ -54,11 +54,9 @@ extension Console {
         if let help = try input.parse(option: Option<Bool>.help) {
             assert(help == "true")
             outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
-            return self.eventLoopGroup.next().makeSucceededFuture(())
         } else if let autocomplete = try input.parse(option: Option<Bool>.autocomplete) {
             assert(autocomplete == "true")
             try outputAutocomplete(for: runnable, executable: input.executablePath.joined(separator: " "))
-            return self.eventLoopGroup.next().makeSucceededFuture(())
         } else {
             // try to run the default command first
             switch runnable.type {
@@ -72,7 +70,7 @@ extension Console {
                     }
                     let exec = input.executablePath.joined()
                     output("Running default command: ".consoleText(.info) + exec.consoleText() + " " + defaultCommand.consoleText(.warning))
-                    return run(subcommand, input: &input)
+                    try run(subcommand, input: &input)
                 }
             case .command: break
             }

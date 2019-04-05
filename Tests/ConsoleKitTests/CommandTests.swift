@@ -6,7 +6,7 @@ class CommandTests: XCTestCase {
         let console = TestConsole()
         let group = TestGroup()
         var input = CommandInput(arguments: ["vapor", "sub", "test", "--help"])
-        try console.run(group, input: &input).wait()
+        try console.run(group, input: &input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Usage: vapor sub test <foo> [--bar,-b]\u{20}
 
@@ -27,7 +27,7 @@ class CommandTests: XCTestCase {
         let console = TestConsole()
         let group = TestGroup()
         var input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "--bar", "baz"])
-        try console.run(group, input: &input).wait()
+        try console.run(group, input: &input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Foo: foovalue Bar: baz
 
@@ -38,7 +38,7 @@ class CommandTests: XCTestCase {
         let console = TestConsole()
         let group = TestGroup()
         var input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "-b", "baz"])
-        try console.run(group, input: &input).wait()
+        try console.run(group, input: &input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Foo: foovalue Bar: baz
 
@@ -55,7 +55,7 @@ class CommandTests: XCTestCase {
         let console = TestConsole()
         let group = TestGroup()
         var input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "--bar=baz"])
-        try console.run(group, input: &input).wait()
+        try console.run(group, input: &input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Foo: foovalue Bar: baz
 
