@@ -85,19 +85,19 @@ extension Console {
 
 extension AnyOption {
     fileprivate static var no: Option<Bool> {
-        return .flag(name: "no", short: "n", help: "Automatically answers 'no' to all confirmiations.")
+        return .init(name: "no", short: "n", help: "Automatically answers 'no' to all confirmiations.")
     }
     
     fileprivate static var yes: Option<Bool> {
-        return .flag(name: "yes", short: "y", help: "Automatically answers 'yes' to all confirmiations.")
+        return .init(name: "yes", short: "y", help: "Automatically answers 'yes' to all confirmiations.")
     }
     
     fileprivate static var help: Option<Bool> {
-        return .flag(name: "help", short: "h")
+        return .init(name: "help", short: "h")
     }
     
     fileprivate static var autocomplete: Option<Bool> {
-        return .flag(name: "autocomplete")
+        return .init(name: "autocomplete")
     }
 }
 
