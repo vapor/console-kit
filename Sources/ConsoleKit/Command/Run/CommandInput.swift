@@ -65,7 +65,7 @@ public struct CommandInput {
                     arguments[i] = nil
                 } else {
                     // If we want extract a flag, it just needs to be anywhere in the option string to match.
-                    guard let index = arg.index(of: short) else {
+                    guard let index = arg.firstIndex(of: short) else {
                         continue
                     }
                     
