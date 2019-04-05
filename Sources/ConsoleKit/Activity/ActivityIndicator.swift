@@ -1,9 +1,9 @@
-import Dispatch
-#if os(Linux)
-import Glibc
-#else
-import Darwin
-#endif
+//import Dispatch
+//#if os(Linux)
+//import Glibc
+//#else
+//import Darwin
+//#endif
 
 
 extension ActivityIndicatorType {
@@ -40,8 +40,8 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
 
     /// Current state.
     private var state: ActivityIndicatorState
-    
-    private var task: DispatchWorkItem?
+//    
+//    private var task: DispatchWorkItem?
 
     /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.
     init(activity: A, console: Console) {
@@ -55,20 +55,20 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
     /// Once started, `ActivityIndicator` will continue to redraw the `ActivityIndicatorType` at a fixed
     /// refresh rate passing `ActivityIndicatorState.active`.
     public func start() {
-        let item = DispatchWorkItem {
-            var tick: UInt = 0
-            while true {
-                self.console.wait(microseconds: 40_000)
-                if tick > 0 {
-                    self.console.popEphemeral()
-                }
-                self.console.pushEphemeral()
-                self.activity.outputActivityIndicator(to: self.console, state: .active(tick: tick))
-                tick = tick &+ 1
-            }
-        }
-        DispatchQueue.global().async(execute: item)
-        self.task = item
+//        let item = DispatchWorkItem {
+//            var tick: UInt = 0
+//            while true {
+//                self.console.wait(microseconds: 40_000)
+//                if tick > 0 {
+//                    self.console.popEphemeral()
+//                }
+//                self.console.pushEphemeral()
+//                self.activity.outputActivityIndicator(to: self.console, state: .active(tick: tick))
+//                tick = tick &+ 1
+//            }
+//        }
+//        DispatchQueue.global().async(execute: item)
+//        self.task = item
     }
 
     /// Stops the `ActivityIndicator`, yielding a failed / error appearance.
@@ -93,8 +93,8 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
 
     /// Stops the output refreshing and clears the console.
     private func stop() {
-        self.task!.cancel()
-        self.task = nil
+//        self.task!.cancel()
+//        self.task = nil
         console.popEphemeral()
     }
 }
