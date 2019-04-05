@@ -10,6 +10,6 @@ let package = Package(
     targets: [
         .target(name: "ConsoleKit", dependencies: []),
         .testTarget(name: "ConsoleKitTests", dependencies: ["ConsoleKit"]),
-        .target(name: "ConsoleKitExample", dependencies: ["ConsoleKit"]),
+        // .target(name: "ConsoleKitExample", dependencies: ["ConsoleKit"]),
     ]
 )

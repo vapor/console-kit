@@ -7,7 +7,7 @@ class ConsoleTests: XCTestCase {
         let foo = console.loadingBar(title: "Loading")
 
         DispatchQueue.global().async {
-            console.wait(seconds: 2.5)
+            console.wait(seconds: 1)
             foo.succeed()
         }
 
@@ -25,7 +25,7 @@ class ConsoleTests: XCTestCase {
                     break
                 } else {
                     foo.activity.currentProgress += 0.1
-                    console.wait(seconds: 0.1)
+                    console.wait(microseconds: 50_000)
                 }
             }
         }

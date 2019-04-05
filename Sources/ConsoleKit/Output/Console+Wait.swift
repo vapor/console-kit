@@ -1,10 +1,22 @@
 #if os(Linux)
 import Glibc
 #else
-import Darwin.C
+import Darwin
 #endif
 
 extension Console {
+    /// Blocks the current thread for the specified number of seconds.
+    ///
+    ///     console.wait(seconds: 3)
+    ///
+    /// - warning: Do not use this method on an `EventLoop`. It is for testing purposes only.
+    ///
+    /// - parameters:
+    ///     - seconds: The number of seconds to wait for.
+    public func wait(seconds: Int) {
+        sleep(numericCast(seconds))
+    }
+    
     /// Blocks the current thread for the specified number of seconds.
     ///
     ///     console.blockingWait(seconds: 3.14)
@@ -13,9 +25,7 @@ extension Console {
     ///
     /// - parameters:
     ///     - seconds: The number of seconds to wait for.
-    public func wait(seconds: Double) {
-        let factor = 1000 * 1000
-        let microseconds = seconds * Double(factor)
-        usleep(useconds_t(microseconds))
+    public func wait(microseconds: Int) {
+        usleep(numericCast(microseconds))
     }
 }

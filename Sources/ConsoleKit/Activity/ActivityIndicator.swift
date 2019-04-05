@@ -2,7 +2,7 @@ import Dispatch
 #if os(Linux)
 import Glibc
 #else
-import Darwin.C
+import Darwin
 #endif
 
 
@@ -55,10 +55,11 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
     /// Once started, `ActivityIndicator` will continue to redraw the `ActivityIndicatorType` at a fixed
     /// refresh rate passing `ActivityIndicatorState.active`.
     public func start() {
+        let console = self.console
         let item = DispatchWorkItem {
             var tick: UInt = 0
             while true {
-                usleep(40_000)
+                console.wait(microseconds: 40_000)
                 if tick > 0 {
                     self.console.popEphemeral()
                 }
