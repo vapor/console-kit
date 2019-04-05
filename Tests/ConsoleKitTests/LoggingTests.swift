@@ -36,6 +36,9 @@ final class ConsoleLoggerTests: XCTestCase {
             return "[ \(level) ] \(text) (\(#file):\(line))\n"
         }
         
+        logger.trace("trace")
+        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Trace", "trace", #line - 1))
+        
         logger.debug("debug")
         XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Debug", "debug", #line - 1))
         
@@ -53,11 +56,5 @@ final class ConsoleLoggerTests: XCTestCase {
         
         logger.critical("critical")
         XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Critical", "critical", #line - 1))
-        
-        logger.alert("alert")
-        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Alert", "alert", #line - 1))
-        
-        logger.emergency("emergency")
-        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Emergency", "emergency", #line - 1))
     }
 }

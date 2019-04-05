@@ -62,7 +62,7 @@ extension LoggingSystem {
     ///   - console: The console the logger will log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    public static func bootstrap(console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
+    public static func bootstrap(console: Console, level: Logger.Level = .trace, metadata: Logger.Metadata = [:]) {
         self.bootstrap { _ in
             return ConsoleLogger(console: console, level: level, metadata: metadata)
         }
@@ -73,24 +73,23 @@ extension Logger.Level {
     /// Converts log level to console style
     fileprivate var style: ConsoleStyle {
         switch self {
-        case .debug: return .plain
+        case .trace, .debug: return .plain
         case .info, .notice: return .info
         case .warning: return .warning
-        case .error, .critical: return .error
-        case .alert, .emergency: return ConsoleStyle(color: .brightRed)
+        case .error: return .error
+        case .critical: return ConsoleStyle(color: .brightRed)
         }
     }
     
     fileprivate var name: String {
         switch self {
+        case .trace: return "Trace"
         case .debug: return "Debug"
         case .info: return "Info"
         case .notice: return "Notice"
         case .warning: return "Warning"
         case .error: return "Error"
         case .critical: return "Critical"
-        case .alert: return "Alert"
-        case .emergency: return "Emergency"
         }
     }
 }
