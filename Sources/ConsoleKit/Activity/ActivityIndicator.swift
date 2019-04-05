@@ -1,4 +1,10 @@
 import Dispatch
+#if os(Linux)
+import Glibc
+#else
+import Darwin.C
+#endif
+
 
 extension ActivityIndicatorType {
     /// Creates a new `ActivityIndicator` for this `ActivityIndicatorType`.

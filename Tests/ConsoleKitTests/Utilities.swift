@@ -17,8 +17,6 @@ final class TestGroup: CommandGroup {
     func run(using context: CommandContext) throws {
         if context.options["version"] == "true" {
             context.console.print("v2.0")
-        } else {
-            throw "unknown"
         }
     }
 }
@@ -37,8 +35,6 @@ final class SubGroup: CommandGroup {
     func run(using context: CommandContext) throws {
         if context.options["version"] == "true" {
             context.console.print("v2.0")
-        } else {
-            throw "unknown"
         }
     }
 }
