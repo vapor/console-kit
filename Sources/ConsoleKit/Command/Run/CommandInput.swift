@@ -9,7 +9,7 @@ public struct CommandInput {
 
     /// Create a new `CommandInput`.
     public init(arguments: [String]) {
-        assert(arguments.count >= 1, "At least one argument (the executable path) is required")
+        precondition(arguments.count >= 1, "At least one argument (the executable path) is required")
         var arguments = arguments
         executablePath = [arguments.popFirst()!]
         self.arguments = arguments
