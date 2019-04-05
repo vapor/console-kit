@@ -10,7 +10,7 @@ final class ConsoleLoggerTests: XCTestCase {
         super.setUp()
 
         if !ConsoleLoggerTests.bootstrapped {
-            LoggingSystem.bootstrap(ConsoleLogger.bootstrap(console: self.console))
+            LoggingSystem.bootstrap(console: console)
             ConsoleLoggerTests.bootstrapped = true
         }
     }

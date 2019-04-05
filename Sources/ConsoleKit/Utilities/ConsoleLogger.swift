@@ -24,22 +24,6 @@ public struct ConsoleLogger: LogHandler {
         self.console = console
     }
     
-    /// Creates a boottrap function that will create a `ConsoleLogger` instance.
-    ///
-    ///     LoggingSystem.boostrap(ConsoleLogger.bootstrap(console: console))
-    ///
-    /// - Parameters:
-    ///   - console: The console the logger will log the messages to.
-    ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
-    ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    ///
-    /// - Returns: A function that can be passed into the `LoggingSystem.bootstrap(_:)` method.
-    public static func bootstrap(
-        console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]
-    ) -> (String) -> LogHandler {
-        return { _ in return ConsoleLogger(console: console, level: level, metadata: metadata) }
-    }
-    
     /// See `LogHandler[metadataKey:]`.
     ///
     /// This just acts as a getter/setter for the `.metadata` property.
@@ -65,6 +49,23 @@ public struct ConsoleLogger: LogHandler {
             "(\(file):\(line))".consoleText(.info)
         
         console.output(text)
+    }
+}
+
+extension LoggingSystem {
+    
+    /// Bootstraps a `ConsoleLogger` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    ///
+    ///     LoggingSystem.boostrap(console: console)
+    ///
+    /// - Parameters:
+    ///   - console: The console the logger will log the messages to.
+    ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
+    ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
+    public static func bootstrap(console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
+        self.bootstrap { _ in
+            return ConsoleLogger(console: console, level: level, metadata: metadata)
+        }
     }
 }
 
