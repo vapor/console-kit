@@ -1,3 +1,5 @@
+import Dispatch
+
 extension Console {
     /// Creates a new `ProgressBar`-based `ActivityIndicator`.
     ///
@@ -22,8 +24,8 @@ extension Console {
     /// - parameters:
     ///     - title: Title to display alongside the loading bar.
     /// - returns: An `ActivityIndicator` that can start and stop the loading bar.
-    public func progressBar(title: String) -> ActivityIndicator<ProgressBar> {
-        return ProgressBar(title: title, currentProgress: 0).newActivity(for: self)
+    public func progressBar(title: String, targetQueue: DispatchQueue? = nil) -> ActivityIndicator<ProgressBar> {
+        return ProgressBar(title: title, currentProgress: 0).newActivity(for: self, targetQueue: targetQueue)
     }
 }
 

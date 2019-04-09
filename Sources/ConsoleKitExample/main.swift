@@ -1,4 +1,5 @@
 import ConsoleKit
+import Dispatch
 
 let console: Console = Terminal()
 
@@ -20,3 +21,31 @@ loadingBar.start()
 
 console.wait(seconds: 2)
 loadingBar.succeed()
+
+console.info("Here's an example of progress")
+
+let workGroup = DispatchGroup()
+let updateQueue = DispatchQueue(label: "codes.vapor.consolekitexample.updateBar")
+let progressBar = console.progressBar(title: "Long-running background stuff", targetQueue: updateQueue)
+
+let workQueue = DispatchQueue(label: "codes.vapor.consolekitexample.doWork")
+
+progressBar.start()
+
+workGroup.enter()
+workQueue.async {
+    let durationSeconds: Double = 3.0
+    let count = 50
+    for i in 0 ..< count {
+        console.wait(seconds: durationSeconds / Double(count))
+        updateQueue.async {
+            progressBar.activity.currentProgress = Double(i) / Double(count)
+        }
+    }
+    workGroup.leave()
+}
+
+workGroup.wait()
+progressBar.succeed()
+
+console.success("Example completed successfully")
