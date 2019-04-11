@@ -47,6 +47,7 @@ extension Console {
                 // to get to the desired command
                 input.executablePath.append(name)
                 try run(subcommand, input: &input)
+                return
             }
         case .command: break
         }
@@ -71,6 +72,7 @@ extension Console {
                     let exec = input.executablePath.joined()
                     output("Running default command: ".consoleText(.info) + exec.consoleText() + " " + defaultCommand.consoleText(.warning))
                     try run(subcommand, input: &input)
+                    return
                 }
             case .command: break
             }
