@@ -4,10 +4,10 @@ extension String: Error {}
 
 final class TestGroup: CommandGroup {
     struct Signature: CommandSignature {
-        let version = Option<Bool>(name: "version", help: "Prints the version")
+        let version = Option<Bool>(name: "version", type: .flag, help: "Prints the version")
     }
     
-    static let signature: TestGroup.Signature = Signature()
+    let signature: TestGroup.Signature = Signature()
     
     let commands: Commands = [
         "test": TestCommand(),
@@ -25,10 +25,10 @@ final class TestGroup: CommandGroup {
 
 final class SubGroup: CommandGroup {
     struct Signature: CommandSignature {
-        let version = Option<Bool>(name: "version", help: "Prints the version")
+        let version = Option<Bool>(name: "version", type: .flag, help: "Prints the version")
     }
     
-    static let signature: SubGroup.Signature = Signature()
+    let signature: SubGroup.Signature = Signature()
     
     let commands: Commands = [
         "test": TestCommand()
@@ -50,13 +50,13 @@ final class TestCommand: Command {
         An error will occur if none exists
         """)
         
-        let bar = Option<String>(name: "bar", short: "b", default: nil, help: """
+        let bar = Option<String>(name: "bar", short: "b", type: .value, help: """
         Add a bar if you so desire
         Try passing it
         """)
     }
 
-    static let signature: TestCommand.Signature = Signature()
+    let signature: TestCommand.Signature = Signature()
     
     let help: String? = "This is a test command"
 

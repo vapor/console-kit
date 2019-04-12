@@ -2,7 +2,6 @@ extension Console {
     /// Outputs help for a `CommandRunnable`, this is called automatically when `--help` is
     /// passed or when input validation fails.
     internal func outputHelp(for runnable: AnyCommandRunnable, executable: String) {
-        let runnableType = type(of: runnable)
         output("Usage: ".consoleText(.info) + executable.consoleText() + " ", newLine: false)
 
         switch runnable.type {
@@ -14,7 +13,7 @@ extension Console {
             output("<command> ".consoleText(.warning), newLine: false)
         }
 
-        for opt in runnableType.anySignature.options {
+        for opt in runnable.anySignature.options {
             if let short = opt.short {
                 output("[--\(opt.name),-\(short)] ".consoleText(.success), newLine: false)
             } else {
@@ -28,7 +27,7 @@ extension Console {
             print(help)
         }
 
-        var names = runnableType.anySignature.options.map { $0.name }
+        var names = runnable.anySignature.options.map { $0.name }
 
         switch runnable.type {
         case .command(let arguments):
@@ -40,10 +39,10 @@ extension Console {
         let padding = names.longestCount + 2
 
         if runnable is AnyCommand {
-            if runnableType.anySignature.arguments.count > 0 {
+            if runnable.anySignature.arguments.count > 0 {
                 print()
                 output("Arguments:".consoleText(.info))
-                for arg in runnableType.anySignature.arguments {
+                for arg in runnable.anySignature.arguments {
                     outputHelpListItem(
                         name: arg.name,
                         help: arg.help,
@@ -84,10 +83,10 @@ extension Console {
             }
         }
 
-        if runnableType.anySignature.options.count > 0 {
+        if runnable.anySignature.options.count > 0 {
             print()
             output("Options:".consoleText(.info))
-            for opt in runnableType.anySignature.options {
+            for opt in runnable.anySignature.options {
                 outputHelpListItem(
                     name: opt.name,
                     help: opt.help,

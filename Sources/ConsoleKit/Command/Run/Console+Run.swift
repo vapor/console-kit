@@ -12,11 +12,14 @@ extension Console {
     ///     - input: Mutable `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
     /// - returns: A `Future` that will complete when the command finishes.
     public func run(_ runnable: AnyCommandRunnable, input: inout CommandInput) throws {
+        // stores the latest command to run recursively so that we can
+        // print a useful help message in the error case
+        var current = runnable
         do {
-            return try _run(runnable, input: &input)
+            return try self._run(runnable, input: &input, current: &current)
         } catch {
             if error is CommandError {
-                outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
+                self.outputHelp(for: current, executable: input.executablePath.joined(separator: " "))
             }
             throw error
         }
@@ -25,12 +28,12 @@ extension Console {
     /// Runs the command, throwing if no commands are available.
     ///
     /// See `Console.run(...)`.
-    private func _run(_ runnable: AnyCommandRunnable, input: inout CommandInput) throws {
+    private func _run(_ runnable: AnyCommandRunnable, input: inout CommandInput, current: inout AnyCommandRunnable) throws {
         // check -n and -y flags.
         if try input.parse(option: Option<Bool>.no) == "true" {
-            confirmOverride = false
+            self.confirmOverride = false
         } else if try input.parse(option: Option<Bool>.yes) == "true" {
-            confirmOverride = true
+            self.confirmOverride = true
         }
 
         // try to run subcommand first
@@ -46,7 +49,8 @@ extension Console {
                 // executable should include all subcommands
                 // to get to the desired command
                 input.executablePath.append(name)
-                try run(subcommand, input: &input)
+                current = subcommand
+                try self._run(subcommand, input: &input, current: &current)
                 return
             }
         case .command: break
@@ -54,10 +58,10 @@ extension Console {
 
         if let help = try input.parse(option: Option<Bool>.help) {
             assert(help == "true")
-            outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
+            self.outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
         } else if let autocomplete = try input.parse(option: Option<Bool>.autocomplete) {
             assert(autocomplete == "true")
-            try outputAutocomplete(for: runnable, executable: input.executablePath.joined(separator: " "))
+            try self.outputAutocomplete(for: runnable, executable: input.executablePath.joined(separator: " "))
         } else {
             // try to run the default command first
             switch runnable.type {
@@ -70,39 +74,41 @@ extension Console {
                         )
                     }
                     let exec = input.executablePath.joined()
-                    output("Running default command: ".consoleText(.info) + exec.consoleText() + " " + defaultCommand.consoleText(.warning))
-                    try run(subcommand, input: &input)
+                    self.output("Running default command: ".consoleText(.info) + exec.consoleText() + " " + defaultCommand.consoleText(.warning))
+                    current = subcommand
+                    try self._run(subcommand, input: &input, current: &current)
                     return
                 }
             case .command: break
             }
 
+            current = runnable
             let context = try AnyCommandContext.make(from: &input, console: self, for: runnable)
             return try runnable.run(using: context)
         }
     }
 }
 
-extension AnyOption {
-    fileprivate static var no: Option<Bool> {
-        return .init(name: "no", short: "n", help: "Automatically answers 'no' to all confirmiations.")
+private extension AnyOption {
+    static var no: Option<Bool> {
+        return .init(name: "no", short: "n", type: .flag, help: "Automatically answers 'no' to all confirmiations.")
     }
     
-    fileprivate static var yes: Option<Bool> {
-        return .init(name: "yes", short: "y", help: "Automatically answers 'yes' to all confirmiations.")
+    static var yes: Option<Bool> {
+        return .init(name: "yes", short: "y", type: .flag, help: "Automatically answers 'yes' to all confirmiations.")
     }
     
-    fileprivate static var help: Option<Bool> {
-        return .init(name: "help", short: "h")
+    static var help: Option<Bool> {
+        return .init(name: "help", short: "h", type: .flag)
     }
     
-    fileprivate static var autocomplete: Option<Bool> {
-        return .init(name: "autocomplete")
+    static var autocomplete: Option<Bool> {
+        return .init(name: "autocomplete", type: .flag)
     }
 }
 
-extension AnyArgument {
-    fileprivate static var subcommand: Argument<String> {
+private extension AnyArgument {
+    static var subcommand: Argument<String> {
         return .init(name: "sucommand")
     }
 }
