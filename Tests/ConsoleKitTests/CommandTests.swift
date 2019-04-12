@@ -47,8 +47,8 @@ class CommandTests: XCTestCase {
 
     func testShortFlagNeedsToMatchExactly() throws {
         var input = CommandInput(arguments: ["vapor", "sub", "test", "-x", "exact", "-y_not_exact", "not_exact"])
-        XCTAssertEqual(try input.parse(option: Option<String>.value(name: "xShort", short: "x")), "exact")
-        XCTAssertNil(try input.parse(option: Option<String>.value(name: "yShort", short: "y")))
+        XCTAssertEqual(try input.parse(option: Option<String>(name: "xShort", short: "x", default: nil)), "exact")
+        XCTAssertNil(try input.parse(option: Option<String>(name: "yShort", short: "y", default: nil)))
     }
 
     func testDeprecatedFlag() throws {
