@@ -1,4 +1,3 @@
-#warning("TODO: consider removing separate config struct")
 /// Configures commands for a service container.
 ///
 ///     var commandConfig = CommandConfig.default()
@@ -8,7 +7,7 @@
 ///     commandConfig.use(barCommand, as: "bar")
 ///     services.register(commandConfig)
 ///
-public struct CommandConfig {
+public struct CommandConfiguration {
     /// Internal storage
     private var commands: [String: AnyCommandRunnable]
 

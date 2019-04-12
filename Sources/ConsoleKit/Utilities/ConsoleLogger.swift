@@ -41,19 +41,40 @@ public struct ConsoleLogger: LogHandler {
         function: String,
         line: UInt
     ) {
-        let text: ConsoleText =
-            "[ \(level.name) ]".consoleText(level.style) +
-            " " +
-            message.description.consoleText() +
-            " " +
-            "(\(file):\(line))".consoleText(.info)
+        var text: ConsoleText = ""
+            + "[ \(level.name) ]".consoleText(level.style)
+            + " "
+            + message.description.consoleText()
+        
+        // only log metadata + file info if we are debug or trace
+        if self.logLevel <= .debug {
+            if !self.metadata.isEmpty {
+                // only log metadata if not empty
+                text += " " + self.metadata.description.consoleText()
+            }
+            // log the concise path + line
+            let fileInfo = self.conciseSourcePath(file) + ":" + line.description
+            text += " (" + fileInfo.consoleText() + ")"
+        }
         
         console.output(text)
+    }
+    
+    /// splits a path on the /Sources/ folder, returning everything after
+    ///
+    ///     "/Users/developer/dev/MyApp/Sources/Run/main.swift"
+    ///     // becomes
+    ///     "Run/main.swift"
+    ///
+    private func conciseSourcePath(_ path: String) -> String {
+        return path.split(separator: "/")
+            .split(separator: "Sources")
+            .last?
+            .joined(separator: "/") ?? path
     }
 }
 
 extension LoggingSystem {
-    
     /// Bootstraps a `ConsoleLogger` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
     ///
     ///     LoggingSystem.boostrap(console: console)
@@ -62,7 +83,7 @@ extension LoggingSystem {
     ///   - console: The console the logger will log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    public static func bootstrap(console: Console, level: Logger.Level = .trace, metadata: Logger.Metadata = [:]) {
+    public static func bootstrap(console: Console, level: Logger.Level = .info, metadata: Logger.Metadata = [:]) {
         self.bootstrap { _ in
             return ConsoleLogger(console: console, level: level, metadata: metadata)
         }
@@ -83,13 +104,13 @@ extension Logger.Level {
     
     fileprivate var name: String {
         switch self {
-        case .trace: return "Trace"
-        case .debug: return "Debug"
-        case .info: return "Info"
-        case .notice: return "Notice"
-        case .warning: return "Warning"
-        case .error: return "Error"
-        case .critical: return "Critical"
+        case .trace: return "TRACE"
+        case .debug: return "DEBUG"
+        case .info: return "INFO"
+        case .notice: return "NOTICE"
+        case .warning: return "WARNING"
+        case .error: return "ERROR"
+        case .critical: return "CRITICAL"
         }
     }
 }

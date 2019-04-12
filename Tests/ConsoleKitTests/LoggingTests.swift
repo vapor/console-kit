@@ -32,29 +32,29 @@ final class ConsoleLoggerTests: XCTestCase {
     
     func testLoggingLevels()throws {
         let logger = Logger(label: "com.vapor.console")
-        let expectedOutput = { (level: String, text: String, line: Int) -> String in
-            return "[ \(level) ] \(text) (\(#file):\(line))\n"
+        let expectedOutput = { (level: String, text: String) -> String in
+            return "[ \(level) ] \(text)\n"
         }
         
         logger.trace("trace")
-        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Trace", "trace", #line - 1))
+        XCTAssertNil(self.console.testOutputQueue.first)
         
         logger.debug("debug")
-        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Debug", "debug", #line - 1))
+        XCTAssertNil(self.console.testOutputQueue.first)
         
         logger.info("info")
-        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Info", "info", #line - 1))
+        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("INFO", "info"))
         
         logger.notice("notice")
-        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Notice", "notice", #line - 1))
+        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("NOTICE", "notice"))
         
         logger.warning("warning")
-        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Warning", "warning", #line - 1))
+        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("WARNING", "warning"))
         
         logger.error("error")
-        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Error", "error", #line - 1))
+        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("ERROR", "error"))
         
         logger.critical("critical")
-        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("Critical", "critical", #line - 1))
+        XCTAssertEqual(self.console.testOutputQueue.first, expectedOutput("CRITICAL", "critical"))
     }
 }
