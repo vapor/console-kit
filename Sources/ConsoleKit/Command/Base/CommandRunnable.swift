@@ -1,3 +1,5 @@
+fileprivate var signatureCach: [String: Inputs] = [:]
+
 /// A type-erased `CommandRunnable`.
 public protocol AnyCommandRunnable {
     /// An instance of the type that represents the command's valid inputs/signature.
@@ -45,7 +47,13 @@ extension CommandRunnable {
     ///
     /// - Returns: A new instance of `CommandRunnable.Signature`.
     public static var signature: Signature {
-        return Signature()
+        if let signature = signatureCach[String(describing: Self.self)] as? Signature {
+            return signature
+        } else {
+            let signature = Signature()
+            signatureCach[String(describing: Self.self)] = signature
+            return signature
+        }
     }
     
     /// The default implementation for `AnyCommandRunnable.runt(using:)`.
