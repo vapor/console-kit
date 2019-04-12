@@ -73,9 +73,10 @@ public struct AnyCommandContext {
         
         
         guard input.arguments.count == 0 else {
+            let excess = input.arguments.joined(separator: " ")
             throw CommandError(
                 identifier: "excessInput",
-                reason: "Too many arguments or unsupported options were supplied: \(input.arguments)"
+                reason: "Too many arguments or unsupported options were supplied: '\(excess)'"
             )
         }
         
