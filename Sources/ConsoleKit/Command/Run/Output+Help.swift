@@ -14,7 +14,7 @@ extension Console {
             output("<command> ".consoleText(.warning), newLine: false)
         }
 
-        for opt in runnableType.inputs.options {
+        for opt in runnableType.anySignature.options {
             if let short = opt.short {
                 output("[--\(opt.name),-\(short)] ".consoleText(.success), newLine: false)
             } else {
@@ -28,7 +28,7 @@ extension Console {
             print(help)
         }
 
-        var names = runnableType.inputs.options.map { $0.name }
+        var names = runnableType.anySignature.options.map { $0.name }
 
         switch runnable.type {
         case .command(let arguments):
@@ -40,10 +40,10 @@ extension Console {
         let padding = names.longestCount + 2
 
         if runnable is AnyCommand {
-            if runnableType.inputs.arguments.count > 0 {
+            if runnableType.anySignature.arguments.count > 0 {
                 print()
                 output("Arguments:".consoleText(.info))
-                for arg in runnableType.inputs.arguments {
+                for arg in runnableType.anySignature.arguments {
                     outputHelpListItem(
                         name: arg.name,
                         help: arg.help,
@@ -84,10 +84,10 @@ extension Console {
             }
         }
 
-        if runnableType.inputs.options.count > 0 {
+        if runnableType.anySignature.options.count > 0 {
             print()
             output("Options:".consoleText(.info))
-            for opt in runnableType.inputs.options {
+            for opt in runnableType.anySignature.options {
                 outputHelpListItem(
                     name: opt.name,
                     help: opt.help,

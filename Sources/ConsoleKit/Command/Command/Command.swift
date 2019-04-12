@@ -4,7 +4,7 @@ public protocol AnyCommand: AnyCommandRunnable { }
 extension AnyCommand {
     /// See `AnyCommandRunnable`
     public var type: CommandRunnableType {
-        return .command(arguments: Self.inputs.arguments)
+        return .command(arguments: Self.anySignature.arguments)
     }
 }
 

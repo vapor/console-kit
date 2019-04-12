@@ -1,7 +1,7 @@
 /// A type-erased `CommandRunnable`.
 public protocol AnyCommandRunnable {
     /// An instance of the type that represents the command's valid inputs/signature.
-    static var inputs: CommandSignature { get }
+    static var anySignature: CommandSignature { get }
     
     /// Text that will be displayed when `--help` is passed.
     var help: String? { get }
@@ -36,7 +36,7 @@ extension CommandRunnable {
     /// The default implementation of `AnyCommandRunnable.inputs`.
     ///
     /// - Returns: The `CommandRunnable.signature` value.
-    public static var inputs: CommandSignature {
+    public static var anySignature: CommandSignature {
         return self.signature
     }
     

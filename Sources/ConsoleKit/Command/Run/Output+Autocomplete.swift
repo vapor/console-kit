@@ -6,7 +6,7 @@ extension Console {
         case .command(let arguments): autocomplete += arguments.map { $0.name }
         case .group(let commands): autocomplete += commands.commands.keys
         }
-        autocomplete += type(of: runnable).inputs.options.map { "--" + $0.name }
+        autocomplete += type(of: runnable).anySignature.options.map { "--" + $0.name }
         output(autocomplete.joined(separator: " "), style: .plain)
     }
 }

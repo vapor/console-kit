@@ -47,7 +47,7 @@ public struct AnyCommandContext {
         var parsedOptions: [String: String] = [:]
         let runnableType = type(of: runnable)
         
-        for opt in runnableType.inputs.options {
+        for opt in runnableType.anySignature.options {
             parsedOptions[opt.name] = try input.parse(option: opt)
         }
         
