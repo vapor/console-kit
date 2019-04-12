@@ -43,19 +43,6 @@ extension CommandRunnable {
         return self.signature
     }
     
-    /// The default implementation of `CommandRunnable.signature`.
-    ///
-    /// - Returns: A new instance of `CommandRunnable.Signature`.
-    public static var signature: Signature {
-        if let signature = signatureCach[String(describing: Self.self)] as? Signature {
-            return signature
-        } else {
-            let signature = Signature()
-            signatureCach[String(describing: Self.self)] = signature
-            return signature
-        }
-    }
-    
     /// The default implementation for `AnyCommandRunnable.runt(using:)`.
     ///
     /// The context passed in is cast to `CommandContext<Signature>`, which is then passed into

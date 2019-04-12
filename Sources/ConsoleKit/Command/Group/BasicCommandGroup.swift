@@ -4,6 +4,9 @@ internal struct BasicCommandGroup: CommandGroup {
     /// See `CommandRunnable`.
     struct Signature: Inputs { }
     
+    /// See `CommandRunnable`.
+    static let signature: BasicCommandGroup.Signature = Signature()
+    
     /// See `CommandGroup`.
     var commands: Commands
 

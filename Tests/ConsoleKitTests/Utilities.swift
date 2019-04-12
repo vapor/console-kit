@@ -7,6 +7,8 @@ final class TestGroup: CommandGroup {
         let version = Option<Bool>(name: "version", help: "Prints the version")
     }
     
+    static let signature: TestGroup.Signature = Signature()
+    
     let commands: Commands = [
         "test": TestCommand(),
         "sub": SubGroup()
@@ -25,6 +27,8 @@ final class SubGroup: CommandGroup {
     struct Signature: Inputs {
         let version = Option<Bool>(name: "version", help: "Prints the version")
     }
+    
+    static let signature: SubGroup.Signature = Signature()
     
     let commands: Commands = [
         "test": TestCommand()
@@ -52,6 +56,8 @@ final class TestCommand: Command {
         """)
     }
 
+    static let signature: TestCommand.Signature = Signature()
+    
     let help: String? = "This is a test command"
 
     func run(using context: CommandContext<TestCommand>) throws {
