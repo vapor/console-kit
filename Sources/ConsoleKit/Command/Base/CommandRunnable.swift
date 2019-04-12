@@ -1,7 +1,7 @@
 /// A type-erased `CommandRunnable`.
 public protocol AnyCommandRunnable {
     /// An instance of the type that represents the command's valid inputs/signature.
-    static var anySignature: CommandSignature { get }
+    var anySignature: CommandSignature { get }
     
     /// Text that will be displayed when `--help` is passed.
     var help: String? { get }
@@ -26,7 +26,7 @@ public protocol CommandRunnable: AnyCommandRunnable {
     /// An instance of the type that represents the command's valid signature.
     ///
     /// The type-specific implementation of `AnyCommandRunnable.inputs`.
-    static var signature: Signature { get }
+    var signature: Signature { get }
     
     /// Runs the command against the supplied input.
     func run(using context: CommandContext<Self>) throws
@@ -36,7 +36,7 @@ extension CommandRunnable {
     /// The default implementation of `AnyCommandRunnable.inputs`.
     ///
     /// - Returns: The `CommandRunnable.signature` value.
-    public static var anySignature: CommandSignature {
+    public var anySignature: CommandSignature {
         return self.signature
     }
     
@@ -47,7 +47,7 @@ extension CommandRunnable {
     ///
     /// - Throws: `ConsoleError.invalidSignature` is the context type-cast fails.
     public func run(using anyContext: AnyCommandContext) throws {
-        let context = anyContext.context(command: Self.self)
+        let context = anyContext.context(command: self)
         return try self.run(using: context)
     }
 }

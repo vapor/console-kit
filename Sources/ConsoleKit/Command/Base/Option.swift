@@ -13,7 +13,7 @@ public protocol AnyOption {
     var optionType: OptionType { get }
     
     /// The type that the option value gets decoded to.
-    var type: LosslessStringConvertible.Type { get }
+    var valueType: LosslessStringConvertible.Type { get }
 }
 
 /// A supported option for a command.
@@ -44,27 +44,8 @@ public struct Option<Value>: AnyOption where Value: LosslessStringConvertible {
     /// The type that the option value gets decoded to.
     ///
     /// Required by `AnyOption`.
-    public var type: LosslessStringConvertible.Type {
+    public var valueType: LosslessStringConvertible.Type {
         return Value.self
-    }
-    
-    /// Creates a new `Option` with the `optionType` set to `.flag`.
-    ///
-    ///     let verbose = Option<Bool>(name: "verbose", short: "v", help: "Output debug logs")
-    ///
-    /// - Parameters:
-    ///   - name: The option's unique name. Use this to get the option value from the `CommandContext`.
-    ///   - short: The short-hand for the flag that can be passed in to the command call.
-    ///   - help: The option's help text when `--help` is passed in.
-    public init(
-        name: String,
-        short: Character? = nil,
-        help: String? = nil
-    ) {
-        self.name = name
-        self.short = short
-        self.help = help
-        self.optionType = .flag
     }
     
     /// Creates a new `Option` with the `optionType` set to `.value`.
@@ -79,22 +60,31 @@ public struct Option<Value>: AnyOption where Value: LosslessStringConvertible {
     public init(
         name: String,
         short: Character? = nil,
-        default: Value?,
+        type: OptionType,
         help: String? = nil
     ) {
         self.name = name
         self.short = short
         self.help = help
-        self.optionType = .value(default: `default`?.description)
+        self.optionType = type
     }
 }
 
 public enum OptionType {
+    /// Normal option. Requires a value.
+    ///
+    ///     --branch beta
+    ///
+    public static var value: OptionType {
+        return .value(default: nil)
+    }
+
     /// Normal option. Requires a value if supplied and there is no default.
     ///
     ///     --branch beta
     ///
     case value(default: String?)
+
     /// Flag option. Does not support a value. If supplied, the value is true.
     ///
     ///     --xcode

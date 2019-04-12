@@ -24,10 +24,15 @@ public struct AnyCommandContext {
     ///
     /// - Parameter command: The `Command` generic type for the `CommandContext` instance.
     /// - Returns: A `CommandContext` with the `console`, `arguments`, and `options` from `AnyCommandContext`.
-    public func context<Command>(command: Command.Type = Command.self) -> CommandContext<Command>
+    public func context<Command>(command: Command) -> CommandContext<Command>
         where Command: CommandRunnable
     {
-        return CommandContext<Command>.init(console: self.console, arguments: self.arguments, options: self.options)
+        return CommandContext(
+            console: self.console,
+            command: command,
+            arguments: self.arguments,
+            options: self.options
+        )
     }
     
     /// Creates an `AnyCommandContext`, parsing the values from the supplied `CommandInput`.
@@ -45,9 +50,8 @@ public struct AnyCommandContext {
     ) throws -> AnyCommandContext {
         var parsedArguments: [String: String] = [:]
         var parsedOptions: [String: String] = [:]
-        let runnableType = type(of: runnable)
         
-        for opt in runnableType.anySignature.options {
+        for opt in runnable.anySignature.options {
             parsedOptions[opt.name] = try input.parse(option: opt)
         }
         
@@ -88,7 +92,10 @@ public struct AnyCommandContext {
 /// See `CommandRunnable` for more information.
 public struct CommandContext<Command> where Command: CommandRunnable {
     /// The `Console` this command was run on.
-    public var console: Console
+    public let console: Console
+
+    /// The command for this context.
+    internal let command: Command
 
     /// The parsed arguments (according to declared signature).
     public var arguments: [String: String]
@@ -97,12 +104,14 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     public var options: [String: String]
     
     /// Create a new `CommandContext`.
-    public init(
+    internal init(
         console: Console,
+        command: Command,
         arguments: [String: String],
         options: [String: String]
     ) {
         self.console = console
+        self.command = command
         self.arguments = arguments
         self.options = options
     }
@@ -117,7 +126,7 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     public func option<T>(_ path: KeyPath<Command.Signature, Option<T>>)throws -> T?
         where T: LosslessStringConvertible
     {
-        guard let raw = self.options[Command.signature[keyPath: path].name] else {
+        guard let raw = self.options[self.command.signature[keyPath: path].name] else {
             return nil
         }
         guard let value = T.init(raw) else {
@@ -137,7 +146,7 @@ public struct CommandContext<Command> where Command: CommandRunnable {
         where T: LosslessStringConvertible
     {
         guard let option = try self.option(path) else {
-            let name = Command.signature[keyPath: path].name
+            let name = self.command.signature[keyPath: path].name
             throw CommandError(identifier: "optionRequired", reason: "Option `\(name)` is required.")
         }
 
@@ -153,7 +162,7 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     public func argument<T>(_ path: KeyPath<Command.Signature, Argument<T>>) throws -> T
         where T: LosslessStringConvertible
     {
-        let name = Command.signature[keyPath: path].name
+        let name = self.command.signature[keyPath: path].name
         guard let raw = arguments[name] else {
             throw CommandError(identifier: "argumentRequired", reason: "Argument `\(name)` is required.")
         }
@@ -169,6 +178,6 @@ public struct CommandContext<Command> where Command: CommandRunnable {
         console: Console,
         for runnable: Runnable
     ) throws -> CommandContext<Runnable> where Runnable: CommandRunnable {
-        return try AnyCommandContext.make(from: &input, console: console, for: runnable).context(command: Runnable.self)
+        return try AnyCommandContext.make(from: &input, console: console, for: runnable).context(command: runnable)
     }
 }
