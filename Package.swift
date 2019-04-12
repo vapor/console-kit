@@ -8,7 +8,7 @@ let package = Package(
         .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-log.git", .branch("master")),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
     ],
     targets: [
         .target(name: "ConsoleKit", dependencies: ["Logging"]),
