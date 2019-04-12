@@ -3,7 +3,7 @@ import ConsoleKit
 extension String: Error {}
 
 final class TestGroup: CommandGroup {
-    struct Signature: Inputs {
+    struct Signature: CommandSignature {
         let version = Option<Bool>(name: "version", help: "Prints the version")
     }
     
@@ -24,7 +24,7 @@ final class TestGroup: CommandGroup {
 }
 
 final class SubGroup: CommandGroup {
-    struct Signature: Inputs {
+    struct Signature: CommandSignature {
         let version = Option<Bool>(name: "version", help: "Prints the version")
     }
     
@@ -44,7 +44,7 @@ final class SubGroup: CommandGroup {
 }
 
 final class TestCommand: Command {
-    struct Signature: Inputs {
+    struct Signature: CommandSignature {
         let foo = Argument<String>(name: "foo", help: """
         A foo is required
         An error will occur if none exists

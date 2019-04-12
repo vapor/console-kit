@@ -3,9 +3,9 @@
 ///     struct Signature: Intpus:
 ///         let name = Argument<String>(name: "name")
 ///     }
-public protocol Inputs { }
+public protocol CommandSignature { }
 
-extension Inputs {
+extension CommandSignature {
     
     /// Gets all the `Argument` propeties from an `Inputs` struct.
     ///

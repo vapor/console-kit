@@ -1,9 +1,9 @@
-fileprivate var signatureCach: [String: Inputs] = [:]
+fileprivate var signatureCach: [String: CommandSignature] = [:]
 
 /// A type-erased `CommandRunnable`.
 public protocol AnyCommandRunnable {
     /// An instance of the type that represents the command's valid inputs/signature.
-    static var inputs: Inputs { get }
+    static var inputs: CommandSignature { get }
     
     /// Text that will be displayed when `--help` is passed.
     var help: String? { get }
@@ -23,7 +23,7 @@ public protocol CommandRunnable: AnyCommandRunnable {
     ///
     /// This type is made up of `Argument<T>` and `Option<T>` properties which
     /// are the command's accepted arguments and options.
-    associatedtype Signature: Inputs
+    associatedtype Signature: CommandSignature
     
     /// An instance of the type that represents the command's valid signature.
     ///
@@ -39,7 +39,7 @@ extension CommandRunnable {
     /// The default implementation of `AnyCommandRunnable.inputs`.
     ///
     /// - Returns: The `CommandRunnable.signature` value.
-    public static var inputs: Inputs {
+    public static var inputs: CommandSignature {
         return self.signature
     }
     

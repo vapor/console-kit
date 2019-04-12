@@ -2,7 +2,7 @@
 internal struct BasicCommandGroup: CommandGroup {
     
     /// See `CommandRunnable`.
-    struct Signature: Inputs { }
+    struct Signature: CommandSignature { }
     
     /// See `CommandRunnable`.
     static let signature: BasicCommandGroup.Signature = Signature()
