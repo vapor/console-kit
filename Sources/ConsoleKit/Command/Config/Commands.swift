@@ -1,7 +1,7 @@
 /// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `CommandConfig`.
 public struct Commands: ExpressibleByDictionaryLiteral {
     /// Top-level available commands, stored by unique name.
-    public let commands: [String: CommandRunnable]
+    public let commands: [String: AnyCommandRunnable]
 
     /// If set, this is the default top-level command that should run if no other commands are specified.
     public let defaultCommand: String?
@@ -11,14 +11,14 @@ public struct Commands: ExpressibleByDictionaryLiteral {
     /// - parameters:
     ///     - commands: Top-level available commands, stored by unique name.
     ///     - defaultCommand: If set, this is the default top-level command that should run if no other commands are specified.
-    public init(commands: [String: CommandRunnable] = [:], defaultCommand: String? = nil) {
+    public init(commands: [String: AnyCommandRunnable] = [:], defaultCommand: String? = nil) {
         self.commands = commands
         self.defaultCommand = defaultCommand
     }
 
     /// See `ExpressibleByDictionaryLiteral`.
-    public init(dictionaryLiteral elements: (String, CommandRunnable)...) {
-        var commands: [String: CommandRunnable] = [:]
+    public init(dictionaryLiteral elements: (String, AnyCommandRunnable)...) {
+        var commands: [String: AnyCommandRunnable] = [:]
         for (key, val) in elements {
             commands[key] = val
         }
@@ -37,7 +37,7 @@ public struct Commands: ExpressibleByDictionaryLiteral {
     /// - parameters:
     ///     - help: Optional help messages to include.
     /// - returns: A `CommandGroup` with commands and defaultCommand configured.
-    public func group(help: [String] = []) -> CommandGroup {
+    public func group(help: String? = nil) -> AnyCommandGroup {
         return BasicCommandGroup(commands: self, help: help)
     }
 }

@@ -1,3 +1,13 @@
+/// A type-erased `Command`.
+public protocol AnyCommand: AnyCommandRunnable { }
+
+extension AnyCommand {
+    /// See `AnyCommandRunnable`
+    public var type: CommandRunnableType {
+        return .command(arguments: Self.anySignature.arguments)
+    }
+}
+
 /// A command that can be run through a `Console`.
 ///
 /// Both `Command` and `CommandGroup` conform to `CommandRunnable` which provides the basic requirements
@@ -70,16 +80,4 @@
 ///                     U  ||----w |
 ///                        ||     ||
 ///
-public protocol Command: CommandRunnable {
-    /// This command's required `CommandArgument`s.
-    ///
-    /// See `CommandArgument` for more information.
-    var arguments: [CommandArgument] { get }
-}
-
-extension Command {
-    /// See `CommandRunnable`
-    public var type: CommandRunnableType {
-        return .command(arguments: arguments)
-    }
-}
+public protocol Command: AnyCommand, CommandRunnable { }

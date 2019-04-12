@@ -4,14 +4,14 @@ extension Console {
     ///
     ///     try console.run(group, input: &env.commandInput, on: container).wait()
     ///
-    /// The `CommandInput` will be mutated, removing any used `CommandOption`s and `CommandArgument`s. If any excess input is left
-    /// over after checking the command's signature, an error will be thrown.
+    /// The `CommandInput` will be mutated, removing any used `CommandOption`s and `CommandArgument`s.
+    /// If any excess input is left over after checking the command's signature, an error will be thrown.
     ///
     /// - parameters:
     ///     - runnable: `CommandGroup` or `Command` to run.
     ///     - input: Mutable `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
     /// - returns: A `Future` that will complete when the command finishes.
-    public func run(_ runnable: CommandRunnable, input: inout CommandInput) throws {
+    public func run(_ runnable: AnyCommandRunnable, input: inout CommandInput) throws {
         do {
             return try _run(runnable, input: &input)
         } catch {
@@ -25,18 +25,18 @@ extension Console {
     /// Runs the command, throwing if no commands are available.
     ///
     /// See `Console.run(...)`.
-    private func _run(_ runnable: CommandRunnable, input: inout CommandInput) throws {
+    private func _run(_ runnable: AnyCommandRunnable, input: inout CommandInput) throws {
         // check -n and -y flags.
-        if try input.parse(option: .flag(name: "no", short: "n", help: ["Automatically answers 'no' to all confirmiations."])) == "true" {
+        if try input.parse(option: Option<Bool>.no) == "true" {
             confirmOverride = false
-        } else if try input.parse(option: .flag(name: "yes", short: "y", help: ["Automatically answers 'yes' to all confirmiations."])) == "true" {
+        } else if try input.parse(option: Option<Bool>.yes) == "true" {
             confirmOverride = true
         }
 
         // try to run subcommand first
         switch runnable.type {
         case .group(let commands):
-            if let name = try input.parse(argument: .argument(name: "subcommand")) {
+            if let name = try input.parse(argument: Argument<String>.subcommand) {
                 guard let subcommand = commands.commands[name] else {
                     throw CommandError(
                         identifier: "unknownCommand",
@@ -52,10 +52,10 @@ extension Console {
         case .command: break
         }
 
-        if let help = try input.parse(option: .flag(name: "help", short: "h")) {
+        if let help = try input.parse(option: Option<Bool>.help) {
             assert(help == "true")
             outputHelp(for: runnable, executable: input.executablePath.joined(separator: " "))
-        } else if let autocomplete = try input.parse(option: .flag(name: "autocomplete")) {
+        } else if let autocomplete = try input.parse(option: Option<Bool>.autocomplete) {
             assert(autocomplete == "true")
             try outputAutocomplete(for: runnable, executable: input.executablePath.joined(separator: " "))
         } else {
@@ -77,8 +77,32 @@ extension Console {
             case .command: break
             }
 
-            let context = try CommandContext.make(from: &input, console: self, for: runnable)
+            let context = try AnyCommandContext.make(from: &input, console: self, for: runnable)
             return try runnable.run(using: context)
         }
+    }
+}
+
+extension AnyOption {
+    fileprivate static var no: Option<Bool> {
+        return .init(name: "no", short: "n", help: "Automatically answers 'no' to all confirmiations.")
+    }
+    
+    fileprivate static var yes: Option<Bool> {
+        return .init(name: "yes", short: "y", help: "Automatically answers 'yes' to all confirmiations.")
+    }
+    
+    fileprivate static var help: Option<Bool> {
+        return .init(name: "help", short: "h")
+    }
+    
+    fileprivate static var autocomplete: Option<Bool> {
+        return .init(name: "autocomplete")
+    }
+}
+
+extension AnyArgument {
+    fileprivate static var subcommand: Argument<String> {
+        return .init(name: "sucommand")
     }
 }
