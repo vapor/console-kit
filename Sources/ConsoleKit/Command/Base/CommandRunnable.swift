@@ -33,7 +33,6 @@ public protocol CommandRunnable: AnyCommandRunnable {
 }
 
 extension CommandRunnable {
-    
     /// The default implementation of `AnyCommandRunnable.inputs`.
     ///
     /// - Returns: The `CommandRunnable.signature` value.
