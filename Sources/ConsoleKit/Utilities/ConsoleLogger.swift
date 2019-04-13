@@ -92,7 +92,7 @@ extension LoggingSystem {
 
 extension Logger.Level {
     /// Converts log level to console style
-    fileprivate var style: ConsoleStyle {
+    public var style: ConsoleStyle {
         switch self {
         case .trace, .debug: return .plain
         case .info, .notice: return .info
@@ -102,7 +102,7 @@ extension Logger.Level {
         }
     }
     
-    fileprivate var name: String {
+    public var name: String {
         switch self {
         case .trace: return "TRACE"
         case .debug: return "DEBUG"
