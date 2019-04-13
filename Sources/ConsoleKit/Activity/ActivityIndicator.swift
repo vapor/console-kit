@@ -82,14 +82,16 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
             if tick > 0 {
                 self.console.popEphemeral()
             }
+            tick = tick &+ 1
             self.console.pushEphemeral()
             self.activity.outputActivityIndicator(to: self.console, state: .active(tick: tick))
-            tick = tick &+ 1
         }
         
         self.stopGroup.enter()
         self.timer.setCancelHandler { [unowned self] in
-            self.console.popEphemeral()
+            if tick > 0 {
+                self.console.popEphemeral()
+            }
             self.stopGroup.leave()
         }
         
