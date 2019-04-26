@@ -37,7 +37,7 @@ public struct Commands: ExpressibleByDictionaryLiteral {
     /// - parameters:
     ///     - help: Optional help messages to include.
     /// - returns: A `CommandGroup` with commands and defaultCommand configured.
-    public func group(help: String? = nil) -> AnyCommandGroup {
+    public func group(help: String = "") -> AnyCommandGroup {
         return BasicCommandGroup(commands: self, help: help)
     }
 }

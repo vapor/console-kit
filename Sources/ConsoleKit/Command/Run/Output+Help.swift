@@ -22,9 +22,9 @@ extension Console {
         }
         print()
 
-        if let help = runnable.help {
+        if !runnable.help.isEmpty {
             print()
-            print(help)
+            print(runnable.help)
         }
 
         var names = runnable.anySignature.options.map { $0.name }
@@ -62,7 +62,8 @@ extension Console {
                 for (key, runnable) in commands.commands {
                     var help: String
                     if key == commands.defaultCommand {
-                        if let lines = runnable.help?.split(separator: "\n"), lines.count > 0 {
+                        let lines = runnable.help.split(separator: "\n")
+                        if lines.count > 0 {
                             help = "(default) " + lines[0]
                             if lines.count > 1 {
                                 help.append("\n\(lines[1...].joined(separator: "\n"))")
