@@ -72,7 +72,7 @@ extension Console {
                             help = "(default) n/a"
                         }
                     } else {
-                        help = runnable.help ?? ""
+                        help = runnable.help
                     }
                     outputHelpListItem(
                         name: key,
