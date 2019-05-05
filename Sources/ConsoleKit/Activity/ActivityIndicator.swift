@@ -73,9 +73,11 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
     ///     - refreshRate: The time interval (specified in milliseconds) to use
     ///                    when updating the activity.
     public func start(refreshRate: Int = 40) {
-        self.timer.schedule(deadline: DispatchTime.now(),
-                            repeating: .milliseconds(refreshRate),
-                            leeway: DispatchTimeInterval.milliseconds(10))
+        self.timer.schedule(
+            deadline: DispatchTime.now(),
+            repeating: .milliseconds(refreshRate),
+            leeway: DispatchTimeInterval.milliseconds(10)
+        )
         
         var tick: UInt = 0
         self.timer.setEventHandler { [unowned self] in
