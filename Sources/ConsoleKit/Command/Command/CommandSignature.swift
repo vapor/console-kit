@@ -1,6 +1,6 @@
 /// The structure of the inputs that a command can take
 ///
-///     struct Signature: Intpus:
+///     struct Signature: CommandSignature {
 ///         let name = Argument<String>(name: "name")
 ///     }
 public protocol CommandSignature { }
