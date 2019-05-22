@@ -24,10 +24,10 @@ public struct AnyCommandContext {
     ///
     /// - Parameter command: The `Command` generic type for the `CommandContext` instance.
     /// - Returns: A `CommandContext` with the `console`, `arguments`, and `options` from `AnyCommandContext`.
-    public func context<Command>(command: Command) -> CommandContext<Command>
+    public func context<Command>(command: Command)throws -> CommandContext<Command>
         where Command: CommandRunnable
     {
-        return CommandContext(
+        return try CommandContext(
             console: self.console,
             command: command,
             arguments: self.arguments,
@@ -79,7 +79,7 @@ public struct AnyCommandContext {
                 reason: "Too many arguments or unsupported options were supplied: '\(excess)'"
             )
         }
-        
+
         return AnyCommandContext(
             console: console,
             arguments: parsedArguments,
@@ -105,12 +105,17 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     public var options: [String: String]
     
     /// Create a new `CommandContext`.
-    internal init(
+    fileprivate init(
         console: Console,
         command: Command,
         arguments: [String: String],
         options: [String: String]
-    ) {
+    )throws {
+        if Command.strict {
+            let input = arguments.merging(options, uniquingKeysWith: { arg, opt in return arg })
+            try command.signature.validate(input: input)
+        }
+
         self.console = console
         self.command = command
         self.arguments = arguments
