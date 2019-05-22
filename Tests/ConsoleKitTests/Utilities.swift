@@ -67,6 +67,20 @@ final class TestCommand: Command {
     }
 }
 
+final class StrictCommand: Command {
+    struct Signature: CommandSignature {
+        let int = Argument<Int>(name: "number")
+        let bool = Argument<Bool>(name: "boolean")
+    }
+
+    static let strict = true
+
+    let signature: StrictCommand.Signature = Signature()
+    var help: String? = "I error if you pass in bad values"
+
+    func run(using context: CommandContext<StrictCommand>) throws { print("Done!") }
+}
+
 final class TestConsole: Console {
     var testInputQueue: [String]
     var testOutputQueue: [String]
