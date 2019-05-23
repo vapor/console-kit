@@ -63,6 +63,7 @@ class CommandTests: XCTestCase {
     }
 
     func testDynamicAccess() throws {
+        #if swift(>=5.1)
         struct DynamicCommand: Command {
             struct Signature: CommandSignature {
                 let count = Option<Int>(name: "count", type: .value)
@@ -83,5 +84,6 @@ class CommandTests: XCTestCase {
         let command = DynamicCommand()
         var input = CommandInput(arguments: ["vapor", "true", "--count", "42"])
         try console.run(command, input: &input)
+        #endif
     }
 }

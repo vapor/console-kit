@@ -104,6 +104,7 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     /// A name/value map of the commands options that where passed in.
     public let rawOptions: [String: String]
 
+    #if swift(>=5.1)
     /// The parsed arguments (according to declared signature).
     public var arguments: Arguments {
         return Arguments(context: self)
@@ -113,6 +114,7 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     public var options: Options {
         return Options(context: self)
     }
+    #endif
     
     /// Create a new `CommandContext`.
     internal init(
@@ -193,6 +195,7 @@ public struct CommandContext<Command> where Command: CommandRunnable {
     }
 }
 
+#if swift(>=5.1)
 extension CommandContext {
     /// A type safe container for a `CommandContext` options that supports dynamic access.
     @dynamicMemberLookup public struct Options {
@@ -246,3 +249,4 @@ extension CommandContext {
         }
     }
 }
+#endif
