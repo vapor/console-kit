@@ -91,18 +91,28 @@ public struct AnyCommandContext {
 /// Contains required data for running a command such as the `Console` and `CommandInput`.
 ///
 /// See `CommandRunnable` for more information.
-@dynamicMemberLookup public struct CommandContext<Command> where Command: CommandRunnable {
+public struct CommandContext<Command> where Command: CommandRunnable {
     /// The `Console` this command was run on.
     public let console: Console
 
     /// The command for this context.
     internal let command: Command
 
+    /// A name/value map of the commands arguments that where passed in.
+    public let rawArguments: [String: String]
+
+    /// A name/value map of the commands options that where passed in.
+    public let rawOptions: [String: String]
+
     /// The parsed arguments (according to declared signature).
-    public var arguments: [String: String]
+    public var arguments: Arguments {
+        return Arguments(context: self)
+    }
 
     /// The parsed options (according to declared signature).
-    public var options: [String: String]
+    public var options: Options {
+        return Options(context: self)
+    }
     
     /// Create a new `CommandContext`.
     internal init(
@@ -113,42 +123,8 @@ public struct AnyCommandContext {
     ) {
         self.console = console
         self.command = command
-        self.arguments = arguments
-        self.options = options
-    }
-
-    /// Allows dynamic access to the context's options using the command's signature's keypaths.
-    ///
-    ///     struct Signature: CommandSignature {
-    ///         let count = Option<Int>(name: "count")
-    ///     }
-    ///
-    ///     context.count // Int
-    ///
-    /// - Note: This accessor should be used with a strict command, as it will trap if an error
-    ///   occurs when reading the option.
-    ///
-    /// - Parameter path: The signature's keypath for the option to read.
-    /// - Returns: The requested option's value, if one was passed in.
-    public subscript<T>(dynamicMember path: KeyPath<Command.Signature, Option<T>>) -> T? {
-        return try! self.option(path)
-    }
-
-    /// Allows dynamic access to the context's arguments using the command's signature's keypaths.
-    ///
-    ///     struct Signature: CommandSignature {
-    ///         let auth = Argument<Bool>(name: "auth")
-    ///     }
-    ///
-    ///     context.auth // Bool
-    ///
-    /// - Note: This accessor should be used with a strict command, as it will trap if an error
-    ///   occurs when reading the argument.
-    ///
-    /// - Parameter path: The signature's keypath for the argument to read.
-    /// - Returns: The requested argument's value.
-    public subscript<T>(dynamicMember path: KeyPath<Command.Signature, Argument<T>>) -> T {
-        return try! self.argument(path)
+        self.rawArguments = arguments
+        self.rawOptions = options
     }
 
     /// Gets an option passed into the command.
@@ -161,7 +137,7 @@ public struct AnyCommandContext {
     public func option<T>(_ path: KeyPath<Command.Signature, Option<T>>)throws -> T?
         where T: LosslessStringConvertible
     {
-        guard let raw = self.options[self.command.signature[keyPath: path].name] else {
+        guard let raw = self.rawOptions[self.command.signature[keyPath: path].name] else {
             return nil
         }
         guard let value = T.init(raw) else {
@@ -198,7 +174,7 @@ public struct AnyCommandContext {
         where T: LosslessStringConvertible
     {
         let name = self.command.signature[keyPath: path].name
-        guard let raw = arguments[name] else {
+        guard let raw = self.rawArguments[name] else {
             throw CommandError(identifier: "argumentRequired", reason: "Argument `\(name)` is required.")
         }
         guard let value = T.init(raw) else {
@@ -214,5 +190,59 @@ public struct AnyCommandContext {
         for runnable: Runnable
     ) throws -> CommandContext<Runnable> where Runnable: CommandRunnable {
         return try AnyCommandContext.make(from: &input, console: console, for: runnable).context(command: runnable)
+    }
+}
+
+extension CommandContext {
+    /// A type safe container for a `CommandContext` options that supports dynamic access.
+    @dynamicMemberLookup public struct Options {
+        private let context: CommandContext<Command>
+
+        fileprivate init(context: CommandContext<Command>) {
+            self.context = context
+        }
+
+        /// Allows dynamic access to the context's options using the command's signature's keypaths.
+        ///
+        ///     struct Signature: CommandSignature {
+        ///         let count = Option<Int>(name: "count")
+        ///     }
+        ///
+        ///     context.count // Int
+        ///
+        /// - Note: This accessor should be used with a strict command, as it will trap if an error
+        ///   occurs when reading the option.
+        ///
+        /// - Parameter path: The signature's keypath for the option to read.
+        /// - Returns: The requested option's value, if one was passed in.
+        public subscript<T>(dynamicMember path: KeyPath<Command.Signature, Option<T>>) -> T? {
+            return try! self.context.option(path)
+        }
+    }
+
+    /// A type safe container for a `CommandContext` arguments that supports dynamic access.
+    @dynamicMemberLookup public struct Arguments {
+        private let context: CommandContext<Command>
+
+        fileprivate init(context: CommandContext<Command>) {
+            self.context = context
+        }
+
+        /// Allows dynamic access to the context's arguments using the command's signature's keypaths.
+        ///
+        ///     struct Signature: CommandSignature {
+        ///         let auth = Argument<Bool>(name: "auth")
+        ///     }
+        ///
+        ///     context.auth // Bool
+        ///
+        /// - Note: This accessor should be used with a strict command, as it will trap if an error
+        ///   occurs when reading the argument.
+        ///
+        /// - Parameter path: The signature's keypath for the argument to read.
+        /// - Returns: The requested argument's value.
+        public subscript<T>(dynamicMember path: KeyPath<Command.Signature, Argument<T>>) -> T {
+            return try! self.context.argument(path)
+        }
     }
 }
