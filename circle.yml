@@ -6,7 +6,6 @@ jobs:
       xcode: "10.2.0"
     steps:
       - checkout
-      - run: HOMEBREW_NO_AUTO_UPDATE=1 brew install openssl@1.1
       - run: swift build
       - run: swift test
   macos-release:
@@ -14,14 +13,12 @@ jobs:
       xcode: "10.2.0"
     steps:
       - checkout
-      - run: HOMEBREW_NO_AUTO_UPDATE=1 brew install openssl@1.1
       - run: swift build -c release
   bionic:
     docker:
       - image: swift:5.0-bionic
     steps:
       - checkout
-      - run: apt-get -y install openssl libssl-dev
       - run: swift build --disable-index-store
       - run: swift test --disable-index-store
   bionic-release:
@@ -29,14 +26,12 @@ jobs:
       - image: swift:5.0-bionic
     steps:
       - checkout
-      - run: apt-get -y install openssl libssl-dev
       - run: swift build -c release
   xenial:
     docker:
       - image: swift:5.0-xenial
     steps:
       - checkout
-      - run: apt-get -y install openssl libssl-dev
       - run: swift build --disable-index-store
       - run: swift test --disable-index-store
   xenial-release:
@@ -44,7 +39,6 @@ jobs:
       - image: swift:5.0-xenial
     steps:
       - checkout
-      - run: apt-get -y install openssl libssl-dev
       - run: swift build -c release
 
 workflows:

@@ -16,7 +16,7 @@ final class DemoCommand: Command {
 
     let signature: DemoCommand.Signature = Signature()
 
-    let help: String? = "A demonstration of what ConsoleKit can do"
+    let help: String = "A demonstration of what ConsoleKit can do"
 
     func run(using context: CommandContext<DemoCommand>) throws {
         let funDemoText: ConsoleText
