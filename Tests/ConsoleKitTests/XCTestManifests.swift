@@ -7,6 +7,7 @@ extension CommandTests {
     // to regenerate.
     static let __allTests__CommandTests = [
         ("testDeprecatedFlag", testDeprecatedFlag),
+        ("testDynamicAccess", testDynamicAccess),
         ("testFlag", testFlag),
         ("testHelp", testHelp),
         ("testShortFlag", testShortFlag),
