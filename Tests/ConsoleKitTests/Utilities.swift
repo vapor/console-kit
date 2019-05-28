@@ -14,10 +14,10 @@ final class TestGroup: CommandGroup {
         "sub": SubGroup()
     ]
 
-    let help: String? = "This is a test grouping!"
+    let help: String = "This is a test grouping!"
 
     func run(using context: CommandContext<TestGroup>) throws {
-        if try context.option(\.version) ?? false {
+        if context.option(\.version) ?? false {
             context.console.print("v2.0")
         }
     }
@@ -34,10 +34,10 @@ final class SubGroup: CommandGroup {
         "test": TestCommand()
     ]
 
-    let help: String? = "This is a test sub grouping!"
+    let help: String = "This is a test sub grouping!"
 
     func run(using context: CommandContext<SubGroup>) throws {
-        if try context.option(\.version) ?? false {
+        if context.option(\.version) ?? false {
             context.console.print("v2.0")
         }
     }
@@ -58,10 +58,10 @@ final class TestCommand: Command {
 
     let signature: TestCommand.Signature = Signature()
     
-    let help: String? = "This is a test command"
+    let help: String = "This is a test command"
 
     func run(using context: CommandContext<TestCommand>) throws {
-        let foo = try context.argument(\.foo)
+        let foo = context.argument(\.foo)
         let bar = try context.requireOption(\.bar)
         context.console.output("Foo: \(foo) Bar: \(bar)".consoleText(.info))
     }
@@ -76,7 +76,7 @@ final class StrictCommand: Command {
     static let strict = true
 
     let signature: StrictCommand.Signature = Signature()
-    var help: String? = "I error if you pass in bad values"
+    var help: String = "I error if you pass in bad values"
 
     func run(using context: CommandContext<StrictCommand>) throws { print("Done!") }
 }

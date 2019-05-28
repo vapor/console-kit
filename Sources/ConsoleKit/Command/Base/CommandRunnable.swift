@@ -4,7 +4,7 @@ public protocol AnyCommandRunnable {
     var anySignature: CommandSignature { get }
     
     /// Text that will be displayed when `--help` is passed.
-    var help: String? { get }
+    var help: String { get }
     
     /// The type of runnable. See `CommandRunnableType`.
     var type: CommandRunnableType { get }
@@ -23,12 +23,6 @@ public protocol CommandRunnable: AnyCommandRunnable {
     /// are the command's accepted arguments and options.
     associatedtype Signature: CommandSignature
 
-    /// A flag that defines whether the command arguments and options will be validated before running the command.
-    ///
-    /// If this property is set to `false`, then the command will run even if invalid arguments are passed in
-    /// and the command will instead error out wen you try to access the invalid argument/option.
-    static var strict: Bool { get }
-
     /// An instance of the type that represents the command's valid signature.
     ///
     /// The type-specific implementation of `AnyCommandRunnable.inputs`.
@@ -39,13 +33,6 @@ public protocol CommandRunnable: AnyCommandRunnable {
 }
 
 extension CommandRunnable {
-    /// The default implementation for `CommandRunnable.strict`.
-    ///
-    /// - Returns: `false`.
-    public static var strict: Bool {
-        return false
-    }
-
     /// The default implementation of `AnyCommandRunnable.inputs`.
     ///
     /// - Returns: The `CommandRunnable.signature` value.
