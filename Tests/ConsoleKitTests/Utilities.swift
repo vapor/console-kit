@@ -14,7 +14,7 @@ final class TestGroup: CommandGroup {
         "sub": SubGroup()
     ]
 
-    let help: String? = "This is a test grouping!"
+    let help: String = "This is a test grouping!"
 
     func run(using context: CommandContext<TestGroup>) throws {
         if try context.option(\.version) ?? false {
@@ -34,7 +34,7 @@ final class SubGroup: CommandGroup {
         "test": TestCommand()
     ]
 
-    let help: String? = "This is a test sub grouping!"
+    let help: String = "This is a test sub grouping!"
 
     func run(using context: CommandContext<SubGroup>) throws {
         if try context.option(\.version) ?? false {
@@ -58,7 +58,7 @@ final class TestCommand: Command {
 
     let signature: TestCommand.Signature = Signature()
     
-    let help: String? = "This is a test command"
+    let help: String = "This is a test command"
 
     func run(using context: CommandContext<TestCommand>) throws {
         let foo = try context.argument(\.foo)

@@ -4,7 +4,7 @@ public protocol AnyCommandRunnable {
     var anySignature: CommandSignature { get }
     
     /// Text that will be displayed when `--help` is passed.
-    var help: String? { get }
+    var help: String { get }
     
     /// The type of runnable. See `CommandRunnableType`.
     var type: CommandRunnableType { get }

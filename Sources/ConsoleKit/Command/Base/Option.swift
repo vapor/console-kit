@@ -4,7 +4,7 @@ public protocol AnyOption {
     var name: String { get }
     
     /// The option's help text when `--help` is passed in.
-    var help: String? { get }
+    var help: String { get }
     
     /// The option's short flag.
     var short: Character? { get }
@@ -25,7 +25,7 @@ public struct Option<Value>: AnyOption where Value: LosslessStringConvertible {
     public let name: String
     
     /// The option's short flag.
-    public let help: String?
+    public let help: String
     
     /// The option's help text when `--help` is passed in.
     public let short: Character?
@@ -61,7 +61,7 @@ public struct Option<Value>: AnyOption where Value: LosslessStringConvertible {
         name: String,
         short: Character? = nil,
         type: OptionType,
-        help: String? = nil
+        help: String = ""
     ) {
         self.name = name
         self.short = short

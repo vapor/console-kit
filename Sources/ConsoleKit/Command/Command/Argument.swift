@@ -4,7 +4,7 @@ public protocol AnyArgument {
     var name: String { get }
     
     /// The arguments's help text when `--help` is passed in.
-    var help: String? { get }
+    var help: String { get }
     
     /// The type that the argument value gets decoded to.
     var type: LosslessStringConvertible.Type { get }
@@ -40,7 +40,7 @@ public struct Argument<Value>: AnyArgument where Value: LosslessStringConvertibl
     public let name: String
     
     /// The arguments's help text when `--help` is passed in.
-    public let help: String?
+    public let help: String
     
     /// The type that the argument value gets decoded to.
     ///
@@ -56,7 +56,7 @@ public struct Argument<Value>: AnyArgument where Value: LosslessStringConvertibl
     /// - Parameters:
     ///   - name: The argument's unique name. Use this to get the argument value from the `CommandContext`.
     ///   - help: The arguments's help text when `--help` is passed in.
-    public init(name: String, help: String? = nil) {
+    public init(name: String, help: String = "") {
         self.name = name
         self.help = help
     }

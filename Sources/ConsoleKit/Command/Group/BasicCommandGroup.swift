@@ -10,10 +10,10 @@ internal struct BasicCommandGroup: CommandGroup {
     var commands: Commands
 
     /// See `CommandGroup`.
-    var help: String?
+    let help: String
 
     /// Creates a new `BasicCommandGroup`.
-    internal init(commands: Commands, help: String?) {
+    internal init(commands: Commands, help: String) {
         self.help = help
         self.commands = commands
     }
