@@ -222,7 +222,7 @@ extension CommandContext {
         /// - Parameter path: The signature's keypath for the option to read.
         /// - Returns: The requested option's value, if one was passed in.
         public subscript<T>(dynamicMember path: KeyPath<Command.Signature, Option<T>>) -> T? {
-            return try! self.context.option(path)
+            return self.context.option(path)
         }
     }
 
@@ -248,7 +248,7 @@ extension CommandContext {
         /// - Parameter path: The signature's keypath for the argument to read.
         /// - Returns: The requested argument's value.
         public subscript<T>(dynamicMember path: KeyPath<Command.Signature, Argument<T>>) -> T {
-            return try! self.context.argument(path)
+            return self.context.argument(path)
         }
     }
 }
