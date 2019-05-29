@@ -1,4 +1,3 @@
-#warning("TODO: consider removing separate config struct")
 /// Configures commands for a service container.
 ///
 ///     var commandConfig = CommandConfig.default()
@@ -8,9 +7,9 @@
 ///     commandConfig.use(barCommand, as: "bar")
 ///     services.register(commandConfig)
 ///
-public struct CommandConfig {
+public struct CommandConfiguration {
     /// Internal storage
-    private var commands: [String: CommandRunnable]
+    private var commands: [String: AnyCommandRunnable]
 
     /// The default runnable
     private var defaultCommand: String?
@@ -31,7 +30,7 @@ public struct CommandConfig {
     ///     - name: A unique name for running this command.
     ///     - isDefault: If `true`, this command will be set as the default command to run when none other are specified.
     ///                  Setting this overrides any previous default commands.
-    public mutating func use(_ command: CommandRunnable, as name: String, isDefault: Bool = false) {
+    public mutating func use(_ command: AnyCommandRunnable, as name: String, isDefault: Bool = false) {
         commands[name] = command
         if isDefault {
             defaultCommand = name

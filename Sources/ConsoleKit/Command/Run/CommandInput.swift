@@ -9,7 +9,7 @@ public struct CommandInput {
 
     /// Create a new `CommandInput`.
     public init(arguments: [String]) {
-        guard arguments.count >= 1 else { fatalError("At least one argument (the executable path) is required") }
+        precondition(arguments.count >= 1, "At least one argument (the executable path) is required")
         var arguments = arguments
         executablePath = [arguments.popFirst()!]
         self.arguments = arguments
@@ -26,7 +26,7 @@ public struct CommandInput {
     ///
     /// - parameters:
     ///     - option: The `CommandOption` to parse from this `CommandInput`.
-    public mutating func parse(option: CommandOption) throws -> String? {
+    public mutating func parse(option: AnyOption) throws -> String? {
         // create a temporary [String?] array so it's
         // easier to mark positions as "consumed"
         var arguments = self.arguments.map { $0 as String? }
@@ -54,7 +54,7 @@ public struct CommandInput {
                 arguments[i] = nil
             } else if let short = option.short, arg.hasPrefix("-") {
                 // has `-` prefix but not `--`
-                if case .value = option.type {
+                if case .value = option.optionType {
                     // If we want to extract a _value_, the argument should match exactly, and the desired value will be
                     // the following argument.
                     guard arg == "-\(short)" else {
@@ -84,7 +84,7 @@ public struct CommandInput {
             }
 
             // if we reach here, the option was found
-            switch option.type {
+            switch option.optionType {
             case .flag: return "true"
             case .value(let d):
                 let supplied: String?
@@ -135,7 +135,7 @@ public struct CommandInput {
     ///
     /// - parameters:
     ///     - argument: The `CommandArgument` to parse from this `CommandInput`.
-    public mutating func parse(argument: CommandArgument) throws -> String? {
+    public mutating func parse(argument: AnyArgument) throws -> String? {
         // create a temporary [String?] array so it's
         // easier to mark positions as "consumed"
         var arguments = self.arguments.map { $0 as String? }
@@ -156,46 +156,3 @@ public struct CommandInput {
         return nil
     }
 }
-
-#warning("TODO: move this into Vapor")
-//
-//// MARK: Environment
-//
-//extension Environment {
-//    /// Exposes the `Environment`'s `arguments` property as a `CommandInput`.
-//    public var commandInput: CommandInput {
-//        get { return CommandInput(arguments: arguments) }
-//        set { arguments = newValue.executablePath + newValue.arguments }
-//    }
-//
-//    /// Detects the environment from `CommandLine.arguments`. Invokes `detect(from:)`.
-//    /// - parameters:
-//    ///     - arguments: Command line arguments to detect environment from.
-//    /// - returns: The detected environment, or default env.
-//    public static func detect(arguments: [String] = CommandLine.arguments) throws -> Environment {
-//        var commandInput = CommandInput(arguments: arguments)
-//        return try Environment.detect(from: &commandInput)
-//    }
-//
-//    /// Detects the environment from `CommandInput`. Parses the `--env` flag.
-//    /// - parameters:
-//    ///     - arguments: `CommandInput` to parse `--env` flag from.
-//    /// - returns: The detected environment, or default env.
-//    public static func detect(from commandInput: inout CommandInput) throws -> Environment {
-//        var env: Environment
-//        if let value = try commandInput.parse(option: .value(name: "env", short: "e")) {
-//            switch value {
-//            case "prod", "production": env = .production
-//            case "dev", "development": env = .development
-//            case "test", "testing": env = .testing
-//            default: env = .init(name: value, isRelease: false)
-//            }
-//        } else {
-//            env = .development
-//        }
-//        env.commandInput = commandInput
-//        return env
-//    }
-//}
-//
-

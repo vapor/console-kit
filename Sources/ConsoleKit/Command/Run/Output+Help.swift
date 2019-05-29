@@ -1,7 +1,7 @@
 extension Console {
     /// Outputs help for a `CommandRunnable`, this is called automatically when `--help` is
     /// passed or when input validation fails.
-    internal func outputHelp(for runnable: CommandRunnable, executable: String) {
+    internal func outputHelp(for runnable: AnyCommandRunnable, executable: String) {
         output("Usage: ".consoleText(.info) + executable.consoleText() + " ", newLine: false)
 
         switch runnable.type {
@@ -13,7 +13,7 @@ extension Console {
             output("<command> ".consoleText(.warning), newLine: false)
         }
 
-        for opt in runnable.options {
+        for opt in runnable.anySignature.options {
             if let short = opt.short {
                 output("[--\(opt.name),-\(short)] ".consoleText(.success), newLine: false)
             } else {
@@ -24,13 +24,10 @@ extension Console {
 
         if !runnable.help.isEmpty {
             print()
-
-            for help in runnable.help {
-                print(help)
-            }
+            print(runnable.help)
         }
 
-        var names = runnable.options.map { $0.name }
+        var names = runnable.anySignature.options.map { $0.name }
 
         switch runnable.type {
         case .command(let arguments):
@@ -41,11 +38,11 @@ extension Console {
 
         let padding = names.longestCount + 2
 
-        if let command = runnable as? Command {
-            if command.arguments.count > 0 {
+        if runnable is AnyCommand {
+            if runnable.anySignature.arguments.count > 0 {
                 print()
                 output("Arguments:".consoleText(.info))
-                for arg in command.arguments {
+                for arg in runnable.anySignature.arguments {
                     outputHelpListItem(
                         name: arg.name,
                         help: arg.help,
@@ -63,15 +60,16 @@ extension Console {
                 print()
                 output("Commands:".consoleText(.success))
                 for (key, runnable) in commands.commands {
-                    var help: [String]
+                    var help: String
                     if key == commands.defaultCommand {
-                        if runnable.help.count > 0 {
-                            help = ["(default) " + runnable.help[0]]
-                            if runnable.help.count > 1 {
-                                help += runnable.help[1...]
+                        let lines = runnable.help.split(separator: "\n")
+                        if lines.count > 0 {
+                            help = "(default) " + lines[0]
+                            if lines.count > 1 {
+                                help.append("\n\(lines[1...].joined(separator: "\n"))")
                             }
                         } else {
-                            help = ["(default) n/a"]
+                            help = "(default) n/a"
                         }
                     } else {
                         help = runnable.help
@@ -86,10 +84,10 @@ extension Console {
             }
         }
 
-        if runnable.options.count > 0 {
+        if runnable.anySignature.options.count > 0 {
             print()
             output("Options:".consoleText(.info))
-            for opt in runnable.options {
+            for opt in runnable.anySignature.options {
                 outputHelpListItem(
                     name: opt.name,
                     help: opt.help,
@@ -109,18 +107,18 @@ extension Console {
         }
     }
 
-    private func outputHelpListItem(name: String, help: [String], style: ConsoleStyle, padding: Int) {
+    private func outputHelpListItem(name: String, help: String?, style: ConsoleStyle, padding: Int) {
         output(name.leftPad(to: padding - name.count).consoleText(style), newLine: false)
-        if help.isEmpty {
-            print(" n/a")
-        } else {
-            for (i, help) in help.enumerated() {
-                if i == 0 {
-                    print(help.leftPad(to: 1))
+        if let help = help {
+            for (index, line) in help.split(separator: "\n").map(String.init).enumerated() {
+                if index == 0 {
+                    print(line.leftPad(to: 1))
                 } else {
-                    print(help.leftPad(to: padding + 1))
+                    print(line.leftPad(to: padding + 1))
                 }
             }
+        } else {
+            print(" n/a")
         }
     }
 }

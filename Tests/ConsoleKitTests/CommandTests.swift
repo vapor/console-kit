@@ -47,8 +47,8 @@ class CommandTests: XCTestCase {
 
     func testShortFlagNeedsToMatchExactly() throws {
         var input = CommandInput(arguments: ["vapor", "sub", "test", "-x", "exact", "-y_not_exact", "not_exact"])
-        XCTAssertEqual(try input.parse(option: .value(name: "xShort", short: "x")), "exact")
-        XCTAssertNil(try input.parse(option: .value(name: "yShort", short: "y")))
+        XCTAssertEqual(try input.parse(option: Option<String>(name: "xShort", short: "x", type: .value)), "exact")
+        XCTAssertNil(try input.parse(option: Option<String>(name: "yShort", short: "y", type: .value)))
     }
 
     func testDeprecatedFlag() throws {
@@ -60,5 +60,30 @@ class CommandTests: XCTestCase {
         Foo: foovalue Bar: baz
 
         """)
+    }
+
+    func testDynamicAccess() throws {
+        #if swift(>=5.1)
+        struct DynamicCommand: Command {
+            struct Signature: CommandSignature {
+                let count = Option<Int>(name: "count", type: .value)
+                let auth = Argument<Bool>(name: "auth")
+            }
+            static let strict = true
+
+            var signature: DynamicCommand.Signature = Signature()
+            var help: String? = ""
+
+            func run(using context: CommandContext<DynamicCommand>) throws {
+                XCTAssertEqual(context.options.count, 42)
+                XCTAssertEqual(context.arguments.auth, true)
+            }
+        }
+
+        let console = TestConsole()
+        let command = DynamicCommand()
+        var input = CommandInput(arguments: ["vapor", "true", "--count", "42"])
+        try console.run(command, input: &input)
+        #endif
     }
 }

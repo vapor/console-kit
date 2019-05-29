@@ -1,4 +1,3 @@
-#warning("TODO: convert to error enum")
 /// Errors working with the `Console` module.
 public struct ConsoleError: Error {
     /// See `Debuggable`.
