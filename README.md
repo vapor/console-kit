@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/1342803/58571855-8f7a0a80-8208-11e9-9eb8-86ba9a5209ff.png" height="64" alt="ConsoleKit">
+    <img src="https://user-images.githubusercontent.com/1342803/58571855-8f7a0a80-8208-11e9-9eb8-86ba9a5209ff.png" alt="ConsoleKit">
     <br>
     <br>
     <a href="https://api.vapor.codes/console/master/ConsoleKit/index.html">
