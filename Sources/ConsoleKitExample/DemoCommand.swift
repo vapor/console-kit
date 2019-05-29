@@ -20,7 +20,7 @@ final class DemoCommand: Command {
 
     func run(using context: CommandContext<DemoCommand>) throws {
         let funDemoText: ConsoleText
-        if try context.option(\.colored) ?? false {
+        if context.option(\.colored) ?? false {
             funDemoText = [
                 ConsoleTextFragment(string: "D", style: .init(color: .red)),
                 ConsoleTextFragment(string: "e", style: .init(color: .yellow)),
@@ -36,13 +36,13 @@ final class DemoCommand: Command {
         let name = context.console.ask("What is your name?".consoleText(.info))
         context.console.print("Hello, \(name) 👋")
 
-        if try context.option(\.colored) ?? false {
+        if context.option(\.colored) ?? false {
             context.console.info("Here's an example of loading")
         } else {
             context.console.print("Here's an example of loading")
         }
 
-        if let frames = try context.option(\.loadingFrames) {
+        if let frames = context.option(\.loadingFrames) {
             let loadingBar = context.console.customActivity(frames: frames.split(separator: ",").map(String.init))
             loadingBar.start()
 

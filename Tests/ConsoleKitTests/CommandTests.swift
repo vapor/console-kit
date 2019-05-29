@@ -62,6 +62,20 @@ class CommandTests: XCTestCase {
         """)
     }
 
+    func testStrictCommand() throws {
+        let console = TestConsole()
+        let command = StrictCommand()
+
+        var input = CommandInput(arguments: ["vapor", "3", "true"])
+        try console.run(command, input: &input)
+
+        input = CommandInput(arguments: ["vapor", "e", "true"])
+        try XCTAssertThrowsError(console.run(command, input: &input))
+
+        input = CommandInput(arguments: ["vapor", "e", "nope"])
+        try XCTAssertThrowsError(console.run(command, input: &input))
+    }
+
     func testDynamicAccess() throws {
         #if swift(>=5.1)
         struct DynamicCommand: Command {

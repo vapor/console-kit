@@ -12,6 +12,7 @@ extension CommandTests {
         ("testHelp", testHelp),
         ("testShortFlag", testShortFlag),
         ("testShortFlagNeedsToMatchExactly", testShortFlagNeedsToMatchExactly),
+        ("testStrictCommand", testStrictCommand),
     ]
 }
 

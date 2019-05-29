@@ -22,7 +22,7 @@ public protocol CommandRunnable: AnyCommandRunnable {
     /// This type is made up of `Argument<T>` and `Option<T>` properties which
     /// are the command's accepted arguments and options.
     associatedtype Signature: CommandSignature
-    
+
     /// An instance of the type that represents the command's valid signature.
     ///
     /// The type-specific implementation of `AnyCommandRunnable.inputs`.
@@ -47,7 +47,7 @@ extension CommandRunnable {
     ///
     /// - Throws: `ConsoleError.invalidSignature` is the context type-cast fails.
     public func run(using anyContext: AnyCommandContext) throws {
-        let context = anyContext.context(command: self)
+        let context = try anyContext.context(command: self)
         return try self.run(using: context)
     }
 }
