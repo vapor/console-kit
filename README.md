@@ -2,7 +2,7 @@
     <img src="https://user-images.githubusercontent.com/1342803/58572182-2c3ca800-8209-11e9-9977-f0258e07e54f.png" alt="ConsoleKit">
     <br>
     <br>
-    <a href="https://api.vapor.codes/console/master/ConsoleKit/index.html">
+    <a href="https://api.vapor.codes/console-kit/master/ConsoleKit/index.html">
         <img src="http://img.shields.io/badge/api-docs-2196f3.svg" alt="API Docs">
     </a>
     <a href="http://vapor.team">
