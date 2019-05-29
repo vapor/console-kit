@@ -13,8 +13,11 @@ extension ActivityIndicatorType {
     ///
     /// - parameters:
     ///     - console: Console to use for rendering the `ActivityIndicator`
-    public func newActivity(for console: Console) -> ActivityIndicator<Self> {
-        return .init(activity: self, console: console)
+    ///     - targetQueue: An optional target queue (defaults to `nil`) on which
+    ///                    asynchronous updates to the console will be
+    ///                    scheduled.
+    public func newActivity(for console: Console, targetQueue: DispatchQueue? = nil) -> ActivityIndicator<Self> {
+        return .init(activity: self, console: console, targetQueue: targetQueue)
     }
 }
 
@@ -41,34 +44,60 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
     /// Current state.
     private var state: ActivityIndicatorState
     
-    private var task: DispatchWorkItem?
-
+    /// The queue on which to handle timer events
+    private let queue: DispatchQueue
+    
+    /// We use a DispatchGroup as a synchronization mechanism for when the
+    /// dispatch timer is cancelled.
+    private let stopGroup: DispatchGroup
+    
+    /// The timer that drives this activity indicator's updates.
+    private var timer: DispatchSourceTimer
+    
     /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.
-    init(activity: A, console: Console) {
+    init(activity: A, console: Console, targetQueue: DispatchQueue? = nil) {
         self.console = console
         self.state = .ready
         self.activity = activity
+        self.queue = DispatchQueue(label: "codes.vapor.consolekit.activityindicator", target: targetQueue)
+        self.timer = DispatchSource.makeTimerSource(flags: [], queue: self.queue)
+        self.stopGroup = DispatchGroup()
     }
 
     /// Starts the `ActivityIndicator`. Usually this means beginning the associated "loading" animation.
     ///
     /// Once started, `ActivityIndicator` will continue to redraw the `ActivityIndicatorType` at a fixed
     /// refresh rate passing `ActivityIndicatorState.active`.
-    public func start() {
-        let item = DispatchWorkItem {
-            var tick: UInt = 0
-            while true {
-                usleep(40_000)
-                if tick > 0 {
-                    self.console.popEphemeral()
-                }
-                self.console.pushEphemeral()
-                self.activity.outputActivityIndicator(to: self.console, state: .active(tick: tick))
-                tick = tick &+ 1
+    ///
+    /// - Parameters:
+    ///     - refreshRate: The time interval (specified in milliseconds) to use
+    ///                    when updating the activity.
+    public func start(refreshRate: Int = 40) {
+        self.timer.schedule(
+            deadline: DispatchTime.now(),
+            repeating: .milliseconds(refreshRate),
+            leeway: DispatchTimeInterval.milliseconds(10)
+        )
+        
+        var tick: UInt = 0
+        self.timer.setEventHandler { [unowned self] in
+            if tick > 0 {
+                self.console.popEphemeral()
             }
+            tick = tick &+ 1
+            self.console.pushEphemeral()
+            self.activity.outputActivityIndicator(to: self.console, state: .active(tick: tick))
         }
-        DispatchQueue.global().async(execute: item)
-        self.task = item
+        
+        self.stopGroup.enter()
+        self.timer.setCancelHandler { [unowned self] in
+            if tick > 0 {
+                self.console.popEphemeral()
+            }
+            self.stopGroup.leave()
+        }
+        
+        self.timer.resume()
     }
 
     /// Stops the `ActivityIndicator`, yielding a failed / error appearance.
@@ -92,9 +121,16 @@ public final class ActivityIndicator<A> where A: ActivityIndicatorType {
     }
 
     /// Stops the output refreshing and clears the console.
+    ///
+    /// - Precondition: `start()` must have been called once before this.
+    /// - Postcondition: The indicator is idle, and safe to be interacted with
+    ///                  from the main thread (e.g. to call
+    ///                  `activity.outputActivityIndicator(to:state:)` as with
+    ///                  the public `fail()` and `succeed()` implementations.
     private func stop() {
-        self.task!.cancel()
-        self.task = nil
-        console.popEphemeral()
+        self.timer.cancel()
+        self.stopGroup.wait()
+        self.timer.setEventHandler {}
+        self.timer.setCancelHandler {}
     }
 }
