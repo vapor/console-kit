@@ -2,8 +2,8 @@
     <img src="https://user-images.githubusercontent.com/1342803/36577130-48a9046c-1823-11e8-8ca6-36cc7b9a6ac4.png" height="64" alt="Console">
     <br>
     <br>
-    <a href="https://docs.vapor.codes/3.0/console/getting-started/">
-        <img src="http://img.shields.io/badge/read_the-docs-2196f3.svg" alt="Documentation">
+    <a href="https://api.vapor.codes/console/master/ConsoleKit/index.html">
+        <img src="http://img.shields.io/badge/api-docs-2196f3.svg" alt="API Docs">
     </a>
     <a href="http://vapor.team">
         <img src="https://img.shields.io/discord/431917998102675485.svg" alt="Team Chat">
