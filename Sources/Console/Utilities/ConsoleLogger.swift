@@ -1,4 +1,4 @@
-import Logging
+import LoggingKit
 
 /// Outputs logs to a `Console`.
 public final class ConsoleLogger: Logger {
