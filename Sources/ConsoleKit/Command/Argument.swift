@@ -1,15 +1,3 @@
-/// A type-erased `Argument`.
-public protocol AnyArgument {
-    /// The argument's unique name.
-    var name: String { get }
-    
-    /// The arguments's help text when `--help` is passed in.
-    var help: String { get }
-    
-    /// The type that the argument value gets decoded to.
-    var type: LosslessStringConvertible.Type { get }
-}
-
 /// An argument for a console command
 ///
 ///     exec command <arg>
@@ -35,29 +23,42 @@ public protocol AnyArgument {
 ///     }
 ///
 /// See `Command` for more information.
-public struct Argument<Value>: AnyArgument where Value: LosslessStringConvertible {
-    /// The argument's unique name.
-    public let name: String
-    
+@propertyWrapper
+public final class Argument<Value>: AnyArgument
+    where Value: LosslessStringConvertible
+{
     /// The arguments's help text when `--help` is passed in.
     public let help: String
-    
-    /// The type that the argument value gets decoded to.
-    ///
-    /// Required by `AnyArgument`.
-    public var type: LosslessStringConvertible.Type {
-        return Value.self
+
+    /// @propertyWrapper value
+    public var wrappedValue: Value {
+        guard let value = self.value else {
+            fatalError("Argument \(self.name) was not initialized")
+        }
+        return value
     }
+
+    var value: Value?
+    var label: String?
     
     /// Creates a new `Argument`
     ///
-    ///     let count = Argument<Int>(name: "count", help: "The number of times to run the command")
+    ///     @Argument(help: "The number of times to run the command")
+    ///     var count: Int
     ///
     /// - Parameters:
-    ///   - name: The argument's unique name. Use this to get the argument value from the `CommandContext`.
     ///   - help: The arguments's help text when `--help` is passed in.
-    public init(name: String, help: String = "") {
-        self.name = name
+    public init(help: String) {
         self.help = help
+    }
+
+    func load(from input: inout CommandInput) throws {
+        guard let argument = input.nextArgument() else {
+            throw CommandError(identifier: "argument", reason: "Missing required argument: \(self.name)")
+        }
+        guard let value = Value(argument) else {
+            throw CommandError(identifier: "argument", reason: "Could not convert argument for \(self.name) to \(Value.self)")
+        }
+        self.value = value
     }
 }

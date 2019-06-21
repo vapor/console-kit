@@ -8,8 +8,9 @@ var config = CommandConfiguration()
 config.use(DemoCommand(), as: "demo", isDefault: true)
 
 do {
-    let commands = try config.resolve().group(help: "An example command-line application built with ConsoleKit")
-    try console.run(commands, input: &input)
+    let commands = try config.resolve()
+        .group(help: "An example command-line application built with ConsoleKit")
+    try console.run(commands, input: input)
 } catch let error {
     console.error(error.localizedDescription)
     exit(1)
