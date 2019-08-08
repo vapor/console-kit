@@ -3,51 +3,67 @@ version: 2
 jobs:
   macos:
     macos:
-      xcode: "10.2.0"
+      xcode: "11.0.0"
     steps:
       - checkout
       - run: swift build
       - run: swift test
   macos-release:
     macos:
-      xcode: "10.2.0"
+      xcode: "11.0.0"
     steps:
       - checkout
       - run: swift build -c release
   bionic:
     docker:
-      - image: swift:5.0-bionic
+      - image: vapor/swift:5.1-bionic
     steps:
       - checkout
-      - run: swift build --disable-index-store
-      - run: swift test --disable-index-store
+      - run: swift build
+      - run: swift test
   bionic-release:
     docker:
-      - image: swift:5.0-bionic
+      - image: vapor/swift:5.1-bionic
     steps:
       - checkout
       - run: swift build -c release
   xenial:
     docker:
-      - image: swift:5.0-xenial
+      - image: vapor/swift:5.1-xenial
     steps:
       - checkout
-      - run: swift build --disable-index-store
-      - run: swift test --disable-index-store
+      - run: swift build
+      - run: swift test
   xenial-release:
     docker:
-      - image: swift:5.0-xenial
+      - image: vapor/swift:5.1-xenial
     steps:
       - checkout
       - run: swift build -c release
+
+  bionic-sqlite:
+    docker:
+      - image: vapor/swift:5.1-bionic
+    steps:
+      - run: apt-get -y install sqlite3 libsqlite3-dev
+      - run:
+          command: git clone -b master https://github.com/vapor/fluent-sqlite-driver.git
+          working_directory: ~/
+      - run:
+          command: swift package edit fluent-kit --revision $CIRCLE_SHA1
+          working_directory: ~/fluent-sqlite-driver
+      - run:
+          command: swift test
+          working_directory: ~/fluent-sqlite-driver
 
 workflows:
   version: 2
   tests:
     jobs:
-      - macos
-      - macos-release
+#      - macos
+#      - macos-release
       - bionic
       - bionic-release
       - xenial
       - xenial-release
+      - bionic-sqlite
