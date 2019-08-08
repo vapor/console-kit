@@ -72,13 +72,13 @@
 ///
 public protocol Command: AnyCommand {
     associatedtype Signature: CommandSignature
-    func run(context: CommandContext, signature: Signature) throws
+    func run(using context: CommandContext, signature: Signature) throws
 }
 
 extension Command {
     public func run(using context: inout CommandContext) throws {
         let signature = try Signature(from: &context.input)
-        try self.run(context: context, signature: signature)
+        try self.run(using: context, signature: signature)
     }
 
     public func outputAutoComplete(using context: inout CommandContext) {

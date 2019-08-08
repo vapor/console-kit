@@ -22,6 +22,10 @@ public final class Option<Value>: AnyOption
 
     var label: String?
     var value: Value??
+
+    public convenience init() {
+        self.init(short: nil, help: "")
+    }
     
     /// Creates a new `Option` with the `optionType` set to `.value`.
     ///

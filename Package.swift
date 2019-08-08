@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.1
 import PackageDescription
 
 let package = Package(
@@ -12,6 +12,6 @@ let package = Package(
     targets: [
         .target(name: "ConsoleKit", dependencies: ["Logging"]),
         .testTarget(name: "ConsoleKitTests", dependencies: ["ConsoleKit"]),
-        .target(name: "ConsoleKitExample", dependencies: ["ConsoleKit"]),
+        // .target(name: "ConsoleKitExample", dependencies: ["ConsoleKit"]),
     ]
 )

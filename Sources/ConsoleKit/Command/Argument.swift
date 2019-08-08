@@ -40,6 +40,10 @@ public final class Argument<Value>: AnyArgument
 
     var value: Value?
     var label: String?
+
+    public convenience init() {
+        self.init(help: "")
+    }
     
     /// Creates a new `Argument`
     ///
