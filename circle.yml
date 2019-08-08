@@ -41,21 +41,6 @@ jobs:
       - checkout
       - run: swift build -c release
 
-  bionic-sqlite:
-    docker:
-      - image: vapor/swift:5.1-bionic
-    steps:
-      - run: apt-get -y install sqlite3 libsqlite3-dev
-      - run:
-          command: git clone -b master https://github.com/vapor/fluent-sqlite-driver.git
-          working_directory: ~/
-      - run:
-          command: swift package edit fluent-kit --revision $CIRCLE_SHA1
-          working_directory: ~/fluent-sqlite-driver
-      - run:
-          command: swift test
-          working_directory: ~/fluent-sqlite-driver
-
 workflows:
   version: 2
   tests:
@@ -66,4 +51,3 @@ workflows:
       - bionic-release
       - xenial
       - xenial-release
-      - bionic-sqlite
