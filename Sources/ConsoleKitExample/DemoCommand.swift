@@ -2,25 +2,22 @@ import ConsoleKit
 
 final class DemoCommand: Command {
     struct Signature: CommandSignature {
-        let colored = Option<Bool>(
-            name: "colored",
-            short: "c",
-            type: .value(default: "true"),
-            help: "Whether the output should be color or just black and white."
-        )
-        let loadingFrames = Option<String>(name: "loading", type: .value, help: """
-        Custom frames for the loading bar.
-        The value for this option should be a comma separated list of characters to use.
-        """)
+        @Flag(short: "c", help: "Enables colorized output")
+        var color: Bool
+
+        @Option(help: "Custom frames for the loading bar\nUse a comma-separated list")
+        var frames: String?
+
+        init() { }
     }
 
-    let signature: DemoCommand.Signature = Signature()
+    var help: String {
+        "A demonstration of what ConsoleKit can do"
+    }
 
-    let help: String = "A demonstration of what ConsoleKit can do"
-
-    func run(using context: CommandContext<DemoCommand>) throws {
+    func run(context: CommandContext, signature: Signature) throws {
         let funDemoText: ConsoleText
-        if context.option(\.colored) ?? false {
+        if signature.color {
             funDemoText = [
                 ConsoleTextFragment(string: "D", style: .init(color: .red)),
                 ConsoleTextFragment(string: "e", style: .init(color: .yellow)),
@@ -36,13 +33,13 @@ final class DemoCommand: Command {
         let name = context.console.ask("What is your name?".consoleText(.info))
         context.console.print("Hello, \(name) 👋")
 
-        if context.option(\.colored) ?? false {
+        if signature.color {
             context.console.info("Here's an example of loading")
         } else {
             context.console.print("Here's an example of loading")
         }
 
-        if let frames = context.option(\.loadingFrames) {
+        if let frames = signature.frames {
             let loadingBar = context.console.customActivity(frames: frames.split(separator: ",").map(String.init))
             loadingBar.start()
 
