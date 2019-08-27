@@ -47,8 +47,12 @@ class CommandTests: XCTestCase {
 
     func testShortFlagNeedsToMatchExactly() throws {
         struct Signature: CommandSignature {
-            @Option(short: "x") var xShort: String
-            @Option(short: "y") var yShort: String
+            @Option(name: "x-short", short: "x")
+            var xShort: String
+            
+            @Option(name: "y-short", short: "y")
+            var yShort: String
+            
             init() { }
         }
         var input = CommandInput(arguments: ["vapor", "sub", "test", "-x", "exact", "-y_not_exact", "not_exact"])
@@ -74,8 +78,12 @@ class CommandTests: XCTestCase {
     func testDynamicAccess() throws {
         struct DynamicCommand: Command {
             struct Signature: CommandSignature {
-                @Option var count: Int?
-                @Argument var auth: Bool
+                @Option(name: "count")
+                var count: Int?
+                
+                @Argument(name: "auth")
+                var auth: Bool
+                
                 init() { }
             }
             var help: String = ""

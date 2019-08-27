@@ -4,7 +4,7 @@ extension String: Error {}
 
 final class TestGroup: CommandGroup {
     struct Signature: CommandSignature {
-        @Flag(help: "Prints the version")
+        @Flag(name: "version", help: "Prints the version")
         var version: Bool
         init() { }
     }
@@ -25,7 +25,7 @@ final class TestGroup: CommandGroup {
 
 final class SubGroup: CommandGroup {
     struct Signature: CommandSignature {
-        @Flag(help: "Prints the version")
+        @Flag(name: "version", help: "Prints the version")
         var version: Bool
         init() { }
     }
@@ -45,13 +45,13 @@ final class SubGroup: CommandGroup {
 
 final class TestCommand: Command {
     struct Signature: CommandSignature {
-        @Argument(help: """
+        @Argument(name: "foo", help: """
         A foo is required
         An error will occur if none exists
         """)
         var foo: String
 
-        @Option(short: "b", help: """
+        @Option(name: "bar", short: "b", help: """
         Add a bar if you so desire
         Try passing it
         """)
@@ -69,8 +69,12 @@ final class TestCommand: Command {
 
 final class StrictCommand: Command {
     struct Signature: CommandSignature {
-        @Argument var number: Int
-        @Argument var bool: Bool
+        @Argument(name: "number")
+        var number: Int
+        
+        @Argument(name: "bool")
+        var bool: Bool
+        
         init() { }
     }
     var help: String = "I error if you pass in bad values"

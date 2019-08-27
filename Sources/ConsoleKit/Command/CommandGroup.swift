@@ -16,6 +16,12 @@ public protocol CommandGroup: AnyCommand {
 }
 
 extension CommandGroup {
+    public var defaultCommand: AnyCommand? {
+        return nil
+    }
+}
+
+extension CommandGroup {
     public func run(using context: inout CommandContext) throws {
         if let command = try self.commmand(using: &context) {
             try command.run(using: &context)
