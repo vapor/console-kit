@@ -4,14 +4,14 @@ public struct Commands: ExpressibleByDictionaryLiteral {
     public let commands: [String: AnyCommand]
 
     /// If set, this is the default top-level command that should run if no other commands are specified.
-    public let defaultCommand: String?
+    public let defaultCommand: AnyCommand?
 
     /// Creates a new `ConfiguredCommands` struct. This is usually done by calling `resolve(for:)` on `CommandConfig`.
     ///
     /// - parameters:
     ///     - commands: Top-level available commands, stored by unique name.
     ///     - defaultCommand: If set, this is the default top-level command that should run if no other commands are specified.
-    public init(commands: [String: AnyCommand] = [:], defaultCommand: String? = nil) {
+    public init(commands: [String: AnyCommand] = [:], defaultCommand: AnyCommand? = nil) {
         self.commands = commands
         self.defaultCommand = defaultCommand
     }
@@ -38,11 +38,12 @@ public struct Commands: ExpressibleByDictionaryLiteral {
     ///     - help: Optional help messages to include.
     /// - returns: A `CommandGroup` with commands and defaultCommand configured.
     public func group(help: String = "") -> CommandGroup {
-        return _Group(commands: self.commands, help: help)
+        return _Group(commands: self.commands, defaultCommand: self.defaultCommand, help: help)
     }
 }
 
 private struct _Group: CommandGroup {
     let commands: [String: AnyCommand]
+    var defaultCommand: AnyCommand?
     let help: String
 }

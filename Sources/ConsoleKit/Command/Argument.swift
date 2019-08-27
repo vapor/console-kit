@@ -27,8 +27,13 @@
 public final class Argument<Value>: AnyArgument
     where Value: LosslessStringConvertible
 {
-    /// The arguments's help text when `--help` is passed in.
+    /// The argument's identifying name.
+    public let name: String
+    
+    /// The argument's help text when `--help` is passed in.
     public let help: String
+
+    var value: Value?
 
     /// @propertyWrapper value
     public var wrappedValue: Value {
@@ -36,13 +41,6 @@ public final class Argument<Value>: AnyArgument
             fatalError("Argument \(self.name) was not initialized")
         }
         return value
-    }
-
-    var value: Value?
-    var label: String?
-
-    public convenience init() {
-        self.init(help: "")
     }
     
     /// Creates a new `Argument`
@@ -52,7 +50,8 @@ public final class Argument<Value>: AnyArgument
     ///
     /// - Parameters:
     ///   - help: The arguments's help text when `--help` is passed in.
-    public init(help: String) {
+    public init(name: String, help: String = "") {
+        self.name = name
         self.help = help
     }
 

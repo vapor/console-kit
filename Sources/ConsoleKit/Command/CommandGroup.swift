@@ -12,12 +12,15 @@
 /// You can create your own `CommandGroup` if you want to support custom `CommandOptions`.
 public protocol CommandGroup: AnyCommand {
     var commands: [String: AnyCommand] { get }
+    var defaultCommand: AnyCommand? { get }
 }
 
 extension CommandGroup {
     public func run(using context: inout CommandContext) throws {
         if let command = try self.commmand(using: &context) {
             try command.run(using: &context)
+        } else if let `default` = self.defaultCommand {
+            return try `default`.run(using: &context)
         } else {
             try self.outputHelp(using: &context)
             throw CommandError(identifier: "noCommand", reason: "Missing command")
