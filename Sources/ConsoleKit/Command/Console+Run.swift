@@ -36,16 +36,16 @@ extension Console {
 }
 
 private struct GlobalSignature: CommandSignature {
-    @Flag(short: "n", help: "Automatically answers no to all confirmations")
+    @Flag(name: "no", short: "n", help: "Automatically answers no to all confirmations")
     var no: Bool
 
-    @Flag(short: "y", help: "Automatically answers yes to all confirmations")
+    @Flag(name: "yes", short: "y", help: "Automatically answers yes to all confirmations")
     var yes: Bool
 
-    @Flag(short: "h", help: "Displays instructions for the supplied command")
+    @Flag(name: "help", short: "h", help: "Displays instructions for the supplied command")
     var help: Bool
 
-    @Flag(help: "Produces output for bash autocomplete")
+    @Flag(name: "autocomplete", help: "Produces output for bash autocomplete")
     var autocomplete: Bool
 
     init() { }

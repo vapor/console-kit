@@ -6,6 +6,9 @@
 public final class Option<Value>: AnyOption
     where Value: LosslessStringConvertible
 {
+    /// The option's identifying name.
+    public let name: String
+    
     /// The option's short flag.
     public let help: String
     
@@ -20,12 +23,7 @@ public final class Option<Value>: AnyOption
         return value
     }
 
-    var label: String?
     var value: Value??
-
-    public convenience init() {
-        self.init(short: nil, help: "")
-    }
     
     /// Creates a new `Option` with the `optionType` set to `.value`.
     ///
@@ -36,9 +34,11 @@ public final class Option<Value>: AnyOption
     ///   - short: The short-hand for the flag that can be passed in to the command call.
     ///   - help: The option's help text when `--help` is passed in.
     public init(
+        name: String,
         short: Character? = nil,
         help: String = ""
     ) {
+        self.name = name
         self.short = short
         self.help = help
     }

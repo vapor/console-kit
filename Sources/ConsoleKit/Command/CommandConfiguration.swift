@@ -12,7 +12,7 @@ public struct CommandConfiguration {
     private var commands: [String: AnyCommand]
 
     /// The default runnable
-    private var defaultCommand: String?
+    private var defaultCommand: AnyCommand?
 
     /// Create a new `CommandConfig`.
     public init() {
@@ -31,9 +31,9 @@ public struct CommandConfiguration {
     ///     - isDefault: If `true`, this command will be set as the default command to run when none other are specified.
     ///                  Setting this overrides any previous default commands.
     public mutating func use(_ command: AnyCommand, as name: String, isDefault: Bool = false) {
-        commands[name] = command
+        self.commands[name] = command
         if isDefault {
-            defaultCommand = name
+            self.defaultCommand = command
         }
     }
 
@@ -42,6 +42,6 @@ public struct CommandConfiguration {
     /// - returns: `Commands` struct which contains initialized commands.
     /// - throws: Errors creating the lazy commands from the container.
     public func resolve() throws -> Commands {
-        return .init(commands: commands, defaultCommand: defaultCommand)
+        return .init(commands: self.commands, defaultCommand: self.defaultCommand)
     }
 }
