@@ -76,21 +76,11 @@ class CommandTests: XCTestCase {
     }
 
     func testDynamicAccess() throws {
-        struct DynamicCommand: Command {
-            struct Signature: CommandSignature {
-                @Option(name: "count")
-                var count: Int?
-                
-                @Argument(name: "auth")
-                var auth: Bool
-                
-                init() { }
-            }
+        struct DynamicCommand: AnyCommand {
             var help: String = ""
 
-            func run(using context: CommandContext, signature: Signature) throws {
-                XCTAssertEqual(signature.count, 42)
-                XCTAssertEqual(signature.auth, true)
+            func run(using context: inout CommandContext) throws {
+                XCTAssertEqual(context.input.arguments, ["true", "--count", "42"])
             }
         }
 
