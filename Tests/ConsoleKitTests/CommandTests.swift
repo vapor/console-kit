@@ -8,7 +8,7 @@ class CommandTests: XCTestCase {
         let input = CommandInput(arguments: ["vapor", "sub", "test", "--help"])
         try console.run(group, input: input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
-        Usage: vapor sub test <foo> [--bar,-b]\u{20}
+        Usage: vapor sub test <foo> [--bar,-b] [--baz,-B]\u{20}
 
         This is a test command
 
@@ -19,6 +19,10 @@ class CommandTests: XCTestCase {
         Options:
           bar Add a bar if you so desire
               Try passing it
+
+        Flags:
+          baz Add a baz if you so desire
+              It's just a flag
 
         """)
     }

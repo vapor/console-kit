@@ -13,6 +13,10 @@ public final class Flag: AnyFlag {
     /// The option's help text when `--help` is passed in.
     public let short: Character?
 
+    public var projectedValue: Flag {
+        return self
+    }
+
     public var wrappedValue: Bool {
         guard let value = self.value else {
             fatalError("Flag \(self.name) was not initialized")

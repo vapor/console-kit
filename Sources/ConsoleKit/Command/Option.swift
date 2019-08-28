@@ -15,6 +15,9 @@ public final class Option<Value>: AnyOption
     /// The option's help text when `--help` is passed in.
     public let short: Character?
 
+    public var projectedValue: Option<Value> {
+        return self
+    }
 
     public var wrappedValue: Value? {
         guard let value = self.value else {
