@@ -35,6 +35,10 @@ public final class Argument<Value>: AnyArgument
 
     var value: Value?
 
+    public var projectedValue: Argument<Value> {
+        return self
+    }
+
     /// @propertyWrapper value
     public var wrappedValue: Value {
         guard let value = self.value else {

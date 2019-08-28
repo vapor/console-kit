@@ -1,4 +1,5 @@
 import ConsoleKit
+import XCTest
 
 extension String: Error {}
 
@@ -57,12 +58,21 @@ final class TestCommand: Command {
         """)
         var bar: String?
 
+        @Flag(name: "baz", short: "B", help: """
+        Add a baz if you so desire
+        It's just a flag
+        """)
+        var baz: Bool
+
         init() { }
     }
 
     let help: String = "This is a test command"
 
     func run(using context: CommandContext, signature: Signature) throws {
+        XCTAssertEqual(signature.$foo.name, "foo")
+        XCTAssertEqual(signature.$bar.name, "bar")
+        XCTAssertEqual(signature.$baz.name, "baz")
         context.console.output("Foo: \(signature.foo) Bar: \(signature.bar ?? "nil")".consoleText(.info))
     }
 }
