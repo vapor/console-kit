@@ -82,7 +82,9 @@ extension CommandGroup {
             guard let command = self.commands[name] else {
                 throw CommandError(
                     identifier: "unknownCommand",
-                    reason: "Unknown command `\(name)`"
+                    reason: "Unknown command `\(name)`",
+                    name: name,
+                    commands: Array(self.commands.keys)
                 )
             }
             // executable should include all subcommands
