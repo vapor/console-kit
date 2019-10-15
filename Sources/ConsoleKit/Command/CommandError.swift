@@ -7,14 +7,14 @@ public struct CommandError: Error, CustomStringConvertible {
     public let reason: String
     
     /// The name of the attempted command
-    private let name: String?
+    public let command: String?
     
     /// All available commands
-    private let availableCommands: [String]
+    public let availableCommands: [String]
 
     /// See `CustomStringConvertible`.
     public var description: String {
-        guard let name = name, !availableCommands.isEmpty else {
+        guard let name = command, !availableCommands.isEmpty else {
             return "\(self.identifier): \(self.reason)"
         }
         
@@ -40,7 +40,7 @@ public struct CommandError: Error, CustomStringConvertible {
     internal init(identifier: String, reason: String, forName name: String? = nil, availableCommands: [String] = []) {
         self.identifier = identifier
         self.reason = reason
-        self.name = name
+        self.command = name
         self.availableCommands = availableCommands
     }
 }
