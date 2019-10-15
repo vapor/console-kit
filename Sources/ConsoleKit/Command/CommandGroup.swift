@@ -83,8 +83,8 @@ extension CommandGroup {
                 throw CommandError(
                     identifier: "unknownCommand",
                     reason: "Unknown command `\(name)`",
-                    name: name,
-                    commands: Array(self.commands.keys)
+                    forName: name,
+                    availableCommands: Array(self.commands.keys)
                 )
             }
             // executable should include all subcommands

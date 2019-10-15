@@ -2,7 +2,7 @@
 import XCTest
 
 class CommandErrorTests: XCTestCase {
-    func testUnknownCommand() throws {
+    func testUnknownWithSuggestionCommand() throws {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "sup"])
@@ -12,7 +12,18 @@ class CommandErrorTests: XCTestCase {
 
             Did you mean this?
 
-                sub
+            \tsub
+            """)
+        }
+    }
+    
+    func testUnknownWithoutSuggestionCommand() throws {
+        let console = TestConsole()
+        let group = TestGroup()
+        let input = CommandInput(arguments: ["vapor", "desoxyribonucleic-acid"])
+        XCTAssertThrowsError(try console.run(group, input: input), "Unknown command is supposed to throw") { error in
+            XCTAssertEqual((error as! CommandError).description, """
+            Error: Unknown command `desoxyribonucleic-acid`
             """)
         }
     }
