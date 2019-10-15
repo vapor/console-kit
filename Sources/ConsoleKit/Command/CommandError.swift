@@ -37,10 +37,10 @@ public struct CommandError: Error, CustomStringConvertible {
     }
 
     /// Creates a new `CommandError`
-    internal init(identifier: String, reason: String, forName name: String? = nil, availableCommands: [String] = []) {
+    internal init(identifier: String, reason: String, forCommand command: String? = nil, availableCommands: [String] = []) {
         self.identifier = identifier
         self.reason = reason
-        self.command = name
+        self.command = command
         self.availableCommands = availableCommands
     }
 }
@@ -51,5 +51,5 @@ private func smallerDistance(lhs: (String, Int), rhs: (String, Int)) -> Bool {
 }
 
 private func distanceLessThan(_ threshold: Int) -> (String, Int) -> Bool {
-    return { name, distance in distance < threshold }
+    return { command, distance in distance < threshold }
 }

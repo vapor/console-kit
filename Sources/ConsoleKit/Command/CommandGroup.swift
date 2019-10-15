@@ -83,7 +83,7 @@ extension CommandGroup {
                 throw CommandError(
                     identifier: "unknownCommand",
                     reason: "Unknown command `\(name)`",
-                    forName: name,
+                    forCommand: name,
                     availableCommands: Array(self.commands.keys)
                 )
             }
