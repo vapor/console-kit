@@ -61,10 +61,10 @@ public final class Argument<Value>: AnyArgument
 
     func load(from input: inout CommandInput) throws {
         guard let argument = input.nextArgument() else {
-            throw CommandError(identifier: "argument", reason: "Missing required argument: \(self.name)")
+            throw CommandError.missingRequiredArgument(self.name)
         }
         guard let value = Value(argument) else {
-            throw CommandError(identifier: "argument", reason: "Could not convert argument for \(self.name) to \(Value.self)")
+            throw CommandError.invalidArgumentType(self.name, type: Value.self)
         }
         self.value = value
     }
