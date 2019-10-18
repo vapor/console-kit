@@ -60,11 +60,27 @@ public enum CommandError: Error, Equatable, CustomStringConvertible {
     }
 }
 
-
 private func smallerDistance(lhs: (String, Int), rhs: (String, Int)) -> Bool {
     return lhs.1 < rhs.1
 }
 
 private func distanceLessThan(_ threshold: Int) -> (String, Int) -> Bool {
     return { command, distance in distance < threshold }
+}
+
+extension CommandError: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .missingCommand:
+            return #".missingCommand"#
+        case let .unknownCommand(command, available: available):
+            return #".unknownCommand("\#(command)", available: \#(available))"#
+        case let .missingRequiredArgument(argument):
+            return #".missingRequiredArgument("\#(argument)")"#
+        case let .invalidArgumentType(argument, type: type):
+            return #".invalidArgumentType("\#(argument)", type: \#(type))"#
+        case let .invalidOptionType(option, type: type):
+            return #".invalidOptionType("\#(option)", type: \#(type))"#
+        }
+    }
 }
