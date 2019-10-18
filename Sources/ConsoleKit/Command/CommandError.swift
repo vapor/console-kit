@@ -11,7 +11,7 @@ public enum CommandError: Error, Equatable, CustomStringConvertible {
         switch (lhs, rhs) {
         case (.missingCommand, .missingCommand):
             return true
-        case (let .unknownCommand(cmdL, availL), let .unknownCommand(cmdR, available: availR)):
+        case (let .unknownCommand(cmdL, available: availL), let .unknownCommand(cmdR, available: availR)):
             return cmdL == cmdR && availL.sorted() == availR.sorted()
         case (let .missingRequiredArgument(argL), let .missingRequiredArgument(argR)):
             return argL == argR
