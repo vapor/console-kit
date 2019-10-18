@@ -53,9 +53,9 @@ public enum CommandError: Error, Equatable, CustomStringConvertible {
         case let .missingRequiredArgument(argument):
             return "Error: Missing required argument: \(argument)"
         case let .invalidArgumentType(argument, type: type):
-            return "Error: Could not convert argument for \(argument) to \(type)"
+            return "Error: Could not convert argument for `\(argument)` to \(type)"
         case let .invalidOptionType(option, type: type):
-            return "Error: Could not convert option for \(option) to \(type)"
+            return "Error: Could not convert option for `\(option)` to \(type)"
         }
     }
 }
