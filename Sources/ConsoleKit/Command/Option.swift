@@ -49,7 +49,7 @@ public final class Option<Value>: AnyOption
     func load(from input: inout CommandInput) throws {
         if let option = input.nextOption(name: self.name, short: self.short) {
             guard let value = Value(option) else {
-                throw CommandError(identifier: "option", reason: "Could not convert option for \(self.name) to \(Value.self)")
+                throw CommandError.invalidOptionType(self.name, type: Value.self)
             }
             self.value = value
         } else {

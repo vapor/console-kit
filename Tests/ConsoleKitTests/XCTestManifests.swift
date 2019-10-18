@@ -6,9 +6,13 @@ extension CommandErrorTests {
     //   `swift test --generate-linuxmain`
     // to regenerate.
     static let __allTests__CommandErrorTests = [
+        ("testCommandWithInvalidArgumentType", testCommandWithInvalidArgumentType),
+        ("testCommandWithInvalidOptionType", testCommandWithInvalidOptionType),
+        ("testCommandWithMissingRequiredArgument", testCommandWithMissingRequiredArgument),
         ("testLevenshteinDistance", testLevenshteinDistance),
-        ("testUnknownWithoutSuggestionCommand", testUnknownWithoutSuggestionCommand),
-        ("testUnknownWithSuggestionCommand", testUnknownWithSuggestionCommand),
+        ("testMissingCommand", testMissingCommand),
+        ("testUnknownCommandWithoutSuggestion", testUnknownCommandWithoutSuggestion),
+        ("testUnknownCommandWithSuggestion", testUnknownCommandWithSuggestion),
     ]
 }
 

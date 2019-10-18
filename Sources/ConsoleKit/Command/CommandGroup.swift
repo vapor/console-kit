@@ -29,7 +29,7 @@ extension CommandGroup {
             return try `default`.run(using: &context)
         } else {
             try self.outputHelp(using: &context)
-            throw CommandError(identifier: "noCommand", reason: "Missing command")
+            throw CommandError.missingCommand
         }
     }
 
@@ -80,12 +80,7 @@ extension CommandGroup {
     private func commmand(using context: inout CommandContext) throws -> AnyCommand? {
         if let name = context.input.arguments.popFirst() {
             guard let command = self.commands[name] else {
-                throw CommandError(
-                    identifier: "unknownCommand",
-                    reason: "Unknown command `\(name)`",
-                    forCommand: name,
-                    availableCommands: Array(self.commands.keys)
-                )
+                throw CommandError.unknownCommand(name, available: Array(self.commands.keys))
             }
             // executable should include all subcommands
             // to get to the desired command
