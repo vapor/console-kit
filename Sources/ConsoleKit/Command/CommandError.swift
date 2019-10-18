@@ -6,7 +6,7 @@ public enum CommandError: Error, Equatable, CustomStringConvertible {
     case invalidArgumentType(_ argument: String, type: Any.Type)
     case invalidOptionType(_ option: String, type: Any.Type)
 
-    /// See `Equable`
+    /// See `Equatable`
     public static func == (lhs: CommandError, rhs: CommandError) -> Bool {
         switch (lhs, rhs) {
         case (.missingCommand, .missingCommand):
