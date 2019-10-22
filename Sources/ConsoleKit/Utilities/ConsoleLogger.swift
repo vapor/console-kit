@@ -2,6 +2,7 @@ import Logging
 
 /// Outputs logs to a `Console`.
 public struct ConsoleLogger: LogHandler {
+    public let label: String
     
     /// See `LogHandler.metadata`.
     public var metadata: Logger.Metadata
@@ -15,10 +16,12 @@ public struct ConsoleLogger: LogHandler {
     /// Creates a new `ConsoleLogger` instance.
     ///
     /// - Parameters:
+    ///   - label: Unique identifier for this logger.
     ///   - console: The console to log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    public init(console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
+    public init(label: String, console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
+        self.label = label
         self.metadata = metadata
         self.logLevel = level
         self.console = console
@@ -42,7 +45,12 @@ public struct ConsoleLogger: LogHandler {
         line: UInt
     ) {
         var text: ConsoleText = ""
-            + "[ \(level.name) ]".consoleText(level.style)
+        
+        if self.logLevel <= .trace {
+            text += "[ \(self.label) ] ".consoleText()
+        }
+            
+        text += "[ \(level.name) ]".consoleText(level.style)
             + " "
             + message.description.consoleText()
         
@@ -57,7 +65,7 @@ public struct ConsoleLogger: LogHandler {
             text += " (" + fileInfo.consoleText() + ")"
         }
         
-        console.output(text)
+        self.console.output(text)
     }
     
     /// splits a path on the /Sources/ folder, returning everything after
@@ -84,8 +92,8 @@ extension LoggingSystem {
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
     public static func bootstrap(console: Console, level: Logger.Level = .info, metadata: Logger.Metadata = [:]) {
-        self.bootstrap { _ in
-            return ConsoleLogger(console: console, level: level, metadata: metadata)
+        self.bootstrap { label in
+            return ConsoleLogger(label: label, console: console, level: level, metadata: metadata)
         }
     }
 }
