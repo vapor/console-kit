@@ -1,10 +1,10 @@
 /// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `CommandConfig`.
-public struct Commands: ExpressibleByDictionaryLiteral {
+public struct Commands {
     /// Top-level available commands, stored by unique name.
-    public let commands: [String: AnyCommand]
+    public var commands: [String: AnyCommand]
 
     /// If set, this is the default top-level command that should run if no other commands are specified.
-    public let defaultCommand: AnyCommand?
+    public var defaultCommand: AnyCommand?
 
     /// Creates a new `ConfiguredCommands` struct. This is usually done by calling `resolve(for:)` on `CommandConfig`.
     ///
@@ -15,14 +15,23 @@ public struct Commands: ExpressibleByDictionaryLiteral {
         self.commands = commands
         self.defaultCommand = defaultCommand
     }
-
-    /// See `ExpressibleByDictionaryLiteral`.
-    public init(dictionaryLiteral elements: (String, AnyCommand)...) {
-        var commands: [String: AnyCommand] = [:]
-        for (key, val) in elements {
-            commands[key] = val
+    
+    /// Adds a `Command` instance to the config.
+    ///
+    ///     var commandConfig = CommandConfig.default()
+    ///     commandConfig.use(barCommand, as: "bar")
+    ///     services.register(commandConfig)
+    ///
+    /// - parameters:
+    ///     - command: Some `CommandRunnable`. This type will be requested from the service container later.
+    ///     - name: A unique name for running this command.
+    ///     - isDefault: If `true`, this command will be set as the default command to run when none other are specified.
+    ///                  Setting this overrides any previous default commands.
+    public mutating func use(_ command: AnyCommand, as name: String, isDefault: Bool = false) {
+        self.commands[name] = command
+        if isDefault {
+            self.defaultCommand = command
         }
-        self.init(commands: commands, defaultCommand: nil)
     }
 
     /// Creates a `CommandGroup` for this `Commands`.
