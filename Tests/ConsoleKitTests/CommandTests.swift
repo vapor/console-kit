@@ -93,4 +93,40 @@ class CommandTests: XCTestCase {
         let input = CommandInput(arguments: ["vapor", "true", "--count", "42"])
         try console.run(command, input: input)
     }
+
+    func testOptionUsed() throws {
+        struct OptionInitialized: Command {
+            struct Signature: CommandSignature {
+                @Option(name: "option") var option: Bool?
+            }
+
+            var help: String = ""
+
+            func run(using context: CommandContext, signature: OptionInitialized.Signature) throws {
+                XCTAssert(signature.$option.used)
+            }
+        }
+
+        struct OptionUninitialized: Command {
+            struct Signature: CommandSignature {
+                @Option(name: "option") var option: Bool?
+            }
+
+            var help: String = ""
+
+            func run(using context: CommandContext, signature: OptionUninitialized.Signature) throws {
+                XCTAssertFalse(signature.$option.used)
+            }
+        }
+
+        let console = TestConsole()
+        let initialized = OptionInitialized()
+        let uninitialized = OptionUninitialized()
+
+        let initializedInput = CommandInput(arguments: ["vapor", "--option", "true"])
+        try console.run(initialized, input: initializedInput)
+
+        let uninitializedInput = CommandInput(arguments: ["vapor"])
+        try console.run(uninitialized, input: uninitializedInput)
+    }
 }

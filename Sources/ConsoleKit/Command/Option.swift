@@ -15,6 +15,15 @@ public final class Option<Value>: AnyOption
     /// The option's help text when `--help` is passed in.
     public let short: Character?
 
+    /// Wheather the option was passed into the command's signature or not.
+    ///
+    ///     app command --option
+    ///     // signature.option.used == true
+    ///
+    ///     app command
+    ///     // signature.option.used == false
+    public private(set) var used: Bool
+
     public var projectedValue: Option<Value> {
         return self
     }
@@ -51,12 +60,16 @@ public final class Option<Value>: AnyOption
         self.name = name
         self.short = short
         self.help = help
+        self.used = false
         self.value = .uninitialized
     }
 
     func load(from input: inout CommandInput) throws {
-        if let option = input.nextOption(name: self.name, short: self.short) {
-            guard let value = Value(option) else {
+        let option = input.nextOption(name: self.name, short: self.short)
+        self.used = option.passedIn
+
+        if let rawValue = option.value {
+            guard let value = Value(rawValue) else {
                 throw CommandError.invalidOptionType(self.name, type: Value.self)
             }
             self.value = .initialized(value)
