@@ -18,11 +18,11 @@ public final class Option<Value>: AnyOption
     /// Wheather the option was passed into the command's signature or not.
     ///
     ///     app command --option "Hello World"
-    ///     // signature.option.used == true
+    ///     // signature.option.isPresent == true
     ///
     ///     app command
-    ///     // signature.option.used == false
-    public private(set) var used: Bool
+    ///     // signature.option.isPresent == false
+    public private(set) var isPresent: Bool
 
     public var projectedValue: Option<Value> {
         return self
@@ -60,13 +60,13 @@ public final class Option<Value>: AnyOption
         self.name = name
         self.short = short
         self.help = help
-        self.used = false
+        self.isPresent = false
         self.value = .uninitialized
     }
 
     func load(from input: inout CommandInput) throws {
         let option = input.nextOption(name: self.name, short: self.short)
-        self.used = option.passedIn
+        self.isPresent = option.passedIn
 
         if let rawValue = option.value {
             guard let value = Value(rawValue) else {

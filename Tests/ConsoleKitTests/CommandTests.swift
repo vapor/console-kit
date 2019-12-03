@@ -106,7 +106,7 @@ class CommandTests: XCTestCase {
 
             func run(using context: CommandContext, signature: OptionInitialized.Signature) throws {
                 assertion(signature)
-                XCTAssert(signature.$option.used)
+                XCTAssert(signature.$option.isPresent)
             }
         }
 
@@ -118,7 +118,7 @@ class CommandTests: XCTestCase {
             var help: String = ""
 
             func run(using context: CommandContext, signature: OptionUninitialized.Signature) throws {
-                XCTAssertFalse(signature.$option.used)
+                XCTAssertFalse(signature.$option.isPresent)
             }
         }
 
