@@ -97,19 +97,22 @@ class CommandTests: XCTestCase {
     func testOptionUsed() throws {
         struct OptionInitialized: Command {
             struct Signature: CommandSignature {
-                @Option(name: "option") var option: Bool?
+                @Option(name: "option") var option: String?
+                @Option(name: "str") var str: String?
             }
 
             var help: String = ""
+            var assertion: (Signature) -> ()
 
             func run(using context: CommandContext, signature: OptionInitialized.Signature) throws {
+                assertion(signature)
                 XCTAssert(signature.$option.used)
             }
         }
 
         struct OptionUninitialized: Command {
             struct Signature: CommandSignature {
-                @Option(name: "option") var option: Bool?
+                @Option(name: "option") var option: String?
             }
 
             var help: String = ""
@@ -120,12 +123,14 @@ class CommandTests: XCTestCase {
         }
 
         let console = TestConsole()
-        let initialized = OptionInitialized()
+
+        try console.run(OptionInitialized(assertion: { XCTAssertNil($0.option) }), input: CommandInput(arguments: ["vapor", "--option"]))
+        try console.run(OptionInitialized(assertion: { XCTAssertEqual($0.option, "true") }), input: CommandInput(arguments: ["vapor", "--option", "true"]))
+        try console.run(OptionInitialized(assertion: { XCTAssertNil($0.option) }), input: CommandInput(arguments: ["vapor", "--option", "--str"]))
+        try console.run(OptionInitialized(assertion: { XCTAssertNil($0.option) }), input: CommandInput(arguments: ["vapor", "--option", "--str", "HelloWorld"]))
+        try console.run(OptionInitialized(assertion: { XCTAssertEqual($0.option, "--str") }), input: CommandInput(arguments: ["vapor", "--option", "\\--str"]))
+
         let uninitialized = OptionUninitialized()
-
-        let initializedInput = CommandInput(arguments: ["vapor", "--option", "true"])
-        try console.run(initialized, input: initializedInput)
-
         let uninitializedInput = CommandInput(arguments: ["vapor"])
         try console.run(uninitialized, input: uninitializedInput)
     }

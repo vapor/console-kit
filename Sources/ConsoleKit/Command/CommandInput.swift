@@ -42,13 +42,20 @@ public struct CommandInput {
         }
         // ensure there is a value after this index
         let valueIndex = self.arguments.index(after: flagIndex)
-        guard valueIndex <= self.arguments.endIndex else {
+        guard valueIndex < self.arguments.endIndex else {
             return (nil, true)
         }
 
         let value = self.arguments[valueIndex]
-        self.arguments.removeSubrange(flagIndex...valueIndex)
-        return (value, true)
+        switch value.first {
+        case "-": return (nil, true)
+        case "\\":
+            self.arguments.removeSubrange(flagIndex...valueIndex)
+            return (String(value.dropFirst()), true)
+        default:
+            self.arguments.removeSubrange(flagIndex...valueIndex)
+            return (value, true)
+        }
     }
 
     private func nextFlagIndex(name: String, short: Character?) -> Array<String>.Index? {
