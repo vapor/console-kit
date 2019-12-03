@@ -93,4 +93,45 @@ class CommandTests: XCTestCase {
         let input = CommandInput(arguments: ["vapor", "true", "--count", "42"])
         try console.run(command, input: input)
     }
+
+    func testOptionUsed() throws {
+        struct OptionInitialized: Command {
+            struct Signature: CommandSignature {
+                @Option(name: "option") var option: String?
+                @Option(name: "str") var str: String?
+            }
+
+            var help: String = ""
+            var assertion: (Signature) -> ()
+
+            func run(using context: CommandContext, signature: OptionInitialized.Signature) throws {
+                assertion(signature)
+                XCTAssert(signature.$option.isPresent)
+            }
+        }
+
+        struct OptionUninitialized: Command {
+            struct Signature: CommandSignature {
+                @Option(name: "option") var option: String?
+            }
+
+            var help: String = ""
+
+            func run(using context: CommandContext, signature: OptionUninitialized.Signature) throws {
+                XCTAssertFalse(signature.$option.isPresent)
+            }
+        }
+
+        let console = TestConsole()
+
+        try console.run(OptionInitialized(assertion: { XCTAssertNil($0.option) }), input: CommandInput(arguments: ["vapor", "--option"]))
+        try console.run(OptionInitialized(assertion: { XCTAssertEqual($0.option, "true") }), input: CommandInput(arguments: ["vapor", "--option", "true"]))
+        try console.run(OptionInitialized(assertion: { XCTAssertNil($0.option) }), input: CommandInput(arguments: ["vapor", "--option", "--str"]))
+        try console.run(OptionInitialized(assertion: { XCTAssertNil($0.option) }), input: CommandInput(arguments: ["vapor", "--option", "--str", "HelloWorld"]))
+        try console.run(OptionInitialized(assertion: { XCTAssertEqual($0.option, "--str") }), input: CommandInput(arguments: ["vapor", "--option", "\\--str"]))
+
+        let uninitialized = OptionUninitialized()
+        let uninitializedInput = CommandInput(arguments: ["vapor"])
+        try console.run(uninitialized, input: uninitializedInput)
+    }
 }

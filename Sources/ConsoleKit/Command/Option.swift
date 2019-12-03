@@ -15,18 +15,34 @@ public final class Option<Value>: AnyOption
     /// The option's help text when `--help` is passed in.
     public let short: Character?
 
+    /// Wheather the option was passed into the command's signature or not.
+    ///
+    ///     app command --option "Hello World"
+    ///     // signature.option.isPresent == true
+    ///
+    ///     app command
+    ///     // signature.option.isPresent == false
+    public private(set) var isPresent: Bool
+
     public var projectedValue: Option<Value> {
         return self
     }
 
-    public var wrappedValue: Value? {
-        guard let value = self.value else {
-            fatalError("Option \(self.name) was not initialized")
+    public var initialized: Bool {
+        switch self.value {
+        case .initialized: return true
+        case .uninitialized: return false
         }
-        return value
     }
 
-    var value: Value??
+    public var wrappedValue: Value? {
+        switch self.value {
+        case let .initialized(value): return value
+        case .uninitialized: fatalError("Option \(self.name) was not initialized")
+        }
+    }
+
+    var value: InputValue<Value?>
     
     /// Creates a new `Option` with the `optionType` set to `.value`.
     ///
@@ -44,16 +60,21 @@ public final class Option<Value>: AnyOption
         self.name = name
         self.short = short
         self.help = help
+        self.isPresent = false
+        self.value = .uninitialized
     }
 
     func load(from input: inout CommandInput) throws {
-        if let option = input.nextOption(name: self.name, short: self.short) {
-            guard let value = Value(option) else {
+        let option = input.nextOption(name: self.name, short: self.short)
+        self.isPresent = option.passedIn
+
+        if let rawValue = option.value {
+            guard let value = Value(rawValue) else {
                 throw CommandError.invalidOptionType(self.name, type: Value.self)
             }
-            self.value = value
+            self.value = .initialized(value)
         } else {
-            self.value = .some(.none)
+            self.value = .initialized(nil)
         }
     }
 }

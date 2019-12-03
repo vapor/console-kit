@@ -41,9 +41,16 @@ extension CommandSignature {
     }
 }
 
+enum InputValue<T> {
+    case initialized(T)
+    case uninitialized
+}
+
 internal protocol AnySignatureValue: class {
     var help: String { get }
     var name: String { get }
+    var initialized: Bool { get }
+
     func load(from input: inout CommandInput) throws
 }
 

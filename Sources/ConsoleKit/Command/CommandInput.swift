@@ -36,19 +36,26 @@ public struct CommandInput {
         return true
     }
 
-    mutating func nextOption(name: String, short: Character?) -> String? {
+    mutating func nextOption(name: String, short: Character?) -> (value: String?, passedIn: Bool) {
         guard let flagIndex = self.nextFlagIndex(name: name, short: short) else {
-            return nil
+            return (nil, false)
         }
         // ensure there is a value after this index
         let valueIndex = self.arguments.index(after: flagIndex)
-        guard valueIndex <= self.arguments.endIndex else {
-            return nil
+        guard valueIndex < self.arguments.endIndex else {
+            return (nil, true)
         }
 
         let value = self.arguments[valueIndex]
-        self.arguments.removeSubrange(flagIndex...valueIndex)
-        return value
+        switch value.first {
+        case "-": return (nil, true)
+        case "\\":
+            self.arguments.removeSubrange(flagIndex...valueIndex)
+            return (String(value.dropFirst()), true)
+        default:
+            self.arguments.removeSubrange(flagIndex...valueIndex)
+            return (value, true)
+        }
     }
 
     private func nextFlagIndex(name: String, short: Character?) -> Array<String>.Index? {

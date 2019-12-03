@@ -33,18 +33,25 @@ public final class Argument<Value>: AnyArgument
     /// The argument's help text when `--help` is passed in.
     public let help: String
 
-    var value: Value?
+    var value: InputValue<Value>
 
     public var projectedValue: Argument<Value> {
         return self
     }
 
+    public var initialized: Bool {
+        switch self.value {
+        case .initialized: return true
+        case .uninitialized: return false
+        }
+    }
+
     /// @propertyWrapper value
     public var wrappedValue: Value {
-        guard let value = self.value else {
-            fatalError("Argument \(self.name) was not initialized")
+        switch self.value {
+        case let .initialized(value): return value
+        case .uninitialized: fatalError("Argument \(self.name) was not initialized")
         }
-        return value
     }
     
     /// Creates a new `Argument`
@@ -57,6 +64,7 @@ public final class Argument<Value>: AnyArgument
     public init(name: String, help: String = "") {
         self.name = name
         self.help = help
+        self.value = .uninitialized
     }
 
     func load(from input: inout CommandInput) throws {
@@ -66,6 +74,6 @@ public final class Argument<Value>: AnyArgument
         guard let value = Value(argument) else {
             throw CommandError.invalidArgumentType(self.name, type: Value.self)
         }
-        self.value = value
+        self.value = .initialized(value)
     }
 }

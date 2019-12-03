@@ -13,18 +13,25 @@ public final class Flag: AnyFlag {
     /// The option's help text when `--help` is passed in.
     public let short: Character?
 
+    public var initialized: Bool {
+        switch self.value {
+        case .initialized: return true
+        case .uninitialized: return false
+        }
+    }
+
     public var projectedValue: Flag {
         return self
     }
 
     public var wrappedValue: Bool {
-        guard let value = self.value else {
-            fatalError("Flag \(self.name) was not initialized")
+        switch self.value {
+        case let .initialized(value): return value
+        case .uninitialized: fatalError("Flag \(self.name) was not initialized")
         }
-        return value
     }
 
-    var value: Bool?
+    var value: InputValue<Bool>
 
     /// Creates a new `Option` with the `optionType` set to `.value`.
     ///
@@ -42,9 +49,10 @@ public final class Flag: AnyFlag {
         self.name = name
         self.short = short
         self.help = help
+        self.value = .uninitialized
     }
 
     func load(from input: inout CommandInput) throws {
-        self.value = input.nextFlag(name: self.name, short: self.short)
+        self.value = .initialized(input.nextFlag(name: self.name, short: self.short))
     }
 }
