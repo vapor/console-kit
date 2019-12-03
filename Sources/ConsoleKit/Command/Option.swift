@@ -17,7 +17,7 @@ public final class Option<Value>: AnyOption
 
     /// Wheather the option was passed into the command's signature or not.
     ///
-    ///     app command --option
+    ///     app command --option "Hello World"
     ///     // signature.option.used == true
     ///
     ///     app command
