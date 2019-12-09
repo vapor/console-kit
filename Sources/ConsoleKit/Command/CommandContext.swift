@@ -5,6 +5,8 @@ public struct CommandContext {
     
     /// The parsed arguments (according to declared signature).
     public var input: CommandInput
+
+    public var userInfo: [AnyHashable: Any]
     
     /// Create a new `AnyCommandContext`.
     public init(
@@ -13,5 +15,6 @@ public struct CommandContext {
     ) {
         self.console = console
         self.input = input
+        self.userInfo = [:]
     }
 }

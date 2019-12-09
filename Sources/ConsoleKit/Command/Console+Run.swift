@@ -1,5 +1,9 @@
 /// Adds the ability to run `Command`s on a `Console`.
 extension Console {
+    public func run(_ command: AnyCommand, input: CommandInput) throws {
+        // create new context
+        try self.run(command, with: CommandContext(console: self, input: input))
+    }
     /// Runs a `CommandRunnable` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
     ///
     ///     try console.run(group, input: &env.commandInput, on: container).wait()
@@ -11,9 +15,9 @@ extension Console {
     ///     - runnable: `CommandGroup` or `Command` to run.
     ///     - input: Mutable `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
     /// - returns: A `Future` that will complete when the command finishes.
-    public func run(_ command: AnyCommand, input: CommandInput) throws {
-        // create new context
-        var context = CommandContext(console: self, input: input)
+    public func run(_ command: AnyCommand, with context: CommandContext) throws {
+        // make copy of context
+        var context = context
 
         // parse global signature
         let signature = try GlobalSignature(from: &context.input)
