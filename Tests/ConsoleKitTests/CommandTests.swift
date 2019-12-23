@@ -52,10 +52,10 @@ class CommandTests: XCTestCase {
     func testShortFlagNeedsToMatchExactly() throws {
         struct Signature: CommandSignature {
             @Option(name: "x-short", short: "x")
-            var xShort: String
+            var xShort: String?
             
             @Option(name: "y-short", short: "y")
-            var yShort: String
+            var yShort: String?
             
             init() { }
         }
