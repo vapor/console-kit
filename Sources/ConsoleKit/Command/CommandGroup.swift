@@ -1,13 +1,16 @@
 /// A group of named commands that can be run through a `Console`.
 ///
-/// Usually you will use `CommandConfig` to register commands and create a group.
+/// Usually you will use `Commands` to register commands and create a group.
 ///
-///     var env = Environment.testing
-///     let container: Container = ...
-///     var config = CommandConfig()
+///     let console: Console = ...
+///     var input = CommandInput(arguments: CommandLine.arguments)
+///     var context = CommandContext(console: console, input: input)
+///
+///     var config = Commands()
 ///     config.use(CowsayCommand(), as: "cowsay")
-///     let group = try config.resolve(for: container).group()
-///     try console.run(group, input: &env.commandInput, on: container).wait()
+///
+///     let group = config.group(help: "Some help for cosway group...")
+///     try console.run(group, with: context)
 ///
 /// You can create your own `CommandGroup` if you want to support custom `CommandOptions`.
 public protocol CommandGroup: AnyCommand {

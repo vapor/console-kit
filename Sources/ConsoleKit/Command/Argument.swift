@@ -56,7 +56,7 @@ public final class Argument<Value>: AnyArgument
     
     /// Creates a new `Argument`
     ///
-    ///     @Argument(help: "The number of times to run the command")
+    ///     @Argument(name: "count", help: "The number of times to run the command")
     ///     var count: Int
     ///
     /// - Parameters:

@@ -5,7 +5,6 @@ import Glibc
 import Darwin.C
 #endif
 
-
 extension ActivityIndicatorType {
     /// Creates a new `ActivityIndicator` for this `ActivityIndicatorType`.
     ///

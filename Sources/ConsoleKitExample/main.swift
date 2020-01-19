@@ -6,7 +6,7 @@ var input = CommandInput(arguments: CommandLine.arguments)
 var context = CommandContext(console: console, input: input)
 
 var commands = Commands()
-commands.use(DemoCommand(), as: "demo", isDefault: true)
+commands.use(DemoCommand(), as: "demo", isDefault: false)
 
 do {
     let group = commands

@@ -1,20 +1,28 @@
 /// Adds the ability to run `Command`s on a `Console`.
 extension Console {
-    public func run(_ command: AnyCommand, input: CommandInput) throws {
-        // create new context
-        try self.run(command, with: CommandContext(console: self, input: input))
-    }
-    /// Runs a `CommandRunnable` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
+
+    /// Runs an `AnyCommand` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
     ///
-    ///     try console.run(group, input: &env.commandInput, on: container).wait()
+    ///     try console.run(group, input: commandInput)
     ///
     /// The `CommandInput` will be mutated, removing any used `CommandOption`s and `CommandArgument`s.
     /// If any excess input is left over after checking the command's signature, an error will be thrown.
     ///
     /// - parameters:
+    ///     - command: `CommandGroup` or `Command` to run.
+    ///     - input: `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
+    public func run(_ command: AnyCommand, input: CommandInput) throws {
+        // create new context
+        try self.run(command, with: CommandContext(console: self, input: input))
+    }
+
+    /// Runs an `AnyCommand` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandContext`.
+    ///
+    ///     try console.run(group, with: context)
+    ///
+    /// - parameters:
     ///     - runnable: `CommandGroup` or `Command` to run.
-    ///     - input: Mutable `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
-    /// - returns: A `Future` that will complete when the command finishes.
+    ///     - input: `CommandContext` to parse `CommandOption`s and `CommandArgument`s from.
     public func run(_ command: AnyCommand, with context: CommandContext) throws {
         // make copy of context
         var context = context
