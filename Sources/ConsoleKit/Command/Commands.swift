@@ -1,4 +1,4 @@
-/// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `CommandConfig`.
+/// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `Commands`.
 public struct Commands {
     /// Top-level available commands, stored by unique name.
     public var commands: [String: AnyCommand]
@@ -6,7 +6,7 @@ public struct Commands {
     /// If set, this is the default top-level command that should run if no other commands are specified.
     public var defaultCommand: AnyCommand?
 
-    /// Creates a new `ConfiguredCommands` struct. This is usually done by calling `resolve(for:)` on `CommandConfig`.
+    /// Creates a new `ConfiguredCommands` struct. This is usually done by calling `resolve(for:)` on `Commands`.
     ///
     /// - parameters:
     ///     - commands: Top-level available commands, stored by unique name.
@@ -18,12 +18,11 @@ public struct Commands {
     
     /// Adds a `Command` instance to the config.
     ///
-    ///     var commandConfig = CommandConfig.default()
-    ///     commandConfig.use(barCommand, as: "bar")
-    ///     services.register(commandConfig)
+    ///     var config = Commands()
+    ///     config.use(barCommand, as: "bar")
     ///
     /// - parameters:
-    ///     - command: Some `CommandRunnable`. This type will be requested from the service container later.
+    ///     - command: Some `AnyCommand`. This type will be requested from the service container later.
     ///     - name: A unique name for running this command.
     ///     - isDefault: If `true`, this command will be set as the default command to run when none other are specified.
     ///                  Setting this overrides any previous default commands.
@@ -36,12 +35,11 @@ public struct Commands {
 
     /// Creates a `CommandGroup` for this `Commands`.
     ///
-    ///     var env = Environment.testing
-    ///     let container: Container = ...
-    ///     var config = CommandConfig()
+    ///     var config = Commands()
     ///     config.use(CowsayCommand(), as: "cowsay")
-    ///     let group = try config.resolve(for: container).group()
-    ///     try console.run(group, input: &env.commandInput, on: container).wait()
+    ///     let group = config.group(help: "Some help for cosway group...")
+    ///
+    ///     try console.run(group, with: context)
     ///
     /// - parameters:
     ///     - help: Optional help messages to include.

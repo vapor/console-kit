@@ -46,7 +46,7 @@ public final class Option<Value>: AnyOption
     
     /// Creates a new `Option` with the `optionType` set to `.value`.
     ///
-    ///     @Option(short: "v", help: "Output debug logs")
+    ///     @Option(name: "verbose", short: "v", help: "Output debug logs")
     ///     var verbose: Bool?
     ///
     /// - Parameters:

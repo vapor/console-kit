@@ -34,7 +34,6 @@ extension ActivityBar {
     }
 }
 
-
 /// Defines the width of all `ActivityBar`s in characters.
 private var _width: Int = 25
 

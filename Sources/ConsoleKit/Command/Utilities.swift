@@ -40,7 +40,6 @@ extension Console {
     }
 }
 
-
 private extension String {
     func leftPad(to padding: Int) -> String {
         return String(repeating: " ", count: padding) + self

@@ -2,10 +2,10 @@ import ConsoleKit
 
 final class DemoCommand: Command {
     struct Signature: CommandSignature {
-        @Flag(short: "c", help: "Enables colorized output")
+        @Flag(name: "color", short: "c", help: "Enables colorized output")
         var color: Bool
 
-        @Option(help: "Custom frames for the loading bar\nUse a comma-separated list")
+        @Option(name: "frames", help: "Custom frames for the loading bar\nUse a comma-separated list")
         var frames: String?
 
         init() { }
@@ -15,7 +15,7 @@ final class DemoCommand: Command {
         "A demonstration of what ConsoleKit can do"
     }
 
-    func run(context: CommandContext, signature: Signature) throws {
+    func run(using context: CommandContext, signature: Signature) throws {
         let funDemoText: ConsoleText
         if signature.color {
             funDemoText = [

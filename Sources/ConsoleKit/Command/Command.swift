@@ -1,30 +1,32 @@
 /// A command that can be run through a `Console`.
 ///
-/// Both `Command` and `CommandGroup` conform to `CommandRunnable` which provides the basic requirements
+/// Both `Command` and `CommandGroup` conform to `AnyCommand` which provides the basic requirements
 /// all command-like types need. In addition to those types, a `Command` requires zero or more `CommandArgument`s.
 ///
 /// Below is a sample command that generates ASCII picture of a cow with a message.
 ///
 ///     struct CowsayCommand: Command {
-///         var arguments: [CommandArgument] {
-///             return [.argument(name: "message")]
+///         public struct Signature: CommandSignature {
+///             @Argument(name: "message")
+///             var message: String
+///
+///             @Option(name: "eyes", short: "e")
+///             var eyes: String?
+///
+///             @Option(name: "tongue", short: "t")
+///             var tongue: String?
+///
+///             public init() { }
 ///         }
 ///
-///         var options: [CommandOption] {
-///             return [
-///                 .value(name: "eyes", short: "e"),
-///                 .value(name: "tongue", short: "t"),
-///             ]
+///         var help: String {
+///             "Generates ASCII picture of a cow with a message."
 ///         }
 ///
-///         var help: [String] {
-///             return ["Generates ASCII picture of a cow with a message."]
-///         }
-///
-///         func run(using context: CommandContext) throws -> Future<Void> {
-///             let message = try context.argument("message")
-///             let eyes = context.options["eyes"] ?? "oo"
-///             let tongue = context.options["tongue"] ?? " "
+///         public init() { }
+///         public func run(using context: CommandContext, signature: Signature) throws {
+///             let eyes = signature.eyes ?? "oo"
+///             let tongue = signature.tongue ?? " "
 ///             let padding = String(repeating: "-", count: message.count)
 ///             let text: String = """
 ///               \(padding)
@@ -37,14 +39,20 @@
 ///                                ||     ||
 ///             """
 ///             context.console.print(text)
-///             return .done(on: context.container)
 ///         }
 ///     }
 ///
+/// Meanwhile you can use the Command in an executable target like:
 ///
-/// Use `CommandConfig` to register commands and create a `CommandGroup`.
+///     let console: Console = Terminal()
+///     var input = CommandInput(arguments: CommandLine.arguments)
+///     var context = CommandContext(console: console, input: input)
 ///
-/// - note: You can also use `console.run(...)` to run a `CommandRunnable` manually.
+///     try console.run(CoswayCommand(), with: context)
+///
+/// Use `Commands` to register commands and create a `CommandGroup`.
+///
+/// - note: You can also use `console.run(...)` to run an `AnyCommand` manually.
 ///
 /// Here is a simple example of the command in action, assuming it has been registered as `"cowsay"`.
 ///
