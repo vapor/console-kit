@@ -96,3 +96,29 @@ public func +(lhs: ConsoleText, rhs: ConsoleText) -> ConsoleText {
 public func +=(lhs: inout ConsoleText, rhs: ConsoleText) {
     lhs = lhs + rhs
 }
+
+extension ConsoleText: ExpressibleByStringInterpolation {
+    public init(stringInterpolation: StringInterpolation) {
+        self.fragments = stringInterpolation.fragments
+    }
+
+    public struct StringInterpolation: StringInterpolationProtocol {
+        public var fragments: [ConsoleTextFragment]
+
+        public init(literalCapacity: Int, interpolationCount: Int) {
+            self.fragments = []
+            self.fragments.reserveCapacity(literalCapacity)
+        }
+
+        public mutating func appendLiteral(_ literal: String) {
+            self.fragments.append(.init(string: literal))
+        }
+
+        public mutating func appendInterpolation(
+            _ value: String,
+            style: ConsoleStyle = .plain
+        ) {
+            self.fragments.append(.init(string: value, style: style))
+        }
+    }
+}
