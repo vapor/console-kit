@@ -51,8 +51,8 @@ extension CommandGroup {
     }
 
     private func outputGroupHelp(using context: inout CommandContext) {
-        context.console.output("Usage: ".consoleText(.info) + context.input.executable.consoleText() + " ", newLine: false)
-        context.console.output("<command> ".consoleText(.warning), newLine: false)
+        context.console.output("\("Usage: ", style: .info) \(context.input.executable)", newLine: false)
+        context.console.output("\("<command>", style: .warning) ", newLine: false)
         context.console.print()
 
         if !self.help.isEmpty {
