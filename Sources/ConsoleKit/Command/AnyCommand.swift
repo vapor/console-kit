@@ -7,6 +7,8 @@ public protocol AnyCommand {
     func run(using context: inout CommandContext) throws
     func outputAutoComplete(using context: inout CommandContext) throws
     func outputHelp(using context: inout CommandContext) throws
+
+    func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String
 }
 
 extension AnyCommand {

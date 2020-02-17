@@ -52,6 +52,8 @@ internal protocol AnySignatureValue: class {
     var initialized: Bool { get }
 
     func load(from input: inout CommandInput) throws
+
+    func completionExpression(for shell: Shell) -> String
 }
 
 internal protocol AnyArgument: AnySignatureValue { }
