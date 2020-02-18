@@ -8,7 +8,7 @@ public protocol AnyCommand {
     func outputAutoComplete(using context: inout CommandContext) throws
     func outputHelp(using context: inout CommandContext) throws
 
-    /// 
+    /// Renders the shell completion script functions for the command and any descendent subcommands.
     func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String
 }
 

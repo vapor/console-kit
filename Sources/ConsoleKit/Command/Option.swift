@@ -16,7 +16,7 @@ public final class Option<Value>: AnyOption
     public let short: Character?
 
     /// The option's shell completion action.
-    public let completionAction: CompletionAction
+    public let completion: CompletionAction
 
     /// Wheather the option was passed into the command's signature or not.
     ///
@@ -59,12 +59,12 @@ public final class Option<Value>: AnyOption
         name: String,
         short: Character? = nil,
         help: String = "",
-        completionAction: CompletionAction = .default
+        completion: CompletionAction = .default
     ) {
         self.name = name
         self.short = short
         self.help = help
-        self.completionAction = completionAction
+        self.completion = completion
         self.isPresent = false
         self.value = .uninitialized
     }

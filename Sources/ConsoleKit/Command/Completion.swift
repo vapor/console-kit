@@ -73,7 +73,7 @@ extension AnyCommand {
         let isRootCommand = commandDepth == 1
         let arguments = ([Flag.help] + signatureValues.sorted(by: { $0.name < $1.name })).map { $0.completionInfo }
         let subcommands = subcommands.sorted(by: { $0.key < $1.key })
-        let wordList = arguments.flatMap { $0.label?.values ?? [] } + subcommands.map { $0.key }
+        let wordList = arguments.flatMap { $0.labels?.values ?? [] } + subcommands.map { $0.key }
         return """
         function \(context.input.completionFunctionName())() { \(
             isRootCommand ? """
@@ -88,7 +88,7 @@ extension AnyCommand {
             if [[ $COMP_CWORD != \(commandDepth) ]]; then
                 case $prev in
         \( arguments.map { argument in
-            let label = argument.label?.values.joined(separator: "|") ?? "*"
+            let label = argument.labels?.values.joined(separator: "|") ?? "*"
             if let action = argument.action {
                 if let expression = action[.bash] {
                     return """
@@ -175,9 +175,9 @@ extension AnyCommand {
         \(arguments.map { argument in
             let help = argument.help.completionEscaped
             let action = argument.action.map { ": :\($0[.zsh] ?? " ")" } ?? ""
-            if let long = argument.label?.long {
+            if let long = argument.labels?.long {
                 return """
-                "\((argument.label?.short).map { "(\(long) \($0))\"{\(long),\($0)}\"" } ?? long)[\(help)]\(action)"
+                "\((argument.labels?.short).map { "(\(long) \($0))\"{\(long),\($0)}\"" } ?? long)[\(help)]\(action)"
         """
             } else {
                 return """
@@ -223,19 +223,19 @@ extension AnyCommand {
 }
 
 /// An action to be used in the shell completion script(s) to provide
-/// special shell completion behaviors for an `Option` or `Argument`'s value.
+/// special shell completion behaviors for an `Option`'s argument or a
+/// positional `Argument`.
 public struct CompletionAction {
 
     /// The shell-specific implementations of the action.
-    public var expressions: [Shell: String]
+    public let expressions: [Shell: String]
 
     public init(_ expressions: [Shell: String] = [:]) {
         self.expressions = expressions
     }
 
     public subscript(shell: Shell) -> String? {
-        get { self.expressions[shell] }
-        set { self.expressions[shell] = newValue }
+        return self.expressions[shell]
     }
 }
 
@@ -252,8 +252,7 @@ extension CompletionAction {
     /// The empty `CompletionAction`, which represents a no-op.
     public static var `default`: CompletionAction { [:] }
 
-    /// Creates a `CompletionAction` that will match against files with one of
-    /// the given extensions.
+    /// Creates a `CompletionAction` that uses a built-in function to generate file matches.
     ///
     /// - Parameters:
     ///   - extensions: The file extensions to match against. If none are provided,
@@ -268,33 +267,26 @@ extension CompletionAction {
             ]
         case 1:
             return [
-                .bash: "_filedir @(\(extensions[0]))",
+                .bash: "_filedir '@(\(extensions[0]))'",
                 .zsh: "_files -g '*.\(extensions[0])'"
             ]
         default:
             return [
-                .bash: "_filedir @(\(extensions.joined(separator: "|")))",
+                .bash: "_filedir '@(\(extensions.joined(separator: "|")))'",
                 .zsh: "_files -g '*.(\(extensions.joined(separator: "|")))'"
             ]
         }
     }
 
-    /// Creates a `CompletionAction` that matches against files using an arbitrary
-    /// globbing pattern.
-    public static func files(matchingPattern pattern: String) -> CompletionAction {
-        return [
-            .bash: "_filedir",
-            .zsh: "_files -g '\(pattern)'"
-        ]
-    }
-
-    public static func directories(matchingPattern pattern: String? = nil) -> CompletionAction {
+    /// Creates a `CompletionAction` that uses a built-in function to generate directory matches.
+    public static func directories() -> CompletionAction {
         return [
             .bash: "_filedir -d",
-            .zsh: "_files -/\(pattern.map { " -g '\($0)'" } ?? "")"
+            .zsh: "_files -/"
         ]
     }
 
+    /// Creates a `CompletionAction` that provides a predefined list of possible values.
     public static func values(_ values: [String]) -> CompletionAction {
         return [
             .bash: "COMPREPLY=( $(compgen -W \"\(values.joined(separator: " "))\" -- $cur) )",
@@ -302,33 +294,56 @@ extension CompletionAction {
         ]
     }
 
+    /// Creates a `CompletionAction` that provides a predefined list of possible values
+    /// generated from a `CaseIterable` type.
     public static func values<C: CaseIterable & LosslessStringConvertible>(of type: C.Type) -> CompletionAction {
         return .values(C.allCases.map { "\($0)" })
     }
 }
 
-struct CompletionArgumentInfo {
+/// Type-erased information for a command signature value (e.g. `Flag`, `Option`, `Argument`),
+/// and its argument.
+struct CompletionSignatureValueInfo {
 
-    var name: String
-    var help: String
+    /// The possible labels for a command signature value, consisting of a long (`--long`) form
+    /// and an optional short (`-l`) form.
+    struct Labels {
 
-    struct Label {
-
+        /// The long form of the label (including its leading dashes).
         var long: String
+
+        /// The optional short form of the label (including its leading dash).
         var short: String?
 
+        /// Creates a `Label` from an `AnySignatureValue`'s `name` and `short` properties.
         init(name: String, short: Character?) {
             self.long = "--\(name)"
             self.short = short.map { "-\($0)" }
         }
 
+        /// Returns an array containing the label's non-nil string values.
         var values: [String] {
             return [self.long] + (self.short.map { [$0] } ?? [])
         }
     }
 
-    var label: Label?
+    /// The name of the command signature value (without any leading dashes).
+    var name: String
 
+    /// The help text for the command signature value.
+    var help: String
+
+    /// The labels for the command signature value.
+    ///
+    /// `Argument`s do not have `labels`; `Flag`s and `Option`s do.
+    ///
+    var labels: Labels?
+
+    /// The completion action for the command signature value's argument.
+    ///
+    /// `Flag`s do not have an argument, and thus do not have an `action`; `Option`s
+    /// and `Argument`s do.
+    ///
     var action: CompletionAction?
 }
 
@@ -339,35 +354,37 @@ extension Flag {
         return Flag(name: "help", short: "h", help: "Show more information about this command")
     }
 
-    var completionInfo: CompletionArgumentInfo {
+    // See `AnySignatureValue`.
+    var completionInfo: CompletionSignatureValueInfo {
         return .init(
             name: self.name,
             help: self.help,
-            label: .init(name: self.name, short: self.short)
+            labels: .init(name: self.name, short: self.short)
         )
     }
 }
 
 extension Option {
 
-    var completionInfo: CompletionArgumentInfo {
+    // See `AnySignatureValue`.
+    var completionInfo: CompletionSignatureValueInfo {
         return .init(
             name: self.name,
             help: self.help,
-            label: .init(name: self.name, short: self.short),
-            action: self.completionAction
+            labels: .init(name: self.name, short: self.short),
+            action: self.completion
         )
     }
 }
 
 extension Argument {
 
-    var completionInfo: CompletionArgumentInfo {
+    // See `AnySignatureValue`.
+    var completionInfo: CompletionSignatureValueInfo {
         return .init(
             name: self.name,
             help: self.help,
-            label: nil,
-            action: self.completionAction
+            action: self.completion
         )
     }
 }

@@ -34,7 +34,7 @@ public final class Argument<Value>: AnyArgument
     public let help: String
 
     /// The argument's shell completion action.
-    public let completionAction: CompletionAction
+    public let completion: CompletionAction
 
     var value: InputValue<Value>
 
@@ -64,10 +64,10 @@ public final class Argument<Value>: AnyArgument
     ///
     /// - Parameters:
     ///   - help: The arguments's help text when `--help` is passed in.
-    public init(name: String, help: String = "", completionAction: CompletionAction = .default) {
+    public init(name: String, help: String = "", completion: CompletionAction = .default) {
         self.name = name
         self.help = help
-        self.completionAction = completionAction
+        self.completion = completion
         self.value = .uninitialized
     }
 
