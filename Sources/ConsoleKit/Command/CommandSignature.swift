@@ -49,34 +49,17 @@ enum InputValue<T> {
 internal protocol AnySignatureValue: class {
     var help: String { get }
     var name: String { get }
-    var short: Character? { get }
     var initialized: Bool { get }
 
-    var hasLabel: Bool { get }
-
-    func completionExpression(for shell: Shell) -> String
-
     func load(from input: inout CommandInput) throws
-}
 
-extension AnySignatureValue {
-
-    var hasLabel: Bool { true }
-
-    var labels: [String] {
-        guard self.hasLabel else { return [] }
-        let long = "--\(self.name)"
-        guard let short = self.short.map({ "-\($0)" }) else { return [long] }
-        return [long, short]
-    }
+    var completionInfo: CompletionArgumentInfo { get }
 }
 
 internal protocol AnyArgument: AnySignatureValue { }
-
-extension AnyArgument {
-    var short: Character? { nil }
-    var hasLabel: Bool { false }
+internal protocol AnyOption: AnySignatureValue {
+    var short: Character? { get }
 }
-
-internal protocol AnyOption: AnySignatureValue { }
-internal protocol AnyFlag: AnySignatureValue { }
+internal protocol AnyFlag: AnySignatureValue {
+    var short: Character? { get }
+}

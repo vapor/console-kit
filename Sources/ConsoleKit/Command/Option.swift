@@ -15,6 +15,9 @@ public final class Option<Value>: AnyOption
     /// The option's help text when `--help` is passed in.
     public let short: Character?
 
+    /// The option's shell completion action.
+    public let completionAction: CompletionAction
+
     /// Wheather the option was passed into the command's signature or not.
     ///
     ///     app command --option "Hello World"
@@ -55,11 +58,13 @@ public final class Option<Value>: AnyOption
     public init(
         name: String,
         short: Character? = nil,
-        help: String = ""
+        help: String = "",
+        completionAction: CompletionAction = .default
     ) {
         self.name = name
         self.short = short
         self.help = help
+        self.completionAction = completionAction
         self.isPresent = false
         self.value = .uninitialized
     }

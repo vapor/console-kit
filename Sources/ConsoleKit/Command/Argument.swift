@@ -33,6 +33,9 @@ public final class Argument<Value>: AnyArgument
     /// The argument's help text when `--help` is passed in.
     public let help: String
 
+    /// The argument's shell completion action.
+    public let completionAction: CompletionAction
+
     var value: InputValue<Value>
 
     public var projectedValue: Argument<Value> {
@@ -61,9 +64,10 @@ public final class Argument<Value>: AnyArgument
     ///
     /// - Parameters:
     ///   - help: The arguments's help text when `--help` is passed in.
-    public init(name: String, help: String = "") {
+    public init(name: String, help: String = "", completionAction: CompletionAction = .default) {
         self.name = name
         self.help = help
+        self.completionAction = completionAction
         self.value = .uninitialized
     }
 
