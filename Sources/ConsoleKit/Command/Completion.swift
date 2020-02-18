@@ -1,5 +1,6 @@
 /// Shell completion implementations.
 public enum Shell {
+    case bash
     case zsh
 }
 
@@ -9,6 +10,8 @@ extension AnyCommand {
     /// `shell` for `self` and, recursively, al of its descendent subcommands.
     public func renderCompletionFile(using context: CommandContext, shell: Shell) -> String {
         switch shell {
+        case .bash:
+            return self.renderBashCompletionFile(using: context)
         case .zsh:
             return self.renderZshCompletionFile(using: context)
         }
@@ -20,6 +23,8 @@ extension Command {
     // See `AnyCommand`.
     public func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String {
         switch shell {
+        case .bash:
+            return self.renderBashCompletionFunction(using: context, signatureValues: Signature.reference.values)
         case .zsh:
             return self.renderZshCompletionFunction(using: context, signatureValues: Signature.reference.values)
         }
@@ -32,6 +37,8 @@ extension CommandGroup {
     public func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String {
         var functions: [String] = []
         switch shell {
+        case .bash:
+            functions.append(self.renderBashCompletionFunction(using: context, subcommands: self.commands))
         case .zsh:
             functions.append(self.renderZshCompletionFunction(using: context, subcommands: self.commands))
         }
@@ -45,6 +52,70 @@ extension CommandGroup {
 }
 
 extension AnyCommand {
+
+    fileprivate func renderBashCompletionFile(using context: CommandContext) -> String {
+        return """
+        \(self.renderCompletionFunctions(using: context, shell: .bash))
+        complete -F _\(context.input.executableName) \(context.input.executableName)
+
+        """
+    }
+
+    fileprivate func renderBashCompletionFunction(
+        using context: CommandContext,
+        signatureValues: [AnySignatureValue] = [],
+        subcommands: [String: AnyCommand] = [:]
+    ) -> String {
+        let commandDepth = context.input.executablePath.count
+        let isRootCommand = commandDepth == 1
+        let signatureValues = signatureValues.sorted(by: { $0.name < $1.name })
+        let subcommands = subcommands.sorted(by: { $0.key < $1.key })
+        let wordList = signatureValues.flatMap { $0.labels } + subcommands.map { $0.key }
+        return """
+        function \(context.input.completionFunctionName())() { \(
+            isRootCommand ? """
+
+            local cur prev
+            cur="${COMP_WORDS[COMP_CWORD]}"
+            prev="${COMP_WORDS[COMP_CWORD-1]}"
+            COMPREPLY=()
+        """ : ""
+        )\( !wordList.isEmpty ? """
+
+            if [[ $COMP_CWORD == \(commandDepth) ]]; then
+                COMPREPLY=( $(compgen -W "\(wordList.joined(separator: " "))" -- $cur) )
+                return
+            fi
+        """ : ""
+        )\( !signatureValues.isEmpty ? """
+
+            case $prev in
+        \( signatureValues.map { value in
+            return """
+                \(value.completionExpression(for: .bash))
+        """
+        }.joined(separator: "\n"))
+            esac
+        """ : ""
+        )\( !subcommands.isEmpty ? """
+
+            case ${COMP_WORDS[\(commandDepth)]} in
+        \( subcommands.map { (name, _) in
+            return """
+                \(name)) \(context.input.completionFunctionName(forSubcommand: name)) \(commandDepth + 1) ;;
+        """
+        }.joined(separator: "\n"))
+            esac
+        """ : ""
+        )\( signatureValues.isEmpty && subcommands.isEmpty ? """
+
+            :
+        """ : ""
+        )
+        }
+
+        """
+    }
 
     /// Returns the contents of a zsh completion file for `self` and, recursively,
     /// all of its descendent subcommands.
@@ -91,7 +162,7 @@ extension AnyCommand {
             _arguments -C $arguments && return\(!subcommands.isEmpty ? """
 
             case $state in
-                (command)
+                command)
                     local subcommands
                     subcommands=(
         \(subcommands.map { (name, command) in
@@ -102,13 +173,11 @@ extension AnyCommand {
                     )
                     _describe "subcommand" subcommands
                     ;;
-                (arg)
+                arg)
                     case ${words[1]} in
         \(subcommands.map { (name, _) in
             return """
-                        (\(name))
-                            \(context.input.completionFunctionName(forSubcommand: name))
-                            ;;
+                        \(name)) \(context.input.completionFunctionName(forSubcommand: name)) ;;
         """
         }.joined(separator: "\n"))
                     esac
@@ -132,6 +201,8 @@ extension Flag {
     // See `AnySignatureValue`.
     func completionExpression(for shell: Shell) -> String {
         switch shell {
+        case .bash:
+            return "\(self.labels.joined(separator: "|"))) return ;;"
         case .zsh:
             let long = "--\(self.name)"
             let help = self.help.completionEscaped
@@ -149,6 +220,8 @@ extension Option {
     // See `AnySignatureValue`.
     func completionExpression(for shell: Shell) -> String {
         switch shell {
+        case .bash:
+            return "\(self.labels.joined(separator: "|"))) return ;;"
         case .zsh:
             let long = "--\(self.name)"
             let help = self.help.completionEscaped
@@ -166,6 +239,8 @@ extension Argument {
     // See `AnySignatureValue`.
     func completionExpression(for shell: Shell) -> String {
         switch shell {
+        case .bash:
+            return "*) return ;;"
         case .zsh:
             return "\":\(self.help.completionEscaped): \""
         }
