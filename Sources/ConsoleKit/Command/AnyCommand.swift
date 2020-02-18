@@ -20,4 +20,8 @@ extension AnyCommand {
     public func outputHelp(using context: inout CommandContext) {
         // do nothing
     }
+
+    public func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String {
+        return ""
+    }
 }
