@@ -85,7 +85,7 @@ extension AnyCommand {
         """ : ""
         )\( !arguments.isEmpty ? """
 
-            if [[ $COMP_CWORD != \(commandDepth) ]]; then
+            if [[ "$COMP_CWORD" -ne \(commandDepth) ]]; then
                 case $prev in
         \( arguments.map { argument in
             let label = argument.labels?.values.joined(separator: "|") ?? "*"
@@ -113,12 +113,12 @@ extension AnyCommand {
         """ : ""
         )\( !subcommands.isEmpty ? """
 
-            if [[ $COMP_CWORD != \(commandDepth) ]]; then
+            if [[ "$COMP_CWORD" -ne \(commandDepth) ]]; then
                 case ${COMP_WORDS[\(commandDepth)]} in
         \( subcommands.map { (name, _) in
             return """
                     \(name))
-                        \(context.input.completionFunctionName(forSubcommand: name)) \(commandDepth + 1)
+                        \(context.input.completionFunctionName(forSubcommand: name))
                         return
                         ;;
         """
