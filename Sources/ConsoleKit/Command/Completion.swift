@@ -1,7 +1,16 @@
 /// Shell completion implementations.
-public enum Shell {
+public enum Shell: String, LosslessStringConvertible, CaseIterable {
+
     case bash
     case zsh
+
+    // See `CustomStringConvertible`.
+    public var description: String { self.rawValue }
+
+    // See `LosslessStringConvertible`.
+    public init?(_ description: String) {
+        self.init(rawValue: description)
+    }
 }
 
 extension AnyCommand {

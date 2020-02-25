@@ -5,7 +5,7 @@ let console: Console = Terminal()
 var input = CommandInput(arguments: CommandLine.arguments)
 var context = CommandContext(console: console, input: input)
 
-var commands = Commands()
+var commands = Commands(enableAutocomplete: true)
 commands.use(DemoCommand(), as: "demo", isDefault: false)
 
 do {
@@ -13,6 +13,6 @@ do {
         .group(help: "An example command-line application built with ConsoleKit")
     try console.run(group, input: input)
 } catch let error {
-    console.error(error.localizedDescription)
+    console.error("\(error)")
     exit(1)
 }
