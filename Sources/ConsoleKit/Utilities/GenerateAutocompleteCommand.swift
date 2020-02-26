@@ -15,9 +15,10 @@ struct GenerateAutocompleteCommand: Command {
         @Option(
             name: "shell",
             short: "s",
-            help: "Generate completion script for SHELL [ \(Shell.allCases.map { "\($0)" }.joined(separator: " | ")) ]. \n"
-                + "Defaults to the \"SHELL\" environment variable if possible."
-            ,
+            help: """
+            Generate completion script for SHELL [ \(Shell.allCases.map { "\($0)" }.joined(separator: " | ")) ].
+            Defaults to the "SHELL" environment variable if possible.
+            """,
             completion: .values(of: Shell.self)
         )
         var shell: Shell?
@@ -25,8 +26,10 @@ struct GenerateAutocompleteCommand: Command {
         @Option(
             name: "output",
             short: "o",
-            help: "Write output to file at OUTPUT. \n"
-                + "Defaults to printing to stdout.",
+            help: """
+            Write output to file at OUTPUT.
+            Defaults to printing to stdout.
+            """,
             completion: .files()
         )
         var output: String?
