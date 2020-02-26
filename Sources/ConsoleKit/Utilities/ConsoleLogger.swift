@@ -58,7 +58,7 @@ public struct ConsoleLogger: LogHandler {
         if self.logLevel <= .debug {
             if !self.metadata.isEmpty {
                 // only log metadata if not empty
-                text += " " + self.metadata.description.consoleText()
+                text += " " + self.metadata.descriptionWithoutQuotes.consoleText()
             }
             // log the concise path + line
             let fileInfo = self.conciseSourcePath(file) + ":" + line.description
@@ -79,6 +79,20 @@ public struct ConsoleLogger: LogHandler {
             .split(separator: "Sources")
             .last?
             .joined(separator: "/") ?? path
+    }
+}
+
+private extension Logger.Metadata {
+    struct StringWithoutQuotes: CustomStringConvertible, Hashable {
+        let description: String
+    }
+
+    var descriptionWithoutQuotes: String {
+        var info: [StringWithoutQuotes: StringWithoutQuotes] = [:]
+        for (key, value) in self {
+            info[.init(description: key.description)] = .init(description: value.description)
+        }
+        return info.description
     }
 }
 
