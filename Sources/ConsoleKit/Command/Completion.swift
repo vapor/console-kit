@@ -448,6 +448,6 @@ extension StringProtocol {
             .replacingOccurrences(of: "}", with: "\\}")
             .replacingOccurrences(of: "[", with: "\\[")
             .replacingOccurrences(of: "]", with: "\\]")
-            .replacingOccurrences(of: "\n", with: "\\n")
+            .replacingOccurrences(of: "\n", with: " ")
     }
 }
