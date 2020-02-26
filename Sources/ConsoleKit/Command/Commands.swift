@@ -7,6 +7,13 @@ public struct Commands {
     public var defaultCommand: AnyCommand?
 
     /// If `true`, an `autocomplete` subcommand will be added to any created `CommandGroup`.
+    ///
+    /// The `autocomplete` command generates shell completion scripts that can be loaded from shell configuration
+    /// files to provide autocompletion for the entire command hierarchy and its command-line arguments.
+    ///
+    /// - Important: `enableAutocomplete` should only be set to `true` for a _root_ command group. Any nested
+    ///   subcommands will automatically be included in the completion script generation process.
+    ///
     public var enableAutocomplete: Bool
 
     /// Creates a new `ConfiguredCommands` struct. This is usually done by calling `resolve(for:)` on `Commands`.
@@ -14,7 +21,14 @@ public struct Commands {
     /// - parameters:
     ///     - commands: Top-level available commands, stored by unique name.
     ///     - defaultCommand: If set, this is the default top-level command that should run if no other commands are specified.
-    ///     - autocomplete: If `true`, an `autocomplete` subcommand will be added to any created `CommandGroup`.
+    ///     - enableAutocomplete: If `true`, an `autocomplete` subcommand will be added to any created `CommandGroup`.
+    ///
+    ///       The `autocomplete` command generates shell completion scripts that can be loaded from shell configuration
+    ///       files to provide autocompletion for the entire command hierarchy and its command-line arguments.
+    ///
+    ///       `enableAutocomplete` should only be set to `true` for a _root_ command group. Any nested subcommands will
+    ///       automatically be included in the completion script generation process.
+    ///
     public init(commands: [String: AnyCommand] = [:], defaultCommand: AnyCommand? = nil, enableAutocomplete: Bool = false) {
         self.commands = commands
         self.defaultCommand = defaultCommand

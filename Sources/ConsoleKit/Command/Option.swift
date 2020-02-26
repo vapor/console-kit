@@ -16,6 +16,8 @@ public final class Option<Value>: AnyOption
     public let short: Character?
 
     /// The option's shell completion action.
+    ///
+    /// See `CompletionAction` for more information and available actions.
     public let completion: CompletionAction
 
     /// Wheather the option was passed into the command's signature or not.
@@ -53,8 +55,11 @@ public final class Option<Value>: AnyOption
     ///     var verbose: Bool?
     ///
     /// - Parameters:
+    ///   - name: The option's identifying name that can be passed in to the command call.
     ///   - short: The short-hand for the flag that can be passed in to the command call.
     ///   - help: The option's help text when `--help` is passed in.
+    ///   - completion: The option's shell completion action. See `CompletionAction` for more
+    ///                 information and available actions.
     public init(
         name: String,
         short: Character? = nil,

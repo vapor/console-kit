@@ -407,7 +407,7 @@ extension CommandInput {
     /// like `".build/x86_64-apple-macosx/debug/program"`; `executableName` will return
     /// `"program"`.
     ///
-    fileprivate var executableName: String {
+    var executableName: String {
         return String(self.executablePath.first!.split(separator: "/").last!)
     }
 
