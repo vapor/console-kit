@@ -52,6 +52,10 @@ internal protocol AnySignatureValue: class {
     var initialized: Bool { get }
 
     func load(from input: inout CommandInput) throws
+
+    /// Returns the information used by the completion-generation code to provide
+    /// shell completions for command signature values and their arguments.
+    var completionInfo: CompletionSignatureValueInfo { get }
 }
 
 internal protocol AnyArgument: AnySignatureValue { }

@@ -6,14 +6,33 @@ public struct Commands {
     /// If set, this is the default top-level command that should run if no other commands are specified.
     public var defaultCommand: AnyCommand?
 
+    /// If `true`, an `autocomplete` subcommand will be added to any created `CommandGroup`.
+    ///
+    /// The `autocomplete` command generates shell completion scripts that can be loaded from shell configuration
+    /// files to provide autocompletion for the entire command hierarchy and its command-line arguments.
+    ///
+    /// - Important: `enableAutocomplete` should only be set to `true` for a _root_ command group. Any nested
+    ///   subcommands will automatically be included in the completion script generation process.
+    ///
+    public var enableAutocomplete: Bool
+
     /// Creates a new `ConfiguredCommands` struct. This is usually done by calling `resolve(for:)` on `Commands`.
     ///
     /// - parameters:
     ///     - commands: Top-level available commands, stored by unique name.
     ///     - defaultCommand: If set, this is the default top-level command that should run if no other commands are specified.
-    public init(commands: [String: AnyCommand] = [:], defaultCommand: AnyCommand? = nil) {
+    ///     - enableAutocomplete: If `true`, an `autocomplete` subcommand will be added to any created `CommandGroup`.
+    ///
+    ///       The `autocomplete` command generates shell completion scripts that can be loaded from shell configuration
+    ///       files to provide autocompletion for the entire command hierarchy and its command-line arguments.
+    ///
+    ///       `enableAutocomplete` should only be set to `true` for a _root_ command group. Any nested subcommands will
+    ///       automatically be included in the completion script generation process.
+    ///
+    public init(commands: [String: AnyCommand] = [:], defaultCommand: AnyCommand? = nil, enableAutocomplete: Bool = false) {
         self.commands = commands
         self.defaultCommand = defaultCommand
+        self.enableAutocomplete = enableAutocomplete
     }
     
     /// Adds a `Command` instance to the config.
@@ -45,12 +64,24 @@ public struct Commands {
     ///     - help: Optional help messages to include.
     /// - returns: A `CommandGroup` with commands and defaultCommand configured.
     public func group(help: String = "") -> CommandGroup {
-        return _Group(commands: self.commands, defaultCommand: self.defaultCommand, help: help)
+        var group = _Group(
+            commands: self.commands,
+            defaultCommand: self.defaultCommand,
+            help: help
+        )
+        if self.enableAutocomplete {
+            // First a placeholder uninitialized autocomplete command is added to the commands. The
+            // second, _initialized_ autocomplete command immediately overwrites the first, but will
+            // use it to provide completion for itself!
+            group.commands["autocomplete"] = GenerateAutocompleteCommand()
+            group.commands["autocomplete"] = GenerateAutocompleteCommand(rootCommand: group)
+        }
+        return group
     }
 }
 
 private struct _Group: CommandGroup {
-    let commands: [String: AnyCommand]
+    var commands: [String: AnyCommand]
     var defaultCommand: AnyCommand?
     let help: String
 }
