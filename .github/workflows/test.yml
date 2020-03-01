@@ -2,17 +2,28 @@ name: test
 on:
 - pull_request
 jobs:
-  xenial:
+  console-kit_xenial:
     container: 
-      image: swift:5.1-xenial
+      image: vapor/swift:5.2-xenial
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - run: swift test --enable-test-discovery --sanitize=thread
-  bionic:
+  console-kit_bionic:
     container: 
-      image: swift:5.1-bionic
+      image: vapor/swift:5.2-bionic
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - run: swift test --enable-test-discovery --sanitize=thread
+  vapor:
+    container: 
+      image: vapor/swift:5.2
+    runs-on: ubuntu-latest
+    steps:
+    - run: git clone -b master https://github.com/vapor/vapor.git
+      working-directory: ./
+    - run: swift package edit console-kit --revision ${{ github.sha }}
+      working-directory: ./vapor
+    - run: swift test --enable-test-discovery --sanitize=thread
+      working-directory: ./vapor
