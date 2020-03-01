@@ -1,6 +1,6 @@
 <p align="center">
     <img 
-        src="https://user-images.githubusercontent.com/1342803/75630601-39ccf700-5bba-11ea-94af-6655b8d35fc6.png" 
+        src="https://user-images.githubusercontent.com/1342803/75630703-0d65aa80-5bbb-11ea-8f0d-fd2a3e9f0fcb.png" 
         height="64" 
         alt="ConsoleKit"
     >
