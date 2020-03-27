@@ -120,5 +120,18 @@ extension ConsoleText: ExpressibleByStringInterpolation {
         ) {
             self.fragments.append(.init(string: value, style: style))
         }
+        
+        public mutating func appendInterpolation(
+            _ value: String,
+            color: ConsoleColor?,
+            background: ConsoleColor? = nil,
+            isBold: Bool = false
+        ) {
+            self.fragments.append(.init(string: value, style: .init(
+                color: color,
+                background: background,
+                isBold: isBold
+            )))
+        }
     }
 }

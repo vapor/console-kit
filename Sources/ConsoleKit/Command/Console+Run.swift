@@ -1,6 +1,5 @@
 /// Adds the ability to run `Command`s on a `Console`.
 extension Console {
-
     /// Runs an `AnyCommand` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
     ///
     ///     try console.run(group, input: commandInput)

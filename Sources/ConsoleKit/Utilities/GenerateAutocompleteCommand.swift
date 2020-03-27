@@ -1,7 +1,6 @@
 import Foundation
 
 struct GenerateAutocompleteCommand: Command {
-
     var help: String { "Generate shell completion scripts for the executable" }
 
     var rootCommand: AnyCommand?
