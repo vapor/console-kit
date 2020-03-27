@@ -2,7 +2,6 @@ import XCTest
 @testable import ConsoleKit
 
 class TerminalTests: XCTestCase {
-    
     func testStylizeForeground() throws {
         XCTAssertEqual("TEST".terminalStylize(.init(color: .black)), "\u{001b}[0;30mTEST\u{001b}[0m")
     }

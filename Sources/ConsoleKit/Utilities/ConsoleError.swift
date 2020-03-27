@@ -12,4 +12,3 @@ public struct ConsoleError: Error {
         self.reason = reason
     }
 }
-

@@ -1,6 +1,5 @@
 /// Shell completion implementations.
 public enum Shell: String, LosslessStringConvertible, CaseIterable {
-
     case bash
     case zsh
 
