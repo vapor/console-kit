@@ -123,4 +123,3 @@ final class TestConsole: Console {
 
     var size: (width: Int, height: Int) { return (0, 0) }
 }
-
