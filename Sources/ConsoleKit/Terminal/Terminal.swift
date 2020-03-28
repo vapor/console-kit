@@ -13,6 +13,9 @@ public final class Terminal: Console {
 
     /// Dynamically exclude ANSI commands when in Xcode since it doesn't support them.
     internal var enableCommands: Bool {
+        if let override = self.stylizedOutputOverride {
+            return override
+        }
         #if Xcode
             return false
         #else
@@ -98,4 +101,17 @@ public final class Terminal: Console {
         _ = ioctl(STDOUT_FILENO, UInt(TIOCGWINSZ), &w);
         return (Int(w.ws_col), Int(w.ws_row))
     }
+}
+
+extension Console {
+    
+    /// If set, overrides a `Terminal`'s own determination as to whether its
+    /// output supports color commands. Useful for easily implementing an option
+    /// of the form `--color=no|yes|auto`. If the active `Console` is not
+    /// specifically a `Terminal`, has no effect.
+    public var stylizedOutputOverride: Bool? {
+        get { return self.userInfo["stylizedOutputOverride"] as? Bool }
+        set { self.userInfo["stylizedOutputOverride"] = newValue }
+    }
+
 }
