@@ -40,7 +40,7 @@ public final class Terminal: Console {
     }
 
     /// See `Console`
-    public func input(isSecure: Bool) -> String {
+    public func read(isSecure: Bool) -> String? {
         didOutputLines(count: 1)
         if isSecure {
             // http://stackoverflow.com/a/30878869/2611971
@@ -54,7 +54,7 @@ public final class Terminal: Console {
             }
             return pass
         } else {
-            return readLine(strippingNewline: true) ?? ""
+            return readLine(strippingNewline: true)
         }
     }
 

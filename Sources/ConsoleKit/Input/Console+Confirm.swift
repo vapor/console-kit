@@ -41,8 +41,17 @@ extension Console {
                 output(message.consoleText(.warning))
                 return override
             }
-
-            result = input().lowercased()
+            
+            guard let line = read()?.lowercased() else {
+                // EOF on stdin. What to do here? There is no guarantee that
+                // returning false is a "safe" default. For now, crash with as
+                // helpful an error as possible. Alternatives: Hang forever.
+                self.error("EOF trying to read confirmation response, we have to crash here.", newLine: true)
+                self.report(error: "EOF trying to read confirmation response, we have to crash here.", newLine: true)
+                fatalError("EOF trying to read confirmation response, we have to crash here.")
+            }
+            
+            result = line
             i += 1
         }
 
