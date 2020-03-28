@@ -19,7 +19,7 @@ public final class Terminal: Console {
         #if Xcode
             return false
         #else
-            return true
+            return isatty(STDOUT_FILENO) // returns true in Xcode!
         #endif
     }
 
