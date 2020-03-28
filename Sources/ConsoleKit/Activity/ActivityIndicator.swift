@@ -27,7 +27,7 @@ extension ActivityIndicatorType {
 ///     let loadingBar = console.loadingBar(title: "Loading")
 ///     background {
 ///         // complete the loading bar after 3 seconds
-///         console.blockingWait(seconds: 3)
+///         console.wait(seconds: 3)
 ///         loadingBar.succeed()
 ///     }
 ///     // start the loading bar and wait for it to finish

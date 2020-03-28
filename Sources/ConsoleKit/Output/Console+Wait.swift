@@ -7,7 +7,7 @@ import Darwin.C
 extension Console {
     /// Blocks the current thread for the specified number of seconds.
     ///
-    ///     console.blockingWait(seconds: 3.14)
+    ///     console.wait(seconds: 3.14)
     ///
     /// - warning: Do not use this method on an `EventLoop`. It is for testing purposes only.
     ///
