@@ -2,6 +2,25 @@
 import XCTest
 
 class CommandTests: XCTestCase {
+    func testBaseHelp() throws {
+        let console = TestConsole()
+        let group = TestGroup()
+        let input = CommandInput(arguments: ["vapor", "--help"])
+        try console.run(group, input: input)
+        XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
+        Usage: vapor <command>
+
+        This is a test grouping!
+
+        Commands:
+           sub This is a test sub grouping!
+          test This is a test command
+        
+        Use `vapor <command> [--help,-h]` for more information on a command.
+        
+        """)
+    }
+
     func testHelp() throws {
         let console = TestConsole()
         let group = TestGroup()

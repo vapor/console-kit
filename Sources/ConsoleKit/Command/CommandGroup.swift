@@ -51,8 +51,8 @@ extension CommandGroup {
     }
 
     private func outputGroupHelp(using context: inout CommandContext) {
-        context.console.output("\("Usage: ", style: .info) \(context.input.executable)", newLine: false)
-        context.console.output("\("<command>", style: .warning) ", newLine: false)
+        context.console.output("\("Usage:", style: .info) \(context.input.executable) ", newLine: false)
+        context.console.output("\("<command>", style: .warning)", newLine: false)
         context.console.print()
 
         if !self.help.isEmpty {
@@ -64,7 +64,7 @@ extension CommandGroup {
         if self.commands.count > 0 {
             context.console.print()
             context.console.output("Commands:".consoleText(.success))
-            for (key, command) in self.commands {
+            for (key, command) in self.commands.sorted(by: { $0.key < $1.key }) {
                 context.console.outputHelpListItem(
                     name: key,
                     help: command.help,
