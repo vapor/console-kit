@@ -13,8 +13,8 @@ public final class Terminal: Console {
 
     /// Dynamically exclude ANSI commands when in Xcode since it doesn't support them.
     internal var enableCommands: Bool {
-        if let override = self.stylizedOutputOverride {
-            return override
+        if let stylizeOverride = self.stylizedOutputOverride {
+            return stylizeOverride
         }
         #if Xcode
             return false
