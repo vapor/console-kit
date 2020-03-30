@@ -105,8 +105,8 @@ final class TestConsole: Console {
         self.userInfo = [:]
     }
 
-    func read(isSecure: Bool) -> String? {
-        return testInputQueue.popLast()
+    func input(isSecure: Bool) -> String {
+        return testInputQueue.popLast() ?? ""
     }
 
     func output(_ text: ConsoleText, newLine: Bool) {

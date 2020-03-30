@@ -48,19 +48,6 @@ public protocol Console: class {
     /// - parameters:
     ///     - secure: If `true`, the input should not be shown while it is entered.
     ///
-    /// - returns: the string that was read, or `nil` if EOF was encountered
-    func read(isSecure: Bool) -> String?
-
-    /// Returns a `String` of input read from the `Console` until a line feed character was found.
-    ///
-    ///     let input = console.input(isSecure: false)
-    ///     print(input) // String
-    ///
-    /// - note: The line feed character should not be included.
-    ///
-    /// - parameters:
-    ///     - secure: If `true`, the input should not be shown while it is entered.
-    ///
     /// - returns: the string that was read, or an empty string if EOF was encountered
     func input(isSecure: Bool) -> String
 

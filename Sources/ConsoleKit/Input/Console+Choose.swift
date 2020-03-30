@@ -62,14 +62,7 @@ extension Console {
         var res: T?
         while res == nil {
             output("> ".consoleText(.info), newLine: false)
-            guard let raw = read() else {
-                // EOF on stdin. What to do here? There's no way to know what a
-                // safe default to return would be. For now, crash with as
-                // helpful an error as possible. Alternatives: Hang forever.
-                self.error("EOF trying to read selection, we have to crash here.", newLine: true)
-                self.report(error: "EOF trying to read selection, we have to crash here.", newLine: true)
-                fatalError("EOF trying to read selection, we have to crash here.")
-            }
+            let raw = input()
             guard let idx = Int(raw), (1...array.count).contains(idx) else {
                 // .count is implicitly offset, no need to adjust
                 clear(.line)
