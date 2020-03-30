@@ -14,7 +14,7 @@ extension Console {
     ///         while true {
     ///             if progressBar.activity.currentProgress >= 1 { break }
     ///             progressBar.activity.currentProgress += 0.1
-    ///             console.blockingWait(seconds: 0.25)
+    ///             console.wait(seconds: 0.25)
     ///         }
     ///         progressBar.succeed()
     ///     }

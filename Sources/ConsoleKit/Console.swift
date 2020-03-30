@@ -47,6 +47,8 @@ public protocol Console: class {
     ///
     /// - parameters:
     ///     - secure: If `true`, the input should not be shown while it is entered.
+    ///
+    /// - returns: the string that was read, or an empty string if EOF was encountered
     func input(isSecure: Bool) -> String
 
     /// Outputs serialized `ConsoleText` to the `Console`.

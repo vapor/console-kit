@@ -7,7 +7,7 @@ extension Console {
     ///
     ///     background {
     ///         // complete the indicator after 3 seconds
-    ///         console.blockingWait(seconds: 3)
+    ///         console.wait(seconds: 3)
     ///         indicator.succeed()
     ///     }
     ///     // start the indicator and wait for it to finish
@@ -36,7 +36,7 @@ extension Console {
     ///
     ///     background {
     ///         // complete the indicator after 3 seconds
-    ///         console.blockingWait(seconds: 3)
+    ///         console.wait(seconds: 3)
     ///         indicator.succeed()
     ///     }
     ///     // start the indicator and wait for it to finish
