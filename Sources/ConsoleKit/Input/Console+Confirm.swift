@@ -41,7 +41,7 @@ extension Console {
                 output(message.consoleText(.warning))
                 return override
             }
-            
+
             result = input().lowercased()
             i += 1
         }
