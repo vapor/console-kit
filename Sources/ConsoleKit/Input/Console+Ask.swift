@@ -14,10 +14,6 @@ extension Console {
     ///     - prompt: Text to display before asking for input.
     ///     - isSecure: See `Console.input(isSecure:)`
     /// - returns: Input `String`. entered in response to the prompt.
-    ///
-    /// - note: If EOF appears from the terminal's input, the result is an empty
-    ///   string. It is the caller's responsibility to avoid infinite retries in
-    ///   such a case, such as in `Console.confirm(_:)`.
     public func ask(_ prompt: ConsoleText, isSecure: Bool = false) -> String {
         output(prompt + .newLine + "> ".consoleText(.info), newLine: false)
         return input(isSecure: isSecure)
