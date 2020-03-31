@@ -4,21 +4,21 @@ on:
 jobs:
   console-kit_xenial:
     container: 
-      image: vapor/swift:5.2-xenial
+      image: vapor/swift:5.2-xenial-ci
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - run: swift test --enable-test-discovery --sanitize=thread
   console-kit_bionic:
     container: 
-      image: vapor/swift:5.2-bionic
+      image: vapor/swift:5.2-bionic-ci
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - run: swift test --enable-test-discovery --sanitize=thread
   vapor:
     container: 
-      image: vapor/swift:5.2
+      image: vapor/swift:5.2-ci
     runs-on: ubuntu-latest
     steps:
     - run: git clone -b master https://github.com/vapor/vapor.git
