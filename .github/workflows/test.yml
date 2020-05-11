@@ -15,9 +15,9 @@ jobs:
                 'swiftlang/swift:nightly-master-amazonlinux2']
     container: ${{ matrix.image }}
     steps:
-      - run: dnf install zlib-devel
+      - run: dnf install -y zlib-devel
         if: ${{ matrix.image == 'swiftlang/swift:nightly-master-centos8' }}
-      - run: yum install zlib-devel
+      - run: yum install -y zlib-devel
         if: ${{ matrix.image == 'swiftlang/swift:nightly-master-amazonlinux2' }}
       - uses: actions/checkout@v2
         with:
