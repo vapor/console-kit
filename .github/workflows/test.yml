@@ -7,12 +7,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: ['swift:5.2-xenial', 'swift:5.2-bionic',
-                'swiftlang/swift:nightly-5.2-xenial', 'swiftlang/swift:nightly-5.2-bionic',
-                'swiftlang/swift:nightly-5.3-xenial', 'swiftlang/swift:nightly-5.3-bionic',
-                'swiftlang/swift:nightly-master-xenial', 'swiftlang/swift:nightly-master-bionic',
-                'swiftlang/swift:nightly-master-focal', 'swiftlang/swift:nightly-master-centos8',
-                'swiftlang/swift:nightly-master-amazonlinux2']
+        image:
+          - swift:5.2-xenial
+          - swift:5.2-bionic
+          - swiftlang/swift:nightly-5.2-xenial
+          - swiftlang/swift:nightly-5.2-bionic
+          - swiftlang/swift:nightly-5.3-xenial
+          - swiftlang/swift:nightly-5.3-bionic
+          - swiftlang/swift:nightly-master-xenial
+          - swiftlang/swift:nightly-master-bionic
+          - swiftlang/swift:nightly-master-focal
+          - swiftlang/swift:nightly-master-centos8
+          - swiftlang/swift:nightly-master-amazonlinux2
     container: ${{ matrix.image }}
     steps:
       - run: dnf install -y zlib-devel
