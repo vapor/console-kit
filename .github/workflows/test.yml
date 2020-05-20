@@ -41,7 +41,7 @@ jobs:
         with: { path: console-kit }
       - uses: actions/checkout@v2
         with: { repository: 'vapor/vapor', path: vapor }
-      - run: swift package --package-path vapor edit console-kit --path ../console-kit
+      - run: swift package --package-path vapor edit console-kit --path console-kit
       - run: swift test --package-path vapor --enable-test-discovery --sanitize=thread
   vapor-integration_macos:
     runs-on: macos-latest
@@ -50,8 +50,8 @@ jobs:
         uses: maxim-lobanov/setup-xcode@1.0
         with: { 'xcode-version': 'latest' }
       - uses: actions/checkout@v2
-        with: { path: console-kit }
+        with: { path: 'console-kit' }
       - uses: actions/checkout@v2
-        with: { repository: 'vapor/vapor', path: vapor }
-      - run: swift package --package-path vapor edit console-kit --path ../console-kit
+        with: { repository: 'vapor/vapor', path: 'vapor' }
+      - run: swift package --package-path vapor edit console-kit --path console-kit
       - run: swift test --package-path vapor --enable-test-discovery --sanitize=thread
