@@ -17,41 +17,41 @@ jobs:
           - swiftlang/swift:nightly-master-xenial
           - swiftlang/swift:nightly-master-bionic
           - swiftlang/swift:nightly-master-focal
-          - swiftlang/swift:nightly-master-centos8
-          - swiftlang/swift:nightly-master-amazonlinux2
+        include:
+          - { image: 'swiftlang/swift:nightly-master-centos8', depscmd: 'dnf install -y zlib-devel' }
+          - { image: 'swiftlang/swift:nightly-master-amazonlinux2', depscmd: 'yum install -y zlib-devel' }
     container: ${{ matrix.image }}
     steps:
-      - run: dnf install -y zlib-devel
-        if: ${{ matrix.image == 'swiftlang/swift:nightly-master-centos8' }}
-      - run: yum install -y zlib-devel
-        if: ${{ matrix.image == 'swiftlang/swift:nightly-master-amazonlinux2' }}
+      - run: ${{ matrix.depscmd }}
       - uses: actions/checkout@v2
-        with:
-          path: console-kit
-      - uses: actions/checkout@v2
-        with:
-          repository: vapor/vapor
-          path: vapor
       - run: swift test --enable-test-discovery --sanitize=thread
-        working-directory: console-kit
-      - run: swift package edit console-kit --path ../console-kit
-        working-directory: vapor
-      - run: swift test --enable-test-discovery --sanitize=thread
-        working-directory: vapor
   console-kit_macos:
     runs-on: macos-latest
     steps:
-      - run: sudo xcode-select -s /Applications/Xcode_11.4.app/Contents/Developer
+      - name: Select latest available Xcode
+        uses: maxim-lobanov/setup-xcode@1.0
+        with: { 'xcode-version': 'latest' }
       - uses: actions/checkout@v2
-        with:
-          path: console-kit
+      - run: swift test --enable-test-discovery --sanitize=thread
+  vapor-integration_linux:
+    runs-on: ubuntu-latest
+    container: swift:5.2-bionic
+    steps:
       - uses: actions/checkout@v2
-        with:
-          repository: vapor/vapor
-          path: vapor
-      - run: swift test --enable-test-discovery --sanitize=thread
-        working-directory: console-kit
-      - run: swift package edit console-kit --path ../console-kit
-        working-directory: vapor
-      - run: swift test --enable-test-discovery --sanitize=thread
-        working-directory: vapor
+        with: { path: console-kit }
+      - uses: actions/checkout@v2
+        with: { repository: 'vapor/vapor', path: vapor }
+      - run: swift package --package-path vapor edit console-kit --path ../console-kit
+      - run: swift test --package-path vapor --enable-test-discovery --sanitize=thread
+  vapor-integration_macos:
+    runs-on: macos-latest
+    steps:
+      - name: Select latest available Xcode
+        uses: maxim-lobanov/setup-xcode@1.0
+        with: { 'xcode-version': 'latest' }
+      - uses: actions/checkout@v2
+        with: { path: console-kit }
+      - uses: actions/checkout@v2
+        with: { repository: 'vapor/vapor', path: vapor }
+      - run: swift package --package-path vapor edit console-kit --path ../console-kit
+      - run: swift test --package-path vapor --enable-test-discovery --sanitize=thread
