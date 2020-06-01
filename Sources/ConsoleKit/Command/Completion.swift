@@ -95,8 +95,8 @@ extension AnyCommand {
 
             if [[ "$COMP_CWORD" -ne \(commandDepth) ]]; then
                 case $prev in
-        \( arguments.map { argument in
-            let label = argument.labels?.values.joined(separator: "|") ?? "*"
+        \( arguments.compactMap { argument in
+            guard let label = argument.labels?.values.joined(separator: "|") else { return nil }
             if let action = argument.action {
                 if let expression = action[.bash] {
                     return """
@@ -142,6 +142,11 @@ extension AnyCommand {
 
             COMPREPLY=( $(compgen -W "\(wordList.joined(separator: " "))" -- $cur) )
         """: ""
+        )\( arguments
+            .filter { $0.labels == nil }
+            .compactMap { $0.action?[.bash] }
+            .map { "\n    \($0)" }
+            .joined()
         )
         }
 
@@ -298,7 +303,7 @@ extension CompletionAction {
     /// Creates a `CompletionAction` that provides a predefined list of possible values.
     public static func values(_ values: [String]) -> CompletionAction {
         return [
-            .bash: "COMPREPLY=( $(compgen -W \"\(values.joined(separator: " "))\" -- $cur) )",
+            .bash: "COMPREPLY+=( $(compgen -W \"\(values.joined(separator: " "))\" -- $cur) )",
             .zsh: "{_values '' \(values.map { "'\($0)'" }.joined(separator: " "))}"
         ]
     }
