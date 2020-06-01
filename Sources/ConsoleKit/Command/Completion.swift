@@ -182,14 +182,15 @@ extension AnyCommand {
             arguments=(
         \(arguments.map { argument in
             let help = argument.help.completionEscaped
-            let action = argument.action.map { ": :\($0[.zsh] ?? " ")" } ?? ""
             if let long = argument.labels?.long {
+                let labels = (argument.labels?.short).map { "(\(long) \($0))\"{\(long),\($0)}\"" } ?? long
+                let action = argument.action.map { ": :\($0[.zsh] ?? " ")" } ?? ""
                 return """
-                "\((argument.labels?.short).map { "(\(long) \($0))\"{\(long),\($0)}\"" } ?? long)[\(help)]\(action)"
+                "\(labels)[\(help)]\(action)"
         """
             } else {
                 return """
-                ":\(help): "
+                ":\(help):\(argument.action?[.zsh] ?? " ")"
         """
             }
         }.joined(separator: "\n"))\(!subcommands.isEmpty ? """
