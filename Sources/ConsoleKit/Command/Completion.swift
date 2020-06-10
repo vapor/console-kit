@@ -95,8 +95,8 @@ extension AnyCommand {
 
             if [[ "$COMP_CWORD" -ne \(commandDepth) ]]; then
                 case $prev in
-        \( arguments.map { argument in
-            let label = argument.labels?.values.joined(separator: "|") ?? "*"
+        \( arguments.compactMap { argument in
+            guard let label = argument.labels?.values.joined(separator: "|") else { return nil }
             if let action = argument.action {
                 if let expression = action[.bash] {
                     return """
@@ -142,6 +142,11 @@ extension AnyCommand {
 
             COMPREPLY=( $(compgen -W "\(wordList.joined(separator: " "))" -- $cur) )
         """: ""
+        )\( arguments
+            .filter { $0.labels == nil }
+            .compactMap { $0.action?[.bash] }
+            .map { "\n    \($0)" }
+            .joined()
         )
         }
 
@@ -182,14 +187,15 @@ extension AnyCommand {
             arguments=(
         \(arguments.map { argument in
             let help = argument.help.completionEscaped
-            let action = argument.action.map { ": :\($0[.zsh] ?? " ")" } ?? ""
             if let long = argument.labels?.long {
+                let labels = (argument.labels?.short).map { "(\(long) \($0))\"{\(long),\($0)}\"" } ?? long
+                let action = argument.action.map { ": :\($0[.zsh] ?? " ")" } ?? ""
                 return """
-                "\((argument.labels?.short).map { "(\(long) \($0))\"{\(long),\($0)}\"" } ?? long)[\(help)]\(action)"
+                "\(labels)[\(help)]\(action)"
         """
             } else {
                 return """
-                ":\(help): "
+                ":\(help):\(argument.action?[.zsh] ?? " ")"
         """
             }
         }.joined(separator: "\n"))\(!subcommands.isEmpty ? """
@@ -297,7 +303,7 @@ extension CompletionAction {
     /// Creates a `CompletionAction` that provides a predefined list of possible values.
     public static func values(_ values: [String]) -> CompletionAction {
         return [
-            .bash: "COMPREPLY=( $(compgen -W \"\(values.joined(separator: " "))\" -- $cur) )",
+            .bash: "COMPREPLY+=( $(compgen -W \"\(values.joined(separator: " "))\" -- $cur) )",
             .zsh: "{_values '' \(values.map { "'\($0)'" }.joined(separator: " "))}"
         ]
     }
