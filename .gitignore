@@ -6,4 +6,5 @@ Package.resolved
 .DS_Store
 DerivedData
 .swiftpm
+Tests/LinuxMain.swift
 

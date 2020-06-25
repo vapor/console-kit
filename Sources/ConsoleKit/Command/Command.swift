@@ -86,6 +86,10 @@ public protocol Command: AnyCommand {
 extension Command {
     public func run(using context: inout CommandContext) throws {
         let signature = try Signature(from: &context.input)
+        guard context.input.arguments.isEmpty else {
+            let input = context.input.arguments.joined(separator: " ")
+            throw ConsoleError.init(identifier: "unknownInput", reason: "Input not recognized: \(input)")
+        }
         try self.run(using: context, signature: signature)
     }
 
