@@ -68,6 +68,19 @@ class CommandTests: XCTestCase {
         """)
     }
 
+    func testDeprecatedSyntax() throws {
+        let console = TestConsole()
+        let group = TestGroup()
+        let input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "--bar=baz"])
+        do {
+            try console.run(group, input: input)
+            XCTFail("Should have failed")
+        } catch {
+            // Pass
+            print(error)
+        }
+    }
+
     func testShortFlagNeedsToMatchExactly() throws {
         struct Signature: CommandSignature {
             @Option(name: "x-short", short: "x")
@@ -125,32 +138,22 @@ class CommandTests: XCTestCase {
 
             func run(using context: CommandContext, signature: OptionInitialized.Signature) throws {
                 assertion(signature)
-                XCTAssert(signature.$option.isPresent)
-            }
-        }
-
-        struct OptionUninitialized: Command {
-            struct Signature: CommandSignature {
-                @Option(name: "option") var option: String?
-            }
-
-            var help: String = ""
-
-            func run(using context: CommandContext, signature: OptionUninitialized.Signature) throws {
-                XCTAssertFalse(signature.$option.isPresent)
             }
         }
 
         let console = TestConsole()
 
-        try console.run(OptionInitialized(assertion: { XCTAssertNil($0.option) }), input: CommandInput(arguments: ["vapor", "--option"]))
-        try console.run(OptionInitialized(assertion: { XCTAssertEqual($0.option, "true") }), input: CommandInput(arguments: ["vapor", "--option", "true"]))
-        try console.run(OptionInitialized(assertion: { XCTAssertNil($0.option) }), input: CommandInput(arguments: ["vapor", "--option", "--str"]))
-        try console.run(OptionInitialized(assertion: { XCTAssertNil($0.option) }), input: CommandInput(arguments: ["vapor", "--option", "--str", "HelloWorld"]))
-        try console.run(OptionInitialized(assertion: { XCTAssertEqual($0.option, "--str") }), input: CommandInput(arguments: ["vapor", "--option", "\\--str"]))
-
-        let uninitialized = OptionUninitialized()
-        let uninitializedInput = CommandInput(arguments: ["vapor"])
-        try console.run(uninitialized, input: uninitializedInput)
+        try console.run(OptionInitialized(assertion: { 
+            XCTAssertEqual($0.option, "true") 
+            XCTAssertNil($0.str) 
+        }), input: CommandInput(arguments: ["vapor", "--option", "true"]))
+        try console.run(OptionInitialized(assertion: { 
+            XCTAssertNil($0.option) 
+            XCTAssertEqual($0.str, "HelloWorld")
+        }), input: CommandInput(arguments: ["vapor", "--str", "HelloWorld"]))
+        try console.run(OptionInitialized(assertion: { 
+            XCTAssertEqual($0.option, "--str") 
+            XCTAssertNil($0.str) 
+        }), input: CommandInput(arguments: ["vapor", "--option", "\\--str"]))
     }
 }
