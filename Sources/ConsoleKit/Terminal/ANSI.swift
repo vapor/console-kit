@@ -3,6 +3,10 @@ enum ANSICommand {
     case eraseScreen
     case eraseLine
     case cursorUp
+    case cursorDown
+    case cursorForward
+    case cursorBack
+    case cursorMove(row: Int, col: Int)
     case sgr([ANSISGRCommand])
 }
 
@@ -77,6 +81,14 @@ extension ANSICommand {
         switch self {
         case .cursorUp:
             return "1A".ansi
+        case .cursorDown:
+            return "1B".ansi
+        case .cursorForward:
+            return "1C".ansi
+        case .cursorBack:
+            return "1D".ansi
+        case .cursorMove(let row, let col):
+            return "\(row);\(col)H".ansi
         case .eraseScreen:
             return "2J".ansi
         case .eraseLine:
