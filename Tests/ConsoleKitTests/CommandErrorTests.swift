@@ -11,7 +11,7 @@ class CommandErrorTests: XCTestCase {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
             }
             XCTAssertEqual(commandError, .missingCommand, "Expected `.missingCommand` error, got \(String(reflecting: error)).")
-            XCTAssertEqual(commandError.description, "Error: Missing command")
+            XCTAssertEqual(commandError.description, "Missing command")
         }
     }
     
@@ -25,7 +25,7 @@ class CommandErrorTests: XCTestCase {
             }
             XCTAssertEqual(commandError, .unknownCommand("sup", available: ["sub", "test"]), "Expected `.unknownCommand` error, got \(String(reflecting: error)).")
             XCTAssertEqual(commandError.description, """
-            Error: Unknown command `sup`
+            Unknown command `sup`
 
             Did you mean this?
 
@@ -44,7 +44,7 @@ class CommandErrorTests: XCTestCase {
             }
             XCTAssertEqual(commandError, .unknownCommand("desoxyribonucleic-acid", available: ["sub", "test"]), "Expected `.unknownCommand` error, got \(String(reflecting: error)).")
             XCTAssertEqual(commandError.description, """
-            Error: Unknown command `desoxyribonucleic-acid`
+            Unknown command `desoxyribonucleic-acid`
             """)
         }
     }
@@ -63,7 +63,7 @@ class CommandErrorTests: XCTestCase {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
             }
             XCTAssertEqual(commandError, .missingRequiredArgument("number"), "Expected `.missingRequiredArgument` error, got \(String(reflecting: error)).")
-            XCTAssertEqual(commandError.description, "Error: Missing required argument: number")
+            XCTAssertEqual(commandError.description, "Missing required argument: number")
         }
     }
     
@@ -81,7 +81,7 @@ class CommandErrorTests: XCTestCase {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
             }
             XCTAssertEqual(commandError, .invalidArgumentType("number", type: Int.self), "Expected `.invalidArgumentType` error, got \(String(reflecting: error)).")
-            XCTAssertEqual(commandError.description, "Error: Could not convert argument for `number` to Int")
+            XCTAssertEqual(commandError.description, "Could not convert argument for `number` to Int")
         }
     }
     
@@ -109,7 +109,7 @@ class CommandErrorTests: XCTestCase {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
             }
             XCTAssertEqual(commandError, .invalidOptionType("bar", type: Int.self), "Expected `.invalidOptionType` error, got \(String(reflecting: error)).")
-            XCTAssertEqual(commandError.description, "Error: Could not convert option for `bar` to Int")
+            XCTAssertEqual(commandError.description, "Could not convert option for `bar` to Int")
         }
     }
     

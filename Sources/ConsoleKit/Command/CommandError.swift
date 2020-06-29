@@ -28,10 +28,10 @@ public enum CommandError: Error, Equatable, CustomStringConvertible {
     public var description: String {
         switch self {
         case .missingCommand:
-            return "Error: Missing command"
+            return "Missing command"
         case let .unknownCommand(command, available: available):
             guard !available.isEmpty else {
-                return "Error: Executable doesn't take a command"
+                return "Executable doesn't take a command"
             }
             
             let suggestions: [(String, Int)] = available
@@ -40,22 +40,22 @@ public enum CommandError: Error, Equatable, CustomStringConvertible {
                 .filter(distanceLessThan(3))
             
             guard !suggestions.isEmpty else {
-                return "Error: Unknown command `\(command)`"
+                return "Unknown command `\(command)`"
             }
             
             return """
-            Error: Unknown command `\(command)`
+            Unknown command `\(command)`
             
             Did you mean this?
             
             \(suggestions.map { "\t\($0.0)" }.joined(separator: "\n"))
             """
         case let .missingRequiredArgument(argument):
-            return "Error: Missing required argument: \(argument)"
+            return "Missing required argument: \(argument)"
         case let .invalidArgumentType(argument, type: type):
-            return "Error: Could not convert argument for `\(argument)` to \(type)"
+            return "Could not convert argument for `\(argument)` to \(type)"
         case let .invalidOptionType(option, type: type):
-            return "Error: Could not convert option for `\(option)` to \(type)"
+            return "Could not convert option for `\(option)` to \(type)"
         }
     }
 }
