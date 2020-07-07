@@ -4,13 +4,13 @@ import Logging
 public struct ConsoleLogger: LogHandler {
     /// See `Logger.label`.
     public let label: String
-    
+
     /// See `LogHandler.metadata`.
     public var metadata: Logger.Metadata
-    
+
     /// See `LogHandler.logLevel`.
     public var logLevel: Logger.Level
-    
+
     /// The console that the messages will get logged to.
     public let console: Console
 
@@ -27,7 +27,7 @@ public struct ConsoleLogger: LogHandler {
         self.logLevel = level
         self.console = console
     }
-    
+
     /// See `LogHandler[metadataKey:]`.
     ///
     /// This just acts as a getter/setter for the `.metadata` property.
@@ -35,7 +35,7 @@ public struct ConsoleLogger: LogHandler {
         get { return self.metadata[key] }
         set { self.metadata[key] = newValue }
     }
-    
+
     /// See `LogHandler.log(level:message:metadata:file:function:line:)`.
     public func log(
         level: Logger.Level,
@@ -46,11 +46,11 @@ public struct ConsoleLogger: LogHandler {
         line: UInt
     ) {
         var text: ConsoleText = ""
-        
+
         if self.logLevel <= .trace {
             text += "[ \(self.label) ] ".consoleText()
         }
-            
+
         text += "[ \(level.name) ]".consoleText(level.style)
             + " "
             + message.description.consoleText()
@@ -71,7 +71,7 @@ public struct ConsoleLogger: LogHandler {
 
         self.console.output(text)
     }
-    
+
     /// splits a path on the /Sources/ folder, returning everything after
     ///
     ///     "/Users/developer/dev/MyApp/Sources/Run/main.swift"
