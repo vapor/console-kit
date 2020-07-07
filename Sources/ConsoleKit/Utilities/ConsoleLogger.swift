@@ -2,6 +2,7 @@ import Logging
 
 /// Outputs logs to a `Console`.
 public struct ConsoleLogger: LogHandler {
+    /// See `Logger.label`.
     public let label: String
     
     /// See `LogHandler.metadata`.
@@ -10,7 +11,7 @@ public struct ConsoleLogger: LogHandler {
     /// See `LogHandler.logLevel`.
     public var logLevel: Logger.Level
     
-    /// The conosle that the messages will get logged to.
+    /// The console that the messages will get logged to.
     public let console: Console
 
     /// Creates a new `ConsoleLogger` instance.
@@ -112,27 +113,3 @@ extension LoggingSystem {
     }
 }
 
-extension Logger.Level {
-    /// Converts log level to console style
-    public var style: ConsoleStyle {
-        switch self {
-        case .trace, .debug: return .plain
-        case .info, .notice: return .info
-        case .warning: return .warning
-        case .error: return .error
-        case .critical: return ConsoleStyle(color: .brightRed)
-        }
-    }
-    
-    public var name: String {
-        switch self {
-        case .trace: return "TRACE"
-        case .debug: return "DEBUG"
-        case .info: return "INFO"
-        case .notice: return "NOTICE"
-        case .warning: return "WARNING"
-        case .error: return "ERROR"
-        case .critical: return "CRITICAL"
-        }
-    }
-}
