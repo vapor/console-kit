@@ -36,11 +36,15 @@ public struct ConsoleLogger: LogHandler {
         set { self.metadata[key] = newValue }
     }
 
-    /// See `LogHandler.log(level:message:metadata:file:function:line:)`.
+    /// See `LogHandler.log(level:message:metadata:source:file:function:line:)`.
+    ///
+    /// - Important: Due to https://github.com/apple/swift-log/issues/145, we currently ignore the `source` parameter,
+    ///   even if it has been manually specified with a non-default value. This will be changed in the future.
     public func log(
         level: Logger.Level,
         message: Logger.Message,
         metadata: Logger.Metadata?,
+        source: String,
         file: String,
         function: String,
         line: UInt
