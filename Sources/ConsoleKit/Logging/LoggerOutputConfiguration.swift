@@ -61,6 +61,29 @@ extension Logger {
         ///   performs poorly when repeatedly and rapidly invoked. Most `DateFormatter`s have this problem when
         ///   configured with a timezone or locale other than the default.
         let timestampLoggingFormat: TimestampLoggingFormat
+        
+        /// Create an `OutputConfiguration`.
+        public init(
+            timestampDisplayLogLevel: Logger.Level? = nil,
+            labelDisplayLogLevel: Logger.Level? = nil,
+            metadataDisplayLogLevel: Logger.Level? = nil,
+            sourceModuleDisplayLogLevel: Logger.Level? = nil,
+            sourceFileLineDisplayLogLevel: Logger.Level? = nil,
+            sourceFunctionDisplayLogLevel: Logger.Level? = nil,
+            defaultExcludedLabels: [String] = [],
+            defaultExcludedRegularExpressions: [String] = [],
+            timestampLoggingFormat: TimestampLoggingFormat = .highPrecisionISO8601
+        ) {
+            self.timestampDisplayLogLevel = timestampDisplayLogLevel
+            self.labelDisplayLogLevel = labelDisplayLogLevel
+            self.metadataDisplayLogLevel = metadataDisplayLogLevel
+            self.sourceModuleDisplayLogLevel = sourceModuleDisplayLogLevel
+            self.sourceFileLineDisplayLogLevel = sourceFileLineDisplayLogLevel
+            self.sourceFunctionDisplayLogLevel = sourceFunctionDisplayLogLevel
+            self.defaultExcludedLabels = defaultExcludedLabels
+            self.defaultExcludedRegularExpressions = defaultExcludedRegularExpressions
+            self.timestampLoggingFormat = timestampLoggingFormat
+        }
     }
 }
 

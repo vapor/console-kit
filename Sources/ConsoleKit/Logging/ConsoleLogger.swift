@@ -14,6 +14,16 @@ public struct ConsoleLogger: LogHandler {
     /// The console that the messages will get logged to.
     public let console: Console
 
+    /// The output configuration which applies to the logger backed by this handler. Initially, a copy of the default
+    /// configuration provided when boostrapping the logging system, but can be updated to change the output behavior of
+    /// the individual `Logger`.
+    public var outputConfiguration: Logger.OutputConfiguration = .default
+
+    /// The style configuration which applies to the logger backed by this handler. Initially, a copy of the default
+    /// configuration provided when boostrapping the logging system, but can be updated to change the style of the
+    /// individual `Logger`.
+    public var styleConfiguration: Logger.StyleConfiguration = .default
+
     /// Creates a new `ConsoleLogger` instance.
     ///
     /// - Parameters:
@@ -21,11 +31,26 @@ public struct ConsoleLogger: LogHandler {
     ///   - console: The console to log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    public init(label: String, console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
+    ///   - settings: The output configuration this logger should use. This defaults to the default console logger settings.
+    ///   - style: The style configuration this logger should use. This defaults to the default console logger style.
+    ///
+    /// - Note: It would make more sense for the output and style configurations to default to those provided when
+    ///   bootstrapping the logging system (if any). Unfortunately, it was not possible to do this without either
+    ///   breaking existing API or taking the performance hit of a global lock on every logger creation.
+    public init(
+        label: String,
+        console: Console,
+        level: Logger.Level = .debug,
+        metadata: Logger.Metadata = [:],
+        settings: Logger.OutputConfiguration = .default,
+        style: Logger.StyleConfiguration = .default
+    ) {
         self.label = label
         self.metadata = metadata
         self.logLevel = level
         self.console = console
+        self.outputConfiguration = settings
+        self.styleConfiguration = style
     }
 
     /// See `LogHandler[metadataKey:]`.
@@ -110,10 +135,19 @@ extension LoggingSystem {
     ///   - console: The console the logger will log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    public static func bootstrap(console: Console, level: Logger.Level = .info, metadata: Logger.Metadata = [:]) {
+    ///   - outputConfiguration: The default output configuration to use by default for all loggers. This defaults to
+    ///     the `.default` configuration.
+    ///   - styleConfiguration: The default style configuration to use by default for all loggers. This defaults to the
+    ///     `.default` configuration.
+    public static func bootstrap(
+        console: Console,
+        level: Logger.Level = .info,
+        metadata: Logger.Metadata = [:],
+        outputConfiguration: Logger.OutputConfiguration = .default,
+        styleConfiguration: Logger.StyleConfiguration = .default
+    ) {
         self.bootstrap { label in
-            return ConsoleLogger(label: label, console: console, level: level, metadata: metadata)
+            return ConsoleLogger(label: label, console: console, level: level, metadata: metadata, settings: outputConfiguration, style: styleConfiguration)
         }
     }
 }
-
