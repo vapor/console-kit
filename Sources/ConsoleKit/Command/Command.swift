@@ -102,12 +102,17 @@ extension Command {
 
     public func outputHelp(using context: inout CommandContext) {
         context.console.output("Usage: ".consoleText(.info) + context.input.executable.consoleText() + " ", newLine: false)
+        Signature.reference.outputHelp(help: self.help, using: &context)
+    }
+}
 
-        for argument in Signature.reference.arguments {
+extension CommandSignature {
+    public func outputHelp(help: String, using context: inout CommandContext) {
+        for argument in self.arguments {
             context.console.output(("<" + argument.name + "> ").consoleText(.warning), newLine: false)
         }
 
-        for option in Signature.reference.options {
+        for option in self.options {
             if let short = option.short {
                 context.console.output("[--\(option.name),-\(short)] ".consoleText(.success), newLine: false)
             } else {
@@ -115,7 +120,7 @@ extension Command {
             }
         }
 
-        for flag in Signature.reference.flags {
+        for flag in self.flags {
             if let short = flag.short {
                 context.console.output("[--\(flag.name),-\(short)] ".consoleText(.info), newLine: false)
             } else {
@@ -124,20 +129,20 @@ extension Command {
         }
         context.console.print()
 
-        if !self.help.isEmpty {
+        if !help.isEmpty {
             context.console.print()
-            context.console.print(self.help)
+            context.console.print(help)
         }
 
-        let names = Signature.reference.options.map { $0.name }
-            + Signature.reference.arguments.map { $0.name }
-            + Signature.reference.flags.map { $0.name }
+        let names = self.options.map { $0.name }
+            + self.arguments.map { $0.name }
+            + self.flags.map { $0.name }
 
         let padding = names.longestCount + 2
-        if Signature.reference.arguments.count > 0 {
+        if self.arguments.count > 0 {
             context.console.print()
             context.console.output("Arguments:".consoleText(.info))
-            for argument in Signature.reference.arguments {
+            for argument in self.arguments {
                 context.console.outputHelpListItem(
                     name: argument.name,
                     help: argument.help,
@@ -147,10 +152,10 @@ extension Command {
             }
         }
 
-        if Signature.reference.options.count > 0 {
+        if self.options.count > 0 {
             context.console.print()
             context.console.output("Options:".consoleText(.info))
-            for option in Signature.reference.options {
+            for option in self.options {
                 context.console.outputHelpListItem(
                     name: option.name,
                     help: option.help,
@@ -160,10 +165,10 @@ extension Command {
             }
         }
 
-        if Signature.reference.flags.count > 0 {
+        if self.flags.count > 0 {
             context.console.print()
             context.console.output("Flags:".consoleText(.info))
-            for option in Signature.reference.flags {
+            for option in self.flags {
                 context.console.outputHelpListItem(
                     name: option.name,
                     help: option.help,
