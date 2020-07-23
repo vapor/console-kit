@@ -12,7 +12,7 @@ public struct ConsoleLogger: LogHandler {
     
     /// The conosle that the messages will get logged to.
     public let console: Console
-    
+
     /// Creates a new `ConsoleLogger` instance.
     ///
     /// - Parameters:
@@ -53,18 +53,21 @@ public struct ConsoleLogger: LogHandler {
         text += "[ \(level.name) ]".consoleText(level.style)
             + " "
             + message.description.consoleText()
-        
-        // only log metadata + file info if we are debug or trace
+
+        let allMetadata = (metadata ?? [:]).merging(self.metadata) { (a, _) in a }
+
+        if !allMetadata.isEmpty {
+            // only log metadata if not empty
+            text += " " + allMetadata.sortedDescriptionWithoutQuotes.consoleText()
+        }
+
+        // log file info if we are debug or lower
         if self.logLevel <= .debug {
-            if !self.metadata.isEmpty {
-                // only log metadata if not empty
-                text += " " + self.metadata.descriptionWithoutQuotes.consoleText()
-            }
             // log the concise path + line
             let fileInfo = self.conciseSourcePath(file) + ":" + line.description
             text += " (" + fileInfo.consoleText() + ")"
         }
-        
+
         self.console.output(text)
     }
     
@@ -75,24 +78,21 @@ public struct ConsoleLogger: LogHandler {
     ///     "Run/main.swift"
     ///
     private func conciseSourcePath(_ path: String) -> String {
+        let separator: Substring = path.contains("Sources") ? "Sources" : "Tests"
         return path.split(separator: "/")
-            .split(separator: "Sources")
+            .split(separator: separator)
             .last?
             .joined(separator: "/") ?? path
     }
 }
 
 private extension Logger.Metadata {
-    struct StringWithoutQuotes: CustomStringConvertible, Hashable {
-        let description: String
-    }
-
-    var descriptionWithoutQuotes: String {
-        var info: [StringWithoutQuotes: StringWithoutQuotes] = [:]
-        for (key, value) in self {
-            info[.init(description: key.description)] = .init(description: value.description)
-        }
-        return info.description
+    var sortedDescriptionWithoutQuotes: String {
+        let contents = Array(self)
+            .sorted(by: { $0.0 < $1.0 })
+            .map { "\($0.description): \($1)" }
+            .joined(separator: ", ")
+        return "[\(contents)]"
     }
 }
 

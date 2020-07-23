@@ -21,15 +21,12 @@ final class ConsoleLoggerTests: XCTestCase {
         XCTAssertEqual("second", logger2[metadataKey: "only-on"])
     }
     
-    func testLoggingLevels()throws {
+    func testLoggingLevels() throws {
         let console = TestConsole()
         let logger = Logger(label: "codes.vapor.console") { label in
             ConsoleLogger(label: label, console: console, level: .info)
         }
-        let expectedOutput = { (level: String, text: String) -> String in
-            return "[ \(level) ] \(text)\n"
-        }
-        
+
         logger.trace("trace")
         XCTAssertNil(console.testOutputQueue.first)
         
@@ -37,18 +34,48 @@ final class ConsoleLoggerTests: XCTestCase {
         XCTAssertNil(console.testOutputQueue.first)
         
         logger.info("info")
-        XCTAssertEqual(console.testOutputQueue.first, expectedOutput("INFO", "info"))
+        XCTAssertLog(console, .info, "info")
         
         logger.notice("notice")
-        XCTAssertEqual(console.testOutputQueue.first, expectedOutput("NOTICE", "notice"))
+        XCTAssertLog(console, .notice, "notice")
         
         logger.warning("warning")
-        XCTAssertEqual(console.testOutputQueue.first, expectedOutput("WARNING", "warning"))
+        XCTAssertLog(console, .warning, "warning")
         
         logger.error("error")
-        XCTAssertEqual(console.testOutputQueue.first, expectedOutput("ERROR", "error"))
+        XCTAssertLog(console, .error, "error")
         
         logger.critical("critical")
-        XCTAssertEqual(console.testOutputQueue.first, expectedOutput("CRITICAL", "critical"))
+        XCTAssertLog(console, .critical, "critical")
     }
+
+    func testMetadata() {
+        let console = TestConsole()
+        let logger = Logger(label: "codes.vapor.console") { label in
+            ConsoleLogger(label: label, console: console, level: .info, metadata: ["meta1": "test1"])
+        }
+
+        logger.info("info")
+        XCTAssertLog(console, .info, "info [meta1: test1]")
+
+        logger.info("info", metadata: ["meta2": "test2"])
+        XCTAssertLog(console, .info, "info [meta1: test1, meta2: test2]")
+
+        logger.info("info", metadata: ["meta1": "overridden"])
+        XCTAssertLog(console, .info, "info [meta1: overridden]")
+    }
+
+    func testSourceLocation() {
+        let console = TestConsole()
+        let logger = Logger(label: "codes.vapor.console") { label in
+            ConsoleLogger(label: label, console: console, level: .debug)
+        }
+
+        logger.debug("debug")
+        XCTAssertLog(console, .debug, "debug (ConsoleKitTests/LoggingTests.swift:74)")
+    }
+}
+
+private func XCTAssertLog(_ console: TestConsole, _ level: Logger.Level, _ message: String, file: StaticString = #file, line: UInt = #line) {
+    XCTAssertEqual(console.testOutputQueue.first, "[ \(level.name) ] \(message)\n", file: (file), line: line)
 }
