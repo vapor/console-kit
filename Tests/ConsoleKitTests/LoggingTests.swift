@@ -76,6 +76,6 @@ final class ConsoleLoggerTests: XCTestCase {
     }
 }
 
-private func XCTAssertLog(_ console: TestConsole, _ level: Logger.Level, _ message: String, file: StaticString = #filePath, line: UInt = #line) {
-    XCTAssertEqual(console.testOutputQueue.first, "[ \(level.name) ] \(message)\n", file: file, line: line)
+private func XCTAssertLog(_ console: TestConsole, _ level: Logger.Level, _ message: String, file: StaticString = #file, line: UInt = #line) {
+    XCTAssertEqual(console.testOutputQueue.first, "[ \(level.name) ] \(message)\n", file: (file), line: line)
 }
