@@ -25,11 +25,12 @@ public struct ConsoleLogger: LogHandler {
     ///   - sourcePathDelimiter: The path component upto which source file paths will be truncated.
     ///     For example, given a value of `Sources` and a source file path of `/app/Sources/Run/main.swift`, the output
     ///     will be `Run/main.swift`. Defaults to `Sources`.
-    public init(label: String,
-                console: Console,
-                level: Logger.Level = .debug,
-                metadata: Logger.Metadata = [:],
-                sourcePathDelimiter: String = "Sources") {
+    public init(
+        label: String,
+        console: Console,
+        level: Logger.Level = .debug,
+        metadata: Logger.Metadata = [:],
+        sourcePathDelimiter: String = "Sources") {
         self.label = label
         self.metadata = metadata
         self.logLevel = level
@@ -120,16 +121,18 @@ extension LoggingSystem {
     ///   - sourcePathDelimiter: The path component upto which source file paths will be truncated.
     ///     For example, given a value of `Sources` and a source file path of `/app/Sources/Run/main.swift`, the output
     ///     will be `Run/main.swift`. Defaults to `Sources`.
-    public static func bootstrap(console: Console,
-                                 level: Logger.Level = .info,
-                                 metadata: Logger.Metadata = [:],
-                                 sourcePathDelimiter: String = "Sources") {
+    public static func bootstrap(
+        console: Console,
+        level: Logger.Level = .info,
+        metadata: Logger.Metadata = [:],
+        sourcePathDelimiter: String = "Sources") {
         self.bootstrap { label in
-            return ConsoleLogger(label: label,
-                                 console: console,
-                                 level: level,
-                                 metadata: metadata,
-                                 sourcePathDelimiter: sourcePathDelimiter)
+            return ConsoleLogger(
+                label: label,
+                console: console,
+                level: level,
+                metadata: metadata,
+                sourcePathDelimiter: sourcePathDelimiter)
         }
     }
 }
