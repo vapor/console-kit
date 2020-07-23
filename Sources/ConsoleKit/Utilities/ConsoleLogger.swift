@@ -53,15 +53,12 @@ public struct ConsoleLogger: LogHandler {
         text += "[ \(level.name) ]".consoleText(level.style)
             + " "
             + message.description.consoleText()
-        
-        // only log metadata if we are info or lower
-        if self.logLevel <= .info {
-            let allMetadata = (metadata ?? [:]).merging(self.metadata) { (a, _) in a }
 
-            if !allMetadata.isEmpty {
-                // only log metadata if not empty
-                text += " " + allMetadata.sortedDescriptionWithoutQuotes.consoleText()
-            }
+        let allMetadata = (metadata ?? [:]).merging(self.metadata) { (a, _) in a }
+
+        if !allMetadata.isEmpty {
+            // only log metadata if not empty
+            text += " " + allMetadata.sortedDescriptionWithoutQuotes.consoleText()
         }
 
         // log file info if we are debug or lower
