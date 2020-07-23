@@ -52,11 +52,17 @@ final class ConsoleLoggerTests: XCTestCase {
     func testMetadata() {
         let console = TestConsole()
         let logger = Logger(label: "codes.vapor.console") { label in
-            ConsoleLogger(label: label, console: console, level: .info, metadata: ["meta": "test"])
+            ConsoleLogger(label: label, console: console, level: .info, metadata: ["meta1": "test1"])
         }
 
         logger.info("info")
-        XCTAssertLog(console, .info, "info [meta: test]")
+        XCTAssertLog(console, .info, "info [meta1: test1]")
+
+        logger.info("info", metadata: ["meta2": "test2"])
+        XCTAssertLog(console, .info, "info [meta1: test1, meta2: test2]")
+
+        logger.info("info", metadata: ["meta1": "overridden"])
+        XCTAssertLog(console, .info, "info [meta1: overridden]")
     }
 
     func testSourceLocation() {
@@ -66,7 +72,7 @@ final class ConsoleLoggerTests: XCTestCase {
         }
 
         logger.debug("debug")
-        XCTAssertLog(console, .debug, "debug (LoggingTests.swift:68)")
+        XCTAssertLog(console, .debug, "debug (LoggingTests.swift:74)")
     }
 }
 

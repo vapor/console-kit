@@ -66,9 +66,11 @@ public struct ConsoleLogger: LogHandler {
         
         // only log metadata if we are info or lower
         if self.logLevel <= .info {
-            if !self.metadata.isEmpty {
+            let allMetadata = (metadata ?? [:]).merging(self.metadata) { (a, _) in a }
+
+            if !allMetadata.isEmpty {
                 // only log metadata if not empty
-                text += " " + self.metadata.descriptionWithoutQuotes.consoleText()
+                text += " " + allMetadata.sortedDescriptionWithoutQuotes.consoleText()
             }
         }
 
@@ -97,16 +99,12 @@ public struct ConsoleLogger: LogHandler {
 }
 
 private extension Logger.Metadata {
-    struct StringWithoutQuotes: CustomStringConvertible, Hashable {
-        let description: String
-    }
-
-    var descriptionWithoutQuotes: String {
-        var info: [StringWithoutQuotes: StringWithoutQuotes] = [:]
-        for (key, value) in self {
-            info[.init(description: key.description)] = .init(description: value.description)
-        }
-        return info.description
+    var sortedDescriptionWithoutQuotes: String {
+        let contents = Array(self)
+            .sorted(by: { $0.0 < $1.0 })
+            .map { "\($0.description): \($1)" }
+            .joined(separator: ", ")
+        return "[\(contents)]"
     }
 }
 
