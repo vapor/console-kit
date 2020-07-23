@@ -12,6 +12,8 @@ public struct ConsoleLogger: LogHandler {
     
     /// The conosle that the messages will get logged to.
     public let console: Console
+
+    private let sourcePathDelimiter: Substring
     
     /// Creates a new `ConsoleLogger` instance.
     ///
@@ -20,11 +22,19 @@ public struct ConsoleLogger: LogHandler {
     ///   - console: The console to log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    public init(label: String, console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
+    ///   - sourcePathDelimiter: The path component upto which source file paths will be truncated.
+    ///     For example, given a value of `Sources` and a source file path of `/app/Sources/Run/main.swift`, the output
+    ///     will be `Run/main.swift`. Defaults to `Sources`.
+    public init(label: String,
+                console: Console,
+                level: Logger.Level = .debug,
+                metadata: Logger.Metadata = [:],
+                sourcePathDelimiter: String = "Sources") {
         self.label = label
         self.metadata = metadata
         self.logLevel = level
         self.console = console
+        self.sourcePathDelimiter = Substring(sourcePathDelimiter)
     }
     
     /// See `LogHandler[metadataKey:]`.
@@ -54,17 +64,21 @@ public struct ConsoleLogger: LogHandler {
             + " "
             + message.description.consoleText()
         
-        // only log metadata + file info if we are debug or trace
-        if self.logLevel <= .debug {
+        // only log metadata if we are info or lower
+        if self.logLevel <= .info {
             if !self.metadata.isEmpty {
                 // only log metadata if not empty
                 text += " " + self.metadata.descriptionWithoutQuotes.consoleText()
             }
+        }
+
+        // log file info if we are debug or lower
+        if self.logLevel <= .debug {
             // log the concise path + line
             let fileInfo = self.conciseSourcePath(file) + ":" + line.description
             text += " (" + fileInfo.consoleText() + ")"
         }
-        
+
         self.console.output(text)
     }
     
@@ -76,7 +90,7 @@ public struct ConsoleLogger: LogHandler {
     ///
     private func conciseSourcePath(_ path: String) -> String {
         return path.split(separator: "/")
-            .split(separator: "Sources")
+            .split(separator: self.sourcePathDelimiter)
             .last?
             .joined(separator: "/") ?? path
     }
@@ -105,9 +119,19 @@ extension LoggingSystem {
     ///   - console: The console the logger will log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    public static func bootstrap(console: Console, level: Logger.Level = .info, metadata: Logger.Metadata = [:]) {
+    ///   - sourcePathDelimiter: The path component upto which source file paths will be truncated.
+    ///     For example, given a value of `Sources` and a source file path of `/app/Sources/Run/main.swift`, the output
+    ///     will be `Run/main.swift`. Defaults to `Sources`.
+    public static func bootstrap(console: Console,
+                                 level: Logger.Level = .info,
+                                 metadata: Logger.Metadata = [:],
+                                 sourcePathDelimiter: String = "Sources") {
         self.bootstrap { label in
-            return ConsoleLogger(label: label, console: console, level: level, metadata: metadata)
+            return ConsoleLogger(label: label,
+                                 console: console,
+                                 level: level,
+                                 metadata: metadata,
+                                 sourcePathDelimiter: sourcePathDelimiter)
         }
     }
 }
