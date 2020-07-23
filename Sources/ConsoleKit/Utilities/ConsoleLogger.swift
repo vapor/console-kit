@@ -13,8 +13,6 @@ public struct ConsoleLogger: LogHandler {
     /// The conosle that the messages will get logged to.
     public let console: Console
 
-    private let sourcePathDelimiter: Substring
-    
     /// Creates a new `ConsoleLogger` instance.
     ///
     /// - Parameters:
@@ -22,20 +20,11 @@ public struct ConsoleLogger: LogHandler {
     ///   - console: The console to log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    ///   - sourcePathDelimiter: The path component upto which source file paths will be truncated.
-    ///     For example, given a value of `Sources` and a source file path of `/app/Sources/Run/main.swift`, the output
-    ///     will be `Run/main.swift`. Defaults to `Sources`.
-    public init(
-        label: String,
-        console: Console,
-        level: Logger.Level = .debug,
-        metadata: Logger.Metadata = [:],
-        sourcePathDelimiter: String = "Sources") {
+    public init(label: String, console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
         self.label = label
         self.metadata = metadata
         self.logLevel = level
         self.console = console
-        self.sourcePathDelimiter = Substring(sourcePathDelimiter)
     }
     
     /// See `LogHandler[metadataKey:]`.
@@ -92,8 +81,9 @@ public struct ConsoleLogger: LogHandler {
     ///     "Run/main.swift"
     ///
     private func conciseSourcePath(_ path: String) -> String {
+        let separator: Substring = path.contains("Sources") ? "Sources" : "Tests"
         return path.split(separator: "/")
-            .split(separator: self.sourcePathDelimiter)
+            .split(separator: separator)
             .last?
             .joined(separator: "/") ?? path
     }
@@ -118,21 +108,9 @@ extension LoggingSystem {
     ///   - console: The console the logger will log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    ///   - sourcePathDelimiter: The path component upto which source file paths will be truncated.
-    ///     For example, given a value of `Sources` and a source file path of `/app/Sources/Run/main.swift`, the output
-    ///     will be `Run/main.swift`. Defaults to `Sources`.
-    public static func bootstrap(
-        console: Console,
-        level: Logger.Level = .info,
-        metadata: Logger.Metadata = [:],
-        sourcePathDelimiter: String = "Sources") {
+    public static func bootstrap(console: Console, level: Logger.Level = .info, metadata: Logger.Metadata = [:]) {
         self.bootstrap { label in
-            return ConsoleLogger(
-                label: label,
-                console: console,
-                level: level,
-                metadata: metadata,
-                sourcePathDelimiter: sourcePathDelimiter)
+            return ConsoleLogger(label: label, console: console, level: level, metadata: metadata)
         }
     }
 }

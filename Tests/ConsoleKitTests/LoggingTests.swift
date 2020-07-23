@@ -68,11 +68,11 @@ final class ConsoleLoggerTests: XCTestCase {
     func testSourceLocation() {
         let console = TestConsole()
         let logger = Logger(label: "codes.vapor.console") { label in
-            ConsoleLogger(label: label, console: console, level: .debug, sourcePathDelimiter: "ConsoleKitTests")
+            ConsoleLogger(label: label, console: console, level: .debug)
         }
 
         logger.debug("debug")
-        XCTAssertLog(console, .debug, "debug (LoggingTests.swift:74)")
+        XCTAssertLog(console, .debug, "debug (ConsoleKitTests/LoggingTests.swift:74)")
     }
 }
 
