@@ -72,10 +72,10 @@ final class ConsoleLoggerTests: XCTestCase {
         }
 
         logger.debug("debug")
-        XCTAssertLog(console, .debug, "debug (ConsoleKitTests/LoggingTests.swift:74)")
+        XCTAssertLog(console, .debug, "debug (ConsoleKitTests/LoggingTests.swift:\(#line - 1))")
     }
 }
 
 private func XCTAssertLog(_ console: TestConsole, _ level: Logger.Level, _ message: String, file: StaticString = #file, line: UInt = #line) {
-    XCTAssertEqual(console.testOutputQueue.first, "[ \(level.name) ] \(message)\n", file: (file), line: line)
+    XCTAssertEqual(console.testOutputQueue.first, "[ \(level.rawValue.uppercased()) ] \(message)\n", file: (file), line: line)
 }
