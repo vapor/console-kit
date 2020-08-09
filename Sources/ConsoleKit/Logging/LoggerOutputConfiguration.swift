@@ -9,7 +9,7 @@ extension Logger {
     /// effect if and only if the log level of the `Logger` (not the individual message) is _at or below_ the configured
     /// level, as determined by the `Comparable` conformance of `Logger.Level`. For example, for a maximum level of
     /// "info", the parameter will apply when the logger is configured at `info`, `debug`, and `trace` levels, but not
-    /// for any others. Setting any such parameter to `.error` is equivalent to an "always" condition. Setting such a
+    /// for any others. Setting any such parameter to `.critical` is equivalent to an "always" condition. Setting such a
     /// parameter to `nil` is equivalent to a "never" condition.
     ///
     /// - Note: Certain elements of a log message are always visible at all log levels unless the entire message has
@@ -127,7 +127,7 @@ extension Logger.OutputConfiguration {
     public static var `default`: Self { .init(
         timestampDisplayLogLevel: nil, // original logger never showed timestamp
         labelDisplayLogLevel: .trace,
-        metadataDisplayLogLevel: .debug,
+        metadataDisplayLogLevel: .critical,
         sourceModuleDisplayLogLevel: nil,
         sourceFileLineDisplayLogLevel: .debug,
         sourceFunctionDisplayLogLevel: nil,
