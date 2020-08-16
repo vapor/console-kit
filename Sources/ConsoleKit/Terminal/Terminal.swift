@@ -1,7 +1,9 @@
 #if os(Linux)
 import Glibc
-#else
+#elseif os(macOS)
 import Darwin.C
+#elseif os(Windows)
+import MSVCRT
 #endif
 import Foundation
 
@@ -43,12 +45,35 @@ public final class Terminal: Console {
     public func input(isSecure: Bool) -> String {
         didOutputLines(count: 1)
         if isSecure {
-            // http://stackoverflow.com/a/30878869/2611971
+#if os(macOS)
+            var buffer = Array<Int8>.init(repeating: 0, count: 1024)
+            while readpassphrase("", &buffer, buffer.count, RPP_REQUIRE_TTY) == nil {
+                guard errno == EINTR else { return "" }
+            }
+            // This bit of "with unsafe" silliness is a bit much. It's just easier than talking String into treating a
+            // `Collection` (as opposed to an unsafe pointer) as NUL-terminated.
+            var pass = buffer.withUnsafeBufferPointer { $0.withMemoryRebound(to: UInt8.self) {
+                String.init(decodingCString: $0.baseAddress!, as: Unicode.UTF8.self)
+            } }
+#elseif os(Linux)
+            // TODO: Replace getpass() with something much safer
             let entry: UnsafeMutablePointer<Int8> = getpass("")
             let pointer: UnsafePointer<CChar> = .init(entry)
             guard var pass = String(validatingUTF8: pointer) else {
                 return ""
             }
+#elseif os(Windows)
+            var result = ""
+            while result.count < 32768 { // arbitrary upper bound for sanity
+                let c = _getch()
+                if c == 0x0d || c == 0x0a {
+                    break
+                } else if isprint(c) {
+                    result.append(Character(Unicode.Scalar(c)))
+                }
+            }
+            var pass = result
+#endif
             if pass.hasSuffix("\n") {
                 pass = String(pass.dropLast())
             }
