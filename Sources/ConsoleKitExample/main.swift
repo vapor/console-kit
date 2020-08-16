@@ -7,6 +7,7 @@ var context = CommandContext(console: console, input: input)
 
 var commands = Commands(enableAutocomplete: true)
 commands.use(DemoCommand(), as: "demo", isDefault: false)
+commands.use(LoggingDemoCommand(), as: "logging-demo", isDefault: false)
 
 do {
     let group = commands
