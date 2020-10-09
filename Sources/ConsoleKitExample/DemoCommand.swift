@@ -52,9 +52,5 @@ final class DemoCommand: Command {
             context.console.wait(seconds: 2)
             loadingBar.succeed()
         }
-        
-        context.console.output("Now for secure input: ", newLine: false)
-        let input = context.console.input(isSecure: true)
-        context.console.output("Your secure input was: \(input)")
     }
 }
