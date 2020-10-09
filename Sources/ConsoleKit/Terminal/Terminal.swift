@@ -1,7 +1,9 @@
 #if os(Linux)
 import Glibc
-#else
+#elseif os(macOS)
 import Darwin.C
+#elseif os(Windows)
+import MSVCRT
 #endif
 import Foundation
 
@@ -43,12 +45,43 @@ public final class Terminal: Console {
     public func input(isSecure: Bool) -> String {
         didOutputLines(count: 1)
         if isSecure {
-            // http://stackoverflow.com/a/30878869/2611971
-            let entry: UnsafeMutablePointer<Int8> = getpass("")
-            let pointer: UnsafePointer<CChar> = .init(entry)
-            guard var pass = String(validatingUTF8: pointer) else {
-                return ""
+#if os(macOS) || os(Linux)
+            var pass: String
+            func plat_readpassphrase(into buf: UnsafeMutableBufferPointer<Int8>) -> Int {
+                #if os(macOS)
+                let rpp = readpassphrase
+                #elseif os(Linux)
+                let rpp = linux_readpassphrase, RPP_REQUIRE_TTY = 0 as Int32
+                #endif
+
+                while rpp("", buf.baseAddress!, buf.count, RPP_REQUIRE_TTY) == nil {
+                    guard errno == EINTR else { return 0 }
+                }
+                return strlen(buf.baseAddress!)
             }
+            if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
+#if swift(>=5.3)
+                pass = String(unsafeUninitializedCapacity: 1024) { $0.withMemoryRebound(to: Int8.self) { plat_readpassphrase(into: $0) } }
+#else
+                fatalError()
+#endif
+            } else {
+                let buffer = Array<UTF8.CodeUnit>(unsafeUninitializedCapacity: 1024) { buf, count in
+                    buf.withMemoryRebound(to: Int8.self) { count = plat_readpassphrase(into: $0) }
+                }
+                pass = String.init(decoding: buffer, as: UTF8.self)
+            }
+#elseif os(Windows)
+            var pass = ""
+            while pass.count < 32768 { // arbitrary upper bound for sanity
+                let c = _getch()
+                if c == 0x0d || c == 0x0a {
+                    break
+                } else if isprint(c) {
+                    pass.append(Character(Unicode.Scalar(c)))
+                }
+            }
+#endif
             if pass.hasSuffix("\n") {
                 pass = String(pass.dropLast())
             }
