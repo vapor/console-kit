@@ -59,18 +59,16 @@ public final class Terminal: Console {
                 }
                 return strlen(buf.baseAddress!)
             }
-            if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
-#if swift(>=5.3)
-                pass = String(unsafeUninitializedCapacity: 1024) { $0.withMemoryRebound(to: Int8.self) { plat_readpassphrase(into: $0) } }
-#else
-                fatalError()
-#endif
-            } else {
-                let buffer = Array<UTF8.CodeUnit>(unsafeUninitializedCapacity: 1024) { buf, count in
-                    buf.withMemoryRebound(to: Int8.self) { count = plat_readpassphrase(into: $0) }
+            func readpassphrase_str() -> String {
+#if swift(>=5.3.1)
+                if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
+                    // This initializer is only present in Swift 5.3.1 and later, and has an availability guard as well.
+                    return .init(unsafeUninitializedCapacity: 1024) { $0.withMemoryRebound(to: Int8.self) { plat_readpassphrase(into: $0) } }
                 }
-                pass = String.init(decoding: buffer, as: UTF8.self)
+#endif
+                return .init(decoding: [Int8](unsafeUninitializedCapacity: 1024) { $1 = plat_readpassphrase(into: $0) }.map(UInt8.init), as: UTF8.self)
             }
+            pass = readpassphrase_str()
 #elseif os(Windows)
             var pass = ""
             while pass.count < 32768 { // arbitrary upper bound for sanity
