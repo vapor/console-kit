@@ -45,8 +45,8 @@ public final class Terminal: Console {
     public func input(isSecure: Bool) -> String {
         didOutputLines(count: 1)
         if isSecure {
+            var pass = ""
 #if os(macOS) || os(Linux)
-            var pass: String
             func plat_readpassphrase(into buf: UnsafeMutableBufferPointer<Int8>) -> Int {
                 #if os(macOS)
                 let rpp = readpassphrase
@@ -70,7 +70,6 @@ public final class Terminal: Console {
             }
             pass = readpassphrase_str()
 #elseif os(Windows)
-            var pass = ""
             while pass.count < 32768 { // arbitrary upper bound for sanity
                 let c = _getch()
                 if c == 0x0d || c == 0x0a {
@@ -138,7 +137,7 @@ public final class Terminal: Console {
 }
 
 extension Console {
-    
+
     /// If set, overrides a `Terminal`'s own determination as to whether its
     /// output supports color commands. Useful for easily implementing an option
     /// of the form `--color=no|yes|auto`. If the active `Console` is not
