@@ -34,7 +34,7 @@
 ///
 /// Get the `Console`'s current size using the `size` property.
 ///
-public protocol Console: class {
+public protocol Console: AnyObject {
     /// The size of the `Console` window. Used for calculating lines printed and centering text.
     var size: (width: Int, height: Int) { get }
 
