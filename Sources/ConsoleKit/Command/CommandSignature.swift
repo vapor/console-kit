@@ -46,7 +46,7 @@ enum InputValue<T> {
     case uninitialized
 }
 
-internal protocol AnySignatureValue: class {
+internal protocol AnySignatureValue: AnyObject {
     var help: String { get }
     var name: String { get }
     var initialized: Bool { get }
