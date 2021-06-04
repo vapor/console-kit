@@ -25,11 +25,11 @@ extension CommandGroup {
 }
 
 extension CommandGroup {
-    public func run(using context: inout CommandContext) throws {
+    public func run(using context: inout CommandContext) async throws {
         if let command = try self.commmand(using: &context) {
-            try command.run(using: &context)
+            try await command.run(using: &context)
         } else if let `default` = self.defaultCommand {
-            return try `default`.run(using: &context)
+            return try await `default`.run(using: &context)
         } else {
             try self.outputHelp(using: &context)
             throw CommandError.missingCommand

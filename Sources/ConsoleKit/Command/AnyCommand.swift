@@ -4,7 +4,7 @@ public protocol AnyCommand {
     var help: String { get }
     
     /// Runs the command against the supplied input.
-    func run(using context: inout CommandContext) throws
+    func run(using context: inout CommandContext) async throws
     func outputAutoComplete(using context: inout CommandContext) throws
     func outputHelp(using context: inout CommandContext) throws
 

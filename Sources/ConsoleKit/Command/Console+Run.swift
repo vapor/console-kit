@@ -1,3 +1,5 @@
+import Foundation
+
 /// Adds the ability to run `Command`s on a `Console`.
 extension Console {
     /// Runs an `AnyCommand` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
@@ -12,7 +14,14 @@ extension Console {
     ///     - input: `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
     public func run(_ command: AnyCommand, input: CommandInput) throws {
         // create new context
-        try self.run(command, with: CommandContext(console: self, input: input))
+        let group = DispatchGroup()
+        group.enter()
+        Task(priority: .default) {
+            defer { group.leave() }
+            // FIXME: errors are not passed through
+            try await self.run(command, with: CommandContext(console: self, input: input))
+        }
+        group.wait()
     }
 
     /// Runs an `AnyCommand` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandContext`.
@@ -22,7 +31,7 @@ extension Console {
     /// - parameters:
     ///     - runnable: `CommandGroup` or `Command` to run.
     ///     - input: `CommandContext` to parse `CommandOption`s and `CommandArgument`s from.
-    public func run(_ command: AnyCommand, with context: CommandContext) throws {
+    public func run(_ command: AnyCommand, with context: CommandContext) async throws {
         // make copy of context
         var context = context
 
@@ -41,7 +50,7 @@ extension Console {
         } else if signature.autocomplete {
             try command.outputAutoComplete(using: &context)
         } else {
-            return try command.run(using: &context)
+            return try await command.run(using: &context)
         }
     }
 }

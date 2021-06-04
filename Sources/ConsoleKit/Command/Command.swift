@@ -1,3 +1,5 @@
+import Foundation
+
 /// A command that can be run through a `Console`.
 ///
 /// Both `Command` and `CommandGroup` conform to `AnyCommand` which provides the basic requirements
@@ -80,7 +82,7 @@
 ///
 public protocol Command: AnyCommand {
     associatedtype Signature: CommandSignature
-    func run(using context: CommandContext, signature: Signature) throws
+    func run(using context: CommandContext, signature: Signature) async throws
 }
 
 extension Command {
@@ -90,7 +92,15 @@ extension Command {
             let input = context.input.arguments.joined(separator: " ")
             throw ConsoleError.init(identifier: "unknownInput", reason: "Input not recognized: \(input)")
         }
-        try self.run(using: context, signature: signature)
+        let group = DispatchGroup()
+        group.enter()
+        let context = context
+        Task(priority: .default) {
+            defer { group.leave() }
+            // FIXME: errors are not passed through
+            try await self.run(using: context, signature: signature)
+        }
+        group.wait()
     }
 
     public func outputAutoComplete(using context: inout CommandContext) {

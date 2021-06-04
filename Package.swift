@@ -15,6 +15,12 @@ let package = Package(
     targets: [
         .target(name: "ConsoleKit", dependencies: [
             .product(name: "Logging", package: "swift-log"),
+        ],
+        swiftSettings: [
+            .unsafeFlags([
+                "-Xfrontend", "-enable-experimental-concurrency",
+                "-Xfrontend", "-disable-availability-checking",
+            ])
         ]),
         .testTarget(name: "ConsoleKitTests", dependencies: [
             .target(name: "ConsoleKit"),
