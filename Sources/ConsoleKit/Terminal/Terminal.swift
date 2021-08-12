@@ -1,4 +1,4 @@
-#if os(Linux)
+#if os(Linux) || os(Android)
 import Glibc
 #elseif os(macOS)
 import Darwin.C
@@ -46,11 +46,11 @@ public final class Terminal: Console {
         didOutputLines(count: 1)
         if isSecure {
             var pass = ""
-#if os(macOS) || os(Linux)
+#if os(macOS) || os(Linux) || os(Android)
             func plat_readpassphrase(into buf: UnsafeMutableBufferPointer<Int8>) -> Int {
                 #if os(macOS)
                 let rpp = readpassphrase
-                #elseif os(Linux)
+                #elseif os(Linux) || os(Android)
                 let rpp = linux_readpassphrase, RPP_REQUIRE_TTY = 0 as Int32
                 #endif
 
