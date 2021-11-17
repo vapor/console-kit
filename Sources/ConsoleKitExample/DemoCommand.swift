@@ -10,6 +10,14 @@ final class DemoCommand: Command {
 
         init() { }
     }
+    
+    let asciiHeader: [String]? = [
+        "██████  ███████ ███    ███  ██████ ",
+        "██   ██ ██      ████  ████ ██    ██",
+        "██   ██ █████   ██ ████ ██ ██    ██",
+        "██   ██ ██      ██  ██  ██ ██    ██",
+        "██████  ███████ ██      ██  ██████ "
+    ]
 
     var help: String {
         "A demonstration of what ConsoleKit can do"
