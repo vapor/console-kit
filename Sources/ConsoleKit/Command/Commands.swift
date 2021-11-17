@@ -63,10 +63,11 @@ public struct Commands {
     /// - parameters:
     ///     - help: Optional help messages to include.
     /// - returns: A `CommandGroup` with commands and defaultCommand configured.
-    public func group(help: String = "") -> CommandGroup {
+    public func group(asciiHeader: [String]? = nil, help: String = "") -> CommandGroup {
         var group = _Group(
             commands: self.commands,
             defaultCommand: self.defaultCommand,
+            asciiHeader: asciiHeader,
             help: help
         )
         if self.enableAutocomplete {
@@ -83,5 +84,6 @@ public struct Commands {
 private struct _Group: CommandGroup {
     var commands: [String: AnyCommand]
     var defaultCommand: AnyCommand?
+    let asciiHeader: [String]?
     let help: String
 }
