@@ -18,3 +18,10 @@ public struct CommandContext {
         self.userInfo = [:]
     }
 }
+
+extension CommandContext {
+    
+    var usageDescriptor: String {
+        return input.executableUsagePath.joined(separator: " ")
+    }
+}

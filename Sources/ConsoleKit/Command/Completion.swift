@@ -415,6 +415,18 @@ extension CommandInput {
     var executableName: String {
         return String(self.executablePath.first!.split(separator: "/").last!)
     }
+    
+    /// Returns all components for the usage of an executable without any unnecessary
+    /// path related details.
+    ///
+    /// For example, if the executable named `program` is run from the package's root
+    /// via `swift run program <command>`, the first element in `executablePath` will be something
+    /// like `".build/x86_64-apple-macosx/debug/program <command>"`; `executableUsagePath` will return
+    /// `["program", "<command>"]`.
+    ///
+    var executableUsagePath: [String] {
+        return [executableName] + executablePath.dropFirst()
+    }
 
     /// Returns the name to use for the completion function for the current `executablePath`.
     ///
