@@ -57,9 +57,6 @@ extension CommandGroup {
     }
 
     private func outputGroupHelp(using context: inout CommandContext) {
-        context.console.output("\("Usage:", style: .info) \(context.input.executable) ", newLine: false)
-        context.console.output("\("<command>", style: .warning)", newLine: false)
-        context.console.print()
         if let header = asciiHeader {
             for line in context.console.center(header) {
                 context.console.print(line)
@@ -88,7 +85,7 @@ extension CommandGroup {
         }
 
         context.console.print()
-        context.console.print("Use `\(context.input.executable) ", newLine: false)
+        context.console.output("\("Usage:", style: .info) \(context.input.executable) ", newLine: false)
         context.console.output("<command>".consoleText(.warning), newLine: false)
         context.console.output(" [--help,-h]".consoleText(.success) + "` for more information on a command.")
     }
