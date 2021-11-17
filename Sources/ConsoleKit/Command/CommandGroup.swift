@@ -16,9 +16,15 @@
 public protocol CommandGroup: AnyCommand {
     var commands: [String: AnyCommand] { get }
     var defaultCommand: AnyCommand? { get }
+    var asciiHeader: [String]? { get }
 }
 
 extension CommandGroup {
+    
+    public var asciiHeader: [String]? {
+        return nil
+    }
+    
     public var defaultCommand: AnyCommand? {
         return nil
     }
@@ -54,10 +60,17 @@ extension CommandGroup {
         context.console.output("\("Usage:", style: .info) \(context.input.executable) ", newLine: false)
         context.console.output("\("<command>", style: .warning)", newLine: false)
         context.console.print()
+        if let header = asciiHeader {
+            for line in context.console.center(header) {
+                context.console.print(line)
+            }
+            context.console.print()
+        }
 
         if !self.help.isEmpty {
+            let helpText = context.console.center(self.help)
+            context.console.print(helpText)
             context.console.print()
-            context.console.print(self.help)
         }
 
         let padding = self.commands.map { $0.key }.longestCount + 2
