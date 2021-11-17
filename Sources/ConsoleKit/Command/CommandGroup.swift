@@ -60,7 +60,7 @@ extension CommandGroup {
         let padding = self.commands.map { $0.key }.longestCount + 2
         if self.commands.count > 0 {
             context.console.print()
-            context.console.output("Commands:".consoleText(.success))
+            context.console.output("Commands:".consoleText(.info))
             for (key, command) in self.commands.sorted(by: { $0.key < $1.key }) {
                 context.console.outputHelpListItem(
                     name: key,
