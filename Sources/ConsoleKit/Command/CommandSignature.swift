@@ -86,8 +86,6 @@ extension CommandSignature {
                 )
             }
         }
-        
-        context.console.print()
     }
     
     func outputUsage(using context: inout CommandContext) {
