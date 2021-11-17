@@ -76,3 +76,20 @@ extension Console {
         output(string.consoleText(.error), newLine: newLine)
     }
 }
+
+extension Console {
+    func outputHelpListItem(name: String, help: String?, style: ConsoleStyle, padding: Int) {
+        self.output(name.leftPad(to: padding - name.count).consoleText(style), newLine: false)
+        if let help = help {
+            for (index, line) in help.split(separator: "\n").map(String.init).enumerated() {
+                if index == 0 {
+                    self.print(line.leftPad(to: 1))
+                } else {
+                    self.print(line.leftPad(to: padding + 1))
+                }
+            }
+        } else {
+            self.print(" n/a")
+        }
+    }
+}
