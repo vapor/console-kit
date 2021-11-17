@@ -52,8 +52,8 @@ extension CommandGroup {
 
     private func outputGroupHelp(using context: inout CommandContext) {
         outputHelpHeader(using: &context)
-        outputCommands(using: &context)
         outputUsage(using: &context)
+        outputCommands(using: &context)
     }
     
     private func outputCommands(using context: inout CommandContext) {
@@ -76,11 +76,10 @@ extension CommandGroup {
     private func outputUsage(using context: inout CommandContext) {
         context.console.output(
             "Usage: ".consoleText(.info) +
-            context.input.executable.consoleText() +
+            context.usageDescriptor.consoleText() +
             " <command>".consoleText(.warning) +
             " [--help,-h]".consoleText(.success)
         )
-        context.console.print()
     }
 
     private func commmand(using context: inout CommandContext) throws -> AnyCommand? {
