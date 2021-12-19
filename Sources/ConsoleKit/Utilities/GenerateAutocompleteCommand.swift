@@ -37,7 +37,7 @@ struct GenerateAutocompleteCommand: Command {
         var quiet: Bool
     }
 
-    func run(using context: CommandContext, signature: Signature) throws {
+    func run(using context: CommandContext, signature: Signature) async throws {
 
         guard let rootCommand = self.rootCommand else { fatalError("`rootCommand` was not initialized") }
         guard let shell = signature.shell ?? self.environmentShell() else {

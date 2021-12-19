@@ -10,9 +10,9 @@ extension Console {
     /// - parameters:
     ///     - command: `CommandGroup` or `Command` to run.
     ///     - input: `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
-    public func run(_ command: AnyCommand, input: CommandInput) throws {
+    public func run(_ command: AnyCommand, input: CommandInput) async throws {
         // create new context
-        try self.run(command, with: CommandContext(console: self, input: input))
+        try await self.run(command, with: CommandContext(console: self, input: input))
     }
 
     /// Runs an `AnyCommand` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandContext`.
@@ -22,7 +22,7 @@ extension Console {
     /// - parameters:
     ///     - runnable: `CommandGroup` or `Command` to run.
     ///     - input: `CommandContext` to parse `CommandOption`s and `CommandArgument`s from.
-    public func run(_ command: AnyCommand, with context: CommandContext) throws {
+    public func run(_ command: AnyCommand, with context: CommandContext) async throws {
         // make copy of context
         var context = context
 
@@ -41,7 +41,7 @@ extension Console {
         } else if signature.autocomplete {
             try command.outputAutoComplete(using: &context)
         } else {
-            return try command.run(using: &context)
+          return try await command.run(using: &context)
         }
     }
 }

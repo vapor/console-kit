@@ -2,11 +2,11 @@
 import XCTest
 
 class CommandTests: XCTestCase {
-    func testBaseHelp() throws {
+    func testBaseHelp() async throws {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "--help"])
-        try console.run(group, input: input)
+        try await console.run(group, input: input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Usage: vapor <command>
 
@@ -21,11 +21,11 @@ class CommandTests: XCTestCase {
         """)
     }
 
-    func testHelp() throws {
+    func testHelp() async throws {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "sub", "test", "--help"])
-        try console.run(group, input: input)
+        try await console.run(group, input: input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Usage: vapor sub test <foo> [--bar,-b] [--baz,-B]\u{20}
 
@@ -46,34 +46,34 @@ class CommandTests: XCTestCase {
         """)
     }
 
-    func testFlag() throws {
+    func testFlag() async throws {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "--bar", "baz"])
-        try console.run(group, input: input)
+        try await console.run(group, input: input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Foo: foovalue Bar: baz
 
         """)
     }
 
-    func testShortFlag() throws {
+    func testShortFlag() async throws {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "-b", "baz"])
-        try console.run(group, input: input)
+        try await console.run(group, input: input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Foo: foovalue Bar: baz
 
         """)
     }
 
-    func testDeprecatedSyntax() throws {
+    func testDeprecatedSyntax() async throws {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "--bar=baz"])
         do {
-            try console.run(group, input: input)
+            try await console.run(group, input: input)
             XCTFail("Should have failed")
         } catch {
             // Pass
@@ -97,21 +97,24 @@ class CommandTests: XCTestCase {
         XCTAssertNil(signature.yShort)
     }
 
-    func testStrictCommand() throws {
+    func testStrictCommand() async throws {
         let console = TestConsole()
         let command = StrictCommand()
 
         var input = CommandInput(arguments: ["vapor", "3", "true"])
-        try console.run(command, input: input)
+        try await console.run(command, input: input)
 
         input = CommandInput(arguments: ["vapor", "e", "true"])
-        try XCTAssertThrowsError(console.run(command, input: input))
-
+        let result: Void? = try? await console.run(command, input: input)
+        XCTAssertNil(result)
+        
+        
         input = CommandInput(arguments: ["vapor", "e", "nope"])
-        try XCTAssertThrowsError(console.run(command, input: input))
+        let otherResult: Void? = try? await console.run(command, input: input)
+        XCTAssertNil(otherResult)
     }
 
-    func testDynamicAccess() throws {
+    func testDynamicAccess() async throws {
         struct DynamicCommand: AnyCommand {
             var help: String = ""
 
@@ -123,10 +126,10 @@ class CommandTests: XCTestCase {
         let console = TestConsole()
         let command = DynamicCommand()
         let input = CommandInput(arguments: ["vapor", "true", "--count", "42"])
-        try console.run(command, input: input)
+        try await console.run(command, input: input)
     }
 
-    func testOptionUsed() throws {
+    func testOptionUsed() async throws {
         struct OptionInitialized: Command {
             struct Signature: CommandSignature {
                 @Option(name: "option") var option: String?
@@ -143,15 +146,15 @@ class CommandTests: XCTestCase {
 
         let console = TestConsole()
 
-        try console.run(OptionInitialized(assertion: { 
+        try await console.run(OptionInitialized(assertion: {
             XCTAssertEqual($0.option, "true") 
             XCTAssertNil($0.str) 
         }), input: CommandInput(arguments: ["vapor", "--option", "true"]))
-        try console.run(OptionInitialized(assertion: { 
+        try await console.run(OptionInitialized(assertion: {
             XCTAssertNil($0.option) 
             XCTAssertEqual($0.str, "HelloWorld")
         }), input: CommandInput(arguments: ["vapor", "--str", "HelloWorld"]))
-        try console.run(OptionInitialized(assertion: { 
+        try await console.run(OptionInitialized(assertion: {
             XCTAssertEqual($0.option, "--str") 
             XCTAssertNil($0.str) 
         }), input: CommandInput(arguments: ["vapor", "--option", "\\--str"]))

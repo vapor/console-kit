@@ -80,17 +80,17 @@
 ///
 public protocol Command: AnyCommand {
     associatedtype Signature: CommandSignature
-    func run(using context: CommandContext, signature: Signature) throws
+    func run(using context: CommandContext, signature: Signature) async throws
 }
 
 extension Command {
-    public func run(using context: inout CommandContext) throws {
+    public func run(using context: inout CommandContext) async throws {
         let signature = try Signature(from: &context.input)
         guard context.input.arguments.isEmpty else {
             let input = context.input.arguments.joined(separator: " ")
             throw ConsoleError.init(identifier: "unknownInput", reason: "Input not recognized: \(input)")
         }
-        try self.run(using: context, signature: signature)
+      try await self.run(using: context, signature: signature)
     }
 
     public func outputAutoComplete(using context: inout CommandContext) {

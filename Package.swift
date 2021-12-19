@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.5
 import PackageDescription
 
 let package = Package(
@@ -19,8 +19,14 @@ let package = Package(
         .testTarget(name: "ConsoleKitTests", dependencies: [
             .target(name: "ConsoleKit"),
         ]),
-        .target(name: "ConsoleKitExample", dependencies: [
+        .executableTarget(
+          name: "ConsoleKitExample",
+          dependencies: [
             .target(name: "ConsoleKit"),
-        ]),
+          ],
+          swiftSettings: [
+            .unsafeFlags(["-parse-as-library"])
+          ]
+        )
     ]
 )
