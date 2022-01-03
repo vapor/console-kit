@@ -2,32 +2,24 @@
 import XCTest
 
 class CommandErrorTests: XCTestCase {
-    func testMissingCommand() async throws {
+    func testMissingCommand() throws {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor"])
-        do {
-            try await console.run(group, input: input)
-        } catch {
+        XCTAssertThrowsError(try console.run(group, input: input), "Missing command is supposed to throw") { error in
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
             }
             XCTAssertEqual(commandError, .missingCommand, "Expected `.missingCommand` error, got \(String(reflecting: error)).")
             XCTAssertEqual(commandError.description, "Missing command")
-            return
         }
-        
-        XCTFail("Missing command is supposed to throw")
     }
     
-    func testUnknownCommandWithSuggestion() async throws {
+    func testUnknownCommandWithSuggestion() throws {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "sup"])
-        
-        do {
-            try await console.run(group, input: input)
-        } catch {
+        XCTAssertThrowsError(try console.run(group, input: input), "Unknown command is supposed to throw") { error in
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
             }
@@ -39,20 +31,14 @@ class CommandErrorTests: XCTestCase {
 
             \tsub
             """)
-            return
         }
-        
-        XCTFail("Unknown command is supposed to throw")
     }
     
-    func testUnknownCommandWithoutSuggestion() async throws {
+    func testUnknownCommandWithoutSuggestion() throws {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "desoxyribonucleic-acid"])
-        
-        do {
-            try await console.run(group, input: input)
-        } catch {
+        XCTAssertThrowsError(try console.run(group, input: input), "Unknown command is supposed to throw") { error in
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
             }
@@ -60,59 +46,46 @@ class CommandErrorTests: XCTestCase {
             XCTAssertEqual(commandError.description, """
             Unknown command `desoxyribonucleic-acid`
             """)
-            return
         }
-        
-        XCTFail("Unknown command is supposed to throw")
     }
     
-    func testCommandWithMissingRequiredArgument() async throws {
+    func testCommandWithMissingRequiredArgument() throws {
         let console = TestConsole()
         let command = StrictCommand()
 
         var input = CommandInput(arguments: ["vapor", "3", "true"])
-        try await console.run(command, input: input)
+        try console.run(command, input: input)
 
         input = CommandInput(arguments: ["vapor"])
-        
-        do {
-            try await console.run(command, input: input)
-        } catch {
+        try XCTAssertThrowsError(console.run(command, input: input))
+        XCTAssertThrowsError(try console.run(command, input: input), "Missing argument is supposed to throw") { error in
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
             }
             XCTAssertEqual(commandError, .missingRequiredArgument("number"), "Expected `.missingRequiredArgument` error, got \(String(reflecting: error)).")
             XCTAssertEqual(commandError.description, "Missing required argument: number")
-            return
         }
-        
-        XCTFail("Missing argument is supposed to throw")
     }
     
-    func testCommandWithInvalidArgumentType() async throws {
+    func testCommandWithInvalidArgumentType() throws {
         let console = TestConsole()
         let command = StrictCommand()
 
         var input = CommandInput(arguments: ["vapor", "3", "true"])
-        try await console.run(command, input: input)
+        try console.run(command, input: input)
 
         input = CommandInput(arguments: ["vapor", "e", "true"])
-        
-        do {
-            try await console.run(command, input: input)
-        } catch {
+        try XCTAssertThrowsError(console.run(command, input: input))
+        XCTAssertThrowsError(try console.run(command, input: input), "Invalid argument is supposed to throw") { error in
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
             }
             XCTAssertEqual(commandError, .invalidArgumentType("number", type: Int.self), "Expected `.invalidArgumentType` error, got \(String(reflecting: error)).")
             XCTAssertEqual(commandError.description, "Could not convert argument for `number` to Int")
-            return
         }
-        
-        XCTFail("Invalid argument is supposed to throw")
     }
     
-    func testCommandWithInvalidOptionType() async throws {
+    func testCommandWithInvalidOptionType() throws {
         final class IntOptionCommand: Command {
             struct Signature: CommandSignature {
                 @Option(name: "bar", short: "b", help: "")
@@ -127,21 +100,17 @@ class CommandErrorTests: XCTestCase {
         let command = IntOptionCommand()
         
         var input = CommandInput(arguments: ["vapor", "--bar", "3"])
-        try await console.run(command, input: input)
+        try console.run(command, input: input)
         
         input = CommandInput(arguments: ["vapor", "--bar", "a"])
-        do {
-            try await console.run(command, input: input)
-        } catch {
+        try XCTAssertThrowsError(console.run(command, input: input))
+        XCTAssertThrowsError(try console.run(command, input: input), "Invalid argument is supposed to throw") { error in
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
             }
             XCTAssertEqual(commandError, .invalidOptionType("bar", type: Int.self), "Expected `.invalidOptionType` error, got \(String(reflecting: error)).")
             XCTAssertEqual(commandError.description, "Could not convert option for `bar` to Int")
-            return
         }
-        
-        XCTFail("Invalid argument is supposed to throw")
     }
     
     func testLevenshteinDistance() {
