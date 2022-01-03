@@ -5,7 +5,7 @@
 ///
 /// Below is a sample command that generates ASCII picture of a cow with a message.
 ///
-///     struct CowsayCommand: Command {
+///     struct CowsayCommand: AsyncCommand {
 ///         public struct Signature: CommandSignature {
 ///             @Argument(name: "message")
 ///             var message: String
@@ -24,7 +24,7 @@
 ///         }
 ///
 ///         public init() { }
-///         public func run(using context: CommandContext, signature: Signature) throws {
+///         public func run(using context: CommandContext, signature: Signature) async throws {
 ///             let eyes = signature.eyes ?? "oo"
 ///             let tongue = signature.tongue ?? " "
 ///             let padding = String(repeating: "-", count: message.count)
@@ -48,11 +48,11 @@
 ///     var input = CommandInput(arguments: CommandLine.arguments)
 ///     var context = CommandContext(console: console, input: input)
 ///
-///     try console.run(CoswayCommand(), with: context)
+///     try await console.run(CoswayCommand(), with: context)
 ///
 /// Use `Commands` to register commands and create a `CommandGroup`.
 ///
-/// - note: You can also use `console.run(...)` to run an `AnyCommand` manually.
+/// - note: You can also use `console.run(...)` to run an `AnyAsyncCommand` manually.
 ///
 /// Here is a simple example of the command in action, assuming it has been registered as `"cowsay"`.
 ///
@@ -78,19 +78,19 @@
 ///                     U  ||----w |
 ///                        ||     ||
 ///
-public protocol Command: AnyCommand {
+public protocol AsyncCommand: AnyAsyncCommand {
     associatedtype Signature: CommandSignature
-    func run(using context: CommandContext, signature: Signature) throws
+    func run(using context: CommandContext, signature: Signature) async throws
 }
 
-extension Command {
-    public func run(using context: inout CommandContext) throws {
+extension AsyncCommand {
+    public func run(using context: inout CommandContext) async throws {
         let signature = try Signature(from: &context.input)
         guard context.input.arguments.isEmpty else {
             let input = context.input.arguments.joined(separator: " ")
             throw ConsoleError.init(identifier: "unknownInput", reason: "Input not recognized: \(input)")
         }
-        try self.run(using: context, signature: signature)
+      try await self.run(using: context, signature: signature)
     }
 
     public func outputAutoComplete(using context: inout CommandContext) {
@@ -103,79 +103,5 @@ extension Command {
     public func outputHelp(using context: inout CommandContext) {
         context.console.output("Usage: ".consoleText(.info) + context.input.executable.consoleText() + " ", newLine: false)
         Signature.reference.outputHelp(help: self.help, using: &context)
-    }
-}
-
-extension CommandSignature {
-    public func outputHelp(help: String, using context: inout CommandContext) {
-        for argument in self.arguments {
-            context.console.output(("<" + argument.name + "> ").consoleText(.warning), newLine: false)
-        }
-
-        for option in self.options {
-            if let short = option.short {
-                context.console.output("[--\(option.name),-\(short)] ".consoleText(.success), newLine: false)
-            } else {
-                context.console.output("[--\(option.name)] ".consoleText(.success), newLine: false)
-            }
-        }
-
-        for flag in self.flags {
-            if let short = flag.short {
-                context.console.output("[--\(flag.name),-\(short)] ".consoleText(.info), newLine: false)
-            } else {
-                context.console.output("[--\(flag.name)] ".consoleText(.info), newLine: false)
-            }
-        }
-        context.console.print()
-
-        if !help.isEmpty {
-            context.console.print()
-            context.console.print(help)
-        }
-
-        let names = self.options.map { $0.name }
-            + self.arguments.map { $0.name }
-            + self.flags.map { $0.name }
-
-        let padding = names.longestCount + 2
-        if self.arguments.count > 0 {
-            context.console.print()
-            context.console.output("Arguments:".consoleText(.info))
-            for argument in self.arguments {
-                context.console.outputHelpListItem(
-                    name: argument.name,
-                    help: argument.help,
-                    style: .info,
-                    padding: padding
-                )
-            }
-        }
-
-        if self.options.count > 0 {
-            context.console.print()
-            context.console.output("Options:".consoleText(.info))
-            for option in self.options {
-                context.console.outputHelpListItem(
-                    name: option.name,
-                    help: option.help,
-                    style: .success,
-                    padding: padding
-                )
-            }
-        }
-
-        if self.flags.count > 0 {
-            context.console.print()
-            context.console.output("Flags:".consoleText(.info))
-            for option in self.flags {
-                context.console.outputHelpListItem(
-                    name: option.name,
-                    help: option.help,
-                    style: .success,
-                    padding: padding
-                )
-            }
-        }
     }
 }

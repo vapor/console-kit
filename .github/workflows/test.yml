@@ -7,7 +7,10 @@ jobs:
       fail-fast: false
       matrix:
         swiftver:
-          - swift:5.5
+          - swift:5.2
+          - swift:5.3
+          - swiftlang/swift:nightly-5.3
+          - swiftlang/swift:nightly-master
         swiftos:
           - xenial
           - bionic
@@ -41,7 +44,7 @@ jobs:
       - run: swift test --enable-test-discovery --sanitize=thread
   integration-linux:
     runs-on: ubuntu-latest
-    container: swift:5.5-focal
+    container: swift:5.3-focal
     steps:
       - uses: actions/checkout@v2
         with: { path: console-kit }

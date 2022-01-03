@@ -13,23 +13,23 @@
 ///     try console.run(group, with: context)
 ///
 /// You can create your own `CommandGroup` if you want to support custom `CommandOptions`.
-public protocol CommandGroup: AnyCommand {
-    var commands: [String: AnyCommand] { get }
-    var defaultCommand: AnyCommand? { get }
+public protocol AsyncCommandGroup: AnyAsyncCommand {
+    var commands: [String: AnyAsyncCommand] { get }
+    var defaultCommand: AnyAsyncCommand? { get }
 }
 
-extension CommandGroup {
-    public var defaultCommand: AnyCommand? {
+extension AsyncCommandGroup {
+    public var defaultCommand: AnyAsyncCommand? {
         return nil
     }
 }
 
-extension CommandGroup {
-    public func run(using context: inout CommandContext) throws {
+extension AsyncCommandGroup {
+    public func run(using context: inout CommandContext) async throws {
         if let command = try self.commmand(using: &context) {
-          try command.run(using: &context)
+            try await command.run(using: &context)
         } else if let `default` = self.defaultCommand {
-          return try `default`.run(using: &context)
+            return try await `default`.run(using: &context)
         } else {
             try self.outputHelp(using: &context)
             throw CommandError.missingCommand
@@ -80,7 +80,7 @@ extension CommandGroup {
         context.console.output(" [--help,-h]".consoleText(.success) + "` for more information on a command.")
     }
 
-    private func commmand(using context: inout CommandContext) throws -> AnyCommand? {
+    private func commmand(using context: inout CommandContext) throws -> AnyAsyncCommand? {
         if let name = context.input.arguments.popFirst() {
             guard let command = self.commands[name] else {
                 throw CommandError.unknownCommand(name, available: Array(self.commands.keys))

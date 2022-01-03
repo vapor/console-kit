@@ -1,11 +1,11 @@
 import Foundation
 
-struct GenerateAutocompleteCommand: Command {
+struct GenerateAsyncAutocompleteCommand: AsyncCommand {
     var help: String { "Generate shell completion scripts for the executable" }
 
-    var rootCommand: AnyCommand?
+    var rootCommand: AnyAsyncCommand?
 
-    init(rootCommand: AnyCommand? = nil) {
+    init(rootCommand: AnyAsyncCommand? = nil) {
         self.rootCommand = rootCommand
     }
 
@@ -37,7 +37,7 @@ struct GenerateAutocompleteCommand: Command {
         var quiet: Bool
     }
 
-    func run(using context: CommandContext, signature: Signature) throws {
+    func run(using context: CommandContext, signature: Signature) async throws {
 
         guard let rootCommand = self.rootCommand else { fatalError("`rootCommand` was not initialized") }
         guard let shell = signature.shell ?? self.environmentShell() else {

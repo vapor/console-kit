@@ -10,7 +10,52 @@ extension Console {
     /// - parameters:
     ///     - command: `CommandGroup` or `Command` to run.
     ///     - input: `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
-    public func run(_ command: AnyCommand, input: CommandInput) async throws {
+    public func run(_ command: AnyCommand, input: CommandInput) throws {
+        // create new context
+        try self.run(command, with: CommandContext(console: self, input: input))
+    }
+
+    /// Runs an `AnyCommand` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandContext`.
+    ///
+    ///     try console.run(group, with: context)
+    ///
+    /// - parameters:
+    ///     - runnable: `CommandGroup` or `Command` to run.
+    ///     - input: `CommandContext` to parse `CommandOption`s and `CommandArgument`s from.
+    public func run(_ command: AnyCommand, with context: CommandContext) throws {
+        // make copy of context
+        var context = context
+
+        // parse global signature
+        let signature = try GlobalSignature(from: &context.input)
+
+        // check -n and -y flags.
+        if signature.no {
+            self.confirmOverride = false
+        } else if signature.yes {
+            self.confirmOverride = true
+        }
+
+        if signature.help {
+            try command.outputHelp(using: &context)
+        } else if signature.autocomplete {
+            try command.outputAutoComplete(using: &context)
+        } else {
+          return try command.run(using: &context)
+        }
+    }
+    
+    /// Runs an `AnyCommand` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
+    ///
+    ///     try console.run(group, input: commandInput)
+    ///
+    /// The `CommandInput` will be mutated, removing any used `CommandOption`s and `CommandArgument`s.
+    /// If any excess input is left over after checking the command's signature, an error will be thrown.
+    ///
+    /// - parameters:
+    ///     - command: `CommandGroup` or `Command` to run.
+    ///     - input: `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
+    public func run(_ command: AnyAsyncCommand, input: CommandInput) async throws {
         // create new context
         try await self.run(command, with: CommandContext(console: self, input: input))
     }
@@ -22,7 +67,7 @@ extension Console {
     /// - parameters:
     ///     - runnable: `CommandGroup` or `Command` to run.
     ///     - input: `CommandContext` to parse `CommandOption`s and `CommandArgument`s from.
-    public func run(_ command: AnyCommand, with context: CommandContext) async throws {
+    public func run(_ command: AnyAsyncCommand, with context: CommandContext) async throws {
         // make copy of context
         var context = context
 
