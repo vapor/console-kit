@@ -19,6 +19,9 @@ let package = Package(
         .testTarget(name: "ConsoleKitTests", dependencies: [
             .target(name: "ConsoleKit"),
         ]),
+        .testTarget(name: "AsyncConsoleKitTests", dependencies: [
+            .target(name: "ConsoleKit"),
+        ]),
         .target(name: "ConsoleKitExample", dependencies: [
             .target(name: "ConsoleKit"),
         ]),
