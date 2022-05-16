@@ -1,4 +1,5 @@
 /// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `AsyncCommands`.
+#if swift(>=5.5)
 public struct AsyncCommands {
     /// Top-level available commands, stored by unique name.
     public var commands: [String: AnyAsyncCommand]
@@ -89,3 +90,4 @@ private struct _AsyncGroup: AsyncCommandGroup {
     var defaultCommand: AnyAsyncCommand?
     let help: String
 }
+#endif

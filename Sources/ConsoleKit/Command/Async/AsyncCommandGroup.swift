@@ -13,6 +13,7 @@
 ///     try console.run(group, with: context)
 ///
 /// You can create your own `AsyncCommandGroup` if you want to support custom `CommandOptions`.
+#if swift(>=5.5)
 public protocol AsyncCommandGroup: AnyAsyncCommand {
     var commands: [String: AnyAsyncCommand] { get }
     var defaultCommand: AnyAsyncCommand? { get }
@@ -94,3 +95,4 @@ extension AsyncCommandGroup {
         }
     }
 }
+#endif

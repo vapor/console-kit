@@ -2,6 +2,7 @@
 import XCTest
 
 class AsyncCommandErrorTests: XCTestCase {
+#if swift(>=5.5)
     func testMissingCommand() async throws {
         let console = TestConsole()
         let group = TestGroup()
@@ -155,4 +156,5 @@ class AsyncCommandErrorTests: XCTestCase {
             50
         )
     }
+#endif
 }

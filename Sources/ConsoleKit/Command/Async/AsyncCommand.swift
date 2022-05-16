@@ -78,6 +78,7 @@
 ///                     U  ||----w |
 ///                        ||     ||
 ///
+#if swift(>=5.5)
 public protocol AsyncCommand: AnyAsyncCommand {
     associatedtype Signature: CommandSignature
     func run(using context: CommandContext, signature: Signature) async throws
@@ -105,3 +106,4 @@ extension AsyncCommand {
         Signature.reference.outputHelp(help: self.help, using: &context)
     }
 }
+#endif

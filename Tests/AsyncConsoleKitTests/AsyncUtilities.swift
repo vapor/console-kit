@@ -1,6 +1,7 @@
 import ConsoleKit
 import XCTest
 
+#if swift(>=5.5)
 extension String: Error {}
 
 final class TestGroup: AsyncCommandGroup {
@@ -123,3 +124,4 @@ final class TestConsole: Console {
 
     var size: (width: Int, height: Int) { return (0, 0) }
 }
+#endif
