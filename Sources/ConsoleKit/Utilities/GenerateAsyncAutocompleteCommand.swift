@@ -1,5 +1,5 @@
 import Foundation
-
+#if swift(>=5.5)
 struct GenerateAsyncAutocompleteCommand: AsyncCommand {
     var help: String { "Generate shell completion scripts for the executable" }
 
@@ -88,3 +88,4 @@ struct GenerateAsyncAutocompleteCommand: AsyncCommand {
         return shell
     }
 }
+#endif
