@@ -86,6 +86,7 @@ extension CommandGroup {
     }
 }
 
+#if swift(>=5.5)
 extension AsyncCommandGroup {
 
     // See `AnyAsyncCommand`.
@@ -105,6 +106,7 @@ extension AsyncCommandGroup {
         return functions.joined(separator: "\n")
     }
 }
+#endif
 
 extension AnyCommand {
 
@@ -283,6 +285,7 @@ extension AnyCommand {
     }
 }
 
+#if swift(>=5.5)
 extension AnyAsyncCommand {
 
     /// Returns the contents of a bash completion file for `self` and, recursively,
@@ -459,6 +462,7 @@ extension AnyAsyncCommand {
         """
     }
 }
+#endif
 
 /// An action to be used in the shell completion script(s) to provide
 /// special shell completion behaviors for an `Option`'s argument or a
