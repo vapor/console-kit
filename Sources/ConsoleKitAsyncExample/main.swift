@@ -1,3 +1,4 @@
+#if swift(>=5.5)
 import ConsoleKit
 import Foundation
 
@@ -20,3 +21,4 @@ import Foundation
         }
     }
 }
+#endif

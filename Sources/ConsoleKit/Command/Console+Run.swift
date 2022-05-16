@@ -41,11 +41,12 @@ extension Console {
         } else if signature.autocomplete {
             try command.outputAutoComplete(using: &context)
         } else {
-          return try command.run(using: &context)
+            return try command.run(using: &context)
         }
     }
     
-    /// Runs an `AnyCommand` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandInput`.
+    #if swift(>=5.5)
+    /// Runs an `AnyAsyncCommand` (`AsyncCommandGroup` or `AsyncCommand`) of commands on this `Console` using the supplied `CommandInput`.
     ///
     ///     try console.run(group, input: commandInput)
     ///
@@ -53,19 +54,21 @@ extension Console {
     /// If any excess input is left over after checking the command's signature, an error will be thrown.
     ///
     /// - parameters:
-    ///     - command: `CommandGroup` or `Command` to run.
+    ///     - command: `AsyncCommandGroup` or `AsyncCommand` to run.
     ///     - input: `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
     public func run(_ command: AnyAsyncCommand, input: CommandInput) async throws {
         // create new context
         try await self.run(command, with: CommandContext(console: self, input: input))
     }
+    #endif
 
-    /// Runs an `AnyCommand` (`CommandGroup` or `Command`) of commands on this `Console` using the supplied `CommandContext`.
+    #if swift(>=5.5)
+    /// Runs an `AnyAsyncCommand` (`AsyncCommandGroup` or `AsyncCommand`) of commands on this `Console` using the supplied `CommandContext`.
     ///
     ///     try console.run(group, with: context)
     ///
     /// - parameters:
-    ///     - runnable: `CommandGroup` or `Command` to run.
+    ///     - runnable: `AsyncCommandGroup` or `AsyncCommand` to run.
     ///     - input: `CommandContext` to parse `CommandOption`s and `CommandArgument`s from.
     public func run(_ command: AnyAsyncCommand, with context: CommandContext) async throws {
         // make copy of context
@@ -89,6 +92,7 @@ extension Console {
           return try await command.run(using: &context)
         }
     }
+    #endif
 }
 
 private struct GlobalSignature: CommandSignature {

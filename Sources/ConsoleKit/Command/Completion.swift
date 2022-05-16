@@ -55,7 +55,7 @@ extension Command {
 
 extension AsyncCommand {
 
-    // See `AnyCommand`.
+    // See `AnyAsyncCommand`.
     public func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String {
         switch shell {
         case .bash:
@@ -88,7 +88,7 @@ extension CommandGroup {
 
 extension AsyncCommandGroup {
 
-    // See `AnyCommand`.
+    // See `AnyAsyncCommand`.
     public func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String {
         var functions: [String] = []
         switch shell {

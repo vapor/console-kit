@@ -1,4 +1,4 @@
-/// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `Commands`.
+/// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `AsyncCommands`.
 public struct AsyncCommands {
     /// Top-level available commands, stored by unique name.
     public var commands: [String: AnyAsyncCommand]
@@ -6,7 +6,7 @@ public struct AsyncCommands {
     /// If set, this is the default top-level command that should run if no other commands are specified.
     public var defaultCommand: AnyAsyncCommand?
 
-    /// If `true`, an `autocomplete` subcommand will be added to any created `CommandGroup`.
+    /// If `true`, an `autocomplete` subcommand will be added to any created `AsyncCommandGroup`.
     ///
     /// The `autocomplete` command generates shell completion scripts that can be loaded from shell configuration
     /// files to provide autocompletion for the entire command hierarchy and its command-line arguments.
@@ -16,12 +16,12 @@ public struct AsyncCommands {
     ///
     public var enableAutocomplete: Bool
 
-    /// Creates a new `ConfiguredCommands` struct. This is usually done by calling `resolve(for:)` on `Commands`.
+    /// Creates a new `ConfiguredCommands` struct. This is usually done by calling `resolve(for:)` on `AsyncCommands`.
     ///
     /// - parameters:
     ///     - commands: Top-level available commands, stored by unique name.
     ///     - defaultCommand: If set, this is the default top-level command that should run if no other commands are specified.
-    ///     - enableAutocomplete: If `true`, an `autocomplete` subcommand will be added to any created `CommandGroup`.
+    ///     - enableAutocomplete: If `true`, an `autocomplete` subcommand will be added to any created `AsyncCommandGroup`.
     ///
     ///       The `autocomplete` command generates shell completion scripts that can be loaded from shell configuration
     ///       files to provide autocompletion for the entire command hierarchy and its command-line arguments.
@@ -39,13 +39,13 @@ public struct AsyncCommands {
         self.enableAutocomplete = enableAutocomplete
     }
     
-    /// Adds a `Command` instance to the config.
+    /// Adds an `AsyncCommand` instance to the config.
     ///
-    ///     var config = Commands()
+    ///     var config = AsyncCommands()
     ///     config.use(barCommand, as: "bar")
     ///
     /// - parameters:
-    ///     - command: Some `AnyCommand`. This type will be requested from the service container later.
+    ///     - command: Some `AnyAsyncCommand`. This type will be requested from the service container later.
     ///     - name: A unique name for running this command.
     ///     - isDefault: If `true`, this command will be set as the default command to run when none other are specified.
     ///                  Setting this overrides any previous default commands.
@@ -56,9 +56,9 @@ public struct AsyncCommands {
         }
     }
 
-    /// Creates a `CommandGroup` for this `Commands`.
+    /// Creates an `AsyncCommandGroup` for this `AsyncCommands`.
     ///
-    ///     var config = Commands()
+    ///     var config = AsyncCommands()
     ///     config.use(CowsayCommand(), as: "cowsay")
     ///     let group = config.group(help: "Some help for cosway group...")
     ///
@@ -66,7 +66,7 @@ public struct AsyncCommands {
     ///
     /// - parameters:
     ///     - help: Optional help messages to include.
-    /// - returns: A `CommandGroup` with commands and defaultCommand configured.
+    /// - returns: An `AsyncCommandGroup` with commands and defaultCommand configured.
     public func group(help: String = "") -> AsyncCommandGroup {
         var group = _AsyncGroup(
             commands: self.commands,

@@ -1,18 +1,18 @@
 /// A group of named commands that can be run through a `Console`.
 ///
-/// Usually you will use `Commands` to register commands and create a group.
+/// Usually you will use `AsyncCommands` to register commands and create a group.
 ///
 ///     let console: Console = ...
 ///     var input = CommandInput(arguments: CommandLine.arguments)
 ///     var context = CommandContext(console: console, input: input)
 ///
-///     var config = Commands()
+///     var config = AsyncCommands()
 ///     config.use(CowsayCommand(), as: "cowsay")
 ///
 ///     let group = config.group(help: "Some help for cosway group...")
 ///     try console.run(group, with: context)
 ///
-/// You can create your own `CommandGroup` if you want to support custom `CommandOptions`.
+/// You can create your own `AsyncCommandGroup` if you want to support custom `CommandOptions`.
 public protocol AsyncCommandGroup: AnyAsyncCommand {
     var commands: [String: AnyAsyncCommand] { get }
     var defaultCommand: AnyAsyncCommand? { get }

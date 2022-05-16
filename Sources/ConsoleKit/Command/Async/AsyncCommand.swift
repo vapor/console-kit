@@ -1,7 +1,7 @@
 /// A command that can be run through a `Console`.
 ///
-/// Both `Command` and `CommandGroup` conform to `AnyCommand` which provides the basic requirements
-/// all command-like types need. In addition to those types, a `Command` requires zero or more `CommandArgument`s.
+/// Both `AsyncCommand` and `AsyncCommandGroup` conform to `AnyAsyncCommand` which provides the basic requirements
+/// all command-like types need. In addition to those types, an `AsyncCommand` requires zero or more `CommandArgument`s.
 ///
 /// Below is a sample command that generates ASCII picture of a cow with a message.
 ///
@@ -42,7 +42,7 @@
 ///         }
 ///     }
 ///
-/// Meanwhile you can use the Command in an executable target like:
+/// Meanwhile you can use the `AsyncCommand` in an executable target like:
 ///
 ///     let console: Console = Terminal()
 ///     var input = CommandInput(arguments: CommandLine.arguments)
@@ -50,7 +50,7 @@
 ///
 ///     try await console.run(CoswayCommand(), with: context)
 ///
-/// Use `Commands` to register commands and create a `CommandGroup`.
+/// Use `AsyncCommands` to register commands and create a `AsyncCommandGroup`.
 ///
 /// - note: You can also use `console.run(...)` to run an `AnyAsyncCommand` manually.
 ///
