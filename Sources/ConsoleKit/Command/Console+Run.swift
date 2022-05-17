@@ -48,7 +48,7 @@ extension Console {
     #if swift(>=5.5)
     /// Runs an `AnyAsyncCommand` (`AsyncCommandGroup` or `AsyncCommand`) of commands on this `Console` using the supplied `CommandInput`.
     ///
-    ///     try console.run(group, input: commandInput)
+    ///     try await console.run(group, input: commandInput)
     ///
     /// The `CommandInput` will be mutated, removing any used `CommandOption`s and `CommandArgument`s.
     /// If any excess input is left over after checking the command's signature, an error will be thrown.
