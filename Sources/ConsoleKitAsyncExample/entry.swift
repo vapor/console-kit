@@ -1,8 +1,9 @@
-#if swift(>=5.5)
 import ConsoleKit
 import Foundation
 
-@main struct Main {
+@main
+struct Main {
+    #if swift(>=5.5)
     static func main() async throws {
         let console: Console = Terminal()
         let input = CommandInput(arguments: CommandLine.arguments)
@@ -20,5 +21,5 @@ import Foundation
             exit(1)
         }
     }
+    #endif
 }
-#endif
