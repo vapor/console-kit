@@ -1,5 +1,6 @@
 import ConsoleKit
 
+#if swift(>=5.5)
 final class DemoCommand: AsyncCommand {
     struct Signature: CommandSignature {
         @Flag(name: "color", short: "c", help: "Enables colorized output")
@@ -58,3 +59,4 @@ final class DemoCommand: AsyncCommand {
         context.console.output("Your secure input was: \(input)")
     }
 }
+#endif
