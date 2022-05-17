@@ -63,7 +63,7 @@ public struct AsyncCommands {
     ///     config.use(CowsayCommand(), as: "cowsay")
     ///     let group = config.group(help: "Some help for cosway group...")
     ///
-    ///     try console.run(group, with: context)
+    ///     try await console.run(group, with: context)
     ///
     /// - parameters:
     ///     - help: Optional help messages to include.
