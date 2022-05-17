@@ -44,14 +44,14 @@ jobs:
       - run: swift test --enable-test-discovery --sanitize=thread
   integration-linux:
     runs-on: ubuntu-latest
-    container: swift:5.3-focal
+    container: swift:5.6-focal
     steps:
       - uses: actions/checkout@v2
         with: { path: console-kit }
       - uses: actions/checkout@v2
         with: { repository: 'vapor/vapor', path: vapor }
       - run: swift package --package-path vapor edit console-kit --path console-kit
-      - run: swift test --package-path vapor --enable-test-discovery --sanitize=thread
+      - run: swift test --package-path vapor --enable-test-discovery
   integration-macos:
     runs-on: macos-latest
     steps:
@@ -62,4 +62,4 @@ jobs:
       - uses: actions/checkout@v2
         with: { repository: 'vapor/vapor', path: vapor }
       - run: swift package --package-path vapor edit console-kit --path console-kit
-      - run: swift test --package-path vapor --enable-test-discovery --sanitize=thread
+      - run: swift test --package-path vapor --enable-test-discovery
