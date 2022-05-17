@@ -26,6 +26,7 @@ extension AnyCommand {
     }
 }
 
+#if swift(>=5.5)
 extension AnyAsyncCommand {
 
     /// Returns the complete contents of a completion script for the given `shell`
@@ -39,6 +40,7 @@ extension AnyAsyncCommand {
         }
     }
 }
+#endif
 
 extension Command {
 
@@ -53,6 +55,7 @@ extension Command {
     }
 }
 
+#if swift(>=5.5)
 extension AsyncCommand {
 
     // See `AnyAsyncCommand`.
@@ -65,6 +68,7 @@ extension AsyncCommand {
         }
     }
 }
+#endif
 
 extension CommandGroup {
 
