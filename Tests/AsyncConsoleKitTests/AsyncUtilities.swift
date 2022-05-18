@@ -18,7 +18,7 @@ final class TestGroup: AsyncCommandGroup {
 
     let help: String = "This is a test grouping!"
 
-    func run(using context: CommandContext, signature: Signature) throws {
+    func run(using context: CommandContext, signature: Signature) async throws {
         if signature.version {
             context.console.print("v2.0")
         }
@@ -38,7 +38,7 @@ final class SubGroup: AsyncCommandGroup {
 
     let help: String = "This is a test sub grouping!"
 
-    func run(using context: CommandContext, signature: Signature) throws {
+    func run(using context: CommandContext, signature: Signature) async throws {
         if signature.version {
             context.console.print("v2.0")
         }
@@ -70,7 +70,7 @@ final class TestCommand: AsyncCommand {
 
     let help: String = "This is a test command"
 
-    func run(using context: CommandContext, signature: Signature) throws {
+    func run(using context: CommandContext, signature: Signature) async throws {
         XCTAssertEqual(signature.$foo.name, "foo")
         XCTAssertEqual(signature.$bar.name, "bar")
         XCTAssertEqual(signature.$baz.name, "baz")
@@ -90,7 +90,7 @@ final class StrictCommand: AsyncCommand {
     }
     var help: String = "I error if you pass in bad values"
 
-    func run(using context: CommandContext, signature: Signature) throws {
+    func run(using context: CommandContext, signature: Signature) async throws {
         print("Done!")
     }
 }

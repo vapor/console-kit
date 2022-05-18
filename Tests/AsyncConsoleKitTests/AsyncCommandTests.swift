@@ -139,7 +139,7 @@ class AsyncCommandTests: XCTestCase {
             var help: String = ""
             var assertion: (Signature) -> ()
 
-            func run(using context: CommandContext, signature: OptionInitialized.Signature) throws {
+            func run(using context: CommandContext, signature: OptionInitialized.Signature) async throws {
                 assertion(signature)
             }
         }

@@ -60,9 +60,7 @@ extension Console {
         // create new context
         try await self.run(command, with: CommandContext(console: self, input: input))
     }
-    #endif
 
-    #if swift(>=5.5)
     /// Runs an `AnyAsyncCommand` (`AsyncCommandGroup` or `AsyncCommand`) of commands on this `Console` using the supplied `CommandContext`.
     ///
     ///     try console.run(group, with: context)
