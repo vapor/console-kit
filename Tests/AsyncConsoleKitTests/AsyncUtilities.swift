@@ -1,7 +1,7 @@
 import ConsoleKit
 import XCTest
 
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
 extension String: Error {}
 
 final class TestGroup: AsyncCommandGroup {

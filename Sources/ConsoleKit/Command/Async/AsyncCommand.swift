@@ -78,7 +78,7 @@
 ///                     U  ||----w |
 ///                        ||     ||
 ///
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
 public protocol AsyncCommand: AnyAsyncCommand {
     associatedtype Signature: CommandSignature
     func run(using context: CommandContext, signature: Signature) async throws

@@ -1,6 +1,6 @@
 import ConsoleKit
 import Foundation
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
 @main
 struct AsyncExample {
     static func main() async throws {

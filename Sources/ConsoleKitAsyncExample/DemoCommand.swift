@@ -1,6 +1,6 @@
 import ConsoleKit
 
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
 final class DemoCommand: AsyncCommand {
     struct Signature: CommandSignature {
         @Flag(name: "color", short: "c", help: "Enables colorized output")

@@ -1,5 +1,5 @@
 import Foundation
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
 struct GenerateAsyncAutocompleteCommand: AsyncCommand {
     var help: String { "Generate shell completion scripts for the executable" }
 

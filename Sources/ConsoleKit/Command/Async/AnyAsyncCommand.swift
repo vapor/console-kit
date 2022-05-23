@@ -1,4 +1,4 @@
-#if swift(>=5.5)
+#if swift(>=5.5)  && canImport(_Concurrency)
 /// A type-erased `Command`.
 public protocol AnyAsyncCommand {
     /// Text that will be displayed when `--help` is passed.
@@ -12,9 +12,7 @@ public protocol AnyAsyncCommand {
     /// Renders the shell completion script functions for the command and any descendent subcommands.
     func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String
 }
-#endif
 
-#if swift(>=5.5)
 extension AnyAsyncCommand {
     public func outputAutoComplete(using context: inout CommandContext) {
         // do nothing
