@@ -2,7 +2,7 @@
 import XCTest
 
 class AsyncCommandTests: XCTestCase {
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
     func testBaseHelp() async throws {
         let console = TestConsole()
         let group = TestGroup()

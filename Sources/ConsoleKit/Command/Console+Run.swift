@@ -45,7 +45,7 @@ extension Console {
         }
     }
     
-    #if swift(>=5.5)
+    #if swift(>=5.5) && canImport(_Concurrency)
     /// Runs an `AnyAsyncCommand` (`AsyncCommandGroup` or `AsyncCommand`) of commands on this `Console` using the supplied `CommandInput`.
     ///
     ///     try await console.run(group, input: commandInput)

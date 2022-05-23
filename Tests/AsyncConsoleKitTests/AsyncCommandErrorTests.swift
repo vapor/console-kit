@@ -2,7 +2,7 @@
 import XCTest
 
 class AsyncCommandErrorTests: XCTestCase {
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
     func testMissingCommand() async throws {
         let console = TestConsole()
         let group = TestGroup()

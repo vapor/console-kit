@@ -1,5 +1,5 @@
 /// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `AsyncCommands`.
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
 public struct AsyncCommands {
     /// Top-level available commands, stored by unique name.
     public var commands: [String: AnyAsyncCommand]

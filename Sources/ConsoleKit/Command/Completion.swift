@@ -26,7 +26,7 @@ extension AnyCommand {
     }
 }
 
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
 extension AnyAsyncCommand {
 
     /// Returns the complete contents of a completion script for the given `shell`
@@ -55,7 +55,7 @@ extension Command {
     }
 }
 
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
 extension AsyncCommand {
 
     // See `AnyAsyncCommand`.
@@ -90,7 +90,7 @@ extension CommandGroup {
     }
 }
 
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
 extension AsyncCommandGroup {
 
     // See `AnyAsyncCommand`.
@@ -289,7 +289,7 @@ extension AnyCommand {
     }
 }
 
-#if swift(>=5.5)
+#if swift(>=5.5) && canImport(_Concurrency)
 extension AnyAsyncCommand {
 
     /// Returns the contents of a bash completion file for `self` and, recursively,
