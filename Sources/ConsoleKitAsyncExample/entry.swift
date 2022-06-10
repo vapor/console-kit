@@ -2,6 +2,7 @@ import ConsoleKit
 import Foundation
 #if swift(>=5.5) && canImport(_Concurrency)
 @main
+@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 struct AsyncExample {
     static func main() async throws {
         let console: Console = Terminal()

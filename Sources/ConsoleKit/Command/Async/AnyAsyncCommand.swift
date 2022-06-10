@@ -1,5 +1,6 @@
 #if swift(>=5.5)  && canImport(_Concurrency)
 /// A type-erased `Command`.
+@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 public protocol AnyAsyncCommand {
     /// Text that will be displayed when `--help` is passed.
     var help: String { get }
@@ -13,6 +14,7 @@ public protocol AnyAsyncCommand {
     func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String
 }
 
+@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 extension AnyAsyncCommand {
     public func outputAutoComplete(using context: inout CommandContext) {
         // do nothing

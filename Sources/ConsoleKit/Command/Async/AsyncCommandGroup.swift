@@ -14,17 +14,20 @@
 ///
 /// You can create your own `AsyncCommandGroup` if you want to support custom `CommandOptions`.
 #if swift(>=5.5) && canImport(_Concurrency)
+@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 public protocol AsyncCommandGroup: AnyAsyncCommand {
     var commands: [String: AnyAsyncCommand] { get }
     var defaultCommand: AnyAsyncCommand? { get }
 }
 
+@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 extension AsyncCommandGroup {
     public var defaultCommand: AnyAsyncCommand? {
         return nil
     }
 }
 
+@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 extension AsyncCommandGroup {
     public func run(using context: inout CommandContext) async throws {
         if let command = try self.commmand(using: &context) {
