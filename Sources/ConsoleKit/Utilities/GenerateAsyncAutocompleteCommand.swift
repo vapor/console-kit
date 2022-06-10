@@ -1,5 +1,6 @@
 import Foundation
 #if swift(>=5.5) && canImport(_Concurrency)
+@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 struct GenerateAsyncAutocompleteCommand: AsyncCommand {
     var help: String { "Generate shell completion scripts for the executable" }
 

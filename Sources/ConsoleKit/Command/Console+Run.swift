@@ -56,6 +56,7 @@ extension Console {
     /// - parameters:
     ///     - command: `AsyncCommandGroup` or `AsyncCommand` to run.
     ///     - input: `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
+    @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
     public func run(_ command: AnyAsyncCommand, input: CommandInput) async throws {
         // create new context
         try await self.run(command, with: CommandContext(console: self, input: input))
@@ -68,6 +69,7 @@ extension Console {
     /// - parameters:
     ///     - runnable: `AsyncCommandGroup` or `AsyncCommand` to run.
     ///     - input: `CommandContext` to parse `CommandOption`s and `CommandArgument`s from.
+    @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
     public func run(_ command: AnyAsyncCommand, with context: CommandContext) async throws {
         // make copy of context
         var context = context
