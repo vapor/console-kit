@@ -73,7 +73,7 @@ final class TestCommand: AsyncCommand {
 
     let help: String = "This is a test command"
 
-    func run(using context: CommandContext, signature: Signature) async throws {
+    func run(usingAsync context: CommandContext, signature: Signature) async throws {
         XCTAssertEqual(signature.$foo.name, "foo")
         XCTAssertEqual(signature.$bar.name, "bar")
         XCTAssertEqual(signature.$baz.name, "baz")
@@ -94,7 +94,7 @@ final class StrictCommand: AsyncCommand {
     }
     var help: String = "I error if you pass in bad values"
 
-    func run(using context: CommandContext, signature: Signature) async throws {
+    func run(usingAsync context: CommandContext, signature: Signature) async throws {
         print("Done!")
     }
 }

@@ -121,7 +121,7 @@ class AsyncCommandErrorTests: XCTestCase {
                 init() { }
             }
             let help: String = "This is a test command"
-            func run(using context: CommandContext, signature: Signature) throws {}
+            func run(usingAsync context: CommandContext, signature: Signature) throws {}
         }
         
         let console = TestConsole()

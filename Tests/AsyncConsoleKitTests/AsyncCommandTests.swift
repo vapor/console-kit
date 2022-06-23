@@ -8,7 +8,7 @@ class AsyncCommandTests: XCTestCase {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "--help"])
-        try await console.run(group, input: input)
+        try console.run(group, input: input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Usage: vapor <command>
 
@@ -27,7 +27,7 @@ class AsyncCommandTests: XCTestCase {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "sub", "test", "--help"])
-        try await console.run(group, input: input)
+        try console.run(group, input: input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Usage: vapor sub test <foo> [--bar,-b] [--baz,-B]\u{20}
 
@@ -52,7 +52,7 @@ class AsyncCommandTests: XCTestCase {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "--bar", "baz"])
-        try await console.run(group, input: input)
+        try console.run(group, input: input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Foo: foovalue Bar: baz
 
@@ -63,7 +63,7 @@ class AsyncCommandTests: XCTestCase {
         let console = TestConsole()
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "-b", "baz"])
-        try await console.run(group, input: input)
+        try console.run(group, input: input)
         XCTAssertEqual(console.testOutputQueue.reversed().joined(separator: ""), """
         Foo: foovalue Bar: baz
 
@@ -75,7 +75,7 @@ class AsyncCommandTests: XCTestCase {
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "sub", "test", "foovalue", "--bar=baz"])
         do {
-            try await console.run(group, input: input)
+            try console.run(group, input: input)
             XCTFail("Should have failed")
         } catch {
             // Pass
@@ -107,11 +107,11 @@ class AsyncCommandTests: XCTestCase {
         try console.run(command, input: input)
 
         input = CommandInput(arguments: ["vapor", "e", "true"])
-        let result: Void? = try? await console.run(command, input: input)
+        let result: Void? = try? console.run(command, input: input)
         XCTAssertNil(result)
         
         input = CommandInput(arguments: ["vapor", "e", "nope"])
-        let otherResult: Void? = try? await console.run(command, input: input)
+        let otherResult: Void? = try? console.run(command, input: input)
         XCTAssertNil(otherResult)
     }
 
@@ -140,7 +140,7 @@ class AsyncCommandTests: XCTestCase {
             var help: String = ""
             var assertion: (Signature) -> ()
 
-            func run(using context: CommandContext, signature: OptionInitialized.Signature) async throws {
+            func run(usingAsync context: CommandContext, signature: OptionInitialized.Signature) async throws {
                 assertion(signature)
             }
         }

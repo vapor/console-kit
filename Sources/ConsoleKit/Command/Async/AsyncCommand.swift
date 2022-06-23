@@ -83,7 +83,7 @@ import NIO
 
 @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 public protocol AsyncCommand: Command {
-    func run(using context: CommandContext, signature: Signature) async throws
+    func run(usingAsync context: CommandContext, signature: Signature) async throws
 }
 
 @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
@@ -91,7 +91,7 @@ extension AsyncCommand {
     public func run(using context: CommandContext, signature: Signature) throws {
         let promise = context.eventLoopGroup.next().makePromise(of: Void.self)
         promise.completeWithTask {
-            try await run(using: context, signature: signature)
+            try await run(usingAsync: context, signature: signature)
         }
         try promise.futureResult.wait()
     }
