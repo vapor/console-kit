@@ -9,7 +9,7 @@ class AsyncCommandErrorTests: XCTestCase {
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor"])
         do {
-            try await console.run(group, input: input)
+            try console.run(group, input: input)
         } catch {
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
@@ -28,7 +28,7 @@ class AsyncCommandErrorTests: XCTestCase {
         let input = CommandInput(arguments: ["vapor", "sup"])
         
         do {
-            try await console.run(group, input: input)
+            try console.run(group, input: input)
         } catch {
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
@@ -53,7 +53,7 @@ class AsyncCommandErrorTests: XCTestCase {
         let group = TestGroup()
         let input = CommandInput(arguments: ["vapor", "desoxyribonucleic-acid"])
         do {
-            try await console.run(group, input: input)
+            try console.run(group, input: input)
         } catch {
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
@@ -73,12 +73,12 @@ class AsyncCommandErrorTests: XCTestCase {
         let command = StrictCommand()
 
         var input = CommandInput(arguments: ["vapor", "3", "true"])
-        try await console.run(command, input: input)
+        try console.run(command, input: input)
 
         input = CommandInput(arguments: ["vapor"])
         
         do {
-            try await console.run(command, input: input)
+            try console.run(command, input: input)
         } catch {
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
@@ -96,11 +96,11 @@ class AsyncCommandErrorTests: XCTestCase {
         let command = StrictCommand()
 
         var input = CommandInput(arguments: ["vapor", "3", "true"])
-        try await console.run(command, input: input)
+        try console.run(command, input: input)
 
         input = CommandInput(arguments: ["vapor", "e", "true"])
         do {
-            try await console.run(command, input: input)
+            try console.run(command, input: input)
         } catch {
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")
@@ -128,11 +128,11 @@ class AsyncCommandErrorTests: XCTestCase {
         let command = IntOptionCommand()
         
         var input = CommandInput(arguments: ["vapor", "--bar", "3"])
-        try await console.run(command, input: input)
+        try console.run(command, input: input)
         
         input = CommandInput(arguments: ["vapor", "--bar", "a"])
         do {
-            try await console.run(command, input: input)
+            try console.run(command, input: input)
         } catch {
             guard let commandError = error as? CommandError else {
                 return XCTFail("Expected `CommandError` error, got \(type(of: error)).")

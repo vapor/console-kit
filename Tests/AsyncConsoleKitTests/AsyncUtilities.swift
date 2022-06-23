@@ -5,14 +5,14 @@ import XCTest
 extension String: Error {}
 
 @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
-final class TestGroup: AsyncCommandGroup {
+final class TestGroup: CommandGroup {
     struct Signature: CommandSignature {
         @Flag(name: "version", help: "Prints the version")
         var version: Bool
         init() { }
     }
 
-    let commands: [String : AnyAsyncCommand] = [
+    let commands: [String : AnyCommand] = [
         "test": TestCommand(),
         "sub": SubGroup()
     ]
@@ -27,14 +27,14 @@ final class TestGroup: AsyncCommandGroup {
 }
 
 @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
-final class SubGroup: AsyncCommandGroup {
+final class SubGroup: CommandGroup {
     struct Signature: CommandSignature {
         @Flag(name: "version", help: "Prints the version")
         var version: Bool
         init() { }
     }
 
-    let commands: [String : AnyAsyncCommand] = [
+    let commands: [String : AnyCommand] = [
         "test": TestCommand()
     ]
 

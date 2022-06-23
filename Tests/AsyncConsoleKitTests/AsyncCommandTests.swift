@@ -104,7 +104,7 @@ class AsyncCommandTests: XCTestCase {
         let command = StrictCommand()
 
         var input = CommandInput(arguments: ["vapor", "3", "true"])
-        try await console.run(command, input: input)
+        try console.run(command, input: input)
 
         input = CommandInput(arguments: ["vapor", "e", "true"])
         let result: Void? = try? await console.run(command, input: input)
@@ -116,7 +116,7 @@ class AsyncCommandTests: XCTestCase {
     }
 
     func testDynamicAccess() async throws {
-        struct DynamicCommand: AnyAsyncCommand {
+        struct DynamicCommand: AnyCommand {
             var help: String = ""
 
             func run(using context: inout CommandContext) throws {
@@ -127,7 +127,7 @@ class AsyncCommandTests: XCTestCase {
         let console = TestConsole()
         let command = DynamicCommand()
         let input = CommandInput(arguments: ["vapor", "true", "--count", "42"])
-        try await console.run(command, input: input)
+        try console.run(command, input: input)
     }
 
     func testOptionUsed() async throws {
@@ -147,15 +147,15 @@ class AsyncCommandTests: XCTestCase {
 
         let console = TestConsole()
 
-        try await console.run(OptionInitialized(assertion: {
+        try console.run(OptionInitialized(assertion: {
             XCTAssertEqual($0.option, "true")
             XCTAssertNil($0.str)
         }), input: CommandInput(arguments: ["vapor", "--option", "true"]))
-        try await console.run(OptionInitialized(assertion: {
+        try console.run(OptionInitialized(assertion: {
             XCTAssertNil($0.option)
             XCTAssertEqual($0.str, "HelloWorld")
         }), input: CommandInput(arguments: ["vapor", "--str", "HelloWorld"]))
-        try await console.run(OptionInitialized(assertion: {
+        try console.run(OptionInitialized(assertion: {
             XCTAssertEqual($0.option, "--str")
             XCTAssertNil($0.str)
         }), input: CommandInput(arguments: ["vapor", "--option", "\\--str"]))

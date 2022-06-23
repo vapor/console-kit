@@ -79,33 +79,21 @@
 ///                        ||     ||
 ///
 #if swift(>=5.5) && canImport(_Concurrency)
+import NIO
+
 @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
-public protocol AsyncCommand: AnyAsyncCommand {
-    associatedtype Signature: CommandSignature
+public protocol AsyncCommand: Command {
     func run(using context: CommandContext, signature: Signature) async throws
 }
 
 @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 extension AsyncCommand {
-    public func run(using context: inout CommandContext) async throws {
-        let signature = try Signature(from: &context.input)
-        guard context.input.arguments.isEmpty else {
-            let input = context.input.arguments.joined(separator: " ")
-            throw ConsoleError.init(identifier: "unknownInput", reason: "Input not recognized: \(input)")
+    public func run(using context: CommandContext, signature: Signature) throws {
+        let promise = context.eventLoopGroup.next().makePromise(of: Void.self)
+        promise.completeWithTask {
+            try await run(using: context, signature: signature)
         }
-      try await self.run(using: context, signature: signature)
-    }
-
-    public func outputAutoComplete(using context: inout CommandContext) {
-        var autocomplete: [String] = []
-        autocomplete += Signature.reference.arguments.map { $0.name }
-        autocomplete += Signature.reference.options.map { "--" + $0.name }
-        context.console.output(autocomplete.joined(separator: " "), style: .plain)
-    }
-
-    public func outputHelp(using context: inout CommandContext) {
-        context.console.output("Usage: ".consoleText(.info) + context.input.executable.consoleText() + " ", newLine: false)
-        Signature.reference.outputHelp(help: self.help, using: &context)
+        try promise.futureResult.wait()
     }
 }
 #endif

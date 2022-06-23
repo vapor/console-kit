@@ -12,10 +12,13 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
+        // Event-driven network application framework for high performance protocol servers & clients, non-blocking.
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.33.0"),
     ],
     targets: [
         .target(name: "ConsoleKit", dependencies: [
             .product(name: "Logging", package: "swift-log"),
+            .product(name: "NIO", package: "swift-nio"),
         ]),
         .testTarget(name: "ConsoleKitTests", dependencies: [
             .target(name: "ConsoleKit"),
