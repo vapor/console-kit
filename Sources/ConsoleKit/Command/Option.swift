@@ -20,7 +20,7 @@ public final class Option<Value>: AnyOption
     /// See `CompletionAction` for more information and available actions.
     public let completion: CompletionAction
 
-    /// Wheather the option was passed into the command's signature or not.
+    /// Whether the option was passed into the command's signature or not.
     ///
     ///     app command --option "Hello World"
     ///     // signature.option.isPresent == true
