@@ -26,6 +26,23 @@ extension AnyCommand {
     }
 }
 
+#if swift(>=5.5) && canImport(_Concurrency)
+@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
+extension AnyAsyncCommand {
+
+    /// Returns the complete contents of a completion script for the given `shell`
+    /// for `self` and, recursively, all of its descendent subcommands.
+    public func renderCompletionScript(using context: CommandContext, shell: Shell) -> String {
+        switch shell {
+        case .bash:
+            return self.renderBashCompletionScript(using: context)
+        case .zsh:
+            return self.renderZshCompletionScript(using: context)
+        }
+    }
+}
+#endif
+
 extension Command {
 
     // See `AnyCommand`.
@@ -38,6 +55,22 @@ extension Command {
         }
     }
 }
+
+#if swift(>=5.5) && canImport(_Concurrency)
+@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
+extension AsyncCommand {
+
+    // See `AnyAsyncCommand`.
+    public func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String {
+        switch shell {
+        case .bash:
+            return self.renderBashCompletionFunction(using: context, signatureValues: Signature.reference.values)
+        case .zsh:
+            return self.renderZshCompletionFunction(using: context, signatureValues: Signature.reference.values)
+        }
+    }
+}
+#endif
 
 extension CommandGroup {
 
@@ -58,6 +91,29 @@ extension CommandGroup {
         return functions.joined(separator: "\n")
     }
 }
+
+#if swift(>=5.5) && canImport(_Concurrency)
+@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
+extension AsyncCommandGroup {
+
+    // See `AnyAsyncCommand`.
+    public func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String {
+        var functions: [String] = []
+        switch shell {
+        case .bash:
+            functions.append(self.renderBashCompletionFunction(using: context, subcommands: self.commands))
+        case .zsh:
+            functions.append(self.renderZshCompletionFunction(using: context, subcommands: self.commands))
+        }
+        for (name, command) in self.commands.sorted(by: { $0.key < $1.key }) {
+            var context = context
+            context.input.executablePath.append(name)
+            functions.append(command.renderCompletionFunctions(using: context, shell: shell))
+        }
+        return functions.joined(separator: "\n")
+    }
+}
+#endif
 
 extension AnyCommand {
 
@@ -235,6 +291,186 @@ extension AnyCommand {
         """
     }
 }
+
+#if swift(>=5.5) && canImport(_Concurrency)
+@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
+extension AnyAsyncCommand {
+
+    /// Returns the contents of a bash completion file for `self` and, recursively,
+    /// all of its descendent subcommands.
+    fileprivate func renderBashCompletionScript(using context: CommandContext) -> String {
+        return """
+        \(self.renderCompletionFunctions(using: context, shell: .bash))
+        complete -F _\(context.input.executableName) \(context.input.executableName)
+
+        """
+    }
+
+    /// Returns the bash completion function for `self`.
+    fileprivate func renderBashCompletionFunction(
+        using context: CommandContext,
+        signatureValues: [AnySignatureValue] = [],
+        subcommands: [String: AnyAsyncCommand] = [:]
+    ) -> String {
+        let commandDepth = context.input.executablePath.count
+        let isRootCommand = commandDepth == 1
+        let arguments = ([Flag.help] + signatureValues.sorted(by: { $0.name < $1.name })).map { $0.completionInfo }
+        let subcommands = subcommands.sorted(by: { $0.key < $1.key })
+        let wordList = arguments.flatMap { $0.labels?.values ?? [] } + subcommands.map { $0.key }
+        return """
+        function \(context.input.completionFunctionName())() { \(
+            isRootCommand ? """
+
+            local cur prev
+            cur="${COMP_WORDS[COMP_CWORD]}"
+            prev="${COMP_WORDS[COMP_CWORD-1]}"
+            COMPREPLY=()
+        """ : ""
+        )\( !arguments.isEmpty ? """
+
+            if [[ "$COMP_CWORD" -ne \(commandDepth) ]]; then
+                case $prev in
+        \( arguments.compactMap { argument in
+            guard let label = argument.labels?.values.joined(separator: "|") else { return nil }
+            if let action = argument.action {
+                if let expression = action[.bash] {
+                    return """
+                    \(label))
+                        \(expression)
+                        return
+                        ;;
+        """
+                } else {
+                    return """
+                    \(label)) return ;;
+        """
+                }
+            } else {
+                return """
+                    \(label)) ;;
+        """
+            }
+        }.joined(separator: "\n"))
+                esac
+            fi
+        """ : ""
+        )\( !subcommands.isEmpty ? """
+
+            if [[ "$COMP_CWORD" -ne \(commandDepth) ]]; then
+                case ${COMP_WORDS[\(commandDepth)]} in
+        \( subcommands.map { (name, _) in
+            return """
+                    \(name))
+                        \(context.input.completionFunctionName(forSubcommand: name))
+                        return
+                        ;;
+        """
+        }.joined(separator: "\n"))
+                esac
+            fi
+        """ : ""
+        )\( arguments.isEmpty && subcommands.isEmpty ? """
+
+            :
+        """ : ""
+        )\( !wordList.isEmpty ? """
+
+            COMPREPLY=( $(compgen -W "\(wordList.joined(separator: " "))" -- $cur) )
+        """: ""
+        )\( arguments
+            .filter { $0.labels == nil }
+            .compactMap { $0.action?[.bash] }
+            .map { "\n    \($0)" }
+            .joined()
+        )
+        }
+
+        """
+    }
+
+    /// Returns the contents of a zsh completion file for `self` and, recursively,
+    /// all of its descendent subcommands.
+    fileprivate func renderZshCompletionScript(using context: CommandContext) -> String {
+        return """
+        #compdef \(context.input.executableName)
+
+        local context state state_descr line
+        typeset -A opt_args
+
+        \(self.renderCompletionFunctions(using: context, shell: .zsh))
+        _\(context.input.executableName)
+
+        """
+    }
+
+    /// Returns the zsh completion function for `self`.
+    ///
+    /// - Parameters:
+    ///   - context: The command context to use to generate the function name.
+    ///   - signatureValues: The signature values to use to generate the argument completions.
+    ///   - subcommands: The subcommands to use to generate the subcommand completions.
+    ///
+    fileprivate func renderZshCompletionFunction(
+        using context: CommandContext,
+        signatureValues: [AnySignatureValue] = [],
+        subcommands: [String: AnyAsyncCommand] = [:]
+    ) -> String {
+        let arguments = ([Flag.help] + signatureValues.sorted(by: { $0.name < $1.name })).map { $0.completionInfo }
+        let subcommands = subcommands.sorted(by: { $0.key < $1.key })
+        return """
+        \(context.input.completionFunctionName())() {
+            arguments=(
+        \(arguments.map { argument in
+            let help = argument.help.completionEscaped
+            if let long = argument.labels?.long {
+                let labels = (argument.labels?.short).map { "(\(long) \($0))\"{\(long),\($0)}\"" } ?? long
+                let action = argument.action.map { ": :\($0[.zsh] ?? " ")" } ?? ""
+                return """
+                "\(labels)[\(help)]\(action)"
+        """
+            } else {
+                return """
+                ":\(help):\(argument.action?[.zsh] ?? " ")"
+        """
+            }
+        }.joined(separator: "\n"))\(!subcommands.isEmpty ? """
+
+                '(-): :->command'
+                '(-)*:: :->arg'
+        """ : "")
+            )
+            _arguments -C $arguments && return\(!subcommands.isEmpty ? """
+
+            case $state in
+                command)
+                    local subcommands
+                    subcommands=(
+        \(subcommands.map { (name, command) in
+            return """
+                        "\(name):\(command.help.completionEscaped)"
+        """
+        }.joined(separator: "\n"))
+                    )
+                    _describe "subcommand" subcommands
+                    ;;
+                arg)
+                    case ${words[1]} in
+        \(subcommands.map { (name, _) in
+            return """
+                        \(name)) \(context.input.completionFunctionName(forSubcommand: name)) ;;
+        """
+        }.joined(separator: "\n"))
+                    esac
+                    ;;
+            esac
+        """ : ""
+        )
+        }
+
+        """
+    }
+}
+#endif
 
 /// An action to be used in the shell completion script(s) to provide
 /// special shell completion behaviors for an `Option`'s argument or a

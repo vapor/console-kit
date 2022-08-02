@@ -44,6 +44,55 @@ extension Console {
             return try command.run(using: &context)
         }
     }
+    
+    #if swift(>=5.5) && canImport(_Concurrency)
+    /// Runs an `AnyAsyncCommand` (`AsyncCommandGroup` or `AsyncCommand`) of commands on this `Console` using the supplied `CommandInput`.
+    ///
+    ///     try await console.run(group, input: commandInput)
+    ///
+    /// The `CommandInput` will be mutated, removing any used `CommandOption`s and `CommandArgument`s.
+    /// If any excess input is left over after checking the command's signature, an error will be thrown.
+    ///
+    /// - parameters:
+    ///     - command: `AsyncCommandGroup` or `AsyncCommand` to run.
+    ///     - input: `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
+    @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
+    public func run(_ command: AnyAsyncCommand, input: CommandInput) async throws {
+        // create new context
+        try await self.run(command, with: CommandContext(console: self, input: input))
+    }
+
+    /// Runs an `AnyAsyncCommand` (`AsyncCommandGroup` or `AsyncCommand`) of commands on this `Console` using the supplied `CommandContext`.
+    ///
+    ///     try console.run(group, with: context)
+    ///
+    /// - parameters:
+    ///     - runnable: `AsyncCommandGroup` or `AsyncCommand` to run.
+    ///     - input: `CommandContext` to parse `CommandOption`s and `CommandArgument`s from.
+    @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
+    public func run(_ command: AnyAsyncCommand, with context: CommandContext) async throws {
+        // make copy of context
+        var context = context
+
+        // parse global signature
+        let signature = try GlobalSignature(from: &context.input)
+
+        // check -n and -y flags.
+        if signature.no {
+            self.confirmOverride = false
+        } else if signature.yes {
+            self.confirmOverride = true
+        }
+
+        if signature.help {
+            try command.outputHelp(using: &context)
+        } else if signature.autocomplete {
+            try command.outputAutoComplete(using: &context)
+        } else {
+          return try await command.run(using: &context)
+        }
+    }
+    #endif
 }
 
 private struct GlobalSignature: CommandSignature {

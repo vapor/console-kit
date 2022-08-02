@@ -4,7 +4,8 @@ import PackageDescription
 let package = Package(
     name: "console-kit",
     platforms: [
-       .macOS(.v10_15)
+       .macOS(.v10_15),
+       .iOS(.v13)
     ],
     products: [
         .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
@@ -19,8 +20,17 @@ let package = Package(
         .testTarget(name: "ConsoleKitTests", dependencies: [
             .target(name: "ConsoleKit"),
         ]),
+        .testTarget(name: "AsyncConsoleKitTests", dependencies: [
+            .target(name: "ConsoleKit"),
+        ]),
         .target(name: "ConsoleKitExample", dependencies: [
             .target(name: "ConsoleKit"),
         ]),
+        .target(name: "ConsoleKitAsyncExample", dependencies: [
+            .target(name: "ConsoleKit")
+        ],
+        swiftSettings: [
+          .unsafeFlags(["-parse-as-library"])
+        ])
     ]
 )
