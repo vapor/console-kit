@@ -2,46 +2,11 @@ name: test
 on:
 - pull_request
 jobs:
-  linux:
-    strategy:
-      fail-fast: false
-      matrix:
-        swiftver:
-          - swift:5.2
-          - swift:5.3
-          - swiftlang/swift:nightly-5.3
-          - swiftlang/swift:nightly-master
-        swiftos:
-          - xenial
-          - bionic
-          - focal
-          - centos7
-          - centos8
-          - amazonlinux2
-    runs-on: ubuntu-latest
-    container: ${{ format('{0}-{1}', matrix.swiftver, matrix.swiftos) }}
-    steps:
-      - name: SPM is incompatible with CentOS 7
-        if: ${{ matrix.swiftos == 'centos7' }}
-        run: |
-          yum install -y make libcurl-devel
-          git clone https://github.com/git/git -bv2.28.0 --depth 1 && cd git
-          make prefix=/usr -j all install NO_OPENSSL=1 NO_EXPAT=1 NO_TCLTK=1 NO_GETTEXT=1 NO_PERL=1
-      - uses: actions/checkout@v2
-      - run: swift test --enable-test-discovery --sanitize=thread
-  macos:
-    strategy:
-      fail-fast: false
-      matrix:
-        xcodever:
-          - latest
-          - latest-stable
-    runs-on: macos-latest
-    steps:
-      - uses: maxim-lobanov/setup-xcode@v1.1
-        with: { 'xcode-version': '${{ matrix.xcodever }}' }
-      - uses: actions/checkout@v2
-      - run: swift test --enable-test-discovery --sanitize=thread
+  unit-tests:
+     uses: vapor/ci/.github/workflows/run-unit-tests.yml@reusable-workflows
+     with:
+       with_coverage: false
+       with_tsan: true
   integration-linux:
     runs-on: ubuntu-latest
     container: swift:5.6-focal
