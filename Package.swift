@@ -23,7 +23,7 @@ let package = Package(
         .testTarget(name: "AsyncConsoleKitTests", dependencies: [
             .target(name: "ConsoleKit"),
         ]),
-        .target(name: "ConsoleKitExample", dependencies: [
+        .executableTarget(name: "ConsoleKitExample", dependencies: [
             .target(name: "ConsoleKit"),
         ]),
         .target(name: "ConsoleKitAsyncExample", dependencies: [

@@ -74,8 +74,34 @@ final class ConsoleLoggerTests: XCTestCase {
         logger.debug("debug")
         XCTAssertLog(console, .debug, "debug (ConsoleKitTests/LoggingTests.swift:74)")
     }
+    
+    func testMetadataProviders() {
+        let simpleTraceIDMetadataProvider = Logger.MetadataProvider {
+            guard let traceID = TraceNamespace.simpleTraceID else {
+                return [:]
+            }
+            return ["simple-trace-id": .string(traceID)]
+        }
+        let console = TestConsole()
+        
+        LoggingSystem.bootstrap({ label, metadataProvider in
+            ConsoleLogger(label: label, console: console, metadataProvider: metadataProvider)
+        }, metadataProvider: simpleTraceIDMetadataProvider)
+        
+        let logger = Logger(label: "codes.vapor.console")
+
+        TraceNamespace.$simpleTraceID.withValue("1234-5678") {
+            logger.debug("debug")
+        }
+        XCTAssertLog(console, .debug, "debug [simple-trace-id: 1234-5678] (ConsoleKitTests/LoggingTests.swift:94)")
+    }
 }
 
 private func XCTAssertLog(_ console: TestConsole, _ level: Logger.Level, _ message: String, file: StaticString = #file, line: UInt = #line) {
     XCTAssertEqual(console.testOutputQueue.first, "[ \(level.name) ] \(message)\n", file: (file), line: line)
 }
+
+enum TraceNamespace {
+    @TaskLocal static var simpleTraceID: String?
+}
+
