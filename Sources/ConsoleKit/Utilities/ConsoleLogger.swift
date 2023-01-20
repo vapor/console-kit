@@ -65,10 +65,9 @@ public struct ConsoleLogger: LogHandler {
             + " "
             + message.description.consoleText()
 
-        let providedMetadata = self.metadataProvider?.get()
-        let allMetadata = (providedMetadata ?? [:])
-            .merging(metadata ?? [:], uniquingKeysWith: { (a, _) in a })
+        let allMetadata = (metadata ?? [:])
             .merging(self.metadata, uniquingKeysWith: { (a, _) in a })
+            .merging(self.metadataProvider?.get() ?? [:], uniquingKeysWith: { (a, _) in a })
 
         if !allMetadata.isEmpty {
             // only log metadata if not empty
