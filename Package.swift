@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.1"),
     ],
     targets: [
         .target(name: "ConsoleKit", dependencies: [
@@ -23,7 +23,7 @@ let package = Package(
         .testTarget(name: "AsyncConsoleKitTests", dependencies: [
             .target(name: "ConsoleKit"),
         ]),
-        .target(name: "ConsoleKitExample", dependencies: [
+        .executableTarget(name: "ConsoleKitExample", dependencies: [
             .target(name: "ConsoleKit"),
         ]),
         .target(name: "ConsoleKitAsyncExample", dependencies: [

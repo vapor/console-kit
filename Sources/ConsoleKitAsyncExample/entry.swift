@@ -7,7 +7,6 @@ struct AsyncExample {
     static func main() async throws {
         let console: Console = Terminal()
         let input = CommandInput(arguments: CommandLine.arguments)
-        var context = CommandContext(console: console, input: input)
 
         var commands = AsyncCommands(enableAutocomplete: true)
         commands.use(DemoCommand(), as: "demo", isDefault: false)

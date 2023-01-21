@@ -7,6 +7,9 @@ public struct ConsoleLogger: LogHandler {
     /// See `LogHandler.metadata`.
     public var metadata: Logger.Metadata
     
+    /// See `LogHandler.metadataProvider`.
+    public var metadataProvider: Logger.MetadataProvider?
+    
     /// See `LogHandler.logLevel`.
     public var logLevel: Logger.Level
     
@@ -25,6 +28,14 @@ public struct ConsoleLogger: LogHandler {
         self.metadata = metadata
         self.logLevel = level
         self.console = console
+    }
+    
+    public init(label: String, console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:], metadataProvider: Logger.MetadataProvider?) {
+        self.label = label
+        self.metadata = metadata
+        self.logLevel = level
+        self.console = console
+        self.metadataProvider = metadataProvider
     }
     
     /// See `LogHandler[metadataKey:]`.
@@ -54,7 +65,9 @@ public struct ConsoleLogger: LogHandler {
             + " "
             + message.description.consoleText()
 
-        let allMetadata = (metadata ?? [:]).merging(self.metadata) { (a, _) in a }
+        let allMetadata = (metadata ?? [:])
+            .merging(self.metadata, uniquingKeysWith: { (a, _) in a })
+            .merging(self.metadataProvider?.get() ?? [:], uniquingKeysWith: { (a, _) in a })
 
         if !allMetadata.isEmpty {
             // only log metadata if not empty
