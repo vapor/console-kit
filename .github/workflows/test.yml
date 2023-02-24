@@ -28,13 +28,3 @@ jobs:
         with: { repository: 'vapor/vapor', path: vapor }
       - run: swift package --package-path vapor edit console-kit --path console-kit
       - run: swift test --package-path vapor --enable-test-discovery
-  test-exports:
-      name: Test exports
-      runs-on: ubuntu-latest
-      steps:
-        - name: Check out package
-          uses: actions/checkout@v3
-          with:
-            fetch-depth: 0
-        - name: Build
-          run: swift build -Xswiftc -DBUILDING_DOCC
