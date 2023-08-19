@@ -1,10 +1,8 @@
 import ConsoleKit
 import XCTest
 
-#if swift(>=5.5) && canImport(_Concurrency)
 extension String: Error {}
 
-@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 final class TestGroup: AsyncCommandGroup {
     struct Signature: CommandSignature {
         @Flag(name: "version", help: "Prints the version")
@@ -26,7 +24,6 @@ final class TestGroup: AsyncCommandGroup {
     }
 }
 
-@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 final class SubGroup: AsyncCommandGroup {
     struct Signature: CommandSignature {
         @Flag(name: "version", help: "Prints the version")
@@ -47,7 +44,6 @@ final class SubGroup: AsyncCommandGroup {
     }
 }
 
-@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 final class TestCommand: AsyncCommand {
     struct Signature: CommandSignature {
         @Argument(name: "foo", help: """
@@ -81,7 +77,6 @@ final class TestCommand: AsyncCommand {
     }
 }
 
-@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
 final class StrictCommand: AsyncCommand {
     struct Signature: CommandSignature {
         @Argument(name: "number")
@@ -128,4 +123,3 @@ final class TestConsole: Console {
 
     var size: (width: Int, height: Int) { return (0, 0) }
 }
-#endif

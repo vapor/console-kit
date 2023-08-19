@@ -1,9 +1,9 @@
 // This implementation is only used on Linux, but we enable building it on macOS in debug for testing purposes.
 #if (os(Linux) || os(Android)) || (os(macOS) && DEBUG)
-#if os(Linux) || os(Android)
-import Glibc
-#elseif os(macOS)
+#if canImport(Darwin)
 import Darwin
+#else
+import Glibc
 #endif
 import Dispatch
 
@@ -22,7 +22,7 @@ internal func linux_readpassphrase(_ prompt: UnsafePointer<Int8>, _ buf: UnsafeM
     precondition((flags & 0x08/* RPP_FORCEUPPER */) == 0, "RPP_FORCEUPPER is not supported by this implementation")
     precondition((flags & 0x10/* RPP_SEVENBIT */) == 0, "RPP_SEVENBIT is not supported by this implementation")
     
-    #if os(Linux) || os(Android)
+    #if !canImport(Darwin)
     let TCSASOFT = 0 as Int32
     #endif
     
@@ -48,7 +48,7 @@ internal func linux_readpassphrase(_ prompt: UnsafePointer<Int8>, _ buf: UnsafeM
     ]
     sigemptyset(&sigrecovery.sa_mask)
     sigrecovery.sa_flags = 0
-    #if os(macOS)
+    #if canImport(Darwin)
     sigrecovery.__sigaction_u = .init(__sa_handler: { linux_readpassphrase_signos[$0] += 1 })
     #elseif os(Linux)
     sigrecovery.__sigaction_handler = .init(sa_handler: { linux_readpassphrase_signos[$0] += 1 })
@@ -135,7 +135,11 @@ fileprivate struct VeryUnsafeMutableSigAtomicBufferPointer {
     }
     
     func reset() {
+#if swift(<5.8)
         self.baseAddress.assign(repeating: 0, count: self.capacity)
+#else
+        self.baseAddress.update(repeating: 0, count: self.capacity)
+#endif
     }
 }
 #endif

@@ -45,7 +45,6 @@ extension Console {
         }
     }
     
-    #if swift(>=5.5) && canImport(_Concurrency)
     /// Runs an `AnyAsyncCommand` (`AsyncCommandGroup` or `AsyncCommand`) of commands on this `Console` using the supplied `CommandInput`.
     ///
     ///     try await console.run(group, input: commandInput)
@@ -56,7 +55,6 @@ extension Console {
     /// - parameters:
     ///     - command: `AsyncCommandGroup` or `AsyncCommand` to run.
     ///     - input: `CommandInput` to parse `CommandOption`s and `CommandArgument`s from.
-    @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
     public func run(_ command: AnyAsyncCommand, input: CommandInput) async throws {
         // create new context
         try await self.run(command, with: CommandContext(console: self, input: input))
@@ -69,7 +67,6 @@ extension Console {
     /// - parameters:
     ///     - runnable: `AsyncCommandGroup` or `AsyncCommand` to run.
     ///     - input: `CommandContext` to parse `CommandOption`s and `CommandArgument`s from.
-    @available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
     public func run(_ command: AnyAsyncCommand, with context: CommandContext) async throws {
         // make copy of context
         var context = context
@@ -92,7 +89,6 @@ extension Console {
           return try await command.run(using: &context)
         }
     }
-    #endif
 }
 
 private struct GlobalSignature: CommandSignature {

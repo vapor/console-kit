@@ -1,9 +1,7 @@
 @testable import ConsoleKit
 import XCTest
 
-@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
-class AsyncCommandErrorTests: XCTestCase {
-#if swift(>=5.5) && canImport(_Concurrency)
+final class AsyncCommandErrorTests: XCTestCase {
     func testMissingCommand() async throws {
         let console = TestConsole()
         let group = TestGroup()
@@ -157,5 +155,4 @@ class AsyncCommandErrorTests: XCTestCase {
             50
         )
     }
-#endif
 }
