@@ -30,16 +30,6 @@ public struct LogRecord {
 	/// The resolved metadata, combining all of the sources. This is computed lazily.
 	var _allMetadata: [String: Logger.MetadataValue]? = nil
 	
-	/// splits a path on the /Sources/ folder, returning everything after
-	///
-	///     "/Users/developer/dev/MyApp/Sources/Run/main.swift"
-	///     // becomes
-	///     "Run/main.swift"
-	///
-	public var conciseSourcePath: String {
-		ConsoleKit.conciseSourcePath(self.file)
-	}
-	
 	/// Combine all of the metadata into a single set. The result is cached after it is computed once.
 	public mutating func allMetadata() -> [String: Logger.MetadataValue] {
 		if let all = self._allMetadata {
@@ -264,7 +254,7 @@ public struct FileFragment: LoggerFragment {
 	public init() { }
 	
 	public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
-		let file = record.conciseSourcePath + ":" + record.line.description
+		let file = record.file + ":" + record.line.description
 		output += "(" + file.consoleText() + ")"
 		output.needsSeparator = true
 	}

@@ -1,23 +1,5 @@
 import Logging
 
-/// splits a path on the /Sources/ folder, returning everything after
-///
-///     "/Users/developer/dev/MyApp/Sources/Run/main.swift"
-///     // becomes
-///     "Run/main.swift"
-///
-func conciseSourcePath(_ path: String) -> String {
-#if compiler(>=5.3)
-	return path
-#else
-	let separator: Substring = path.contains("Sources") ? "Sources" : "Tests"
-	return path.split(separator: "/")
-		.split(separator: separator)
-		.last?
-		.joined(separator: "/") ?? path
-#endif
-}
-
 /// A `LoggerFragment` which implements the default logger message format.
 public func defaultLoggerFragment() -> some LoggerFragment {
 	LabelFragment().maxLevel(.trace)
@@ -126,7 +108,20 @@ public struct ConsoleLogger: LogHandler {
     public let console: Console
 	
 	public var fragment: some LoggerFragment = defaultLoggerFragment()
-
+	
+#if CI // satisfy the easily-confused API breakage checker
+	public func log(
+		level: Logger.Level,
+		message: Logger.Message,
+		metadata: Logger.Metadata?,
+		file: String,
+		function: String,
+		line: UInt
+	) {
+		self.log(level: level, message: message, metadata: metadata, source: file.prefix(while: { $0 != "/"  }), file: file, function: function, line: line)
+	}
+#endif
+	
     /// Creates a new `ConsoleLogger` instance.
     ///
     /// - Parameters:

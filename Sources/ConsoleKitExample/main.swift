@@ -1,5 +1,6 @@
 import ConsoleKit
 import Foundation
+import Logging
 
 let console: Console = Terminal()
 var input = CommandInput(arguments: CommandLine.arguments)
@@ -8,6 +9,8 @@ var context = CommandContext(console: console, input: input)
 var commands = Commands(enableAutocomplete: true)
 commands.use(DemoCommand(), as: "demo", isDefault: false)
 
+LoggingSystem.bootstrap(console: Terminal(), level: .info)
+Logger(label: "one").info("One")
 do {
     let group = commands
         .group(help: "An example command-line application built with ConsoleKit")
