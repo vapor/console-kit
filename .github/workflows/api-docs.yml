@@ -11,4 +11,4 @@ jobs:
      with:
        package_name: console-kit
        modules: ConsoleKit
-       pathsToInvalidate: /console-kit
+       pathsToInvalidate: /consolekit/*

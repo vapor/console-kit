@@ -1,9 +1,9 @@
-#if os(Linux) || os(Android)
+#if canImport(Darwin)
+import Darwin
+#elseif canImport(Glibc)
 import Glibc
-#elseif os(macOS)
-import Darwin.C
 #elseif os(Windows)
-import MSVCRT
+import CRT
 #endif
 import Foundation
 
@@ -46,11 +46,11 @@ public final class Terminal: Console {
         didOutputLines(count: 1)
         if isSecure {
             var pass = ""
-#if os(macOS) || os(Linux) || os(Android)
+#if canImport(Darwin) || canImport(Glibc) || os(Android)
             func plat_readpassphrase(into buf: UnsafeMutableBufferPointer<Int8>) -> Int {
-                #if os(macOS)
+                #if canImport(Darwin)
                 let rpp = readpassphrase
-                #elseif os(Linux) || os(Android)
+                #else
                 let rpp = linux_readpassphrase, RPP_REQUIRE_TTY = 0 as Int32
                 #endif
 
@@ -60,13 +60,11 @@ public final class Terminal: Console {
                 return strlen(buf.baseAddress!)
             }
             func readpassphrase_str() -> String {
-#if swift(>=5.3.1)
                 if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
-                    // This initializer is only present in Swift 5.3.1 and later, and has an availability guard as well.
                     return .init(unsafeUninitializedCapacity: 1024) { $0.withMemoryRebound(to: Int8.self) { plat_readpassphrase(into: $0) } }
+                } else {
+                    return .init(decoding: [Int8](unsafeUninitializedCapacity: 1024) { $1 = plat_readpassphrase(into: $0) }.map(UInt8.init), as: UTF8.self)
                 }
-#endif
-                return .init(decoding: [Int8](unsafeUninitializedCapacity: 1024) { $1 = plat_readpassphrase(into: $0) }.map(UInt8.init), as: UTF8.self)
             }
             pass = readpassphrase_str()
 #elseif os(Windows)

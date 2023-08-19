@@ -1,9 +1,7 @@
 @testable import ConsoleKit
 import XCTest
 
-@available(macOS 12, iOS 15, watchOS 8, tvOS 15, *)
-class AsyncCommandTests: XCTestCase {
-#if swift(>=5.5) && canImport(_Concurrency)
+final class AsyncCommandTests: XCTestCase {
     func testBaseHelp() async throws {
         let console = TestConsole()
         let group = TestGroup()
@@ -160,5 +158,4 @@ class AsyncCommandTests: XCTestCase {
             XCTAssertNil($0.str)
         }), input: CommandInput(arguments: ["vapor", "--option", "\\--str"]))
     }
-#endif
 }

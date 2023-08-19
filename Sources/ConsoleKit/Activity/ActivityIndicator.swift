@@ -1,8 +1,8 @@
 import Dispatch
-#if os(Linux) || os(Android)
-import Glibc
+#if canImport(Darwin)
+import Darwin
 #else
-import Darwin.C
+import Glibc
 #endif
 
 extension ActivityIndicatorType {
