@@ -18,7 +18,7 @@ final class TestConsole: Console {
 	}
 
 	func output(_ text: ConsoleText, newLine: Bool) {
-		self.lastOutput = text.description + (newLine ? "\n" : "")
+		
 	}
 
 	func report(error: String, newLine: Bool) {
@@ -34,18 +34,25 @@ final class TestConsole: Console {
 
 class ConsoleLoggerPerformanceTests: XCTestCase {
 	func testLoggingPerformance() throws  {
-		// averages from logger-fragment branch on my machine 0.547 0.551
-		try performance(expected: 1.066) // average from main branch on my machine
+		try performance(expected: 0.489) // average from main branch on my machine
+		
+		let console = TestConsole()
+		LoggingSystem.bootstrap({ label, provider in
+			ConsoleLogger(label: label, console: console)
+		}, metadataProvider: .init({
+			["provided1": "from metadata provider", "provided2": "another metadata provider"]
+		}))
+		
 		self.measure {
-			let console = TestConsole()
-			var logger1 = Logger(label: "codes.vapor.console.1") { label in
-				ConsoleLogger(label: label, console: console)
-			}
+			var logger1 = Logger(label: "codes.vapor.console.1")
 			
 			for _ in 0..<100_000 {
 				logger1.logLevel = .trace
 				logger1[metadataKey: "value"] = "one"
-				logger1.info("Info")
+				logger1.info(
+					"Info",
+					metadata: ["from-log": "value", "also-from-log": "other"]
+				)
 			}
 		}
 	}

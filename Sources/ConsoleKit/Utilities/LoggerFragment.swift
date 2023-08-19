@@ -1,5 +1,17 @@
 import Logging
 
+#if canImport(Darwin)
+import Darwin
+#elseif os(Windows)
+import CRT
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(WASILibc)
+import WASILibc
+#else
+#error("Unsupported runtime")
+#endif
+
 /// Information about a specific log message, including information from the logger the message was logged to.
 public struct LogRecord {
 	/// The log level of the message
@@ -27,20 +39,12 @@ public struct LogRecord {
 	/// The metadata provider associated with the logger the message was logged to
 	public var metadataProvider: Logger.MetadataProvider?
 	
-	/// The resolved metadata, combining all of the sources. This is computed lazily.
-	var _allMetadata: [String: Logger.MetadataValue]? = nil
-	
-	/// Combine all of the metadata into a single set. The result is cached after it is computed once.
+	/// Combine all of the metadata into a single set.
 	public mutating func allMetadata() -> [String: Logger.MetadataValue] {
-		if let all = self._allMetadata {
-			return all
-		} else {
-			let meta = (self.metadata ?? [:])
-				.merging(self.loggerMetadata, uniquingKeysWith: { (a, _) in a })
-				.merging(self.metadataProvider?.get() ?? [:], uniquingKeysWith: { (a, _) in a })
-			self._allMetadata = meta
-			return meta
-		}
+		// We aren't mutating self here currently, but keeping the method marked that way will ensure we can cache the result without breaking the public API if we decide that's desirable.
+		(self.metadata ?? [:])
+			.merging(self.loggerMetadata, uniquingKeysWith: { (a, _) in a })
+			.merging(self.metadataProvider?.get() ?? [:], uniquingKeysWith: { (a, _) in a })
 	}
 }
 
@@ -57,7 +61,7 @@ public struct FragmentOutput {
 }
 
 /// A fragment of a log message.
-public protocol LoggerFragment {
+public protocol LoggerFragment: Sendable {
 	/// Indicates whether the fragment will write anything to `output` when `write` is called. This is used to determine whether writing a separator should be skipped.
 	func hasContent(record: inout LogRecord) -> Bool
 	
@@ -69,6 +73,7 @@ public protocol LoggerFragment {
 
 extension LoggerFragment {
 	public func hasContent(record: inout LogRecord) -> Bool {
+		// Most fragments have content unconditionally.
 		true
 	}
 }
@@ -250,13 +255,66 @@ public struct MetadataFragment: LoggerFragment {
 }
 
 /// Writes the file location of the logged message, including the line. This fragment requests a separator for the next fragment.
-public struct FileFragment: LoggerFragment {
+public struct SourceLocationFragment: LoggerFragment {
 	public init() { }
 	
 	public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
 		let file = record.file + ":" + record.line.description
 		output += "(" + file.consoleText() + ")"
 		output.needsSeparator = true
+	}
+}
+
+public struct TimestampFragment: LoggerFragment {
+	public init() { }
+	
+	public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
+		if #available(macOS 11, iOS 14, tvOS 14, watchOS 7, *) {
+			output += self.timestampUninit().consoleText()
+		} else {
+			output += self.timestamp().consoleText()
+		}
+		
+		output.needsSeparator = true
+	}
+	
+	@available(macOS 11, iOS 14, tvOS 14, watchOS 7, *)
+	private func timestampUninit() -> String {
+		String(unsafeUninitializedCapacity: 255) {
+			#if canImport(CRT)
+				var timestamp = __time64_t()
+				var localTime = tm()
+				_ = _time64(&timestamp)
+				_ = _localtime64_s(&localTime, &timestamp)
+			#else
+				var timestamp = time(nil)
+				var localTime = tm()
+				localtime_r(&timestamp, &localTime)
+			#endif
+			return $0.withMemoryRebound(to: Int8.self) { strftime($0.baseAddress!, $0.count, "%Y-%m-%dT%H:%M:%S%z", &localTime) }
+		}
+	}
+	
+	private func timestamp() -> String {
+		var buffer = [Int8](repeating: 0, count: 255)
+		#if os(Windows)
+		var timestamp = __time64_t()
+		_ = _time64(&timestamp)
+
+		var localTime = tm()
+		_ = _localtime64_s(&localTime, &timestamp)
+
+		_ = strftime(&buffer, buffer.count, "%Y-%m-%dT%H:%M:%S%z", &localTime)
+		#else
+		var timestamp = time(nil)
+		let localTime = localtime(&timestamp)
+		strftime(&buffer, buffer.count, "%Y-%m-%dT%H:%M:%S%z", localTime)
+		#endif
+		return buffer.withUnsafeBufferPointer {
+			$0.withMemoryRebound(to: CChar.self) {
+				String(cString: $0.baseAddress!)
+			}
+		}
 	}
 }
 

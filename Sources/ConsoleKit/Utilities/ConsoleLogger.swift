@@ -2,10 +2,10 @@ import Logging
 
 /// A `LoggerFragment` which implements the default logger message format.
 public func defaultLoggerFragment() -> some LoggerFragment {
-	LabelFragment().maxLevel(.trace)
+	TimestampFragment().and(LabelFragment().separated(" ")).maxLevel(.trace)
 		.and(LevelFragment().separated(" ").and(MessageFragment().separated(" ")))
 		.and(MetadataFragment().separated(" "))
-		.and(FileFragment().separated(" ").maxLevel(.debug))
+		.and(SourceLocationFragment().separated(" ").maxLevel(.debug))
 }
 
 /// Outputs logs to a `Console` via a `LoggerFragment` pipeline.
