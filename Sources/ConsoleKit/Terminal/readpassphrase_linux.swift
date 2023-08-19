@@ -135,7 +135,11 @@ fileprivate struct VeryUnsafeMutableSigAtomicBufferPointer {
     }
     
     func reset() {
+#if swift(<5.8)
+        self.baseAddress.assign(repeating: 0, count: self.capacity)
+#else
         self.baseAddress.update(repeating: 0, count: self.capacity)
+#endif
     }
 }
 #endif
