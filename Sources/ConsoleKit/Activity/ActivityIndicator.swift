@@ -33,7 +33,7 @@ extension ActivityIndicatorType {
 ///     // start the loading bar and wait for it to finish
 ///     try loadingBar.start(on: ...).wait()
 ///
-public final class ActivityIndicator<A> where A: ActivityIndicatorType {
+public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType {
     /// The generic `ActivityIndicatorType` powering this `ActivityIndicator`.
     public var activity: A
 

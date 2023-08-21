@@ -9,9 +9,9 @@ import Foundation
 
 /// Generic console that uses a mixture of Swift standard
 /// library and Foundation code to fulfill protocol requirements.
-public final class Terminal: Console {
+public final class Terminal: Console, Sendable {
     /// See `Console`
-    public var userInfo: [AnyHashable: Any]
+    public var userInfo: [AnyHashable: Sendable]
 
     /// Dynamically exclude ANSI commands when in Xcode since it doesn't support them.
     internal var enableCommands: Bool {

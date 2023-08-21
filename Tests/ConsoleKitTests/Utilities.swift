@@ -97,7 +97,7 @@ final class StrictCommand: Command {
 final class TestConsole: Console {
     var testInputQueue: [String]
     var testOutputQueue: [String]
-    var userInfo: [AnyHashable : Any]
+    var userInfo: [AnyHashable : Sendable]
 
     init() {
         self.testInputQueue = []

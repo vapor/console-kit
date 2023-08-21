@@ -1,3 +1,5 @@
+import Atomics
+
 /// An `ActivityIndicatorType` that renders an activity bar on a single line.
 ///
 ///     Title [=======              ]
@@ -35,12 +37,12 @@ extension ActivityBar {
 }
 
 /// Defines the width of all `ActivityBar`s in characters.
-private var _width: Int = 25
+private let _width: ManagedAtomic<Int> = ManagedAtomic(25)
 
 extension ActivityBar {
     /// Defines the width of all `ActivityBar`s in characters.
     public static var width: Int {
-        get { return _width }
-        set { _width = newValue}
+		get { return _width.load(ordering: .relaxed) }
+		set { _width.store(newValue, ordering: .relaxed)}
     }
 }

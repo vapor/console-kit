@@ -5,7 +5,7 @@
 /// behind calling the `ActivityIndicatorType` for `ActivityIndicatorState` changes.
 ///
 /// See the `ActivityBar` protocol which is based off of this protocol.
-public protocol ActivityIndicatorType {
+public protocol ActivityIndicatorType: Sendable {
     /// Draws / renders this `ActivityIndicatorType` to the `Console` for the supplied `ActivityIndicatorState`.
     ///
     /// This method will be called by the `ActivityIndicator`. The `Console` will have any previous

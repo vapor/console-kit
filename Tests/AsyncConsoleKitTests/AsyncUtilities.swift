@@ -87,7 +87,8 @@ final class StrictCommand: AsyncCommand {
         
         init() { }
     }
-    var help: String = "I error if you pass in bad values"
+	
+    let help: String = "I error if you pass in bad values"
 
     func run(using context: CommandContext, signature: Signature) async throws {
         print("Done!")
@@ -97,7 +98,7 @@ final class StrictCommand: AsyncCommand {
 final class TestConsole: Console {
     var testInputQueue: [String]
     var testOutputQueue: [String]
-    var userInfo: [AnyHashable : Any]
+    var userInfo: [AnyHashable : Sendable]
 
     init() {
         self.testInputQueue = []
