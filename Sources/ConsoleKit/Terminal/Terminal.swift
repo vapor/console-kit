@@ -122,9 +122,13 @@ public final class Terminal: Console, Sendable {
 
     /// See `Console`
     public func report(error: String, newLine: Bool) {
-        let output = newLine ? error + "\n" : error
-        let data = output.data(using: .utf8) ?? Data()
-        FileHandle.standardError.write(data)
+        for c in (newLine ? "\(error)\n" : error).utf8 {
+#if os(Windows)
+            _putc_nolock(CInt(c), stderr)
+#else
+            putc_unlocked(CInt(c), stderr)
+#endif
+        }
     }
 
     /// See `Console`
