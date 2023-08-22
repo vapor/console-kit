@@ -269,30 +269,8 @@ public struct TimestampFragment: LoggerFragment {
 	public init() { }
 	
 	public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
-		if #available(macOS 11, iOS 14, tvOS 14, watchOS 7, *) {
-			output += self.timestampUninit().consoleText()
-		} else {
-			output += self.timestamp().consoleText()
-		}
-		
+       output += self.timestamp().consoleText()
 		output.needsSeparator = true
-	}
-	
-	@available(macOS 11, iOS 14, tvOS 14, watchOS 7, *)
-	private func timestampUninit() -> String {
-		String(unsafeUninitializedCapacity: 255) {
-			#if canImport(CRT)
-				var timestamp = __time64_t()
-				var localTime = tm()
-				_ = _time64(&timestamp)
-				_ = _localtime64_s(&localTime, &timestamp)
-			#else
-				var timestamp = time(nil)
-				var localTime = tm()
-				localtime_r(&timestamp, &localTime)
-			#endif
-			return $0.withMemoryRebound(to: Int8.self) { strftime($0.baseAddress!, $0.count, "%Y-%m-%dT%H:%M:%S%z", &localTime) }
-		}
 	}
 	
 	private func timestamp() -> String {

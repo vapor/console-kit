@@ -91,7 +91,7 @@ public final class Terminal: Console, Sendable {
 
     /// See `Console`
     public func output(_ text: ConsoleText, newLine: Bool) {
-		if !self.enableCommands {
+		if self.enableCommands {
 			var lines = 0
 			for fragment in text.fragments {
 				let strings = fragment.string.split(separator: "\n", omittingEmptySubsequences: false)

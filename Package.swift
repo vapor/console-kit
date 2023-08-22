@@ -31,7 +31,7 @@ let package = Package(
 		.executableTarget(name: "ConsoleKitExample", dependencies: [
 			.target(name: "ConsoleKit"),
 		]),
-		.target(name: "ConsoleKitAsyncExample", dependencies: [
+		.executableTarget(name: "ConsoleKitAsyncExample", dependencies: [
 			.target(name: "ConsoleKit")
 		])
 	]

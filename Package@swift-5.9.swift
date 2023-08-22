@@ -1,4 +1,4 @@
-// swift-tools-version:5.8
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -14,12 +14,10 @@ let package = Package(
 	],
 	dependencies: [
 		.package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),
-		.package(url: "https://github.com/apple/swift-atomics.git", from: "1.1.0")
 	],
 	targets: [
 		.target(name: "ConsoleKit", dependencies: [
 			.product(name: "Logging", package: "swift-log"),
-			.product(name: "Atomics", package: "swift-atomics")
 		], swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
 		.testTarget(name: "ConsoleKitTests", dependencies: [
 			.target(name: "ConsoleKit"),

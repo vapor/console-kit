@@ -49,26 +49,11 @@ internal func linux_readpassphrase(_ prompt: UnsafePointer<Int8>, _ buf: UnsafeM
     sigemptyset(&sigrecovery.sa_mask)
     sigrecovery.sa_flags = 0
     #if canImport(Darwin)
-	sigrecovery.__sigaction_u = .init(__sa_handler: {
-		linux_readpassphrase_signos.set(
-			linux_readpassphrase_signos.get($0) + 1,
-			at: $0
-		)
-	})
+    sigrecovery.__sigaction_u = .init(__sa_handler: { linux_readpassphrase_signos[$0] += 1 })
     #elseif os(Linux)
-    sigrecovery.__sigaction_handler = .init(sa_handler: {
-		linux_readpassphrase_signos.set(
-			linux_readpassphrase_signos.get($0) + 1,
-			at: $0
-		)
-	})
+    sigrecovery.__sigaction_handler = .init(sa_handler: { linux_readpassphrase_signos[$0] += 1 })
     #elseif os(Android)
-    sigrecovery.sa_handler = {
-		linux_readpassphrase_signos.set(
-			linux_readpassphrase_signos.get($0) + 1,
-			at: $0
-		)
-	}
+    sigrecovery.sa_handler = { linux_readpassphrase_signos[$0] += 1 }
     #endif
     for (sig, _) in sigsaves { sigaction(sig, &sigrecovery, &sigsave); sigsaves[sig] = sigsave }
     
@@ -90,7 +75,7 @@ internal func linux_readpassphrase(_ prompt: UnsafePointer<Int8>, _ buf: UnsafeM
         while tcsetattr(fd, TCSAFLUSH | TCSASOFT, &oterm) == -1 && errno == EINTR && linux_readpassphrase_signos[SIGTTOU] == 0 {
             continue
         }
-		linux_readpassphrase_signos.set(save_sigttou, at: SIGTTOU)
+        linux_readpassphrase_signos[SIGTTOU] = save_sigttou
     }
     
     // Restore signal handlers
@@ -138,30 +123,16 @@ fileprivate struct VeryUnsafeMutableSigAtomicBufferPointer {
         self.capacity = Int(capacity)
         self.baseAddress = .allocate(capacity: self.capacity)
     }
-	
-	func get(_ index: Int) -> sig_atomic_t {
-		self.baseAddress.advanced(by: index).pointee
-	}
-	
-	func set(_ value: sig_atomic_t, at index: Int) {
-		self.baseAddress.advanced(by: index).pointee = value
-	}
-	
-	func get(_ index: Int32) -> sig_atomic_t {
-		self.get(Int(index))
-	}
-	
-	func set(_ value: sig_atomic_t, at index: Int32) {
-		self.set(value, at: Int(index))
-	}
-	
-	subscript(_ index: Int) -> sig_atomic_t {
-		self.get(index)
-	}
-	
-	subscript(_ index: Int32) -> sig_atomic_t {
-		self.get(index)
-	}
+    
+    subscript(_ index: Int) -> sig_atomic_t {
+        get { self.baseAddress.advanced(by: index).pointee }
+        nonmutating set { self.baseAddress.advanced(by: index).pointee = newValue }
+    }
+
+    subscript(_ index: Int32) -> sig_atomic_t {
+        get { self[Int(index)] }
+        nonmutating set { self[Int(index)] = newValue }
+    }
     
     func reset() {
 #if swift(<5.8)

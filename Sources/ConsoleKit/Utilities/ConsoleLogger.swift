@@ -118,7 +118,7 @@ public struct ConsoleLogger: LogHandler, Sendable {
 		function: String,
 		line: UInt
 	) {
-		self.log(level: level, message: message, metadata: metadata, source: file.prefix(while: { $0 != "/"  }), file: file, function: function, line: line)
+		self.log(level: level, message: message, metadata: metadata, source: String(file.prefix(while: { $0 != "/"  })), file: file, function: function, line: line)
 	}
 #endif
 	
