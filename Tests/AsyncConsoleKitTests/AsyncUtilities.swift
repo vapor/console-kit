@@ -87,7 +87,7 @@ final class StrictCommand: AsyncCommand {
         
         init() { }
     }
-	
+    
     let help: String = "I error if you pass in bad values"
 
     func run(using context: CommandContext, signature: Signature) async throws {

@@ -91,23 +91,23 @@ public final class Terminal: Console, Sendable {
 
     /// See `Console`
     public func output(_ text: ConsoleText, newLine: Bool) {
-		if self.enableCommands {
-			var lines = 0
-			for fragment in text.fragments {
-				let strings = fragment.string.split(separator: "\n", omittingEmptySubsequences: false)
-				for string in strings {
-					let count = string.count
-					if count > size.width && count > 0 && size.width > 0 {
-						lines += (count / size.width) + 1
-					}
-				}
-				/// add line for each fragment
-				lines += strings.count - 1
-			}
-			if newLine { lines += 1 }
-			
-			didOutputLines(count: lines)
-		}
+        if self.enableCommands {
+            var lines = 0
+            for fragment in text.fragments {
+                let strings = fragment.string.split(separator: "\n", omittingEmptySubsequences: false)
+                for string in strings {
+                    let count = string.count
+                    if count > size.width && count > 0 && size.width > 0 {
+                        lines += (count / size.width) + 1
+                    }
+                }
+                /// add line for each fragment
+                lines += strings.count - 1
+            }
+            if newLine { lines += 1 }
+            
+            didOutputLines(count: lines)
+        }
 
         let terminator = newLine ? "\n" : ""
 

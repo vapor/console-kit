@@ -22,17 +22,17 @@ let package = Package(
         .testTarget(name: "ConsoleKitTests", dependencies: [
             .target(name: "ConsoleKit"),
         ]),
-		.testTarget(name: "AsyncConsoleKitTests", dependencies: [
-			.target(name: "ConsoleKit"),
-		]),
-		.testTarget(name: "ConsoleKitPerformanceTests", dependencies: [
-			.target(name: "ConsoleKit")
-		]),
-		.executableTarget(name: "ConsoleKitExample", dependencies: [
-			.target(name: "ConsoleKit"),
-		]),
-		.executableTarget(name: "ConsoleKitAsyncExample", dependencies: [
-			.target(name: "ConsoleKit")
-		])
-	]
+        .testTarget(name: "AsyncConsoleKitTests", dependencies: [
+            .target(name: "ConsoleKit"),
+        ]),
+        .testTarget(name: "ConsoleKitPerformanceTests", dependencies: [
+            .target(name: "ConsoleKit")
+        ]),
+        .executableTarget(name: "ConsoleKitExample", dependencies: [
+            .target(name: "ConsoleKit"),
+        ]),
+        .executableTarget(name: "ConsoleKitAsyncExample", dependencies: [
+            .target(name: "ConsoleKit")
+        ])
+    ]
 )
