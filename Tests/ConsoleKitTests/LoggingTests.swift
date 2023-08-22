@@ -84,16 +84,14 @@ final class ConsoleLoggerTests: XCTestCase {
         }
         let console = TestConsole()
         
-        LoggingSystem.bootstrap({ label, metadataProvider in
-            ConsoleLogger(label: label, console: console, metadataProvider: metadataProvider)
-        }, metadataProvider: simpleTraceIDMetadataProvider)
-        
-        let logger = Logger(label: "codes.vapor.console")
+        let logger = Logger(label: "codes.vapor.console") { label in
+            ConsoleLogger(label: label, console: console, metadataProvider: simpleTraceIDMetadataProvider)
+        }
 
         TraceNamespace.$simpleTraceID.withValue("1234-5678") {
             logger.debug("debug")
         }
-        XCTAssertLog(console, .debug, "debug [simple-trace-id: 1234-5678] (ConsoleKitTests/LoggingTests.swift:94)")
+        XCTAssertLog(console, .debug, "debug [simple-trace-id: 1234-5678] (ConsoleKitTests/LoggingTests.swift:92)")
     }
 }
 

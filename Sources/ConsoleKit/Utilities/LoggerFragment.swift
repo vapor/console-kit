@@ -78,7 +78,7 @@ extension LoggerFragment {
     }
 }
 
-extension LoggerFragment {
+public extension LoggerFragment {
     /// Make the current fragment conditional, only calling its `output` method if the record's `loggerLevel` is `maxLevel` or lower
     ///
     /// The sequence
