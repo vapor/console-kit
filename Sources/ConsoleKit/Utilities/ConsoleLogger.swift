@@ -109,19 +109,6 @@ public struct ConsoleLogger: LogHandler, Sendable {
     
     public var fragment: some LoggerFragment = defaultLoggerFragment()
     
-#if CI // satisfy the easily-confused API breakage checker
-    public func log(
-        level: Logger.Level,
-        message: Logger.Message,
-        metadata: Logger.Metadata?,
-        file: String,
-        function: String,
-        line: UInt
-    ) {
-        self.log(level: level, message: message, metadata: metadata, source: String(file.prefix(while: { $0 != "/"  })), file: file, function: function, line: line)
-    }
-#endif
-    
     /// Creates a new `ConsoleLogger` instance.
     ///
     /// - Parameters:
