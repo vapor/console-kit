@@ -77,7 +77,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
         self.state = NIOLockedValueBox(.ready)
         self._activity = NIOLockedValueBox(activity)
         self.queue = DispatchQueue(label: "codes.vapor.consolekit.activityindicator", target: targetQueue)
-        self._timer = NIOLockedValueBox(DispatchSource.makeTimerSource(flags: [], queue: self.queue))
+        self._timer = NIOLockedValueBox(DispatchSource.makeTimerSource(flags: [], queue: self.queue) as! DispatchSource)
         self.stopGroup = DispatchGroup()
     }
 
