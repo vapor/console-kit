@@ -2,10 +2,15 @@ import Logging
 
 /// A `LoggerFragment` which implements the default logger message format.
 public func defaultLoggerFragment() -> some LoggerFragment {
-    TimestampFragment().and(LabelFragment().separated(" ")).maxLevel(.trace)
+    LabelFragment().maxLevel(.trace)
         .and(LevelFragment().separated(" ").and(MessageFragment().separated(" ")))
         .and(MetadataFragment().separated(" "))
         .and(SourceLocationFragment().separated(" ").maxLevel(.debug))
+}
+
+/// A `LoggerFragment` which implements the default logger message format with a timestamp at the front.
+public func timestampDefaultLoggerFragment() -> some LoggerFragment {
+    TimestampFragment().and(defaultLoggerFragment().separated(" "))
 }
 
 /// Outputs logs to a `Console` via a `LoggerFragment` pipeline.
@@ -22,7 +27,7 @@ public struct ConsoleFragmentLogger<T: LoggerFragment>: LogHandler, Sendable {
     public var logLevel: Logger.Level
     
     /// The conosle that the messages will get logged to.
-    public let console: Console
+    public let console: any Console
     
     /// The `LoggerFragment` this logger outputs through.
     public var fragment: T
@@ -35,7 +40,7 @@ public struct ConsoleFragmentLogger<T: LoggerFragment>: LogHandler, Sendable {
     ///   - console: The console to log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    public init(fragment: T, label: String, console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
+    public init(fragment: T, label: String, console: any Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
         self.fragment = fragment
         self.label = label
         self.metadata = metadata
@@ -43,7 +48,7 @@ public struct ConsoleFragmentLogger<T: LoggerFragment>: LogHandler, Sendable {
         self.console = console
     }
     
-    public init(fragment: T, label: String, console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:], metadataProvider: Logger.MetadataProvider?) {
+    public init(fragment: T, label: String, console: any Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:], metadataProvider: Logger.MetadataProvider?) {
         self.fragment = fragment
         self.label = label
         self.metadata = metadata
@@ -105,7 +110,7 @@ public struct ConsoleLogger: LogHandler, Sendable {
     public var logLevel: Logger.Level
     
     /// The conosle that the messages will get logged to.
-    public let console: Console
+    public let console: any Console
     
     public var fragment: some LoggerFragment = defaultLoggerFragment()
     
@@ -116,14 +121,14 @@ public struct ConsoleLogger: LogHandler, Sendable {
     ///   - console: The console to log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    public init(label: String, console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
+    public init(label: String, console: any Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
         self.label = label
         self.metadata = metadata
         self.logLevel = level
         self.console = console
     }
     
-    public init(label: String, console: Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:], metadataProvider: Logger.MetadataProvider?) {
+    public init(label: String, console: any Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:], metadataProvider: Logger.MetadataProvider?) {
         self.label = label
         self.metadata = metadata
         self.logLevel = level
@@ -180,8 +185,29 @@ extension LoggingSystem {
     ///   - console: The console the logger will log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.info`.
     ///   - metadata: Extra metadata to log with all messages. This defaults to an empty dictionary.
+    public static func bootstrap(
+        console: any Console,
+        level: Logger.Level = .info,
+        metadata: Logger.Metadata = [:]
+    ) {
+        self.bootstrap(console: console, level: level, metadata: metadata, metadataProvider: nil)
+    }
+    
+    /// Bootstraps a `ConsoleLogger` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    ///
+    ///     LoggingSystem.boostrap(console: console)
+    ///
+    /// - Parameters:
+    ///   - console: The console the logger will log the messages to.
+    ///   - level: The minimum level of message that the logger will output. This defaults to `.info`.
+    ///   - metadata: Extra metadata to log with all messages. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to bootstrap the logging system with.
-    public static func bootstrap(console: Console, level: Logger.Level = .info, metadata: Logger.Metadata = [:], metadataProvider: Logger.MetadataProvider? = nil) {
+    public static func bootstrap(
+        console: any Console,
+        level: Logger.Level = .info,
+        metadata: Logger.Metadata = [:],
+        metadataProvider: Logger.MetadataProvider? = nil
+    ) {
         self.bootstrap({ (label, metadataProvider) in
             return ConsoleLogger(label: label, console: console, level: level, metadata: metadata, metadataProvider: metadataProvider)
         }, metadataProvider: metadataProvider)
@@ -197,7 +223,13 @@ extension LoggingSystem {
     ///   - level: The minimum level of message that the logger will output. This defaults to `.info`.
     ///   - metadata: Extra metadata to log with all messages. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to bootstrap the logging system with.
-    public static func bootstrap<T: LoggerFragment>(fragment: T, console: Console, level: Logger.Level = .info, metadata: Logger.Metadata = [:], metadataProvider: Logger.MetadataProvider? = nil) {
+    public static func bootstrap(
+        fragment: some LoggerFragment,
+        console: any Console,
+        level: Logger.Level = .info,
+        metadata: Logger.Metadata = [:],
+        metadataProvider: Logger.MetadataProvider? = nil
+    ) {
         self.bootstrap({ (label, metadataProvider) in
             return ConsoleFragmentLogger(fragment: fragment, label: label, console: console, level: level, metadata: metadata, metadataProvider: metadataProvider)
         }, metadataProvider: metadataProvider)

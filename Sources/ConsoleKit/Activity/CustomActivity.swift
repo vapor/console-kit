@@ -100,7 +100,7 @@ public struct CustomActivity: ActivityIndicatorType {
     
     
     /// See `ActivityIndicatorType.outputActivityIndicator(to:state:)`.
-    public func outputActivityIndicator(to console: Console, state: ActivityIndicatorState) {
+    public func outputActivityIndicator(to console: any Console, state: ActivityIndicatorState) {
         let output: ConsoleText
         
         switch state {

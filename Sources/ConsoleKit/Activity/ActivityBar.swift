@@ -22,7 +22,7 @@ public protocol ActivityBar: ActivityIndicatorType {
 
 extension ActivityBar {
     /// See `ActivityIndicatorType`.
-    public func outputActivityIndicator(to console: Console, state: ActivityIndicatorState) {
+    public func outputActivityIndicator(to console: any Console, state: ActivityIndicatorState) {
         let bar: ConsoleText
         switch state {
         case .ready: bar = "[]"
@@ -52,11 +52,11 @@ struct ActivityBarWidthKey: Hashable, Equatable {
 extension Console {
     public var activityBarWidth: Int {
         get {
-            self.userInfo[AnyHashable(ActivityBarWidthKey())] as? Int ?? 25
+            self.userInfo[AnySendableHashable(ActivityBarWidthKey())] as? Int ?? 25
         }
         
         set {
-            self.userInfo[AnyHashable(ActivityBarWidthKey())] = newValue
+            self.userInfo[AnySendableHashable(ActivityBarWidthKey())] = newValue
         }
     }
 }

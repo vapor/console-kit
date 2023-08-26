@@ -4,6 +4,7 @@ import Darwin
 #else
 import Glibc
 #endif
+import NIOConcurrencyHelpers
 
 extension ActivityIndicatorType {
     /// Creates a new `ActivityIndicator` for this `ActivityIndicatorType`.
@@ -15,7 +16,7 @@ extension ActivityIndicatorType {
     ///     - targetQueue: An optional target queue (defaults to `nil`) on which
     ///                    asynchronous updates to the console will be
     ///                    scheduled.
-    public func newActivity(for console: Console, targetQueue: DispatchQueue? = nil) -> ActivityIndicator<Self> {
+    public func newActivity(for console: any Console, targetQueue: DispatchQueue? = nil) -> ActivityIndicator<Self> {
         return .init(activity: self, console: console, targetQueue: targetQueue)
     }
 }
@@ -34,14 +35,22 @@ extension ActivityIndicatorType {
 ///     try loadingBar.start(on: ...).wait()
 ///
 public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType {
+    let _activity: NIOLockedValueBox<A>
     /// The generic `ActivityIndicatorType` powering this `ActivityIndicator`.
-    public var activity: A
+    public var activity: A {
+        get {
+            self._activity.withLockedValue { $0 }
+        }
+        set {
+            self._activity.withLockedValue { $0 = newValue }
+        }
+    }
 
     /// The `Console` this `ActivityIndicator` is running on.
-    private let console: Console
+    private let console: any Console
 
     /// Current state.
-    private var state: ActivityIndicatorState
+    private let state: NIOLockedValueBox<ActivityIndicatorState>
     
     /// The queue on which to handle timer events
     private let queue: DispatchQueue
@@ -50,16 +59,25 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     /// dispatch timer is cancelled.
     private let stopGroup: DispatchGroup
     
+    private let _timer: NIOLockedValueBox<any DispatchSourceTimer & Sendable>
     /// The timer that drives this activity indicator's updates.
-    private var timer: DispatchSourceTimer
+    private var timer: any DispatchSourceTimer & Sendable {
+        get {
+            self._timer.withLockedValue { $0 }
+        }
+        
+        set {
+            self._timer.withLockedValue { $0 = newValue }
+        }
+    }
     
     /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.
-    init(activity: A, console: Console, targetQueue: DispatchQueue? = nil) {
+    init(activity: A, console: any Console, targetQueue: DispatchQueue? = nil) {
         self.console = console
-        self.state = .ready
-        self.activity = activity
+        self.state = NIOLockedValueBox(.ready)
+        self._activity = NIOLockedValueBox(activity)
         self.queue = DispatchQueue(label: "codes.vapor.consolekit.activityindicator", target: targetQueue)
-        self.timer = DispatchSource.makeTimerSource(flags: [], queue: self.queue)
+        self._timer = NIOLockedValueBox(DispatchSource.makeTimerSource(flags: [], queue: self.queue))
         self.stopGroup = DispatchGroup()
     }
 

@@ -11,7 +11,7 @@ import XCTest
 
 final class TestConsole: Console {
     var lastOutput: String? = nil
-    var userInfo = [AnyHashable: any Sendable]()
+    var userInfo = [AnySendableHashable: any Sendable]()
     
     func input(isSecure: Bool) -> String {
         ""

@@ -14,5 +14,5 @@ public protocol ActivityIndicatorType: Sendable {
     /// - parameters:
     ///     - console: `Console` to output this indicator to.
     ///     - state: State to draw the indicator in, e.g., active, failed.
-    func outputActivityIndicator(to console: Console, state: ActivityIndicatorState)
+    func outputActivityIndicator(to console: any Console, state: ActivityIndicatorState)
 }

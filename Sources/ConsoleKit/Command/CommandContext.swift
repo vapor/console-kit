@@ -1,7 +1,7 @@
 /// A type-erased `CommandContext`
 public struct CommandContext {
     /// The `Console` this command was run on.
-    public var console: Console
+    public var console: any Console
     
     /// The parsed arguments (according to declared signature).
     public var input: CommandInput
@@ -10,7 +10,7 @@ public struct CommandContext {
     
     /// Create a new `AnyCommandContext`.
     public init(
-        console: Console,
+        console: any Console,
         input: CommandInput
     ) {
         self.console = console

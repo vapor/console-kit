@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.7
 import PackageDescription
 
 let package = Package(
@@ -14,10 +14,12 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.56.0"),
     ],
     targets: [
         .target(name: "ConsoleKit", dependencies: [
             .product(name: "Logging", package: "swift-log"),
+            .product(name: "NIOConcurrencyHelpers", package: "swift-nio")
         ]),
         .testTarget(name: "ConsoleKitTests", dependencies: [
             .target(name: "ConsoleKit"),
@@ -33,6 +35,10 @@ let package = Package(
         ]),
         .executableTarget(name: "ConsoleKitAsyncExample", dependencies: [
             .target(name: "ConsoleKit")
+        ]),
+        .executableTarget(name: "ConsoleLoggerExample", dependencies: [
+            .target(name: "ConsoleKit"),
+            .product(name: "Logging", package: "swift-log")
         ])
     ]
 )

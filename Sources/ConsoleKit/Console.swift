@@ -75,5 +75,5 @@ public protocol Console: AnyObject, Sendable {
     ///     - newLine: If `true`, the next error will be on a new line.
     func report(error: String, newLine: Bool)
     
-    var userInfo: [AnyHashable: Sendable] { get set }
+    var userInfo: [AnySendableHashable: any Sendable] { get set }
 }
