@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.7
 import PackageDescription
 
 let package = Package(
@@ -28,7 +28,7 @@ let package = Package(
         .executableTarget(name: "ConsoleKitExample", dependencies: [
             .target(name: "ConsoleKit"),
         ]),
-        .target(name: "ConsoleKitAsyncExample", dependencies: [
+        .executableTarget(name: "ConsoleKitAsyncExample", dependencies: [
             .target(name: "ConsoleKit")
         ])
     ]
