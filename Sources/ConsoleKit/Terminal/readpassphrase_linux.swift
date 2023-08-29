@@ -15,7 +15,7 @@ import Dispatch
 /// fatal error to call it off the main thread. This enables us to have the signal recovery handler write to somewhere
 /// it can find without risking intervention from the Swift runtime at async-signal time.
 internal func linux_readpassphrase(_ prompt: UnsafePointer<Int8>, _ buf: UnsafeMutablePointer<Int8>, _ bufsiz: Int, _ flags: Int32) -> UnsafeMutablePointer<Int8>? {
-    dispatchPrecondition(condition: .onQueue(.main))
+    //dispatchPrecondition(condition: .onQueue(.main))
     
     precondition((flags & 0x20/* RPP_STDIN */) == 0, "RPP_STDIN is not supported by this implementation")
     precondition((flags & 0x04/* RPP_FORCELOWER */) == 0, "RPP_FORCELOWER is not supported by this implementation")
