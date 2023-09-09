@@ -9,8 +9,10 @@ public func defaultLoggerFragment() -> some LoggerFragment {
 }
 
 /// A `LoggerFragment` which implements the default logger message format with a timestamp at the front.
-public func timestampDefaultLoggerFragment() -> some LoggerFragment {
-    TimestampFragment().and(defaultLoggerFragment().separated(" "))
+public func timestampDefaultLoggerFragment(
+    timestampSource: some TimestampSource = SystemTimestampSource()
+) -> some LoggerFragment {
+    TimestampFragment(timestampSource).and(defaultLoggerFragment().separated(" "))
 }
 
 /// Outputs logs to a `Console` via a `LoggerFragment` pipeline.

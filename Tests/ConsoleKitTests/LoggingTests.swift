@@ -93,6 +93,62 @@ final class ConsoleLoggerTests: XCTestCase {
         }
         XCTAssertLog(console, .debug, "debug [simple-trace-id: 1234-5678] (ConsoleKitTests/LoggingTests.swift:92)")
     }
+    
+    func testTimestampFragment() {
+        let console = TestConsole()
+        
+        struct ConstantTimestampSource: TimestampSource {
+            let time: tm
+            
+            func now() -> tm {
+                self.time
+            }
+        }
+        
+        let logger = Logger(label: "codes.vapor.console") { label in
+            var time = tm()
+            time.tm_sec = 1
+            time.tm_min = 2
+            time.tm_hour = 3
+            time.tm_mday = 4
+            time.tm_mon = 5
+            time.tm_year = 100
+            
+            return ConsoleFragmentLogger(
+                fragment: timestampDefaultLoggerFragment(timestampSource: ConstantTimestampSource(time: time)),
+                label: label,
+                console: console
+            )
+        }
+        
+        logger.info("logged")
+        
+        var logged = console.testOutputQueue.first!
+        let expect = "2000-06-04T03:02:01"
+        XCTAssert(logged.hasPrefix(expect))
+        logged.removeFirst(expect.count)
+        
+        // Remove the timezone, since there doesn't appear to be a good way to mock it with strftime.
+        while logged.removeFirst() != " " { }
+        
+        XCTAssertEqual(logged, "[ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:124)\n")
+    }
+    
+    func testSourceFragment() {
+        let console = TestConsole()
+        
+        let logger = Logger(label: "codes.vapor.console") { label in
+            ConsoleFragmentLogger(
+                fragment: LoggerSourceFragment().and(defaultLoggerFragment().separated(" ")),
+                label: label,
+                console: console
+            )
+        }
+        
+        logger.info("logged")
+        
+        XCTAssertEqual(console.testOutputQueue.first, "ConsoleKitTests [ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:148)\n")
+    }
 }
 
 private func XCTAssertLog(_ console: TestConsole, _ level: Logger.Level, _ message: String, file: StaticString = #file, line: UInt = #line) {

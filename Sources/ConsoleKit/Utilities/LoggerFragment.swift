@@ -265,8 +265,47 @@ public struct SourceLocationFragment: LoggerFragment {
     }
 }
 
-public struct TimestampFragment: LoggerFragment {
+/// Writes the source of the logged message. By default the source is the name of the module the message was logged in.
+public struct LoggerSourceFragment: LoggerFragment {
     public init() { }
+    
+    public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
+        output += record.source.consoleText()
+        output.needsSeparator = true
+    }
+}
+
+/// A protocol to allow mocking the timestamp for tests
+public protocol TimestampSource: Sendable {
+    func now() -> tm
+}
+
+/// The default `TimestampSource`, which gets the time from the system.
+public struct SystemTimestampSource: TimestampSource {
+    public init() { }
+    
+    public func now() -> tm {
+#if os(Windows)
+        var timestamp = __time64_t()
+        var localTime = tm()
+        _ = _time64(&timestamp)
+        _ = _localtime64_s(&localTime, &timestamp)
+#else
+        var timestamp = time(nil)
+        var localTime = tm()
+        localtime_r(&timestamp, &localTime)
+#endif
+        return localTime
+    }
+}
+
+/// Writes a formatted timestamp based on the time obtained from the `TimestampSource`.
+public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
+    let source: S
+    
+    public init(_ source: S = SystemTimestampSource()) { 
+        self.source = source
+    }
     
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
         output += self.timestamp().consoleText()
@@ -274,24 +313,13 @@ public struct TimestampFragment: LoggerFragment {
     }
     
     private func timestamp() -> String {
-        var buffer = [Int8](repeating: 0, count: 255)
-#if os(Windows)
-        var timestamp = __time64_t()
-        _ = _time64(&timestamp)
-        
-        var localTime = tm()
-        _ = _localtime64_s(&localTime, &timestamp)
-        
-        _ = strftime(&buffer, buffer.count, "%Y-%m-%dT%H:%M:%S%z", &localTime)
-#else
-        var timestamp = time(nil)
-        let localTime = localtime(&timestamp)
-        strftime(&buffer, buffer.count, "%Y-%m-%dT%H:%M:%S%z", localTime)
-#endif
-        return buffer.withUnsafeBufferPointer {
-            $0.withMemoryRebound(to: CChar.self) {
-                String(cString: $0.baseAddress!)
+        withUnsafeTemporaryAllocation(of: CChar.self, capacity: 255) {
+            var localTime = self.source.now()
+            
+            guard strftime($0.baseAddress!, $0.count, "%Y-%m-%dT%H:%M:%S%z", &localTime) > 0 else {
+                return "<unknown>"
             }
+            return String(cString: $0.baseAddress!)
         }
     }
 }
