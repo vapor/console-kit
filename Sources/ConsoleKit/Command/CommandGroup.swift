@@ -14,12 +14,12 @@
 ///
 /// You can create your own `CommandGroup` if you want to support custom `CommandOptions`.
 public protocol CommandGroup: AnyCommand {
-    var commands: [String: AnyCommand] { get }
-    var defaultCommand: AnyCommand? { get }
+    var commands: [String: any AnyCommand] { get }
+    var defaultCommand: (any AnyCommand)? { get }
 }
 
 extension CommandGroup {
-    public var defaultCommand: AnyCommand? {
+    public var defaultCommand: (any AnyCommand)? {
         return nil
     }
 }
@@ -80,7 +80,7 @@ extension CommandGroup {
         context.console.output(" [--help,-h]".consoleText(.success) + "` for more information on a command.")
     }
 
-    private func commmand(using context: inout CommandContext) throws -> AnyCommand? {
+    private func commmand(using context: inout CommandContext) throws -> (any AnyCommand)? {
         if let name = context.input.arguments.popFirst() {
             guard let command = self.commands[name] else {
                 throw CommandError.unknownCommand(name, available: Array(self.commands.keys))

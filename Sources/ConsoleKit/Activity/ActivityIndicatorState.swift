@@ -1,7 +1,7 @@
 /// Possible states to draw / render and `ActivityIndicatorType`.
 ///
 /// See `ActivityIndicatorType`.
-public enum ActivityIndicatorState {
+public enum ActivityIndicatorState: Sendable {
     /// Default state. This is usually never used other than for initialization.
     case ready
 

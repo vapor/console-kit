@@ -6,12 +6,37 @@ import Glibc
 import CRT
 #endif
 import Foundation
+import NIOConcurrencyHelpers
+
+/// A `Sendable` version of the standard library's `AnyHashable` type.
+public struct AnySendableHashable: @unchecked Sendable, Hashable, ExpressibleByStringLiteral {
+    // Note: @unchecked Sendable since there's no way to express that `wrappedValue` is Sendable, even though we ensure that it is in the init.
+    let wrappedValue: AnyHashable
+    
+    public init(_ wrappedValue: any Hashable & Sendable) {
+        self.wrappedValue = AnyHashable(wrappedValue)
+    }
+    
+    public init(stringLiteral value: String) {
+        self.init(value)
+    }
+}
 
 /// Generic console that uses a mixture of Swift standard
 /// library and Foundation code to fulfill protocol requirements.
-public final class Terminal: Console {
+public final class Terminal: Console, Sendable {
+    let _userInfo: NIOLockedValueBox<[AnySendableHashable: any Sendable]>
+    
     /// See `Console`
-    public var userInfo: [AnyHashable: Any]
+    public var userInfo: [AnySendableHashable: any Sendable] {
+        get {
+            self._userInfo.withLockedValue { $0 }
+        }
+        
+        set {
+            self._userInfo.withLockedValue { $0 = newValue }
+        }
+    }
 
     /// Dynamically exclude ANSI commands when in Xcode since it doesn't support them.
     internal var enableCommands: Bool {
@@ -27,7 +52,7 @@ public final class Terminal: Console {
 
     /// Create a new Terminal.
     public init() {
-        self.userInfo = [:]
+        self._userInfo = NIOLockedValueBox([:])
     }
 
     /// See `Console`
@@ -91,21 +116,23 @@ public final class Terminal: Console {
 
     /// See `Console`
     public func output(_ text: ConsoleText, newLine: Bool) {
-        var lines = 0
-        for fragment in text.fragments {
-            let strings = fragment.string.split(separator: "\n", omittingEmptySubsequences: false)
-            for string in strings {
-                let count = string.count
-                if count > size.width && count > 0 && size.width > 0 {
-                    lines += (count / size.width) + 1
+        if self.enableCommands {
+            var lines = 0
+            for fragment in text.fragments {
+                let strings = fragment.string.split(separator: "\n", omittingEmptySubsequences: false)
+                for string in strings {
+                    let count = string.count
+                    if count > size.width && count > 0 && size.width > 0 {
+                        lines += (count / size.width) + 1
+                    }
                 }
+                /// add line for each fragment
+                lines += strings.count - 1
             }
-            /// add line for each fragment
-            lines += strings.count - 1
+            if newLine { lines += 1 }
+            
+            didOutputLines(count: lines)
         }
-        if newLine { lines += 1 }
-
-        didOutputLines(count: lines)
 
         let terminator = newLine ? "\n" : ""
 
@@ -116,14 +143,17 @@ public final class Terminal: Console {
             output = text.description
         }
         Swift.print(output, terminator: terminator)
-        fflush(stdout)
     }
 
     /// See `Console`
     public func report(error: String, newLine: Bool) {
-        let output = newLine ? error + "\n" : error
-        let data = output.data(using: .utf8) ?? Data()
-        FileHandle.standardError.write(data)
+        for c in (newLine ? "\(error)\n" : error).utf8 {
+#if os(Windows)
+            _putc_nolock(CInt(c), stderr)
+#else
+            putc_unlocked(CInt(c), stderr)
+#endif
+        }
     }
 
     /// See `Console`

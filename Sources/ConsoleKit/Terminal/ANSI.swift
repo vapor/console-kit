@@ -156,7 +156,7 @@ extension ANSISGRColorSpec {
         case .traditional(let c): return .foregroundColor(c)
         case .bright(let c): return .brightForegroundColor(c)
         case .palette(let c): return .paletteForegroundColor(c)
-        case .rgb(let r, let g, let b):	return .rgbForegroundColor(r: r, g: g, b: b)
+        case .rgb(let r, let g, let b): return .rgbForegroundColor(r: r, g: g, b: b)
         case .`default`: return .defaultForegroundColor
         }
     }
@@ -178,7 +178,7 @@ extension ConsoleStyle {
         var commands: [ANSISGRCommand] = [.reset]
         
         if isBold {
-	        commands.append(.bold)
+            commands.append(.bold)
         }
         if let color = color {
             commands.append(color.ansiSpec.foregroundAnsiCommand)

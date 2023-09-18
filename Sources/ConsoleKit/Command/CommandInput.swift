@@ -1,5 +1,5 @@
 /// Raw input for commands. Use this to parse options and arguments for the command context.
-public struct CommandInput {
+public struct CommandInput: Sendable {
     /// The `CommandInput`'s raw arguments. This array will be mutated as arguments and options
     /// are parsed from the `CommandInput`.
     public var arguments: [String]

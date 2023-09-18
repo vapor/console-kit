@@ -22,11 +22,11 @@ public protocol ActivityBar: ActivityIndicatorType {
 
 extension ActivityBar {
     /// See `ActivityIndicatorType`.
-    public func outputActivityIndicator(to console: Console, state: ActivityIndicatorState) {
+    public func outputActivityIndicator(to console: any Console, state: ActivityIndicatorState) {
         let bar: ConsoleText
         switch state {
         case .ready: bar = "[]"
-        case .active(let tick): bar = renderActiveBar(tick: tick, width: Self.width)
+        case .active(let tick): bar = renderActiveBar(tick: tick, width: console.activityBarWidth)
         case .success: bar = "[Done]".consoleText(.success)
         case .failure: bar = "[Failed]".consoleText(.error)
         }
@@ -34,13 +34,29 @@ extension ActivityBar {
     }
 }
 
-/// Defines the width of all `ActivityBar`s in characters.
-private var _width: Int = 25
-
 extension ActivityBar {
-    /// Defines the width of all `ActivityBar`s in characters.
+    @available(*, deprecated, message: "This value has no effect. Use `console.activityBarWidth` instead.")
     public static var width: Int {
-        get { return _width }
-        set { _width = newValue}
+        get { 25 } // deliberately hardcoded value
+        set { } // deliberately ignore new value
+    }
+}
+
+/// Key type for storing the activity bar width in the `userInfo` of the related `Console` without colliding with end user keys.
+struct ActivityBarWidthKey: Hashable, Equatable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine("ConsoleKit.ActivityBarWidthKey")
+    }
+}
+
+extension Console {
+    public var activityBarWidth: Int {
+        get {
+            self.userInfo[AnySendableHashable(ActivityBarWidthKey())] as? Int ?? 25
+        }
+        
+        set {
+            self.userInfo[AnySendableHashable(ActivityBarWidthKey())] = newValue
+        }
     }
 }

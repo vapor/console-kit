@@ -101,7 +101,7 @@ internal func linux_readpassphrase(_ prompt: UnsafePointer<Int8>, _ buf: UnsafeM
 /// We must avoid any accesses into the Swift runtime in the signal handler, so this is manually allocated
 /// storage rather than a simple array. It is never deallocated and will be considered a leak by memory
 /// analysis tools.
-fileprivate var linux_readpassphrase_signos: VeryUnsafeMutableSigAtomicBufferPointer = .init(capacity: NSIG)
+fileprivate let linux_readpassphrase_signos: VeryUnsafeMutableSigAtomicBufferPointer = .init(capacity: NSIG)
 
 /// A version of `UnsafeMutableBufferPointer` which avoids any references to the Swift runtime, including conformance to
 /// `Collection` or `Sequence`, etc. Guaranteed to only ever allocate once. Provides a (typically global) "array" of
@@ -126,12 +126,12 @@ fileprivate struct VeryUnsafeMutableSigAtomicBufferPointer {
     
     subscript(_ index: Int) -> sig_atomic_t {
         get { self.baseAddress.advanced(by: index).pointee }
-        set { self.baseAddress.advanced(by: index).pointee = newValue }
+        nonmutating set { self.baseAddress.advanced(by: index).pointee = newValue }
     }
 
     subscript(_ index: Int32) -> sig_atomic_t {
         get { self[Int(index)] }
-        set { self[Int(index)] = newValue }
+        nonmutating set { self[Int(index)] = newValue }
     }
     
     func reset() {

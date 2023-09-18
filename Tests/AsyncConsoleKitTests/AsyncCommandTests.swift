@@ -136,7 +136,7 @@ final class AsyncCommandTests: XCTestCase {
             }
 
             var help: String = ""
-            var assertion: (Signature) -> ()
+            var assertion: @Sendable (Signature) -> ()
 
             func run(using context: CommandContext, signature: OptionInitialized.Signature) async throws {
                 assertion(signature)

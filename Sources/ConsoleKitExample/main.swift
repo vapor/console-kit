@@ -1,5 +1,6 @@
 import ConsoleKit
 import Foundation
+import Logging
 
 let console: Console = Terminal()
 var input = CommandInput(arguments: CommandLine.arguments)

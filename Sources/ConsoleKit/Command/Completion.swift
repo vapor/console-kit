@@ -121,8 +121,8 @@ extension AnyCommand {
     /// Returns the bash completion function for `self`.
     fileprivate func renderBashCompletionFunction(
         using context: CommandContext,
-        signatureValues: [AnySignatureValue] = [],
-        subcommands: [String: AnyCommand] = [:]
+        signatureValues: [any AnySignatureValue] = [],
+        subcommands: [String: any AnyCommand] = [:]
     ) -> String {
         let commandDepth = context.input.executablePath.count
         let isRootCommand = commandDepth == 1
@@ -224,8 +224,8 @@ extension AnyCommand {
     ///
     fileprivate func renderZshCompletionFunction(
         using context: CommandContext,
-        signatureValues: [AnySignatureValue] = [],
-        subcommands: [String: AnyCommand] = [:]
+        signatureValues: [any AnySignatureValue] = [],
+        subcommands: [String: any AnyCommand] = [:]
     ) -> String {
         let arguments = ([Flag.help] + signatureValues.sorted(by: { $0.name < $1.name })).map { $0.completionInfo }
         let subcommands = subcommands.sorted(by: { $0.key < $1.key })
@@ -298,8 +298,8 @@ extension AnyAsyncCommand {
     /// Returns the bash completion function for `self`.
     fileprivate func renderBashCompletionFunction(
         using context: CommandContext,
-        signatureValues: [AnySignatureValue] = [],
-        subcommands: [String: AnyAsyncCommand] = [:]
+        signatureValues: [any AnySignatureValue] = [],
+        subcommands: [String: any AnyAsyncCommand] = [:]
     ) -> String {
         let commandDepth = context.input.executablePath.count
         let isRootCommand = commandDepth == 1
@@ -401,8 +401,8 @@ extension AnyAsyncCommand {
     ///
     fileprivate func renderZshCompletionFunction(
         using context: CommandContext,
-        signatureValues: [AnySignatureValue] = [],
-        subcommands: [String: AnyAsyncCommand] = [:]
+        signatureValues: [any AnySignatureValue] = [],
+        subcommands: [String: any AnyAsyncCommand] = [:]
     ) -> String {
         let arguments = ([Flag.help] + signatureValues.sorted(by: { $0.name < $1.name })).map { $0.completionInfo }
         let subcommands = subcommands.sorted(by: { $0.key < $1.key })

@@ -51,8 +51,8 @@ public struct ProgressBar: ActivityBar {
     public func renderActiveBar(tick: UInt, width: Int) -> ConsoleText {
         let current = min(max(currentProgress, 0.0), 1.0)
 
-        let left = Int(current * Double(ProgressBar.width))
-        let right = ProgressBar.width - left
+        let left = Int(current * Double(width))
+        let right = width - left
 
         var barComponents: [String] = []
         barComponents.append("[")

@@ -3,9 +3,9 @@ import Foundation
 struct GenerateAutocompleteCommand: Command {
     var help: String { "Generate shell completion scripts for the executable" }
 
-    var rootCommand: AnyCommand?
+    var rootCommand: (any AnyCommand)?
 
-    init(rootCommand: AnyCommand? = nil) {
+    init(rootCommand: (any AnyCommand)? = nil) {
         self.rootCommand = rootCommand
     }
 

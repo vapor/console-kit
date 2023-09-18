@@ -1,5 +1,5 @@
 /// A single piece of `ConsoleText`. Contains a raw `String` and the desired `ConsoleStyle`.
-public struct ConsoleTextFragment {
+public struct ConsoleTextFragment: Sendable {
     /// The raw `String`.
     public var string: String
 

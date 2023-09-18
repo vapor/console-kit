@@ -34,7 +34,7 @@
 ///
 /// Get the `Console`'s current size using the `size` property.
 ///
-public protocol Console: AnyObject {
+public protocol Console: AnyObject, Sendable {
     /// The size of the `Console` window. Used for calculating lines printed and centering text.
     var size: (width: Int, height: Int) { get }
 
@@ -75,5 +75,5 @@ public protocol Console: AnyObject {
     ///     - newLine: If `true`, the next error will be on a new line.
     func report(error: String, newLine: Bool)
     
-    var userInfo: [AnyHashable: Any] { get set } 
+    var userInfo: [AnySendableHashable: any Sendable] { get set }
 }
