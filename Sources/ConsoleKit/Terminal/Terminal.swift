@@ -143,6 +143,7 @@ public final class Terminal: Console, Sendable {
             output = text.description
         }
         Swift.print(output, terminator: terminator)
+        fflush(stdout)
     }
 
     /// See `Console`

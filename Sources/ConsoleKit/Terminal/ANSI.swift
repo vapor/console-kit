@@ -1,3 +1,5 @@
+import Foundation
+
 /// Terminal ANSI commands
 enum ANSICommand {
     case eraseScreen
@@ -43,6 +45,7 @@ extension Terminal {
     func command(_ command: ANSICommand) {
         guard enableCommands else { return }
         Swift.print(command.ansi, terminator: "")
+        fflush(stdout)
     }
 }
 
