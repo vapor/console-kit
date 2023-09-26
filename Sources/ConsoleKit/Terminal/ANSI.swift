@@ -1,3 +1,5 @@
+import Foundation
+
 /// Terminal ANSI commands
 enum ANSICommand {
     case eraseScreen
