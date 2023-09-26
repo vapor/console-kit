@@ -43,6 +43,7 @@ extension Terminal {
     func command(_ command: ANSICommand) {
         guard enableCommands else { return }
         Swift.print(command.ansi, terminator: "")
+        fflush(stdout)
     }
 }
 
