@@ -41,7 +41,7 @@ extension CommandSignature {
     }
 }
 
-enum InputValue<T> {
+enum InputValue<T: Sendable>: Sendable {
     case initialized(T)
     case uninitialized
 }

@@ -1,5 +1,5 @@
 /// Shell completion implementations.
-public enum Shell: String, LosslessStringConvertible, CaseIterable {
+public enum Shell: String, LosslessStringConvertible, CaseIterable, Sendable {
     case bash
     case zsh
 
@@ -463,7 +463,7 @@ extension AnyAsyncCommand {
 /// An action to be used in the shell completion script(s) to provide
 /// special shell completion behaviors for an `Option`'s argument or a
 /// positional `Argument`.
-public struct CompletionAction {
+public struct CompletionAction: Sendable {
 
     /// The shell-specific implementations of the action.
     public let expressions: [Shell: String]

@@ -1,9 +1,11 @@
+import NIOConcurrencyHelpers
+
 /// A supported option for a command.
 ///
 ///     exec command [--opt -o]
 ///
 @propertyWrapper
-public final class Option<Value>: AnyOption
+public final class Option<Value: Sendable>: AnyOption, Sendable
     where Value: LosslessStringConvertible
 {
     /// The option's identifying name.
@@ -27,27 +29,33 @@ public final class Option<Value>: AnyOption
     ///
     ///     app command
     ///     // signature.option.isPresent == false
-    public private(set) var isPresent: Bool
+    public var isPresent: Bool {
+        get {
+            _isPresent.withLockedValue { $0 }
+        }
+    }
+    
+    private let _isPresent: NIOLockedValueBox<Bool>
 
     public var projectedValue: Option<Value> {
         return self
     }
 
     public var initialized: Bool {
-        switch self.value {
+        switch self.value.withLockedValue({ $0 }) {
         case .initialized: return true
         case .uninitialized: return false
         }
     }
 
     public var wrappedValue: Value? {
-        switch self.value {
+        switch self.value.withLockedValue({ $0 }) {
         case let .initialized(value): return value
         case .uninitialized: fatalError("Option \(self.name) was not initialized")
         }
     }
 
-    var value: InputValue<Value?>
+    let value: NIOLockedValueBox<InputValue<Value?>>
     
     /// Creates a new `Option` with the `optionType` set to `.value`.
     ///
@@ -70,21 +78,21 @@ public final class Option<Value>: AnyOption
         self.short = short
         self.help = help
         self.completion = completion
-        self.isPresent = false
-        self.value = .uninitialized
+        self._isPresent = .init(false)
+        self.value = .init(.uninitialized)
     }
 
     func load(from input: inout CommandInput) throws {
         let option = input.nextOption(name: self.name, short: self.short)
-        self.isPresent = option.passedIn
+        self._isPresent.withLockedValue { $0 = option.passedIn }
 
         if let rawValue = option.value {
             guard let value = Value(rawValue) else {
                 throw CommandError.invalidOptionType(self.name, type: Value.self)
             }
-            self.value = .initialized(value)
+            self.value.withLockedValue { $0 = .initialized(value) }
         } else {
-            self.value = .initialized(nil)
+            self.value.withLockedValue { $0 = .initialized(nil) }
         }
     }
 }
