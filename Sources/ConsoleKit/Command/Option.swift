@@ -5,8 +5,8 @@ import NIOConcurrencyHelpers
 ///     exec command [--opt -o]
 ///
 @propertyWrapper
-public final class Option<Value: Sendable>: AnyOption, Sendable
-    where Value: LosslessStringConvertible
+public final class Option<Value>: AnyOption, Sendable
+    where Value: LosslessStringConvertible & Sendable
 {
     /// The option's identifying name.
     public let name: String
