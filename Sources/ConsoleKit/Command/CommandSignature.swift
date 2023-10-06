@@ -5,7 +5,7 @@
 ///         var name: String
 ///     }
 ///
-public protocol CommandSignature {
+public protocol CommandSignature: Sendable {
     init()
 }
 
@@ -46,7 +46,7 @@ enum InputValue<T: Sendable>: Sendable {
     case uninitialized
 }
 
-internal protocol AnySignatureValue: AnyObject {
+internal protocol AnySignatureValue: AnyObject, Sendable {
     var help: String { get }
     var name: String { get }
     var initialized: Bool { get }
