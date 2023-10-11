@@ -8,10 +8,20 @@
 import ConsoleKit
 import Logging
 import XCTest
+import NIOConcurrencyHelpers
 
 final class TestConsole: Console {
-    var lastOutput: String? = nil
-    var userInfo = [AnySendableHashable: any Sendable]()
+    let lastOutput: NIOLockedValueBox<String?> = .init(nil)
+    let _userInfo: NIOLockedValueBox<[AnySendableHashable: any Sendable]> = .init([:])
+    
+    var userInfo: [AnySendableHashable : Sendable] {
+        get {
+            _userInfo.withLockedValue { $0 }
+        }
+        set {
+            _userInfo.withLockedValue { $0 = newValue }
+        }
+    }
     
     func input(isSecure: Bool) -> String {
         ""

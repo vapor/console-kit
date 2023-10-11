@@ -1,5 +1,5 @@
 /// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `Commands`.
-public struct Commands {
+public struct Commands: Sendable {
     /// Top-level available commands, stored by unique name.
     public var commands: [String: any AnyCommand]
 
@@ -80,7 +80,7 @@ public struct Commands {
     }
 }
 
-private struct _Group: CommandGroup {
+private struct _Group: CommandGroup, Sendable {
     var commands: [String: any AnyCommand]
     var defaultCommand: (any AnyCommand)?
     let help: String

@@ -1,3 +1,5 @@
+import NIOConcurrencyHelpers
+
 /// An argument for a console command
 ///
 ///     exec command <arg>
@@ -24,8 +26,8 @@
 ///
 /// See `Command` for more information.
 @propertyWrapper
-public final class Argument<Value>: AnyArgument
-    where Value: LosslessStringConvertible
+public final class Argument<Value>: AnyArgument, Sendable
+    where Value: LosslessStringConvertible & Sendable
 {
     /// The argument's identifying name.
     public let name: String
@@ -38,14 +40,14 @@ public final class Argument<Value>: AnyArgument
     /// See `CompletionAction` for more information and available actions.
     public let completion: CompletionAction
 
-    var value: InputValue<Value>
+    let value: NIOLockedValueBox<InputValue<Value>>
 
     public var projectedValue: Argument<Value> {
         return self
     }
 
     public var initialized: Bool {
-        switch self.value {
+        switch self.value.withLockedValue({ $0 }) {
         case .initialized: return true
         case .uninitialized: return false
         }
@@ -53,7 +55,7 @@ public final class Argument<Value>: AnyArgument
 
     /// @propertyWrapper value
     public var wrappedValue: Value {
-        switch self.value {
+        switch self.value.withLockedValue({ $0 }) {
         case let .initialized(value): return value
         case .uninitialized: fatalError("Argument \(self.name) was not initialized")
         }
@@ -73,7 +75,7 @@ public final class Argument<Value>: AnyArgument
         self.name = name
         self.help = help
         self.completion = completion
-        self.value = .uninitialized
+        self.value = .init(.uninitialized)
     }
 
     func load(from input: inout CommandInput) throws {
@@ -83,6 +85,6 @@ public final class Argument<Value>: AnyArgument
         guard let value = Value(argument) else {
             throw CommandError.invalidArgumentType(self.name, type: Value.self)
         }
-        self.value = .initialized(value)
+        self.value.withLockedValue { $0 = .initialized(value) }
     }
 }

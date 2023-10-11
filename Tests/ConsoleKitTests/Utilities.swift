@@ -88,7 +88,9 @@ final class StrictCommand: Command {
         
         init() { }
     }
-    var help: String = "I error if you pass in bad values"
+    var help: String {
+        "I error if you pass in bad values"
+    }
 
     func run(using context: CommandContext, signature: Signature) throws {
         print("Done!")
