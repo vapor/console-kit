@@ -14,12 +14,12 @@
 ///
 /// You can create your own `AsyncCommandGroup` if you want to support custom `CommandOptions`.
 public protocol AsyncCommandGroup: AnyAsyncCommand {
-    var commands: [String: AnyAsyncCommand] { get }
-    var defaultCommand: AnyAsyncCommand? { get }
+    var commands: [String: any AnyAsyncCommand] { get }
+    var defaultCommand: (any AnyAsyncCommand)? { get }
 }
 
 extension AsyncCommandGroup {
-    public var defaultCommand: AnyAsyncCommand? {
+    public var defaultCommand: (any AnyAsyncCommand)? {
         return nil
     }
 }
@@ -80,7 +80,7 @@ extension AsyncCommandGroup {
         context.console.output(" [--help,-h]".consoleText(.success) + "` for more information on a command.")
     }
 
-    private func commmand(using context: inout CommandContext) throws -> AnyAsyncCommand? {
+    private func commmand(using context: inout CommandContext) throws -> (any AnyAsyncCommand)? {
         if let name = context.input.arguments.popFirst() {
             guard let command = self.commands[name] else {
                 throw CommandError.unknownCommand(name, available: Array(self.commands.keys))

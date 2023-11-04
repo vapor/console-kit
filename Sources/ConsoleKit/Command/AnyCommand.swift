@@ -1,5 +1,5 @@
 /// A type-erased `Command`.
-public protocol AnyCommand {
+public protocol AnyCommand: Sendable {
     /// Text that will be displayed when `--help` is passed.
     var help: String { get }
     

@@ -25,7 +25,7 @@ extension String {
 ///     let text: ConsoleText = "Hello, " + "world".consoleText(color: .green)
 ///
 /// See `Console.output(_:newLine:)` for more information.
-public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, ExpressibleByStringLiteral, CustomStringConvertible {
+public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, ExpressibleByStringLiteral, CustomStringConvertible, Sendable {
     /// See `Collection`.
     public var startIndex: Int {
         return fragments.startIndex

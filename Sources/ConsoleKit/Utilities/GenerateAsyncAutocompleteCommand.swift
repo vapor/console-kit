@@ -3,9 +3,9 @@ import Foundation
 struct GenerateAsyncAutocompleteCommand: AsyncCommand {
     var help: String { "Generate shell completion scripts for the executable" }
 
-    var rootCommand: AnyAsyncCommand?
+    var rootCommand: (any AnyAsyncCommand)?
 
-    init(rootCommand: AnyAsyncCommand? = nil) {
+    init(rootCommand: (any AnyAsyncCommand)? = nil) {
         self.rootCommand = rootCommand
     }
 

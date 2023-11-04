@@ -5,7 +5,7 @@ import Foundation
 struct AsyncExample {
     static func main() async throws {
         let console: Console = Terminal()
-        let input = CommandInput(arguments: CommandLine.arguments)
+        let input = CommandInput(arguments: ProcessInfo.processInfo.arguments)
 
         var commands = AsyncCommands(enableAutocomplete: true)
         commands.use(DemoCommand(), as: "demo", isDefault: false)

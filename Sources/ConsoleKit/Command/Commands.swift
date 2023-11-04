@@ -1,10 +1,10 @@
 /// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `Commands`.
-public struct Commands {
+public struct Commands: Sendable {
     /// Top-level available commands, stored by unique name.
-    public var commands: [String: AnyCommand]
+    public var commands: [String: any AnyCommand]
 
     /// If set, this is the default top-level command that should run if no other commands are specified.
-    public var defaultCommand: AnyCommand?
+    public var defaultCommand: (any AnyCommand)?
 
     /// If `true`, an `autocomplete` subcommand will be added to any created `CommandGroup`.
     ///
@@ -29,7 +29,7 @@ public struct Commands {
     ///       `enableAutocomplete` should only be set to `true` for a _root_ command group. Any nested subcommands will
     ///       automatically be included in the completion script generation process.
     ///
-    public init(commands: [String: AnyCommand] = [:], defaultCommand: AnyCommand? = nil, enableAutocomplete: Bool = false) {
+    public init(commands: [String: any AnyCommand] = [:], defaultCommand: (any AnyCommand)? = nil, enableAutocomplete: Bool = false) {
         self.commands = commands
         self.defaultCommand = defaultCommand
         self.enableAutocomplete = enableAutocomplete
@@ -45,7 +45,7 @@ public struct Commands {
     ///     - name: A unique name for running this command.
     ///     - isDefault: If `true`, this command will be set as the default command to run when none other are specified.
     ///                  Setting this overrides any previous default commands.
-    public mutating func use(_ command: AnyCommand, as name: String, isDefault: Bool = false) {
+    public mutating func use(_ command: any AnyCommand, as name: String, isDefault: Bool = false) {
         self.commands[name] = command
         if isDefault {
             self.defaultCommand = command
@@ -63,7 +63,7 @@ public struct Commands {
     /// - parameters:
     ///     - help: Optional help messages to include.
     /// - returns: A `CommandGroup` with commands and defaultCommand configured.
-    public func group(help: String = "") -> CommandGroup {
+    public func group(help: String = "") -> any CommandGroup {
         var group = _Group(
             commands: self.commands,
             defaultCommand: self.defaultCommand,
@@ -80,8 +80,8 @@ public struct Commands {
     }
 }
 
-private struct _Group: CommandGroup {
-    var commands: [String: AnyCommand]
-    var defaultCommand: AnyCommand?
+private struct _Group: CommandGroup, Sendable {
+    var commands: [String: any AnyCommand]
+    var defaultCommand: (any AnyCommand)?
     let help: String
 }

@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
@@ -20,22 +20,27 @@ let package = Package(
         .target(name: "ConsoleKit", dependencies: [
             .product(name: "Logging", package: "swift-log"),
             .product(name: "NIOConcurrencyHelpers", package: "swift-nio")
+        ], swiftSettings: [
+            .enableExperimentalFeature("StrictConcurrency=complete"),
+            .enableUpcomingFeature("ExistentialAny"),
+            .enableUpcomingFeature("ForwardTrailingClosures"),
+            .enableUpcomingFeature("ConciseMagicFile"),
         ]),
         .testTarget(name: "ConsoleKitTests", dependencies: [
             .target(name: "ConsoleKit"),
-        ]),
+        ], swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
         .testTarget(name: "AsyncConsoleKitTests", dependencies: [
             .target(name: "ConsoleKit"),
-        ]),
+        ], swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
         .testTarget(name: "ConsoleKitPerformanceTests", dependencies: [
             .target(name: "ConsoleKit")
-        ]),
+        ], swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
         .executableTarget(name: "ConsoleKitExample", dependencies: [
             .target(name: "ConsoleKit"),
-        ]),
+        ], swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
         .executableTarget(name: "ConsoleKitAsyncExample", dependencies: [
             .target(name: "ConsoleKit")
-        ]),
+        ], swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
         .executableTarget(name: "ConsoleLoggerExample", dependencies: [
             .target(name: "ConsoleKit"),
             .product(name: "Logging", package: "swift-log")

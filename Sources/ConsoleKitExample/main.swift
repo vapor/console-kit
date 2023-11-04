@@ -1,8 +1,9 @@
 import ConsoleKit
 import Foundation
+import Logging
 
 let console: Console = Terminal()
-var input = CommandInput(arguments: CommandLine.arguments)
+var input = CommandInput(arguments: ProcessInfo.processInfo.arguments)
 var context = CommandContext(console: console, input: input)
 
 var commands = Commands(enableAutocomplete: true)

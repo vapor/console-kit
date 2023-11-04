@@ -1,3 +1,5 @@
+import NIOConcurrencyHelpers
+
 /// A supported option for a command.
 ///
 ///     exec command [--opt -o]
@@ -14,7 +16,7 @@ public final class Flag: AnyFlag {
     public let short: Character?
 
     public var initialized: Bool {
-        switch self.value {
+        switch self.value.withLockedValue({ $0 }) {
         case .initialized: return true
         case .uninitialized: return false
         }
@@ -25,13 +27,13 @@ public final class Flag: AnyFlag {
     }
 
     public var wrappedValue: Bool {
-        switch self.value {
+        switch self.value.withLockedValue({ $0 }) {
         case let .initialized(value): return value
         case .uninitialized: fatalError("Flag \(self.name) was not initialized")
         }
     }
 
-    var value: InputValue<Bool>
+    let value: NIOLockedValueBox<InputValue<Bool>>
 
     /// Creates a new `Option` with the `optionType` set to `.value`.
     ///
@@ -49,10 +51,10 @@ public final class Flag: AnyFlag {
         self.name = name
         self.short = short
         self.help = help
-        self.value = .uninitialized
+        self.value = .init(.uninitialized)
     }
 
     func load(from input: inout CommandInput) throws {
-        self.value = .initialized(input.nextFlag(name: self.name, short: self.short))
+        self.value.withLockedValue { $0 = .initialized(input.nextFlag(name: self.name, short: self.short)) }
     }
 }

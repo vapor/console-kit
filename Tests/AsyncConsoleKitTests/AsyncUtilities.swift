@@ -1,5 +1,6 @@
 import ConsoleKit
 import XCTest
+import NIOConcurrencyHelpers
 
 extension String: Error {}
 
@@ -87,7 +88,8 @@ final class StrictCommand: AsyncCommand {
         
         init() { }
     }
-    var help: String = "I error if you pass in bad values"
+    
+    let help: String = "I error if you pass in bad values"
 
     func run(using context: CommandContext, signature: Signature) async throws {
         print("Done!")
@@ -95,12 +97,38 @@ final class StrictCommand: AsyncCommand {
 }
 
 final class TestConsole: Console {
-    var testInputQueue: [String]
-    var testOutputQueue: [String]
-    var userInfo: [AnyHashable : Any]
+    let _testInputQueue: NIOLockedValueBox<[String]> = NIOLockedValueBox([])
+    
+    var testInputQueue: [String] {
+        get {
+            self._testInputQueue.withLockedValue { $0 }
+        }
+        set {
+            self._testInputQueue.withLockedValue { $0 = newValue }
+        }
+    }
+    
+    let _testOutputQueue: NIOLockedValueBox<[String]> = NIOLockedValueBox([])
+    var testOutputQueue: [String] {
+        get {
+            self._testOutputQueue.withLockedValue { $0 }
+        }
+        set {
+            self._testOutputQueue.withLockedValue { $0 = newValue }
+        }
+    }
+    
+    let _userInfo: NIOLockedValueBox<[AnySendableHashable: Sendable]> = NIOLockedValueBox([:])
+    var userInfo: [AnySendableHashable: Sendable] {
+        get {
+            self._userInfo.withLockedValue { $0 }
+        }
+        set {
+            self._userInfo.withLockedValue { $0 = newValue }
+        }
+    }
 
     init() {
-        self.testInputQueue = []
         self.testOutputQueue = []
         self.userInfo = [:]
     }

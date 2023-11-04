@@ -4,7 +4,7 @@
 ///         basically because "that's how ANSI colors work". It's a little conceptually weird, but so are terminal
 ///         control codes.
 ///
-public enum ConsoleColor {
+public enum ConsoleColor: Sendable {
     // MARK: Normal
 
     /// Black

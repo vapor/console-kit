@@ -36,7 +36,7 @@ class TerminalTests: XCTestCase {
 
     func testStylizeRGBColor() throws {
         XCTAssertEqual(
-        	"TEST".terminalStylize(.init(color: .custom(r: 100, g: 100, b: 100))),
+            "TEST".terminalStylize(.init(color: .custom(r: 100, g: 100, b: 100))),
             "\u{001b}[0;38;2;100;100;100mTEST\u{001b}[0m"
         )
         XCTAssertEqual(

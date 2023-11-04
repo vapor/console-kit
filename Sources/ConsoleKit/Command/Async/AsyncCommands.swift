@@ -1,10 +1,10 @@
 /// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `AsyncCommands`.
 public struct AsyncCommands {
     /// Top-level available commands, stored by unique name.
-    public var commands: [String: AnyAsyncCommand]
+    public var commands: [String: any AnyAsyncCommand]
 
     /// If set, this is the default top-level command that should run if no other commands are specified.
-    public var defaultCommand: AnyAsyncCommand?
+    public var defaultCommand: (any AnyAsyncCommand)?
 
     /// If `true`, an `autocomplete` subcommand will be added to any created `AsyncCommandGroup`.
     ///
@@ -30,8 +30,8 @@ public struct AsyncCommands {
     ///       automatically be included in the completion script generation process.
     ///
     public init(
-        commands: [String: AnyAsyncCommand] = [:],
-        defaultCommand: AnyAsyncCommand? = nil,
+        commands: [String: any AnyAsyncCommand] = [:],
+        defaultCommand: (any AnyAsyncCommand)? = nil,
         enableAutocomplete: Bool = false
     ) {
         self.commands = commands
@@ -49,7 +49,7 @@ public struct AsyncCommands {
     ///     - name: A unique name for running this command.
     ///     - isDefault: If `true`, this command will be set as the default command to run when none other are specified.
     ///                  Setting this overrides any previous default commands.
-    public mutating func use(_ command: AnyAsyncCommand, as name: String, isDefault: Bool = false) {
+    public mutating func use(_ command: any AnyAsyncCommand, as name: String, isDefault: Bool = false) {
         self.commands[name] = command
         if isDefault {
             self.defaultCommand = command
@@ -67,7 +67,7 @@ public struct AsyncCommands {
     /// - parameters:
     ///     - help: Optional help messages to include.
     /// - returns: An `AsyncCommandGroup` with commands and defaultCommand configured.
-    public func group(help: String = "") -> AsyncCommandGroup {
+    public func group(help: String = "") -> any AsyncCommandGroup {
         var group = _AsyncGroup(
             commands: self.commands,
             defaultCommand: self.defaultCommand,
@@ -85,7 +85,7 @@ public struct AsyncCommands {
 }
 
 private struct _AsyncGroup: AsyncCommandGroup {
-    var commands: [String: AnyAsyncCommand]
-    var defaultCommand: AnyAsyncCommand?
+    var commands: [String: any AnyAsyncCommand]
+    var defaultCommand: (any AnyAsyncCommand)?
     let help: String
 }

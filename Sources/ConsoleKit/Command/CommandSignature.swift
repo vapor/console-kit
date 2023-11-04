@@ -5,7 +5,7 @@
 ///         var name: String
 ///     }
 ///
-public protocol CommandSignature {
+public protocol CommandSignature: Sendable {
     init()
 }
 
@@ -15,24 +15,24 @@ extension CommandSignature {
         return reference
     }
 
-    var arguments: [AnyArgument] {
+    var arguments: [any AnyArgument] {
         return Mirror(reflecting: self).children
-            .compactMap { $0.value as? AnyArgument }
+            .compactMap { $0.value as? (any AnyArgument) }
     }
 
-    var options: [AnyOption] {
+    var options: [any AnyOption] {
         return Mirror(reflecting: self).children
-            .compactMap { $0.value as? AnyOption }
+            .compactMap { $0.value as? (any AnyOption) }
     }
 
-    var flags: [AnyFlag] {
+    var flags: [any AnyFlag] {
         return Mirror(reflecting: self).children
-            .compactMap { $0.value as? AnyFlag }
+            .compactMap { $0.value as? (any AnyFlag) }
     }
 
-    var values: [AnySignatureValue] {
+    var values: [any AnySignatureValue] {
         return Mirror(reflecting: self).children
-            .compactMap { $0.value as? AnySignatureValue }
+            .compactMap { $0.value as? (any AnySignatureValue) }
     }
     
     public init(from input: inout CommandInput) throws {
@@ -41,12 +41,12 @@ extension CommandSignature {
     }
 }
 
-enum InputValue<T> {
+enum InputValue<T: Sendable>: Sendable {
     case initialized(T)
     case uninitialized
 }
 
-internal protocol AnySignatureValue: AnyObject {
+internal protocol AnySignatureValue: AnyObject, Sendable {
     var help: String { get }
     var name: String { get }
     var initialized: Bool { get }

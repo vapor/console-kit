@@ -42,7 +42,7 @@ public struct LoadingBar: ActivityBar {
         let reverse = Int(tick) % (period * 2) >= period
 
         let increasing = offset
-        let decreasing = LoadingBar.width - offset - 1
+        let decreasing = width - offset - 1
 
         let left: Int
         let right: Int
