@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     container: swift:jammy
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with: { path: console-kit }
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with: { repository: 'vapor/vapor', path: vapor }
       - run: swift package --package-path vapor edit console-kit --path console-kit
       - run: swift test --package-path vapor
