@@ -1,3 +1,5 @@
+import ConsoleKitTerminal
+
 /// A command that can be run through a `Console`.
 ///
 /// Both `AsyncCommand` and `AsyncCommandGroup` conform to `AnyAsyncCommand` which provides the basic requirements

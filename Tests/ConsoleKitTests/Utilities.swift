@@ -8,10 +8,10 @@ final class TestGroup: CommandGroup {
     struct Signature: CommandSignature {
         @Flag(name: "version", help: "Prints the version")
         var version: Bool
-        init() { }
+        init() {}
     }
 
-    let commands: [String : AnyCommand] = [
+    let commands: [String: any AnyCommand] = [
         "test": TestCommand(),
         "sub": SubGroup()
     ]
@@ -29,10 +29,10 @@ final class SubGroup: CommandGroup {
     struct Signature: CommandSignature {
         @Flag(name: "version", help: "Prints the version")
         var version: Bool
-        init() { }
+        init() {}
     }
 
-    let commands: [String : AnyCommand] = [
+    let commands: [String: any AnyCommand] = [
         "test": TestCommand()
     ]
 
@@ -65,7 +65,7 @@ final class TestCommand: Command {
         """)
         var baz: Bool
 
-        init() { }
+        init() {}
     }
 
     let help: String = "This is a test command"
@@ -86,7 +86,7 @@ final class StrictCommand: Command {
         @Argument(name: "bool")
         var bool: Bool
         
-        init() { }
+        init() {}
     }
     var help: String {
         "I error if you pass in bad values"
@@ -101,32 +101,20 @@ final class TestConsole: Console {
     let _testInputQueue: NIOLockedValueBox<[String]> = NIOLockedValueBox([])
     
     var testInputQueue: [String] {
-        get {
-            self._testInputQueue.withLockedValue { $0 }
-        }
-        set {
-            self._testInputQueue.withLockedValue { $0 = newValue }
-        }
+        get { self._testInputQueue.withLockedValue { $0 } }
+        set { self._testInputQueue.withLockedValue { $0 = newValue } }
     }
     
     let _testOutputQueue: NIOLockedValueBox<[String]> = NIOLockedValueBox([])
     var testOutputQueue: [String] {
-        get {
-            self._testOutputQueue.withLockedValue { $0 }
-        }
-        set {
-            self._testOutputQueue.withLockedValue { $0 = newValue }
-        }
+        get { self._testOutputQueue.withLockedValue { $0 } }
+        set { self._testOutputQueue.withLockedValue { $0 = newValue } }
     }
     
-    let _userInfo: NIOLockedValueBox<[AnySendableHashable: Sendable]> = NIOLockedValueBox([:])
-    var userInfo: [AnySendableHashable: Sendable] {
-        get {
-            self._userInfo.withLockedValue { $0 }
-        }
-        set {
-            self._userInfo.withLockedValue { $0 = newValue }
-        }
+    let _userInfo: NIOLockedValueBox<[AnySendableHashable: any Sendable]> = NIOLockedValueBox([:])
+    var userInfo: [AnySendableHashable: any Sendable] {
+        get { self._userInfo.withLockedValue { $0 } }
+        set { self._userInfo.withLockedValue { $0 = newValue } }
     }
 
     init() {
@@ -143,13 +131,9 @@ final class TestConsole: Console {
         testOutputQueue.insert(text.description + (newLine ? "\n" : ""), at: 0)
     }
 
-    func report(error: String, newLine: Bool) {
-        //
-    }
+    func report(error: String, newLine: Bool) {}
 
-    func clear(_ type: ConsoleClear) {
-        //
-    }
+    func clear(_ type: ConsoleClear) {}
 
-    var size: (width: Int, height: Int) { return (0, 0) }
+    var size: (width: Int, height: Int) { (width: 0, height: 0) }
 }

@@ -1,3 +1,5 @@
+import protocol ConsoleKitTerminal.Console
+
 /// A type-erased `CommandContext`
 public struct CommandContext {
     /// The `Console` this command was run on.

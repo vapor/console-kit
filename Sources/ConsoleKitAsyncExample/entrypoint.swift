@@ -4,7 +4,7 @@ import Foundation
 @main
 struct AsyncExample {
     static func main() async throws {
-        let console: Console = Terminal()
+        let console = Terminal()
         let input = CommandInput(arguments: ProcessInfo.processInfo.arguments)
 
         var commands = AsyncCommands(enableAutocomplete: true)
@@ -16,7 +16,6 @@ struct AsyncExample {
             try await console.run(group, input: input)
         } catch let error {
             console.error("\(error)")
-            exit(1)
         }
     }
 }
