@@ -6,8 +6,7 @@ import Logging
 struct ConsoleKitExample {
     static func main() {
         let console = Terminal()
-        var input = CommandInput(arguments: ProcessInfo.processInfo.arguments)
-        var context = CommandContext(console: console, input: input)
+        let input = CommandInput(arguments: ProcessInfo.processInfo.arguments)
 
         var commands = Commands(enableAutocomplete: true)
         commands.use(DemoCommand(), as: "demo", isDefault: false)
