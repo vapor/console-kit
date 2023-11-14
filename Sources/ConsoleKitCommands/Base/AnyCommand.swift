@@ -22,6 +22,6 @@ extension AnyCommand {
     }
 
     public func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String {
-        return ""
+        ""
     }
 }

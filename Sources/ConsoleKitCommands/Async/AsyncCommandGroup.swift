@@ -22,7 +22,7 @@ public protocol AsyncCommandGroup: AnyAsyncCommand {
 
 extension AsyncCommandGroup {
     public var defaultCommand: (any AnyAsyncCommand)? {
-        return nil
+        nil
     }
 }
 

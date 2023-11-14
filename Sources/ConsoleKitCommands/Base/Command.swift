@@ -89,22 +89,21 @@ extension Command {
     public func run(using context: inout CommandContext) throws {
         let signature = try Signature(from: &context.input)
         guard context.input.arguments.isEmpty else {
-            let input = context.input.arguments.joined(separator: " ")
-            throw ConsoleError.init(identifier: "unknownInput", reason: "Input not recognized: \(input)")
+            throw CommandError.unknownInput(context.input.arguments.joined(separator: " "))
         }
         try self.run(using: context, signature: signature)
     }
 
     public func outputAutoComplete(using context: inout CommandContext) {
         var autocomplete: [String] = []
-        autocomplete += Signature.reference.arguments.map { $0.name }
-        autocomplete += Signature.reference.options.map { "--" + $0.name }
+        autocomplete += Signature().arguments.map { $0.name }
+        autocomplete += Signature().options.map { "--" + $0.name }
         context.console.output(autocomplete.joined(separator: " "), style: .plain)
     }
 
     public func outputHelp(using context: inout CommandContext) {
         context.console.output("Usage: ".consoleText(.info) + context.input.executable.consoleText() + " ", newLine: false)
-        Signature.reference.outputHelp(help: self.help, using: &context)
+        Signature().outputHelp(help: self.help, using: &context)
     }
 }
 

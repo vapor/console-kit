@@ -22,7 +22,7 @@ public protocol CommandGroup: AnyCommand {
 
 extension CommandGroup {
     public var defaultCommand: (any AnyCommand)? {
-        return nil
+        nil
     }
 }
 
