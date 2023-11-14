@@ -1,4 +1,4 @@
-# ``ConsoleKit``
+# ``ConsoleKitCommands``
 
 @Metadata {
     @TitleHeading(Package)

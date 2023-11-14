@@ -62,7 +62,7 @@ extension AsyncCommandGroup {
             context.console.print(self.help)
         }
 
-        let padding = (self.commands.max(by: { $0.key.count < $1.key.count })?.key.count ?? 0) + 2
+        let padding = (self.commands.map(\.key.count).max() ?? 0) + 2
         if !self.commands.isEmpty {
             context.console.print()
             context.console.output("Commands:".consoleText(.success))

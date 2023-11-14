@@ -140,7 +140,7 @@ extension CommandSignature {
             + self.arguments.map { $0.name }
             + self.flags.map { $0.name }
 
-        let padding = (names.max(by: { $0.count < $1.count })?.count ?? 0) + 2
+        let padding = (names.map(\.count).max() ?? 0) + 2
         if !self.arguments.isEmpty {
             context.console.print()
             context.console.output("Arguments:".consoleText(.info))

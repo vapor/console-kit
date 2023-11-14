@@ -4,10 +4,10 @@ import struct ConsoleKitTerminal.ConsoleStyle
 extension Array {
     /// Pops the first element from the array.
     mutating func popFirst() -> Element? {
-        guard let pop = first else {
+        guard let pop = self.first else {
             return nil
         }
-        self = Array(dropFirst())
+        self = Array(self.dropFirst())
         return pop
     }
 }
