@@ -17,3 +17,10 @@ extension AnySendableHashable: CustomStringConvertible, CustomDebugStringConvert
     public var debugDescription: String { self.wrappedValue.debugDescription }
     public var customMirror: Mirror { self.wrappedValue.customMirror }
 }
+
+extension Dictionary where Key == AnySendableHashable {
+    public subscript(key: some Hashable & Sendable) -> Value? {
+        get { self[AnySendableHashable(key)] }
+        set { self[AnySendableHashable(key)] = newValue }
+    }
+}

@@ -52,11 +52,11 @@ struct ActivityBarWidthKey: Hashable, Equatable {
 extension Console {
     public var activityBarWidth: Int {
         get {
-            self.userInfo[AnySendableHashable(ActivityBarWidthKey())] as? Int ?? 25
+            self.userInfo[ActivityBarWidthKey()] as? Int ?? 25
         }
         
         set {
-            self.userInfo[AnySendableHashable(ActivityBarWidthKey())] = newValue
+            self.userInfo[ActivityBarWidthKey()] = newValue
         }
     }
 }
