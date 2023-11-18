@@ -14,6 +14,20 @@ import WASILibc
 
 /// Information about a specific log message, including information from the logger the message was logged to.
 public struct LogRecord {
+    public init(level: Logger.Level, message: Logger.Message, metadata: Logger.Metadata? = nil, source: String, file: String, function: String, line: UInt, label: String, loggerLevel: Logger.Level, loggerMetadata: Logger.Metadata, metadataProvider: Logger.MetadataProvider? = nil) {
+        self.level = level
+        self.message = message
+        self.metadata = metadata
+        self.source = source
+        self.file = file
+        self.function = function
+        self.line = line
+        self.label = label
+        self.loggerLevel = loggerLevel
+        self.loggerMetadata = loggerMetadata
+        self.metadataProvider = metadataProvider
+    }
+    
     /// The log level of the message
     public var level: Logger.Level
     /// The logged message
