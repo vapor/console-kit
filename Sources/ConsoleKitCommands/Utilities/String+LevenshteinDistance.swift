@@ -17,17 +17,14 @@ extension String {
         }
         
         // Create two work vectors of integer distances
-        var v0: [Int] = Array(repeating: 0, count: target.count + 1)
-        var v1: [Int] = Array(repeating: 0, count: target.count + 1)
-        
         // Initialize v0 (the previous row of distances)
         // This row is A[0][i]: edit distance for an empty s
         // The distance is just the number of characters to delete from t
-        for i in 0..<v0.count {
-            v0[i] = i
-        }
+        var v0: [Int] = Array(0 ..< (target.count + 1))
+        var v1: [Int] = Array(repeating: 0, count: target.count + 1)
         
         for i in 0..<self.count {
+            let sourceIndex = self.index(self.startIndex, offsetBy: i)
             // Calculate v1 (current row distances) from the previous row v0
 
             // First element of v1 is A[i+1][0]
@@ -36,20 +33,17 @@ extension String {
             
             // Use formula to fill in the rest of the row
             for j in 0..<target.count {
+                let targetIndex = target.index(target.startIndex, offsetBy: j)
                 // Calculating costs for A[i+1][j+1]
                 let deletionCost = v0[j + 1] + 1
                 let insertionCost = v1[j] + 1
-                let sourceIndex = self.index(self.startIndex, offsetBy: i)
-                let targetIndex = target.index(target.startIndex, offsetBy: j)
                 let substitutionCost = self[sourceIndex] == target[targetIndex] ? v0[j] : v0[j] + 1
 
-                v1[j + 1] = [deletionCost, insertionCost, substitutionCost].min()!
+                v1[j + 1] = Swift.min(deletionCost, insertionCost, substitutionCost)
             }
             
             // Copy v1 (current row) to v0 (previous row) for next iteration
-            for j in 0..<v0.count {
-                v0[j] = v1[j]
-            }
+            v0 = v1
         }
         // After the last swap, the results of v1 are now in v0
         return v0[target.count]
