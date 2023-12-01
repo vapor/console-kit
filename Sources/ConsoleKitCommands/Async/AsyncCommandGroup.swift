@@ -18,11 +18,41 @@ import ConsoleKitTerminal
 public protocol AsyncCommandGroup: AnyAsyncCommand {
     var commands: [String: any AnyAsyncCommand] { get }
     var defaultCommand: (any AnyAsyncCommand)? { get }
+
+    /// Merges this group with another group.
+    /// - Parameters:
+    ///   - group: The group to merge with.
+    ///   - defaultCommand: The new default command to use.
+    ///   - help: The help message to use for the merged group.
+    /// - Returns: A new `AsyncCommandGroup` with the merged commands.
+    func merge(
+        with group: any AsyncCommandGroup,
+        defaultCommand: (any AnyAsyncCommand)?,
+        help: String
+    ) -> any AsyncCommandGroup
+}
+
+public struct MergedAsyncCommandGroup: AsyncCommandGroup {
+    public let commands: [String: any AnyAsyncCommand]
+    public let defaultCommand: (any AnyAsyncCommand)?
+    public var help: String
 }
 
 extension AsyncCommandGroup {
-    public var defaultCommand: (any AnyAsyncCommand)? {
-        nil
+    public var defaultCommand: (any AnyAsyncCommand)? { nil }
+
+    public func merge(
+        with group: any AsyncCommandGroup,
+        defaultCommand: (any AnyAsyncCommand)?,
+        help: String
+    ) -> any AsyncCommandGroup {
+        var mergedCommands = self.commands
+        mergedCommands.merge(group.commands, uniquingKeysWith: { (_, new) in new })
+        return MergedAsyncCommandGroup(
+            commands: mergedCommands,
+            defaultCommand: defaultCommand,
+            help: help
+        )
     }
 }
 

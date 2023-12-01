@@ -1,15 +1,15 @@
 import protocol ConsoleKitTerminal.Console
 
 /// A type-erased `CommandContext`
-public struct CommandContext {
+public struct CommandContext: Sendable {
     /// The `Console` this command was run on.
     public var console: any Console
-    
+
     /// The parsed arguments (according to declared signature).
     public var input: CommandInput
 
-    public var userInfo: [AnyHashable: Any]
-    
+    public var userInfo: [AnySendableHashable: any Sendable]
+
     /// Create a new `AnyCommandContext`.
     public init(
         console: any Console,

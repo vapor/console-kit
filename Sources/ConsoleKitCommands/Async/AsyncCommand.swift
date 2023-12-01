@@ -80,7 +80,7 @@ import ConsoleKitTerminal
 ///                     U  ||----w |
 ///                        ||     ||
 ///
-public protocol AsyncCommand: AnyAsyncCommand {
+public protocol AsyncCommand: Sendable, AnyAsyncCommand {
     associatedtype Signature: CommandSignature
     func run(using context: CommandContext, signature: Signature) async throws
 }
@@ -91,7 +91,7 @@ extension AsyncCommand {
         guard context.input.arguments.isEmpty else {
             throw CommandError.unknownInput(context.input.arguments.joined(separator: " "))
         }
-      try await self.run(using: context, signature: signature)
+        try await self.run(using: context, signature: signature)
     }
 
     public func outputAutoComplete(using context: inout CommandContext) {
@@ -102,7 +102,10 @@ extension AsyncCommand {
     }
 
     public func outputHelp(using context: inout CommandContext) {
-        context.console.output("Usage: ".consoleText(.info) + context.input.executable.consoleText() + " ", newLine: false)
+        context.console.output(
+            "Usage: ".consoleText(.info) + context.input.executable.consoleText() + " ",
+            newLine: false
+        )
         Signature().outputHelp(help: self.help, using: &context)
     }
 }

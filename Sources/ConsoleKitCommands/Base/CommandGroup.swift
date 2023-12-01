@@ -15,7 +15,7 @@ import ConsoleKitTerminal
 ///     try console.run(group, with: context)
 ///
 /// You can create your own `CommandGroup` if you want to support custom `CommandOptions`.
-public protocol CommandGroup: AnyCommand {
+public protocol CommandGroup: AnyCommand, AsyncCommandGroup {
     var commands: [String: any AnyCommand] { get }
     var defaultCommand: (any AnyCommand)? { get }
 }
@@ -23,6 +23,12 @@ public protocol CommandGroup: AnyCommand {
 extension CommandGroup {
     public var defaultCommand: (any AnyCommand)? {
         nil
+    }
+
+    public var commands: [String: any AnyAsyncCommand] {
+        // make the compiler happy
+        let castedCommands: [String: any AnyCommand] = commands
+        return castedCommands
     }
 }
 

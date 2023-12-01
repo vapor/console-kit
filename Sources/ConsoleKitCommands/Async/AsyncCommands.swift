@@ -1,5 +1,5 @@
 /// Represents a top-level group of configured commands. This is usually created by calling `resolve(for:)` on `AsyncCommands`.
-public struct AsyncCommands {
+public struct AsyncCommands: Sendable {
     /// Top-level available commands, stored by unique name.
     public var commands: [String: any AnyAsyncCommand]
 
@@ -38,7 +38,7 @@ public struct AsyncCommands {
         self.defaultCommand = defaultCommand
         self.enableAutocomplete = enableAutocomplete
     }
-    
+
     /// Adds an `AsyncCommand` instance to the config.
     ///
     ///     var config = AsyncCommands()
