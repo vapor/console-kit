@@ -1,4 +1,5 @@
 import protocol ConsoleKitTerminal.Console
+import struct ConsoleKitTerminal.AnySendableHashable
 
 /// A type-erased `CommandContext`
 public struct CommandContext: Sendable {
