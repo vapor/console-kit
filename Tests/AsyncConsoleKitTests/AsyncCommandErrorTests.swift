@@ -1,4 +1,4 @@
-@testable import ConsoleKit
+@testable import ConsoleKitCommands
 import XCTest
 
 final class AsyncCommandErrorTests: XCTestCase {

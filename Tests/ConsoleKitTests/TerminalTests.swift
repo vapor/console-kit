@@ -1,5 +1,5 @@
 import XCTest
-@testable import ConsoleKit
+@testable import ConsoleKitTerminal
 
 class TerminalTests: XCTestCase {
     func testStylizeForeground() throws {

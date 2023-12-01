@@ -1,10 +1,3 @@
-//
-//  ConsoleLoggerPerformanceTests.swift
-//  
-//
-//  Created by Cole Kurkowski on 8/19/23.
-//
-
 import ConsoleKit
 import Logging
 import XCTest
@@ -14,32 +7,20 @@ final class TestConsole: Console {
     let lastOutput: NIOLockedValueBox<String?> = .init(nil)
     let _userInfo: NIOLockedValueBox<[AnySendableHashable: any Sendable]> = .init([:])
     
-    var userInfo: [AnySendableHashable : Sendable] {
-        get {
-            _userInfo.withLockedValue { $0 }
-        }
-        set {
-            _userInfo.withLockedValue { $0 = newValue }
-        }
+    var userInfo: [AnySendableHashable : any Sendable] {
+        get { _userInfo.withLockedValue { $0 } }
+        set { _userInfo.withLockedValue { $0 = newValue } }
     }
     
-    func input(isSecure: Bool) -> String {
-        ""
-    }
+    func input(isSecure: Bool) -> String { "" }
 
-    func output(_ text: ConsoleText, newLine: Bool) {
-        
-    }
+    func output(_ text: ConsoleText, newLine: Bool) {}
 
-    func report(error: String, newLine: Bool) {
-        //
-    }
+    func report(error: String, newLine: Bool) {}
 
-    func clear(_ type: ConsoleClear) {
-        //
-    }
+    func clear(_ type: ConsoleClear) {}
 
-    var size: (width: Int, height: Int) { return (0, 0) }
+    var size: (width: Int, height: Int) { (width: 0, height: 0) }
 }
 
 class ConsoleLoggerPerformanceTests: XCTestCase {

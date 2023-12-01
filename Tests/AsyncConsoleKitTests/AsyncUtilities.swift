@@ -8,14 +8,10 @@ final class TestGroup: AsyncCommandGroup {
     struct Signature: CommandSignature {
         @Flag(name: "version", help: "Prints the version")
         var version: Bool
-        init() { }
+        init() {}
     }
 
-    let commands: [String : AnyAsyncCommand] = [
-        "test": TestCommand(),
-        "sub": SubGroup()
-    ]
-
+    let commands: [String : any AnyAsyncCommand] = ["test": TestCommand(), "sub": SubGroup()]
     let help: String = "This is a test grouping!"
 
     func run(using context: CommandContext, signature: Signature) async throws {
@@ -29,12 +25,10 @@ final class SubGroup: AsyncCommandGroup {
     struct Signature: CommandSignature {
         @Flag(name: "version", help: "Prints the version")
         var version: Bool
-        init() { }
+        init() {}
     }
 
-    let commands: [String : AnyAsyncCommand] = [
-        "test": TestCommand()
-    ]
+    let commands: [String: any AnyAsyncCommand] = ["test": TestCommand()]
 
     let help: String = "This is a test sub grouping!"
 
@@ -65,7 +59,7 @@ final class TestCommand: AsyncCommand {
         """)
         var baz: Bool
 
-        init() { }
+        init() {}
     }
 
     let help: String = "This is a test command"
@@ -86,7 +80,7 @@ final class StrictCommand: AsyncCommand {
         @Argument(name: "bool")
         var bool: Bool
         
-        init() { }
+        init() {}
     }
     
     let help: String = "I error if you pass in bad values"
@@ -100,54 +94,33 @@ final class TestConsole: Console {
     let _testInputQueue: NIOLockedValueBox<[String]> = NIOLockedValueBox([])
     
     var testInputQueue: [String] {
-        get {
-            self._testInputQueue.withLockedValue { $0 }
-        }
-        set {
-            self._testInputQueue.withLockedValue { $0 = newValue }
-        }
+        get { self._testInputQueue.withLockedValue { $0 } }
+        set { self._testInputQueue.withLockedValue { $0 = newValue } }
     }
     
     let _testOutputQueue: NIOLockedValueBox<[String]> = NIOLockedValueBox([])
     var testOutputQueue: [String] {
-        get {
-            self._testOutputQueue.withLockedValue { $0 }
-        }
-        set {
-            self._testOutputQueue.withLockedValue { $0 = newValue }
-        }
+        get { self._testOutputQueue.withLockedValue { $0 } }
+        set { self._testOutputQueue.withLockedValue { $0 = newValue } }
     }
     
-    let _userInfo: NIOLockedValueBox<[AnySendableHashable: Sendable]> = NIOLockedValueBox([:])
-    var userInfo: [AnySendableHashable: Sendable] {
-        get {
-            self._userInfo.withLockedValue { $0 }
-        }
-        set {
-            self._userInfo.withLockedValue { $0 = newValue }
-        }
-    }
-
-    init() {
-        self.testOutputQueue = []
-        self.userInfo = [:]
+    let _userInfo: NIOLockedValueBox<[AnySendableHashable: any Sendable]> = NIOLockedValueBox([:])
+    var userInfo: [AnySendableHashable: any Sendable] {
+        get { self._userInfo.withLockedValue { $0 } }
+        set { self._userInfo.withLockedValue { $0 = newValue } }
     }
 
     func input(isSecure: Bool) -> String {
-        return testInputQueue.popLast() ?? ""
+        self.testInputQueue.popLast() ?? ""
     }
 
     func output(_ text: ConsoleText, newLine: Bool) {
-        testOutputQueue.insert(text.description + (newLine ? "\n" : ""), at: 0)
+        self.testOutputQueue.insert(text.description + (newLine ? "\n" : ""), at: 0)
     }
 
-    func report(error: String, newLine: Bool) {
-        //
-    }
+    func report(error: String, newLine: Bool) {}
 
-    func clear(_ type: ConsoleClear) {
-        //
-    }
+    func clear(_ type: ConsoleClear) {}
 
-    var size: (width: Int, height: Int) { return (0, 0) }
+    var size: (width: Int, height: Int) { (width: 0, height: 0) }
 }

@@ -1,6 +1,14 @@
 // swift-tools-version:5.9
 import PackageDescription
 
+let swiftSettings: [PackageDescription.SwiftSetting] = [
+    .enableExperimentalFeature("StrictConcurrency=complete"),
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("ForwardTrailingClosures"),
+    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("DisableOutwardActorInference"),
+]
+
 let package = Package(
     name: "console-kit",
     platforms: [
@@ -11,39 +19,71 @@ let package = Package(
     ],
     products: [
         .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
+        .library(name: "ConsoleKitTerminal", targets: ["ConsoleKitTerminal"]),
+        .library(name: "ConsoleKitCommands", targets: ["ConsoleKitCommands"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.56.0"),
     ],
     targets: [
-        .target(name: "ConsoleKit", dependencies: [
-            .product(name: "Logging", package: "swift-log"),
-            .product(name: "NIOConcurrencyHelpers", package: "swift-nio")
-        ], swiftSettings: [
-            .enableExperimentalFeature("StrictConcurrency=complete"),
-            .enableUpcomingFeature("ExistentialAny"),
-            .enableUpcomingFeature("ForwardTrailingClosures"),
-            .enableUpcomingFeature("ConciseMagicFile"),
-        ]),
-        .testTarget(name: "ConsoleKitTests", dependencies: [
-            .target(name: "ConsoleKit"),
-        ], swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
-        .testTarget(name: "AsyncConsoleKitTests", dependencies: [
-            .target(name: "ConsoleKit"),
-        ], swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
-        .testTarget(name: "ConsoleKitPerformanceTests", dependencies: [
-            .target(name: "ConsoleKit")
-        ], swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
-        .executableTarget(name: "ConsoleKitExample", dependencies: [
-            .target(name: "ConsoleKit"),
-        ], swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
-        .executableTarget(name: "ConsoleKitAsyncExample", dependencies: [
-            .target(name: "ConsoleKit")
-        ], swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]),
-        .executableTarget(name: "ConsoleLoggerExample", dependencies: [
-            .target(name: "ConsoleKit"),
-            .product(name: "Logging", package: "swift-log")
-        ])
+        .target(
+            name: "ConsoleKit",
+            dependencies: [
+                .target(name: "ConsoleKitCommands"),
+                .target(name: "ConsoleKitTerminal"),
+            ],
+            swiftSettings: swiftSettings
+        ),
+        .target(
+            name: "ConsoleKitCommands",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
+                .target(name: "ConsoleKitTerminal"),
+            ],
+            swiftSettings: swiftSettings
+        ),
+        .target(
+            name: "ConsoleKitTerminal",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
+            ],
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(
+            name: "ConsoleKitTests",
+            dependencies: [.target(name: "ConsoleKit")],
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(
+            name: "AsyncConsoleKitTests",
+            dependencies: [.target(name: "ConsoleKit")],
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(
+            name: "ConsoleKitPerformanceTests",
+            dependencies: [.target(name: "ConsoleKit")],
+            swiftSettings: swiftSettings
+        ),
+        .executableTarget(
+            name: "ConsoleKitExample",
+            dependencies: [.target(name: "ConsoleKit")],
+            swiftSettings: swiftSettings
+        ),
+        .executableTarget(
+            name: "ConsoleKitAsyncExample",
+            dependencies: [.target(name: "ConsoleKit")],
+            swiftSettings: swiftSettings
+        ),
+        .executableTarget(
+            name: "ConsoleLoggerExample",
+            dependencies: [
+                .target(name: "ConsoleKit"),
+                .product(name: "Logging", package: "swift-log"),
+            ],
+            swiftSettings: swiftSettings
+        ),
     ]
 )

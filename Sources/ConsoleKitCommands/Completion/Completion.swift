@@ -46,9 +46,9 @@ extension Command {
     public func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String {
         switch shell {
         case .bash:
-            return self.renderBashCompletionFunction(using: context, signatureValues: Signature.reference.values)
+            return self.renderBashCompletionFunction(using: context, signatureValues: Signature().values)
         case .zsh:
-            return self.renderZshCompletionFunction(using: context, signatureValues: Signature.reference.values)
+            return self.renderZshCompletionFunction(using: context, signatureValues: Signature().values)
         }
     }
 }
@@ -59,9 +59,9 @@ extension AsyncCommand {
     public func renderCompletionFunctions(using context: CommandContext, shell: Shell) -> String {
         switch shell {
         case .bash:
-            return self.renderBashCompletionFunction(using: context, signatureValues: Signature.reference.values)
+            return self.renderBashCompletionFunction(using: context, signatureValues: Signature().values)
         case .zsh:
-            return self.renderZshCompletionFunction(using: context, signatureValues: Signature.reference.values)
+            return self.renderZshCompletionFunction(using: context, signatureValues: Signature().values)
         }
     }
 }
@@ -187,7 +187,7 @@ extension AnyCommand {
         """ : ""
         )\( !wordList.isEmpty ? """
 
-            COMPREPLY=( $(compgen -W "\(wordList.joined(separator: " "))" -- $cur) )
+            COMPREPLY=( $(compgen -W "\(wordList.joined(separator: " "))" -- "$cur") )
         """: ""
         )\( arguments
             .filter { $0.labels == nil }
@@ -364,7 +364,7 @@ extension AnyAsyncCommand {
         """ : ""
         )\( !wordList.isEmpty ? """
 
-            COMPREPLY=( $(compgen -W "\(wordList.joined(separator: " "))" -- $cur) )
+            COMPREPLY=( $(compgen -W "\(wordList.joined(separator: " "))" -- "$cur") )
         """: ""
         )\( arguments
             .filter { $0.labels == nil }
@@ -473,7 +473,7 @@ public struct CompletionAction: Sendable {
     }
 
     public subscript(shell: Shell) -> String? {
-        return self.expressions[shell]
+        self.expressions[shell]
     }
 }
 
@@ -500,17 +500,15 @@ extension CompletionAction {
         switch extensions.count {
         case 0:
             return [
-                .bash: "_filedir",
+                .bash: #"if declare -F _filedir >/dev/null; then _filedir; else COMPREPLY+=( $(compgen -f -- "$cur") ); fi"#,
                 .zsh: "_files"
-            ]
-        case 1:
-            return [
-                .bash: "_filedir '@(\(extensions[0]))'",
-                .zsh: "_files -g '*.\(extensions[0])'"
             ]
         default:
             return [
-                .bash: "_filedir '@(\(extensions.joined(separator: "|")))'",
+                .bash: #"if declare -F _filedir >/dev/null; "# +
+                       #"then _filedir '@(\#(extensions.joined(separator: "|")))'; "# +
+                       #"else COMPREPLY+=( \#(extensions.map { #"$(compgen -f -X '!*.\#($0)' -- "$cur")"# }.joined(separator: "; ")) ); "# +
+                       #"fi"#,
                 .zsh: "_files -g '*.(\(extensions.joined(separator: "|")))'"
             ]
         }
@@ -518,8 +516,8 @@ extension CompletionAction {
 
     /// Creates a `CompletionAction` that uses a built-in function to generate directory matches.
     public static func directories() -> CompletionAction {
-        return [
-            .bash: "_filedir -d",
+        [
+            .bash: #"if declare -F _filedir >/dev/null; then _filedir -d; else COMPREPLY+=( compgen -d -- "$cur" ); fi"#,
             .zsh: "_files -/"
         ]
     }
@@ -527,7 +525,7 @@ extension CompletionAction {
     /// Creates a `CompletionAction` that provides a predefined list of possible values.
     public static func values(_ values: [String]) -> CompletionAction {
         return [
-            .bash: "COMPREPLY+=( $(compgen -W \"\(values.joined(separator: " "))\" -- $cur) )",
+            .bash: #"COMPREPLY+=( $(compgen -W "\#(values.joined(separator: " "))" -- "$cur") )"#,
             .zsh: "{_values '' \(values.map { "'\($0)'" }.joined(separator: " "))}"
         ]
     }
@@ -619,7 +617,7 @@ extension Argument {
 
     // See `AnySignatureValue`.
     var completionInfo: CompletionSignatureValueInfo {
-        return .init(
+        .init(
             name: self.name,
             help: self.help,
             action: self.completion
@@ -637,7 +635,7 @@ extension CommandInput {
     /// `"program"`.
     ///
     var executableName: String {
-        return String(self.executablePath.first!.split(separator: "/").last!)
+        String(self.executablePath.first!.split(separator: "/").last!)
     }
 
     /// Returns the name to use for the completion function for the current `executablePath`.
@@ -667,7 +665,7 @@ extension StringProtocol {
     /// Returns a copy of `self` with any characters that might cause trouble
     /// in a completion script escaped.
     fileprivate var completionEscaped: String {
-        return self
+        self
             .replacingOccurrences(of: "'", with: "\\'")
             .replacingOccurrences(of: "\"", with: "\\\"")
             .replacingOccurrences(of: "`", with: "\\`")

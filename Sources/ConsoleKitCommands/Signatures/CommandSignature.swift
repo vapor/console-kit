@@ -10,11 +10,6 @@ public protocol CommandSignature: Sendable {
 }
 
 extension CommandSignature {
-    static var reference: Self {
-        let reference = Self()
-        return reference
-    }
-
     var arguments: [any AnyArgument] {
         return Mirror(reflecting: self).children
             .compactMap { $0.value as? (any AnyArgument) }
@@ -58,7 +53,7 @@ internal protocol AnySignatureValue: AnyObject, Sendable {
     var completionInfo: CompletionSignatureValueInfo { get }
 }
 
-internal protocol AnyArgument: AnySignatureValue { }
+internal protocol AnyArgument: AnySignatureValue {}
 internal protocol AnyOption: AnySignatureValue {
     var short: Character? { get }
 }

@@ -1,3 +1,5 @@
+import ConsoleKitTerminal
+
 /// A command that can be run through a `Console`.
 ///
 /// Both `Command` and `CommandGroup` conform to `AnyCommand` which provides the basic requirements
@@ -87,22 +89,21 @@ extension Command {
     public func run(using context: inout CommandContext) throws {
         let signature = try Signature(from: &context.input)
         guard context.input.arguments.isEmpty else {
-            let input = context.input.arguments.joined(separator: " ")
-            throw ConsoleError.init(identifier: "unknownInput", reason: "Input not recognized: \(input)")
+            throw CommandError.unknownInput(context.input.arguments.joined(separator: " "))
         }
         try self.run(using: context, signature: signature)
     }
 
     public func outputAutoComplete(using context: inout CommandContext) {
         var autocomplete: [String] = []
-        autocomplete += Signature.reference.arguments.map { $0.name }
-        autocomplete += Signature.reference.options.map { "--" + $0.name }
+        autocomplete += Signature().arguments.map { $0.name }
+        autocomplete += Signature().options.map { "--" + $0.name }
         context.console.output(autocomplete.joined(separator: " "), style: .plain)
     }
 
     public func outputHelp(using context: inout CommandContext) {
         context.console.output("Usage: ".consoleText(.info) + context.input.executable.consoleText() + " ", newLine: false)
-        Signature.reference.outputHelp(help: self.help, using: &context)
+        Signature().outputHelp(help: self.help, using: &context)
     }
 }
 
@@ -138,8 +139,8 @@ extension CommandSignature {
             + self.arguments.map { $0.name }
             + self.flags.map { $0.name }
 
-        let padding = names.longestCount + 2
-        if self.arguments.count > 0 {
+        let padding = (names.map(\.count).max() ?? 0) + 2
+        if !self.arguments.isEmpty {
             context.console.print()
             context.console.output("Arguments:".consoleText(.info))
             for argument in self.arguments {
@@ -152,7 +153,7 @@ extension CommandSignature {
             }
         }
 
-        if self.options.count > 0 {
+        if !self.options.isEmpty {
             context.console.print()
             context.console.output("Options:".consoleText(.info))
             for option in self.options {
@@ -165,7 +166,7 @@ extension CommandSignature {
             }
         }
 
-        if self.flags.count > 0 {
+        if !self.flags.isEmpty {
             context.console.print()
             context.console.output("Flags:".consoleText(.info))
             for option in self.flags {

@@ -1,35 +1,37 @@
+import ConsoleKitTerminal
+
 /// A group of named commands that can be run through a `Console`.
 ///
-/// Usually you will use `Commands` to register commands and create a group.
+/// Usually you will use `AsyncCommands` to register commands and create a group.
 ///
 ///     let console: Console = ...
 ///     var input = CommandInput(arguments: CommandLine.arguments)
 ///     var context = CommandContext(console: console, input: input)
 ///
-///     var config = Commands()
+///     var config = AsyncCommands()
 ///     config.use(CowsayCommand(), as: "cowsay")
 ///
 ///     let group = config.group(help: "Some help for cosway group...")
-///     try console.run(group, with: context)
+///     try await console.run(group, with: context)
 ///
-/// You can create your own `CommandGroup` if you want to support custom `CommandOptions`.
-public protocol CommandGroup: AnyCommand {
-    var commands: [String: any AnyCommand] { get }
-    var defaultCommand: (any AnyCommand)? { get }
+/// You can create your own `AsyncCommandGroup` if you want to support custom `CommandOptions`.
+public protocol AsyncCommandGroup: AnyAsyncCommand {
+    var commands: [String: any AnyAsyncCommand] { get }
+    var defaultCommand: (any AnyAsyncCommand)? { get }
 }
 
-extension CommandGroup {
-    public var defaultCommand: (any AnyCommand)? {
-        return nil
+extension AsyncCommandGroup {
+    public var defaultCommand: (any AnyAsyncCommand)? {
+        nil
     }
 }
 
-extension CommandGroup {
-    public func run(using context: inout CommandContext) throws {
+extension AsyncCommandGroup {
+    public func run(using context: inout CommandContext) async throws {
         if let command = try self.commmand(using: &context) {
-            try command.run(using: &context)
+            try await command.run(using: &context)
         } else if let `default` = self.defaultCommand {
-            return try `default`.run(using: &context)
+            return try await `default`.run(using: &context)
         } else {
             try self.outputHelp(using: &context)
             throw CommandError.missingCommand
@@ -60,8 +62,8 @@ extension CommandGroup {
             context.console.print(self.help)
         }
 
-        let padding = self.commands.map { $0.key }.longestCount + 2
-        if self.commands.count > 0 {
+        let padding = (self.commands.map(\.key.count).max() ?? 0) + 2
+        if !self.commands.isEmpty {
             context.console.print()
             context.console.output("Commands:".consoleText(.success))
             for (key, command) in self.commands.sorted(by: { $0.key < $1.key }) {
@@ -80,7 +82,7 @@ extension CommandGroup {
         context.console.output(" [--help,-h]".consoleText(.success) + "` for more information on a command.")
     }
 
-    private func commmand(using context: inout CommandContext) throws -> (any AnyCommand)? {
+    private func commmand(using context: inout CommandContext) throws -> (any AnyAsyncCommand)? {
         if let name = context.input.arguments.popFirst() {
             guard let command = self.commands[name] else {
                 throw CommandError.unknownCommand(name, available: Array(self.commands.keys))

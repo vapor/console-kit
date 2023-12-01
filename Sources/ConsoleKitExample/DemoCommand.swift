@@ -8,7 +8,7 @@ final class DemoCommand: Command {
         @Option(name: "frames", help: "Custom frames for the loading bar\nUse a comma-separated list")
         var frames: String?
 
-        init() { }
+        init() {}
     }
 
     var help: String {
@@ -38,19 +38,17 @@ final class DemoCommand: Command {
         } else {
             context.console.print("Here's an example of loading")
         }
+    
+        func run(loadingBar: ActivityIndicator<some ActivityIndicatorType>) {
+            loadingBar.start()
+            context.console.wait(seconds: 2)
+            loadingBar.succeed()
+        }
 
         if let frames = signature.frames {
-            let loadingBar = context.console.customActivity(frames: frames.split(separator: ",").map(String.init))
-            loadingBar.start()
-
-            context.console.wait(seconds: 2)
-            loadingBar.succeed()
+            run(loadingBar: context.console.customActivity(frames: frames.split(separator: ",").map(String.init)))
         } else {
-            let loadingBar = context.console.loadingBar(title: "Loading")
-            loadingBar.start()
-
-            context.console.wait(seconds: 2)
-            loadingBar.succeed()
+            run(loadingBar: context.console.loadingBar(title: "Loading"))
         }
         
         context.console.output("Now for secure input: ", newLine: false)
