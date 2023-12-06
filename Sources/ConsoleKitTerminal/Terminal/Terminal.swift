@@ -1,10 +1,3 @@
-#if canImport(Darwin)
-import Darwin
-#elseif canImport(Glibc)
-import Glibc
-#elseif os(Windows)
-import CRT
-#endif
 import Foundation
 import NIOConcurrencyHelpers
 

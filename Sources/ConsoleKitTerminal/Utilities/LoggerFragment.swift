@@ -1,16 +1,5 @@
 import Logging
-
-#if canImport(Darwin)
-import Darwin
-#elseif os(Windows)
-import CRT
-#elseif canImport(Glibc)
-import Glibc
-#elseif canImport(WASILibc)
-import WASILibc
-#else
-#error("Unsupported runtime")
-#endif
+import Foundation
 
 /// Information about a specific log message, including information from the logger the message was logged to.
 public struct LogRecord {
