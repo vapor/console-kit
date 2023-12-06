@@ -21,14 +21,10 @@ public protocol CommandGroup: AnyCommand, AsyncCommandGroup {
 }
 
 extension CommandGroup {
-    public var defaultCommand: (any AnyCommand)? {
-        nil
-    }
+    public var defaultCommand: (any AnyCommand)? { nil }
 
     public var commands: [String: any AnyAsyncCommand] {
-        // make the compiler happy
-        let castedCommands: [String: any AnyCommand] = commands
-        return castedCommands
+        self.commands as [String: any AnyCommand]
     }
 }
 

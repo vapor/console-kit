@@ -1,13 +1,8 @@
-#if os(Linux)
+#if !canImport(Darwin)
 // Needed because DispatchQueue isn't Sendable on Linux
 @preconcurrency import Foundation
 #else
 import Foundation
-#endif
-#if canImport(Darwin)
-import Darwin
-#else
-import Glibc
 #endif
 import NIOConcurrencyHelpers
 

@@ -1,8 +1,4 @@
-#if canImport(Darwin)
-import Darwin
-#else
-import Glibc
-#endif
+import Foundation
 
 extension Console {
     /// Blocks the current thread for the specified number of seconds.
@@ -14,8 +10,6 @@ extension Console {
     /// - parameters:
     ///     - seconds: The number of seconds to wait for.
     public func wait(seconds: Double) {
-        let factor = 1000 * 1000
-        let microseconds = seconds * Double(factor)
-        usleep(useconds_t(microseconds))
+        Thread.sleep(forTimeInterval: seconds)
     }
 }
