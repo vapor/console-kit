@@ -25,12 +25,9 @@ extension AnyCommand {
         ""
     }
 
-    // we need to have a sync environment so the compiler uses the sync run method over the async version
-    private func syncRun(using context: inout CommandContext) throws {
-        try self.run(using: &context)
-    }
-
     public func run(using context: inout CommandContext) async throws {
-        try self.syncRun(using: &context)
+        try await withCheckedThrowingContinuation { continuation in
+            continuation.resume(with: .init { try self.run(using: &context) })
+        }
     }
 }
