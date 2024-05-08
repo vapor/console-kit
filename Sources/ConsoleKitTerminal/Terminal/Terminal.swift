@@ -50,7 +50,7 @@ public final class Terminal: Console, Sendable {
         didOutputLines(count: 1)
         if isSecure {
             var pass = ""
-#if canImport(Darwin) || canImport(Glibc) || os(Android)
+#if canImport(Darwin) || canImport(Glibc) || canImport(Musl) || os(Android)
             func plat_readpassphrase(into buf: UnsafeMutableBufferPointer<Int8>) -> Int {
                 #if canImport(Darwin)
                 let rpp = readpassphrase
