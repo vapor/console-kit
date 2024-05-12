@@ -27,6 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          sudo pacman -Sy --needed git base-devel
+          pacman -Sy --needed git base-devel
           git clone https://aur.archlinux.org/swift-bin.git
           cd swift-bin && makepkg -si swift-bin
+      - run: swift test
