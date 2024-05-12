@@ -43,9 +43,13 @@ enum ANSISGRCommand {
 extension Terminal {
     /// Performs an `ANSICommand`.
     func command(_ command: ANSICommand) {
-        guard enableCommands else { return }
+        guard self.enableCommands else { return }
         Swift.print(command.ansi, terminator: "")
-        fflush(stdout)
+        
+        // fdopen() on stdout is fast; also the returned file MUST NOT be fclose()d
+        // This avoids concurrency complaints due to accessing global `stdout`.
+        fflush(fdopen(STDOUT_FILENO, "w+"))
+        
     }
 }
 
@@ -53,7 +57,7 @@ extension ConsoleText {
     /// Wraps a string in the ANSI codes indicated
     /// by the style specification
     func terminalStylize() -> String {
-        return fragments
+        self.fragments
             .map { $0.string.terminalStylize($0.style) }
             .joined()
     }
@@ -180,13 +184,13 @@ extension ConsoleStyle {
     var ansiCommand: ANSICommand {
         var commands: [ANSISGRCommand] = [.reset]
         
-        if isBold {
+        if self.isBold {
             commands.append(.bold)
         }
-        if let color = color {
+        if let color = self.color {
             commands.append(color.ansiSpec.foregroundAnsiCommand)
         }
-        if let background = background {
+        if let background = self.background {
             commands.append(background.ansiSpec.backgroundAnsiCommand)
         }
         return .sgr(commands)
@@ -196,6 +200,6 @@ extension ConsoleStyle {
 extension String {
     /// Converts a String to a full ANSI command.
     fileprivate var ansi: String {
-        return "\u{001B}[" + self
+        "\u{001B}[\(self)"
     }
 }
