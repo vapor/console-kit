@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           # https://www.reddit.com/r/archlinux/comments/6qu4jt/comment/dl1t5m9/
-          pacman -Sy --needed --noconfirm sudo git base-devel
+          pacman -Sy --needed --noconfirm sudo git base-devel patchelf
           useradd builduser -m
           passwd -d builduser
           sudo -u builduser bash -c 'cd ~ && git clone https://aur.archlinux.org/swift-bin.git && cd swift-bin && makepkg -si  --noconfirm swift-bin'
