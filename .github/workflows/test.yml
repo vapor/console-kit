@@ -27,7 +27,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          pacman -Sy --needed --noconfirm git base-devel
-          git clone https://aur.archlinux.org/swift-bin.git
-          cd swift-bin && makepkg -si swift-bin
+          # https://www.reddit.com/r/archlinux/comments/6qu4jt/comment/dl1t5m9/
+          pacman -Sy --needed --noconfirm sudo git base-devel
+          useradd builduser -m
+          passwd -d builduser
+          sudo -u builduser bash -c 'git clone https://aur.archlinux.org/swift-bin.git && cd swift-bin && makepkg -si  --noconfirm swift-bin'
       - run: swift test
