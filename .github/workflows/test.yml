@@ -33,4 +33,4 @@ jobs:
           passwd -d builduser
           printf 'builduser ALL=(ALL) ALL\n' | tee -a /etc/sudoers
           sudo -u builduser bash -c 'cd ~ && git clone https://aur.archlinux.org/swift-bin.git && cd swift-bin && makepkg -si  --noconfirm swift-bin'
-      - run: swift test
+      - run: SWIFT_DETERMINISTIC_HASHING=1 swift test --sanitize=thread
