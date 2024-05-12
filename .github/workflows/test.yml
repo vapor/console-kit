@@ -20,3 +20,12 @@ jobs:
         with: { repository: 'vapor/vapor', path: vapor }
       - run: swift package --package-path vapor edit console-kit --path console-kit
       - run: swift test --package-path vapor
+
+  test-musl:
+    runs-on: ubuntu-latest
+    container: archlinux
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          pacman -Syu --noconfirm swift-language
+          swift test
