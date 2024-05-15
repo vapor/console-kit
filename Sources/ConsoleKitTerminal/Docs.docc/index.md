@@ -8,4 +8,4 @@
 
 * Utilities for sending text (including styles and colors, when supported) to a terminal.
 * Utilities for reading input from a terminal.
-* ``ConsoleLog`` and ``ConsoleFragmentLogger``, [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementations for customizable logging to a console.
+* ``ConsoleLogger`` and ``ConsoleFragmentLogger``, [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementations for customizable logging to a console.
