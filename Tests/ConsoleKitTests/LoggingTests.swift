@@ -97,7 +97,7 @@ final class ConsoleLoggerTests: XCTestCase {
     func testTimestampFragment() {
         let console = TestConsole()
         
-        struct ConstantTimestampSource: TimestampSource {
+        struct ConstantTimestampSource: TimestampSource, @unchecked Sendable {
             let time: tm
             
             func now() -> tm {
