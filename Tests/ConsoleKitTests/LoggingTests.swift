@@ -63,6 +63,9 @@ final class ConsoleLoggerTests: XCTestCase {
 
         logger.info("info", metadata: ["meta1": "overridden"])
         XCTAssertLog(console, .info, "info [meta1: overridden]")
+
+        logger.info("info", metadata: ["meta1": "test1", "meta2": .stringConvertible(CommandError.missingCommand), "meta3": ["hello", "wor\"ld"], "meta4": ["hello": "wor\"ld"]])
+        XCTAssertLog(console, .info, #"info [meta1: test1, meta2: Missing command, meta3: [hello, wor"ld], meta4: [hello: wor"ld]]"#)
     }
 
     func testSourceLocation() {
@@ -152,7 +155,7 @@ final class ConsoleLoggerTests: XCTestCase {
 }
 
 private func XCTAssertLog(_ console: TestConsole, _ level: Logger.Level, _ message: String, file: StaticString = #file, line: UInt = #line) {
-    XCTAssertEqual(console.testOutputQueue.first, "[ \(level.name) ] \(message)\n", file: (file), line: line)
+    XCTAssertEqual(console.testOutputQueue.first ?? "", "[ \(level.name) ] \(message)\n", file: (file), line: line)
 }
 
 enum TraceNamespace {
