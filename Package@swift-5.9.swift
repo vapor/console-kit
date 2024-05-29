@@ -1,14 +1,6 @@
 // swift-tools-version:5.9
 import PackageDescription
 
-let swiftSettings: [PackageDescription.SwiftSetting] = [
-    .enableExperimentalFeature("StrictConcurrency=complete"),
-    .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("ForwardTrailingClosures"),
-    .enableUpcomingFeature("ConciseMagicFile"),
-    .enableUpcomingFeature("DisableOutwardActorInference"),
-]
-
 let package = Package(
     name: "console-kit",
     platforms: [
@@ -87,3 +79,11 @@ let package = Package(
         ),
     ]
 )
+
+var swiftSettings: [SwiftSetting] { [
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("ForwardTrailingClosures"),
+    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("DisableOutwardActorInference"),
+    .enableExperimentalFeature("StrictConcurrency=complete"),
+] }
