@@ -119,7 +119,7 @@ fileprivate let linux_readpassphrase_signos: VeryUnsafeMutableSigAtomicBufferPoi
 /// deliberately. Swift has no other model for doing this kind of thing yet.
 ///
 /// If you think you want to use this for something, you're wrong.
-fileprivate struct VeryUnsafeMutableSigAtomicBufferPointer {
+fileprivate struct VeryUnsafeMutableSigAtomicBufferPointer: @unchecked Sendable {
     let capacity: Int
     let baseAddress: UnsafeMutablePointer<sig_atomic_t>
     
@@ -139,11 +139,7 @@ fileprivate struct VeryUnsafeMutableSigAtomicBufferPointer {
     }
     
     func reset() {
-#if swift(<5.8)
-        self.baseAddress.assign(repeating: 0, count: self.capacity)
-#else
         self.baseAddress.update(repeating: 0, count: self.capacity)
-#endif
     }
 }
 #endif
