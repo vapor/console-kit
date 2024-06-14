@@ -39,7 +39,6 @@ jobs:
         run: |
           SWIFT_DETERMINISTIC_HASHING=1 \
           swift test \
-            --sanitize=thread \
             --enable-code-coverage
       - name: Upload coverage data
         uses: vapor/swift-codecov-action@v0.3
