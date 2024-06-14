@@ -6,18 +6,41 @@ on:
   pull_request: { types: [opened, reopened, synchronize, ready_for_review] }
   push: { branches: [ main ] }
 
-jobs:
+jobs: 
   unit-tests:
      uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
      secrets: inherit
 
   integration-check:
     runs-on: ubuntu-latest
-    container: swift:jammy
+    container: swift:noble
     steps:
       - uses: actions/checkout@v4
         with: { path: console-kit }
       - uses: actions/checkout@v4
         with: { repository: 'vapor/vapor', path: vapor }
       - run: swift package --package-path vapor edit console-kit --path console-kit
-      - run: swift test --package-path vapor
+      - run: SWIFT_DETERMINISTIC_HASHING=1 swift test --package-path vapor
+
+  musl-unit:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Install latest Swift from AUR
+        run: |
+          # https://www.reddit.com/r/archlinux/comments/6qu4jt/comment/dl1t5m9/
+          pacman -Sy --needed --noconfirm sudo git base-devel patchelf
+          useradd builduser -m && passwd -d builduser && echo 'builduser ALL=(ALL) ALL' >> /etc/sudoers
+          sudo -u builduser bash -c \
+            'cd ~ && git clone https://aur.archlinux.org/swift-bin.git && cd swift-bin && sed -i~ "s/swiftc;/swiftc llvm-cov;/" PKGBUILD && makepkg -si --noconfirm swift-bin'
+      - name: Run unit tests
+        run: |
+          SWIFT_DETERMINISTIC_HASHING=1 \
+          swift test \
+            --enable-code-coverage
+      - name: Upload coverage data
+        uses: vapor/swift-codecov-action@v0.3
+        with:
+          codecov_token: ${{ secrets.CODECOV_TOKEN || '' }}
