@@ -6,7 +6,7 @@ on:
   pull_request: { types: [opened, reopened, synchronize, ready_for_review] }
   push: { branches: [ main ] }
 
-jobs:
+jobs: 
   unit-tests:
      uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
      secrets: inherit
