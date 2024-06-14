@@ -63,6 +63,9 @@ final class ConsoleLoggerTests: XCTestCase {
 
         logger.info("info", metadata: ["meta1": "overridden"])
         XCTAssertLog(console, .info, "info [meta1: overridden]")
+
+        logger.info("info", metadata: ["meta1": "test1", "meta2": .stringConvertible(CommandError.missingCommand), "meta3": ["hello", "wor\"ld"], "meta4": ["hello": "wor\"ld"]])
+        XCTAssertLog(console, .info, #"info [meta1: test1, meta2: Missing command, meta3: [hello, wor"ld], meta4: [hello: wor"ld]]"#)
     }
 
     func testSourceLocation() {
@@ -71,8 +74,8 @@ final class ConsoleLoggerTests: XCTestCase {
             ConsoleLogger(label: label, console: console, level: .debug)
         }
 
-        logger.debug("debug")
-        XCTAssertLog(console, .debug, "debug (ConsoleKitTests/LoggingTests.swift:74)")
+        logger.debug("debug", line: 1)
+        XCTAssertLog(console, .debug, "debug (ConsoleKitTests/LoggingTests.swift:1)")
     }
     
     func testMetadataProviders() {
@@ -89,15 +92,15 @@ final class ConsoleLoggerTests: XCTestCase {
         }
 
         TraceNamespace.$simpleTraceID.withValue("1234-5678") {
-            logger.debug("debug")
+            logger.debug("debug", line: 1)
         }
-        XCTAssertLog(console, .debug, "debug [simple-trace-id: 1234-5678] (ConsoleKitTests/LoggingTests.swift:92)")
+        XCTAssertLog(console, .debug, "debug [simple-trace-id: 1234-5678] (ConsoleKitTests/LoggingTests.swift:1)")
     }
     
     func testTimestampFragment() {
         let console = TestConsole()
         
-        struct ConstantTimestampSource: TimestampSource {
+        struct ConstantTimestampSource: TimestampSource, @unchecked Sendable {
             let time: tm
             
             func now() -> tm {
@@ -121,7 +124,7 @@ final class ConsoleLoggerTests: XCTestCase {
             )
         }
         
-        logger.info("logged")
+        logger.info("logged", line: 1)
         
         var logged = console.testOutputQueue.first!
         let expect = "2000-06-04T03:02:01"
@@ -131,7 +134,7 @@ final class ConsoleLoggerTests: XCTestCase {
         // Remove the timezone, since there doesn't appear to be a good way to mock it with strftime.
         while logged.removeFirst() != " " { }
         
-        XCTAssertEqual(logged, "[ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:124)\n")
+        XCTAssertEqual(logged, "[ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
     }
     
     func testSourceFragment() {
@@ -145,14 +148,14 @@ final class ConsoleLoggerTests: XCTestCase {
             )
         }
         
-        logger.info("logged")
+        logger.info("logged", line: 1)
         
-        XCTAssertEqual(console.testOutputQueue.first, "ConsoleKitTests [ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:148)\n")
+        XCTAssertEqual(console.testOutputQueue.first, "ConsoleKitTests [ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
     }
 }
 
-private func XCTAssertLog(_ console: TestConsole, _ level: Logger.Level, _ message: String, file: StaticString = #file, line: UInt = #line) {
-    XCTAssertEqual(console.testOutputQueue.first, "[ \(level.name) ] \(message)\n", file: (file), line: line)
+private func XCTAssertLog(_ console: TestConsole, _ level: Logger.Level, _ message: String, file: StaticString = #filePath, line: UInt = #line) {
+    XCTAssertEqual(console.testOutputQueue.first ?? "", "[ \(level.name) ] \(message)\n", file: file, line: line)
 }
 
 enum TraceNamespace {

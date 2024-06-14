@@ -327,11 +327,22 @@ public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
     }
 }
 
+private extension Logger.MetadataValue {
+    var descriptionWithoutExcessQuotes: String {
+        switch self {
+        case .array(let array): return "[\(array.map(\.descriptionWithoutExcessQuotes).joined(separator: ", "))]"
+        case .dictionary(let dict): return "[\(dict.map { "\($0): \($1.descriptionWithoutExcessQuotes)" }.joined(separator: ", "))]"
+        case .string(let str): return str
+        case .stringConvertible(let conv): return "\(conv)"
+        }
+    }
+}
+
 private extension Logger.Metadata {
     var sortedDescriptionWithoutQuotes: String {
         let contents = Array(self)
             .sorted(by: { $0.0 < $1.0 })
-            .map { "\($0.description): \($1)" }
+            .map { "\($0): \($1.descriptionWithoutExcessQuotes)" }
             .joined(separator: ", ")
         return "[\(contents)]"
     }

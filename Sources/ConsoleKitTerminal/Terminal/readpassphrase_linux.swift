@@ -2,8 +2,10 @@
 #if (os(Linux) || os(Android)) || (os(macOS) && DEBUG)
 #if canImport(Darwin)
 import Darwin
-#else
+#elseif canImport(Glibc)
 import Glibc
+#elseif canImport(Musl)
+import Musl
 #endif
 import Dispatch
 
@@ -50,8 +52,10 @@ internal func linux_readpassphrase(_ prompt: UnsafePointer<Int8>, _ buf: UnsafeM
     sigrecovery.sa_flags = 0
     #if canImport(Darwin)
     sigrecovery.__sigaction_u = .init(__sa_handler: { linux_readpassphrase_signos[$0] += 1 })
-    #elseif os(Linux)
+    #elseif canImport(Glibc)
     sigrecovery.__sigaction_handler = .init(sa_handler: { linux_readpassphrase_signos[$0] += 1 })
+    #elseif canImport(Musl)
+    sigrecovery.__sa_handler = .init(sa_handler: { linux_readpassphrase_signos[$0] += 1 })
     #elseif os(Android)
     sigrecovery.sa_handler = { linux_readpassphrase_signos[$0] += 1 }
     #endif
@@ -115,7 +119,7 @@ fileprivate let linux_readpassphrase_signos: VeryUnsafeMutableSigAtomicBufferPoi
 /// deliberately. Swift has no other model for doing this kind of thing yet.
 ///
 /// If you think you want to use this for something, you're wrong.
-fileprivate struct VeryUnsafeMutableSigAtomicBufferPointer {
+fileprivate struct VeryUnsafeMutableSigAtomicBufferPointer: @unchecked Sendable {
     let capacity: Int
     let baseAddress: UnsafeMutablePointer<sig_atomic_t>
     
@@ -135,11 +139,7 @@ fileprivate struct VeryUnsafeMutableSigAtomicBufferPointer {
     }
     
     func reset() {
-#if swift(<5.8)
-        self.baseAddress.assign(repeating: 0, count: self.capacity)
-#else
         self.baseAddress.update(repeating: 0, count: self.capacity)
-#endif
     }
 }
 #endif
