@@ -33,8 +33,8 @@ jobs:
           # https://www.reddit.com/r/archlinux/comments/6qu4jt/comment/dl1t5m9/
           pacman -Sy --needed --noconfirm sudo git base-devel patchelf
           useradd builduser -m && passwd -d builduser && echo 'builduser ALL=(ALL) ALL' >> /etc/sudoers
-          sudo -u builduser bash -D ~builduser -c \
-            'git clone https://aur.archlinux.org/swift-bin.git && cd swift-bin && sed -i~ "s/swiftc;/swiftc llvm-cov;/" PKGBUILD && makepkg -si --noconfirm swift-bin'
+          sudo -u builduser bash -c \
+            'cd ~ && git clone https://aur.archlinux.org/swift-bin.git && cd swift-bin && sed -i~ "s/swiftc;/swiftc llvm-cov;/" PKGBUILD && makepkg -si --noconfirm swift-bin'
       - name: Run unit tests
         run: |
           SWIFT_DETERMINISTIC_HASHING=1 \
