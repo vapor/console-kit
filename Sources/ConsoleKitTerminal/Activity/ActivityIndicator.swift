@@ -48,9 +48,6 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
 
     /// The `Console` this `ActivityIndicator` is running on.
     private let console: any Console
-
-    /// Current state.
-    private let state: NIOLockedValueBox<ActivityIndicatorState>
     
     /// The queue on which to handle timer events
     private let queue: DispatchQueue
@@ -74,10 +71,14 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.
     init(activity: A, console: any Console, targetQueue: DispatchQueue? = nil) {
         self.console = console
-        self.state = NIOLockedValueBox(.ready)
         self._activity = NIOLockedValueBox(activity)
         self.queue = DispatchQueue(label: "codes.vapor.consolekit.activityindicator", target: targetQueue)
-        self._timer = NIOLockedValueBox(DispatchSource.makeTimerSource(flags: [], queue: self.queue) as! DispatchSource)
+
+        let timer = DispatchSource.makeTimerSource(flags: [], queue: self.queue) as! DispatchSource
+        // Activate the timer in case the activity indicator is never started
+        timer.activate()
+        self._timer = NIOLockedValueBox(timer)
+        
         self.stopGroup = DispatchGroup()
     }
 
@@ -90,6 +91,12 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     ///     - refreshRate: The time interval (specified in milliseconds) to use
     ///                    when updating the activity.
     public func start(refreshRate: Int = 40) {
+        guard console.supportsANSICommands else {
+            // Only output the `.ready` state if the console does not support ANSI commands
+            self.activity.outputActivityIndicator(to: self.console, state: .ready)
+            return
+        }
+
         self.timer.schedule(
             deadline: DispatchTime.now(),
             repeating: .milliseconds(refreshRate),
@@ -113,8 +120,6 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
             }
             self.stopGroup.leave()
         }
-        
-        self.timer.resume()
     }
 
     /// Stops the `ActivityIndicator`, yielding a failed / error appearance.

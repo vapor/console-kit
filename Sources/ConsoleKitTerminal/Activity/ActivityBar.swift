@@ -25,7 +25,7 @@ extension ActivityBar {
     public func outputActivityIndicator(to console: any Console, state: ActivityIndicatorState) {
         let bar: ConsoleText
         switch state {
-        case .ready: bar = "[]"
+        case .ready: bar = "[...]"
         case .active(let tick): bar = renderActiveBar(tick: tick, width: console.activityBarWidth)
         case .success: bar = "[Done]".consoleText(.success)
         case .failure: bar = "[Failed]".consoleText(.error)

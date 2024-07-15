@@ -22,11 +22,7 @@ public final class Terminal: Console, Sendable {
         if let stylizeOverride = self.stylizedOutputOverride {
             return stylizeOverride
         }
-        #if Xcode
-            return false
-        #else
-            return isatty(STDOUT_FILENO) > 0
-        #endif
+        return supportsANSICommands
     }
 
     /// Create a new Terminal.
