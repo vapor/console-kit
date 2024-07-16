@@ -92,7 +92,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     ///                    when updating the activity.
     public func start(refreshRate: Int = 40) {
         guard console.supportsANSICommands else {
-            // Only output the `.ready` state if the console does not support ANSI commands
+            // Skip animations if the console does not support ANSI commands
             self.activity.outputActivityIndicator(to: self.console, state: .ready)
             return
         }
