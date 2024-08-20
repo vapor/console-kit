@@ -1,3 +1,5 @@
+import Foundation
+
 /// Protocol for powering styled Console I/O.
 ///
 /// # Output
@@ -76,4 +78,19 @@ public protocol Console: AnyObject, Sendable {
     func report(error: String, newLine: Bool)
     
     var userInfo: [AnySendableHashable: any Sendable] { get set }
+    
+    /// If the `Console` supports ANSI commands such as color and cursor movement.
+    var supportsANSICommands: Bool { get }
+}
+
+extension Console {
+    public var supportsANSICommands: Bool {
+        #if Xcode
+        // Xcode output does not support ANSI commands
+        return false
+        #else
+        // If STDOUT is not an interactive terminal then omit ANSI commands
+        return isatty(STDOUT_FILENO) > 0
+        #endif
+    }
 }
