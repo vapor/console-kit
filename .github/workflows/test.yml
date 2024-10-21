@@ -9,6 +9,8 @@ on:
 jobs: 
   unit-tests:
      uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
+     with:
+        with_windows: true
      secrets: inherit
 
   integration-check:
