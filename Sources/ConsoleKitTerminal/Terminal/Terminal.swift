@@ -1,5 +1,8 @@
 import Foundation
 import NIOConcurrencyHelpers
+#if os(Windows)
+import WinSDK
+#endif
 
 /// Generic console that uses a mixture of Swift standard
 /// library and Foundation code to fulfill protocol requirements.
@@ -72,8 +75,8 @@ public final class Terminal: Console, Sendable {
                 let c = _getch()
                 if c == 0x0d || c == 0x0a {
                     break
-                } else if isprint(c) {
-                    pass.append(Character(Unicode.Scalar(c)))
+                } else if isprint(c) != 0, let scalar = Unicode.Scalar(UInt32(c)) {
+                    pass.append(Character(scalar))
                 }
             }
 #endif
@@ -134,9 +137,15 @@ public final class Terminal: Console, Sendable {
 
     /// See `Console`
     public var size: (width: Int, height: Int) {
+#if os(Windows)
+        var csbi = CONSOLE_SCREEN_BUFFER_INFO()
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)
+        return (Int(csbi.dwSize.X), Int(csbi.dwSize.Y))
+#else
         var w = winsize()
         _ = ioctl(STDOUT_FILENO, UInt(TIOCGWINSZ), &w);
         return (Int(w.ws_col), Int(w.ws_row))
+#endif
     }
 }
 
