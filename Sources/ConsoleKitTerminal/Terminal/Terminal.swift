@@ -1,5 +1,8 @@
 import Foundation
 import NIOConcurrencyHelpers
+#if canImport(Android)
+import Android
+#endif
 #if os(Windows)
 import WinSDK
 #endif
