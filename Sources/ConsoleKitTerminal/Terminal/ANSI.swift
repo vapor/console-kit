@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(Android)
+import Android
+#endif
 
 /// Terminal ANSI commands
 enum ANSICommand {

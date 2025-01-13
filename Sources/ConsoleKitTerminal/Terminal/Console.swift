@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(Android)
+import Android
+#endif
 
 /// Protocol for powering styled Console I/O.
 ///
