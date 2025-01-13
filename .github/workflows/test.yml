@@ -11,6 +11,7 @@ jobs:
      uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
      with:
         with_windows: true
+        with_musl: true
      secrets: inherit
 
   integration-check:
@@ -23,26 +24,3 @@ jobs:
         with: { repository: 'vapor/vapor', path: vapor }
       - run: swift package --package-path vapor edit console-kit --path console-kit
       - run: SWIFT_DETERMINISTIC_HASHING=1 swift test --package-path vapor
-
-  musl-unit:
-    runs-on: ubuntu-latest
-    container: archlinux:latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-      - name: Install latest Swift from AUR
-        run: |
-          # https://www.reddit.com/r/archlinux/comments/6qu4jt/comment/dl1t5m9/
-          pacman -Sy --needed --noconfirm sudo git base-devel patchelf
-          useradd builduser -m && passwd -d builduser && echo 'builduser ALL=(ALL) ALL' >> /etc/sudoers
-          sudo -u builduser bash -c \
-            'cd ~ && git clone https://aur.archlinux.org/swift-bin.git && cd swift-bin && sed -i~ "s/swiftc;/swiftc llvm-cov;/" PKGBUILD && makepkg -si --noconfirm swift-bin'
-      - name: Run unit tests
-        run: |
-          SWIFT_DETERMINISTIC_HASHING=1 \
-          swift test \
-            --enable-code-coverage
-      - name: Upload coverage data
-        uses: vapor/swift-codecov-action@v0.3
-        with:
-          codecov_token: ${{ secrets.CODECOV_TOKEN || '' }}
