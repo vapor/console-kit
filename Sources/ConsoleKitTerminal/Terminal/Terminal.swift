@@ -1,4 +1,5 @@
 // https://github.com/swiftlang/swift/issues/77866
+// swift-format-ignore
 #if canImport(Glibc)
 @preconcurrency import Glibc
 #endif
