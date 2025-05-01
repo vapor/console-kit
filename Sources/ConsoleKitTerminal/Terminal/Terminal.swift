@@ -1,11 +1,13 @@
+// https://github.com/swiftlang/swift/issues/77866
 #if canImport(Glibc)
-@preconcurrency import Glibc // https://github.com/swiftlang/swift/issues/77866
+@preconcurrency import Glibc
 #endif
+#if canImport(Android)
+@preconcurrency import Android
+#endif
+
 import Foundation
 import Synchronization
-#if canImport(Android)
-import Android
-#endif
 #if os(Windows)
 import WinSDK
 #endif
