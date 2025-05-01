@@ -1,3 +1,6 @@
+#if canImport(Glibc)
+@preconcurrency import Glibc // https://github.com/swiftlang/swift/issues/77866
+#endif
 import Foundation
 import Synchronization
 #if canImport(Android)
