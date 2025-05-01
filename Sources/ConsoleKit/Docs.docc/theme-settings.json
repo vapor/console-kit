@@ -8,11 +8,14 @@
       "consolekit": "#392048",
       "documentation-intro-fill":  "radial-gradient(circle at top, var(--color-consolekit) 30%, #000 100%)",
       "documentation-intro-accent": "var(--color-consolekit)",
+      "documentation-intro-eyebrow": "white",
+      "documentation-intro-figure": "white",
+      "documentation-intro-title": "white",
       "logo-base":  { "dark": "#fff", "light": "#000" },
       "logo-shape": { "dark": "#000", "light": "#fff" },
       "fill":       { "dark": "#000", "light": "#fff" }
     },
-    "icons": { "technology": "/consolekit/images/vapor-consolekit-logo.svg" }
+    "icons": { "technology": "/consolekit/images/ConsoleKit/vapor-consolekit-logo.svg" }
   },
   "features": {
     "quickNavigation": { "enable": true },

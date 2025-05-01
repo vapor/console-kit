@@ -1,4 +1,4 @@
-import NIOConcurrencyHelpers
+import Synchronization
 
 /// An argument for a console command
 ///
@@ -40,14 +40,14 @@ public final class Argument<Value>: AnyArgument, Sendable
     /// See `CompletionAction` for more information and available actions.
     public let completion: CompletionAction
 
-    let value: NIOLockedValueBox<InputValue<Value>>
+    let value: Mutex<InputValue<Value>>
 
     public var projectedValue: Argument<Value> {
         return self
     }
 
     public var initialized: Bool {
-        switch self.value.withLockedValue({ $0 }) {
+        switch self.value.withLock({ $0 }) {
         case .initialized: return true
         case .uninitialized: return false
         }
@@ -55,7 +55,7 @@ public final class Argument<Value>: AnyArgument, Sendable
 
     /// @propertyWrapper value
     public var wrappedValue: Value {
-        switch self.value.withLockedValue({ $0 }) {
+        switch self.value.withLock({ $0 }) {
         case let .initialized(value): return value
         case .uninitialized: fatalError("Argument \(self.name) was not initialized")
         }
@@ -85,6 +85,6 @@ public final class Argument<Value>: AnyArgument, Sendable
         guard let value = Value(argument) else {
             throw CommandError.invalidArgumentType(self.name, type: Value.self)
         }
-        self.value.withLockedValue { $0 = .initialized(value) }
+        self.value.withLock { $0 = .initialized(value) }
     }
 }

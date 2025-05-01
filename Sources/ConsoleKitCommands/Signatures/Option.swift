@@ -1,4 +1,4 @@
-import NIOConcurrencyHelpers
+import Synchronization
 
 /// A supported option for a command.
 ///
@@ -31,31 +31,31 @@ public final class Option<Value>: AnyOption, Sendable
     ///     // signature.option.isPresent == false
     public var isPresent: Bool {
         get {
-            _isPresent.withLockedValue { $0 }
+            _isPresent.withLock { $0 }
         }
     }
     
-    private let _isPresent: NIOLockedValueBox<Bool>
+    private let _isPresent: Mutex<Bool>
 
     public var projectedValue: Option<Value> {
         return self
     }
 
     public var initialized: Bool {
-        switch self.value.withLockedValue({ $0 }) {
+        switch self.value.withLock({ $0 }) {
         case .initialized: return true
         case .uninitialized: return false
         }
     }
 
     public var wrappedValue: Value? {
-        switch self.value.withLockedValue({ $0 }) {
+        switch self.value.withLock({ $0 }) {
         case let .initialized(value): return value
         case .uninitialized: fatalError("Option \(self.name) was not initialized")
         }
     }
 
-    let value: NIOLockedValueBox<InputValue<Value?>>
+    let value: Mutex<InputValue<Value?>>
     
     /// Creates a new `Option` with the `optionType` set to `.value`.
     ///
@@ -84,15 +84,15 @@ public final class Option<Value>: AnyOption, Sendable
 
     func load(from input: inout CommandInput) throws {
         let option = input.nextOption(name: self.name, short: self.short)
-        self._isPresent.withLockedValue { $0 = option.passedIn }
+        self._isPresent.withLock { $0 = option.passedIn }
 
         if let rawValue = option.value {
             guard let value = Value(rawValue) else {
                 throw CommandError.invalidOptionType(self.name, type: Value.self)
             }
-            self.value.withLockedValue { $0 = .initialized(value) }
+            self.value.withLock { $0 = .initialized(value) }
         } else {
-            self.value.withLockedValue { $0 = .initialized(nil) }
+            self.value.withLock { $0 = .initialized(nil) }
         }
     }
 }

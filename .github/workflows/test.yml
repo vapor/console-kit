@@ -12,6 +12,7 @@ jobs:
      with:
         with_windows: true
         with_musl: true
+        with_android: true
      secrets: inherit
 
   integration-check:
