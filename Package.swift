@@ -1,4 +1,4 @@
-// swift-tools-version:6.0
+// swift-tools-version:6.1
 import PackageDescription
 
 let package = Package(
@@ -15,7 +15,7 @@ let package = Package(
         .library(name: "ConsoleKitCommands", targets: ["ConsoleKitCommands"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3")
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.6.3")
     ],
     targets: [
         .target(
@@ -79,4 +79,5 @@ let package = Package(
 
 var swiftSettings: [SwiftSetting] { [
     .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("MemberImportVisibility"),
 ] }

@@ -1,3 +1,5 @@
+import Foundation
+
 /// Shell completion implementations.
 public enum Shell: String, LosslessStringConvertible, CaseIterable, Sendable {
     case bash
