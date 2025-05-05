@@ -29,15 +29,14 @@ let package = Package(
         .target(
             name: "ConsoleKitCommands",
             dependencies: [
-                .product(name: "Logging", package: "swift-log"),
-                .target(name: "ConsoleKitTerminal"),
+                .target(name: "ConsoleKitTerminal")
             ],
             swiftSettings: swiftSettings
         ),
         .target(
             name: "ConsoleKitTerminal",
             dependencies: [
-                .product(name: "Logging", package: "swift-log"),
+                .product(name: "Logging", package: "swift-log")
             ],
             swiftSettings: swiftSettings
         ),
