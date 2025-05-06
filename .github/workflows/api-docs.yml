@@ -10,5 +10,5 @@ jobs:
      secrets: inherit
      with:
        package_name: console-kit
-       modules: ConsoleKit,ConsoleKitTerminal
-       pathsToInvalidate: /consolekit/* /consolekitterminal/*
+       modules: ConsoleKit
+       pathsToInvalidate: /consolekit/*

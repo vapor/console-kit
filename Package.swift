@@ -10,8 +10,7 @@ let package = Package(
         .tvOS(.v18),
     ],
     products: [
-        .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
-        .library(name: "ConsoleKitTerminal", targets: ["ConsoleKitTerminal"]),
+        .library(name: "ConsoleKit", targets: ["ConsoleKit"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.6.3")
@@ -19,13 +18,6 @@ let package = Package(
     targets: [
         .target(
             name: "ConsoleKit",
-            dependencies: [
-                .target(name: "ConsoleKitTerminal"),
-            ],
-            swiftSettings: swiftSettings
-        ),
-        .target(
-            name: "ConsoleKitTerminal",
             dependencies: [
                 .product(name: "Logging", package: "swift-log")
             ],
