@@ -12,7 +12,6 @@ let package = Package(
     products: [
         .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
         .library(name: "ConsoleKitTerminal", targets: ["ConsoleKitTerminal"]),
-        .library(name: "ConsoleKitCommands", targets: ["ConsoleKitCommands"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.6.3")
@@ -21,15 +20,7 @@ let package = Package(
         .target(
             name: "ConsoleKit",
             dependencies: [
-                .target(name: "ConsoleKitCommands"),
                 .target(name: "ConsoleKitTerminal"),
-            ],
-            swiftSettings: swiftSettings
-        ),
-        .target(
-            name: "ConsoleKitCommands",
-            dependencies: [
-                .target(name: "ConsoleKitTerminal")
             ],
             swiftSettings: swiftSettings
         ),
@@ -46,22 +37,7 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "AsyncConsoleKitTests",
-            dependencies: [.target(name: "ConsoleKit")],
-            swiftSettings: swiftSettings
-        ),
-        .testTarget(
             name: "ConsoleKitPerformanceTests",
-            dependencies: [.target(name: "ConsoleKit")],
-            swiftSettings: swiftSettings
-        ),
-        .executableTarget(
-            name: "ConsoleKitExample",
-            dependencies: [.target(name: "ConsoleKit")],
-            swiftSettings: swiftSettings
-        ),
-        .executableTarget(
-            name: "ConsoleKitAsyncExample",
             dependencies: [.target(name: "ConsoleKit")],
             swiftSettings: swiftSettings
         ),
