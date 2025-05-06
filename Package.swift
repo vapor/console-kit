@@ -1,13 +1,13 @@
-// swift-tools-version:5.8
+// swift-tools-version:6.1
 import PackageDescription
 
 let package = Package(
     name: "console-kit",
     platforms: [
-        .macOS(.v10_15),
-        .iOS(.v13),
-        .watchOS(.v6),
-        .tvOS(.v13),
+        .macOS(.v15),
+        .iOS(.v18),
+        .watchOS(.v11),
+        .tvOS(.v18),
     ],
     products: [
         .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
@@ -15,8 +15,7 @@ let package = Package(
         .library(name: "ConsoleKitCommands", targets: ["ConsoleKitCommands"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),
-        .package(url: "https://github.com/apple/swift-nio.git", from: "2.62.0"),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.6.3")
     ],
     targets: [
         .target(
@@ -30,17 +29,14 @@ let package = Package(
         .target(
             name: "ConsoleKitCommands",
             dependencies: [
-                .product(name: "Logging", package: "swift-log"),
-                .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
-                .target(name: "ConsoleKitTerminal"),
+                .target(name: "ConsoleKitTerminal")
             ],
             swiftSettings: swiftSettings
         ),
         .target(
             name: "ConsoleKitTerminal",
             dependencies: [
-                .product(name: "Logging", package: "swift-log"),
-                .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
+                .product(name: "Logging", package: "swift-log")
             ],
             swiftSettings: swiftSettings
         ),
@@ -81,6 +77,6 @@ let package = Package(
 )
 
 var swiftSettings: [SwiftSetting] { [
-    .enableUpcomingFeature("ForwardTrailingClosures"),
-    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("MemberImportVisibility"),
 ] }

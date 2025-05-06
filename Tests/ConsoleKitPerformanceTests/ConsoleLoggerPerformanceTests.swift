@@ -1,15 +1,15 @@
 import ConsoleKit
 import Logging
 import XCTest
-import NIOConcurrencyHelpers
+import Synchronization
 
 final class TestConsole: Console {
-    let lastOutput: NIOLockedValueBox<String?> = .init(nil)
-    let _userInfo: NIOLockedValueBox<[AnySendableHashable: any Sendable]> = .init([:])
+    let lastOutput: Mutex<String?> = .init(nil)
+    let _userInfo: Mutex<[AnySendableHashable: any Sendable]> = .init([:])
     
     var userInfo: [AnySendableHashable : any Sendable] {
-        get { _userInfo.withLockedValue { $0 } }
-        set { _userInfo.withLockedValue { $0 = newValue } }
+        get { _userInfo.withLock { $0 } }
+        set { _userInfo.withLock { $0 = newValue } }
     }
     
     func input(isSecure: Bool) -> String { "" }

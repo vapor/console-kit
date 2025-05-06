@@ -1,4 +1,4 @@
-import NIOConcurrencyHelpers
+import Synchronization
 
 /// A supported option for a command.
 ///
@@ -16,7 +16,7 @@ public final class Flag: AnyFlag {
     public let short: Character?
 
     public var initialized: Bool {
-        switch self.value.withLockedValue({ $0 }) {
+        switch self.value.withLock({ $0 }) {
         case .initialized: return true
         case .uninitialized: return false
         }
@@ -27,13 +27,13 @@ public final class Flag: AnyFlag {
     }
 
     public var wrappedValue: Bool {
-        switch self.value.withLockedValue({ $0 }) {
+        switch self.value.withLock({ $0 }) {
         case let .initialized(value): return value
         case .uninitialized: fatalError("Flag \(self.name) was not initialized")
         }
     }
 
-    let value: NIOLockedValueBox<InputValue<Bool>>
+    let value: Mutex<InputValue<Bool>>
 
     /// Creates a new `Option` with the `optionType` set to `.value`.
     ///
@@ -55,6 +55,6 @@ public final class Flag: AnyFlag {
     }
 
     func load(from input: inout CommandInput) throws {
-        self.value.withLockedValue { $0 = .initialized(input.nextFlag(name: self.name, short: self.short)) }
+        self.value.withLock { $0 = .initialized(input.nextFlag(name: self.name, short: self.short)) }
     }
 }

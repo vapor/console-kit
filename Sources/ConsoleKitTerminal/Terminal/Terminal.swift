@@ -1,8 +1,14 @@
-import Foundation
-import NIOConcurrencyHelpers
-#if canImport(Android)
-import Android
+// https://github.com/swiftlang/swift/issues/77866
+// swift-format-ignore
+#if canImport(Glibc)
+@preconcurrency import Glibc
 #endif
+#if canImport(Android)
+@preconcurrency import Android
+#endif
+
+import Foundation
+import Synchronization
 #if os(Windows)
 import WinSDK
 #endif
@@ -10,16 +16,16 @@ import WinSDK
 /// Generic console that uses a mixture of Swift standard
 /// library and Foundation code to fulfill protocol requirements.
 public final class Terminal: Console, Sendable {
-    let _userInfo: NIOLockedValueBox<[AnySendableHashable: any Sendable]>
+    let _userInfo: Mutex<[AnySendableHashable: any Sendable]>
     
     /// See `Console`
     public var userInfo: [AnySendableHashable: any Sendable] {
         get {
-            self._userInfo.withLockedValue { $0 }
+            self._userInfo.withLock { $0 }
         }
         
         set {
-            self._userInfo.withLockedValue { $0 = newValue }
+            self._userInfo.withLock { $0 = newValue }
         }
     }
 
@@ -33,7 +39,7 @@ public final class Terminal: Console, Sendable {
 
     /// Create a new Terminal.
     public init() {
-        self._userInfo = NIOLockedValueBox([:])
+        self._userInfo = Mutex([:])
     }
 
     /// See `Console`

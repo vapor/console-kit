@@ -1,3 +1,4 @@
+import ConsoleKitTerminal
 import Foundation
 
 struct GenerateAutocompleteCommand: Command {
