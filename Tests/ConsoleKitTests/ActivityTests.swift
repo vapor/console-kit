@@ -1,4 +1,4 @@
-@testable import ConsoleKitTerminal
+@testable import ConsoleKit
 import XCTest
 
 final class ActivityTests: XCTestCase {

@@ -64,7 +64,7 @@ final class ConsoleLoggerTests: XCTestCase {
         logger.info("info", metadata: ["meta1": "overridden"])
         XCTAssertLog(console, .info, "info [meta1: overridden]")
 
-        logger.info("info", metadata: ["meta1": "test1", "meta2": .stringConvertible(CommandError.missingCommand), "meta3": ["hello", "wor\"ld"], "meta4": ["hello": "wor\"ld"]])
+        logger.info("info", metadata: ["meta1": "test1", "meta2": .stringConvertible("Missing command"), "meta3": ["hello", "wor\"ld"], "meta4": ["hello": "wor\"ld"]])
         XCTAssertLog(console, .info, #"info [meta1: test1, meta2: Missing command, meta3: [hello, wor"ld], meta4: [hello: wor"ld]]"#)
     }
 
