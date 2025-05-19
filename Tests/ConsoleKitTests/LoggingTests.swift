@@ -1,9 +1,12 @@
 import ConsoleKit
 import Logging
-import XCTest
+import Testing
+import Foundation
 
-final class ConsoleLoggerTests: XCTestCase {
-    func testLogHandlerCheck() {
+@Suite("ConsoleLogger Tests")
+struct ConsoleLoggerTests {
+    @Test("Log Handler Check")
+    func logHandlerCheck() {
         let console = TestConsole()
         var logger1 = Logger(label: "codes.vapor.console.1") { label in
             ConsoleLogger(label: label, console: console)
@@ -15,70 +18,74 @@ final class ConsoleLoggerTests: XCTestCase {
         logger2.logLevel = .error
         logger2[metadataKey: "only-on"] = "second"
         
-        XCTAssertEqual(.debug, logger1.logLevel)
-        XCTAssertEqual(.error, logger2.logLevel)
-        XCTAssertEqual("first", logger1[metadataKey: "only-on"])
-        XCTAssertEqual("second", logger2[metadataKey: "only-on"])
+        #expect(.debug == logger1.logLevel)
+        #expect(.error == logger2.logLevel)
+        #expect("first" == logger1[metadataKey: "only-on"])
+        #expect("second" == logger2[metadataKey: "only-on"])
     }
     
-    func testLoggingLevels() throws {
+    @Test("Logging Levels")
+    func loggingLevels() throws {
         let console = TestConsole()
         let logger = Logger(label: "codes.vapor.console") { label in
             ConsoleLogger(label: label, console: console, level: .info)
         }
 
         logger.trace("trace")
-        XCTAssertNil(console.testOutputQueue.first)
+        #expect(console.testOutputQueue.first == nil)
         
         logger.debug("debug")
-        XCTAssertNil(console.testOutputQueue.first)
+        #expect(console.testOutputQueue.first == nil)
         
         logger.info("info")
-        XCTAssertLog(console, .info, "info")
+        expect(console, logs: .info, message: "info")
         
         logger.notice("notice")
-        XCTAssertLog(console, .notice, "notice")
+        expect(console, logs: .notice, message: "notice")
         
         logger.warning("warning")
-        XCTAssertLog(console, .warning, "warning")
+        expect(console, logs: .warning, message: "warning")
         
         logger.error("error")
-        XCTAssertLog(console, .error, "error")
+        expect(console, logs: .error, message: "error")
         
         logger.critical("critical")
-        XCTAssertLog(console, .critical, "critical")
+        expect(console, logs: .critical, message: "critical")
     }
 
-    func testMetadata() {
+    @Test("Metadata")
+    func metadata() {
         let console = TestConsole()
         let logger = Logger(label: "codes.vapor.console") { label in
             ConsoleLogger(label: label, console: console, level: .info, metadata: ["meta1": "test1"])
         }
 
         logger.info("info")
-        XCTAssertLog(console, .info, "info [meta1: test1]")
+        expect(console, logs: .info, message: "info [meta1: test1]")
 
         logger.info("info", metadata: ["meta2": "test2"])
-        XCTAssertLog(console, .info, "info [meta1: test1, meta2: test2]")
+        expect(console, logs: .info, message: "info [meta1: test1, meta2: test2]")
 
         logger.info("info", metadata: ["meta1": "overridden"])
-        XCTAssertLog(console, .info, "info [meta1: overridden]")
+        expect(console, logs: .info, message: "info [meta1: overridden]")
 
         logger.info("info", metadata: ["meta1": "test1", "meta2": .stringConvertible("Missing command"), "meta3": ["hello", "wor\"ld"], "meta4": ["hello": "wor\"ld"]])
-        XCTAssertLog(console, .info, #"info [meta1: test1, meta2: Missing command, meta3: [hello, wor"ld], meta4: [hello: wor"ld]]"#)
+        expect(console, logs: .info, message: #"info [meta1: test1, meta2: Missing command, meta3: [hello, wor"ld], meta4: [hello: wor"ld]]"#)
     }
 
-    func testSourceLocation() {
+    @Test("Source Location")
+    func sourceLocation() {
         let console = TestConsole()
         let logger = Logger(label: "codes.vapor.console") { label in
             ConsoleLogger(label: label, console: console, level: .debug)
         }
 
         logger.debug("debug", line: 1)
-        XCTAssertLog(console, .debug, "debug (ConsoleKitTests/LoggingTests.swift:1)")
+        expect(console, logs: .debug, message: "debug (ConsoleKitTests/LoggingTests.swift:1)")
     }
-    
-    func testMetadataProviders() {
+
+    @Test("Metadata Providers")
+    func metadataProviders() {
         let simpleTraceIDMetadataProvider = Logger.MetadataProvider {
             guard let traceID = TraceNamespace.simpleTraceID else {
                 return [:]
@@ -94,10 +101,11 @@ final class ConsoleLoggerTests: XCTestCase {
         TraceNamespace.$simpleTraceID.withValue("1234-5678") {
             logger.debug("debug", line: 1)
         }
-        XCTAssertLog(console, .debug, "debug [simple-trace-id: 1234-5678] (ConsoleKitTests/LoggingTests.swift:1)")
+        expect(console, logs: .debug, message: "debug [simple-trace-id: 1234-5678] (ConsoleKitTests/LoggingTests.swift:1)")
     }
     
-    func testTimestampFragment() {
+    @Test("Timestamp Fragment")
+    func timestampFragment() {
         let console = TestConsole()
         
         struct ConstantTimestampSource: TimestampSource, @unchecked Sendable {
@@ -128,16 +136,17 @@ final class ConsoleLoggerTests: XCTestCase {
         
         var logged = console.testOutputQueue.first!
         let expect = "2000-06-04T03:02:01"
-        XCTAssert(logged.hasPrefix(expect))
+        #expect(logged.hasPrefix(expect))
         logged.removeFirst(expect.count)
         
         // Remove the timezone, since there doesn't appear to be a good way to mock it with strftime.
         while logged.removeFirst() != " " { }
         
-        XCTAssertEqual(logged, "[ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
+        #expect(logged == "[ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
     }
-    
-    func testSourceFragment() {
+
+    @Test("Source Fragment")
+    func sourceFragment() {
         let console = TestConsole()
         
         let logger = Logger(label: "codes.vapor.console") { label in
@@ -150,12 +159,12 @@ final class ConsoleLoggerTests: XCTestCase {
         
         logger.info("logged", line: 1)
         
-        XCTAssertEqual(console.testOutputQueue.first, "ConsoleKitTests [ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
+        #expect(console.testOutputQueue.first == "ConsoleKitTests [ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
     }
 }
 
-private func XCTAssertLog(_ console: TestConsole, _ level: Logger.Level, _ message: String, file: StaticString = #filePath, line: UInt = #line) {
-    XCTAssertEqual(console.testOutputQueue.first ?? "", "[ \(level.name) ] \(message)\n", file: file, line: line)
+private func expect(_ console: TestConsole, logs level: Logger.Level, message: String, sourceLocation: SourceLocation = #_sourceLocation) {
+    #expect(console.testOutputQueue.first ?? "" == "[ \(level.name) ] \(message)\n", sourceLocation: sourceLocation)
 }
 
 enum TraceNamespace {

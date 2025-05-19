@@ -1,14 +1,16 @@
 @testable import ConsoleKit
-import XCTest
+import Testing
 
-final class ActivityTests: XCTestCase {
-    func testActivityWidthKey() {
+@Suite("Activity Tests")
+struct ActivityTests {
+    @Test("Activity Width Key")
+    func activityWidthKey() {
         var dict = [AnySendableHashable: String]()
         
         dict[AnySendableHashable(ActivityBarWidthKey())] = "width key"
         dict[AnySendableHashable("ConsoleKit.ActivityBarWidthKey")] = "string key"
         
-        XCTAssertEqual(dict[AnySendableHashable(ActivityBarWidthKey())], "width key")
-        XCTAssertEqual(dict[AnySendableHashable("ConsoleKit.ActivityBarWidthKey")],  "string key")
+        #expect(dict[AnySendableHashable(ActivityBarWidthKey())] == "width key")
+        #expect(dict[AnySendableHashable("ConsoleKit.ActivityBarWidthKey")] == "string key")
     }
 }
