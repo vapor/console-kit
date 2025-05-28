@@ -1,23 +1,14 @@
-#if !canImport(Darwin)
-// Needed because DispatchQueue isn't Sendable on Linux
-@preconcurrency import Foundation
-#else
-import Foundation
-#endif
 import Synchronization
+import AsyncAlgorithms
 
 extension ActivityIndicatorType {
     /// Creates a new `ActivityIndicator` for this `ActivityIndicatorType`.
     ///
     /// See `ActivityIndicator` for more information.
     ///
-    /// - parameters:
-    ///     - console: Console to use for rendering the `ActivityIndicator`
-    ///     - targetQueue: An optional target queue (defaults to `nil`) on which
-    ///                    asynchronous updates to the console will be
-    ///                    scheduled.
-    public func newActivity(for console: any Console, targetQueue: DispatchQueue? = nil) -> ActivityIndicator<Self> {
-        return .init(activity: self, console: console, targetQueue: targetQueue)
+    /// - parameter console: Console to use for rendering the `ActivityIndicator`
+    public func newActivity(for console: any Console) -> ActivityIndicator<Self> {
+        return .init(activity: self, console: console)
     }
 }
 
@@ -49,37 +40,20 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     /// The `Console` this `ActivityIndicator` is running on.
     private let console: any Console
     
-    /// The queue on which to handle timer events
-    private let queue: DispatchQueue
-    
-    /// We use a DispatchGroup as a synchronization mechanism for when the
-    /// dispatch timer is cancelled.
-    private let stopGroup: DispatchGroup
-    
-    private let _timer: Mutex<any DispatchSourceTimer & Sendable>
-    /// The timer that drives this activity indicator's updates.
-    private var timer: any DispatchSourceTimer & Sendable {
+    private let _timerShouldStop: Mutex<Bool> = Mutex(false)
+    private var timerShouldStop: Bool {
         get {
-            self._timer.withLock { $0 }
+            self._timerShouldStop.withLock { $0 }
         }
-        
         set {
-            self._timer.withLock { $0 = newValue }
+            self._timerShouldStop.withLock { $0 = newValue }
         }
     }
     
     /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.
-    init(activity: A, console: any Console, targetQueue: DispatchQueue? = nil) {
+    init(activity: A, console: any Console) {
         self.console = console
         self._activity = Mutex(activity)
-        self.queue = DispatchQueue(label: "codes.vapor.consolekit.activityindicator", target: targetQueue)
-
-        let timer = DispatchSource.makeTimerSource(flags: [], queue: self.queue) as! DispatchSource
-        // Activate the timer in case the activity indicator is never started
-        timer.activate()
-        self._timer = Mutex(timer)
-        
-        self.stopGroup = DispatchGroup()
     }
 
     /// Starts the `ActivityIndicator`. Usually this means beginning the associated "loading" animation.
@@ -90,21 +64,25 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     /// - Parameters:
     ///     - refreshRate: The time interval (specified in milliseconds) to use
     ///                    when updating the activity.
-    public func start(refreshRate: Int = 40) {
+    public func start(refreshRate: Int = 40) async {
         guard console.supportsANSICommands else {
             // Skip animations if the console does not support ANSI commands
             self.activity.outputActivityIndicator(to: self.console, state: .ready)
             return
         }
 
-        self.timer.schedule(
-            deadline: DispatchTime.now(),
-            repeating: .milliseconds(refreshRate),
-            leeway: DispatchTimeInterval.milliseconds(10)
+        let timer = AsyncTimerSequence(
+            interval: .milliseconds(refreshRate),
+            tolerance: .milliseconds(10),
+            clock: .continuous
         )
         
+        self.timerShouldStop = false
         var tick: UInt = 0
-        self.timer.setEventHandler { [unowned self] in
+        for await _ in timer {
+            guard !self.timerShouldStop else {
+                break
+            }
             if tick > 0 {
                 self.console.popEphemeral()
             }
@@ -113,12 +91,8 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
             self.activity.outputActivityIndicator(to: self.console, state: .active(tick: tick))
         }
         
-        self.stopGroup.enter()
-        self.timer.setCancelHandler { [unowned self] in
-            if tick > 0 {
-                self.console.popEphemeral()
-            }
-            self.stopGroup.leave()
+        if tick > 0 {
+            self.console.popEphemeral()
         }
     }
 
@@ -128,7 +102,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     ///
     /// Must be called after `start(on:)` and completes the future returned by that method.
     public func fail() {
-        stop()
+        self.timerShouldStop = true
         activity.outputActivityIndicator(to: console, state: .failure)
     }
 
@@ -138,21 +112,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     ///
     /// Must be called after `start(on:)` and completes the future returned by that method.
     public func succeed() {
-        stop()
+        self.timerShouldStop = true
         activity.outputActivityIndicator(to: console, state: .success)
-    }
-
-    /// Stops the output refreshing and clears the console.
-    ///
-    /// - Precondition: `start()` must have been called once before this.
-    /// - Postcondition: The indicator is idle, and safe to be interacted with
-    ///                  from the main thread (e.g. to call
-    ///                  `activity.outputActivityIndicator(to:state:)` as with
-    ///                  the public `fail()` and `succeed()` implementations.
-    private func stop() {
-        self.timer.cancel()
-        self.stopGroup.wait()
-        self.timer.setEventHandler {}
-        self.timer.setCancelHandler {}
     }
 }

@@ -9,7 +9,7 @@ import Android
 #elseif canImport(Musl)
 import Musl
 #endif
-import Dispatch
+//import Dispatch
 
 /// This implementation of `readpassphrase()`, used only on Linux where it's extremely difficult to get at the `libbsd`
 /// API even when it is definitely present, is even less tolerant of being called on multiple threads at once than the

@@ -8,12 +8,9 @@ struct ConsoleTests {
         let console = Terminal()
         let foo = console.loadingBar(title: "Loading")
 
-        Task.detached {
-            try await Task.sleep(for: .seconds(2.5))
-            foo.succeed()
-        }
-
-        foo.start()
+        await foo.start()
+        try await Task.sleep(for: .seconds(2.5))
+        foo.succeed()
     }
 
     @Test("Progress")
@@ -21,19 +18,16 @@ struct ConsoleTests {
         let console = Terminal()
         let foo = console.progressBar(title: "Progress")
 
-        Task.detached {
-            while true {
-                if foo.activity.currentProgress >= 1.0 {
-                    foo.succeed()
-                    break
-                } else {
-                    foo.activity.currentProgress += 0.1
-                    try await Task.sleep(for: .seconds(0.1))
-                }
+        await foo.start()
+        while true {
+            if foo.activity.currentProgress >= 1.0 {
+                foo.succeed()
+                break
+            } else {
+                foo.activity.currentProgress += 0.1
+                try await Task.sleep(for: .seconds(0.1))
             }
         }
-
-        foo.start()
     }
 
     @Test("Custom Indicator")
@@ -42,12 +36,9 @@ struct ConsoleTests {
         
         let indicator = console.customActivity(frames: ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"])
         
-        Task.detached {
-            try await Task.sleep(for: .seconds(3))
-            indicator.succeed()
-        }
-        
-        indicator.start()
+        await indicator.start()
+        try await Task.sleep(for: .seconds(3))
+        indicator.succeed()
     }
     
     @Test("Ephemeral")
