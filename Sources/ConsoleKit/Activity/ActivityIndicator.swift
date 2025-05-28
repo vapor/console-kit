@@ -40,16 +40,6 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     /// The `Console` this `ActivityIndicator` is running on.
     private let console: any Console
     
-    private let _timerShouldStop: Mutex<Bool> = Mutex(false)
-    private var timerShouldStop: Bool {
-        get {
-            self._timerShouldStop.withLock { $0 }
-        }
-        set {
-            self._timerShouldStop.withLock { $0 = newValue }
-        }
-    }
-    
     /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.
     init(activity: A, console: any Console) {
         self.console = console
@@ -64,7 +54,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     /// - Parameters:
     ///     - refreshRate: The time interval (specified in milliseconds) to use
     ///                    when updating the activity.
-    public func start(refreshRate: Int = 40) async {
+    private func start(refreshRate: Int = 40) async {
         guard console.supportsANSICommands else {
             // Skip animations if the console does not support ANSI commands
             self.activity.outputActivityIndicator(to: self.console, state: .ready)
@@ -77,22 +67,21 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
             clock: .continuous
         )
         
-        self.timerShouldStop = false
         var tick: UInt = 0
-        for await _ in timer {
-            guard !self.timerShouldStop else {
-                break
+
+        defer {
+            if tick > 0 {
+                self.console.popEphemeral()
             }
+        }
+
+        for await _ in timer {
             if tick > 0 {
                 self.console.popEphemeral()
             }
             tick = tick &+ 1
             self.console.pushEphemeral()
             self.activity.outputActivityIndicator(to: self.console, state: .active(tick: tick))
-        }
-        
-        if tick > 0 {
-            self.console.popEphemeral()
         }
     }
 
@@ -101,8 +90,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     /// Passes `ActivityIndicatorState.failure` to the `ActivityIndicatorType`.
     ///
     /// Must be called after `start(on:)` and completes the future returned by that method.
-    public func fail() {
-        self.timerShouldStop = true
+    private func fail() {
         activity.outputActivityIndicator(to: console, state: .failure)
     }
 
@@ -111,8 +99,33 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     /// Passes `ActivityIndicatorState.success` to the `ActivityIndicatorType`.
     ///
     /// Must be called after `start(on:)` and completes the future returned by that method.
-    public func succeed() {
-        self.timerShouldStop = true
+    private func succeed() {
         activity.outputActivityIndicator(to: console, state: .success)
+    }
+
+    /// Starts the `ActivityIndicator` and stops it after the provided body completes.
+    /// - Parameters:
+    ///   - refreshRate: The time interval (specified in milliseconds) to use when updating the activity.
+    ///   - body: The asynchronous body to execute while the activity indicator is running.
+    public func withActivityIndicator(refreshRate: Int = 40, _ body: () async throws -> Bool) async rethrows {
+        try await withThrowingTaskGroup { group in
+            group.addTask {
+                await self.start(refreshRate: refreshRate)
+            }
+
+            defer { group.cancelAll() }
+
+            do {
+                let result = try await body()
+                if result {
+                    self.succeed()
+                } else {
+                    self.fail()
+                }
+            } catch {
+                self.fail()
+                throw error
+            }
+        }
     }
 }
