@@ -2,28 +2,27 @@ import Synchronization
 import AsyncAlgorithms
 
 extension ActivityIndicatorType {
-    /// Creates a new `ActivityIndicator` for this `ActivityIndicatorType`.
+    /// Creates a new ``ActivityIndicator`` for this ``ActivityIndicatorType``.
     ///
-    /// See `ActivityIndicator` for more information.
+    /// See ``ActivityIndicator`` for more information.
     ///
-    /// - parameter console: Console to use for rendering the `ActivityIndicator`
+    /// - parameter console: Console to use for rendering the ``ActivityIndicator``
     public func newActivity(for console: any Console) -> ActivityIndicator<Self> {
         return .init(activity: self, console: console)
     }
 }
 
-/// An instance of a `ActivityIndicatorType` that can be started, failed, and succeeded.
+/// An instance of a ``ActivityIndicatorType`` that can be started, failed, and succeeded.
 ///
-/// Use `newActivity(for:)` on `ActivityIndicatorType` to create one.
+/// Use ``ActivityIndicatorType/newActivity(for:)`` on ``ActivityIndicatorType`` to create one.
 ///
-///     let loadingBar = console.loadingBar(title: "Loading")
-///     background {
-///         // complete the loading bar after 3 seconds
-///         console.wait(seconds: 3)
-///         loadingBar.succeed()
-///     }
-///     // start the loading bar and wait for it to finish
-///     try loadingBar.start(on: ...).wait()
+/// ```swift
+/// let loadingBar = console.loadingBar(title: "Loading")
+/// try await foo.withActivityIndicator {
+///     try await Task.sleep(for: .seconds(2.5))
+///     return true
+/// }
+/// ```
 ///
 public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType {
     let _activity: Mutex<A>
@@ -103,7 +102,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
         activity.outputActivityIndicator(to: console, state: .success)
     }
 
-    /// Starts the `ActivityIndicator` and stops it after the provided body completes.
+    /// Starts the ``ActivityIndicator`` and stops it after the provided body completes.
     ///
     /// - Parameters:
     ///   - refreshRate: The time interval (specified in milliseconds) to use when updating the activity.
