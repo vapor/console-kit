@@ -69,19 +69,20 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
         
         var tick: UInt = 0
 
-        defer {
-            if tick > 0 {
-                self.console.popEphemeral()
-            }
-        }
-
         for await _ in timer {
+            if Task.isCancelled {
+                break
+            }
             if tick > 0 {
                 self.console.popEphemeral()
             }
             tick = tick &+ 1
             self.console.pushEphemeral()
             self.activity.outputActivityIndicator(to: self.console, state: .active(tick: tick))
+        }
+
+        if tick > 0 {
+            self.console.popEphemeral()
         }
     }
 
