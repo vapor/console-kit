@@ -34,14 +34,6 @@ extension ActivityBar {
     }
 }
 
-extension ActivityBar {
-    @available(*, deprecated, message: "This value has no effect. Use `console.activityBarWidth` instead.")
-    public static var width: Int {
-        get { 25 } // deliberately hardcoded value
-        set { } // deliberately ignore new value
-    }
-}
-
 /// Key type for storing the activity bar width in the `userInfo` of the related `Console` without colliding with end user keys.
 struct ActivityBarWidthKey: Hashable, Equatable {
     func hash(into hasher: inout Hasher) {
