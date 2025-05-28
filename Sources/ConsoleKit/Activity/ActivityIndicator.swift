@@ -69,20 +69,19 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
         
         var tick: UInt = 0
 
-        for await _ in timer {
-            if Task.isCancelled {
-                break
+        defer {
+            if tick > 0 {
+                self.console.popEphemeral()
             }
+        }
+
+        for await _ in timer {
             if tick > 0 {
                 self.console.popEphemeral()
             }
             tick = tick &+ 1
             self.console.pushEphemeral()
             self.activity.outputActivityIndicator(to: self.console, state: .active(tick: tick))
-        }
-
-        if tick > 0 {
-            self.console.popEphemeral()
         }
     }
 
@@ -105,6 +104,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     }
 
     /// Starts the `ActivityIndicator` and stops it after the provided body completes.
+    ///
     /// - Parameters:
     ///   - refreshRate: The time interval (specified in milliseconds) to use when updating the activity.
     ///   - body: The asynchronous body to execute while the activity indicator is running.
@@ -114,16 +114,18 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
                 await self.start(refreshRate: refreshRate)
             }
 
-            defer { group.cancelAll() }
-
             do {
                 let result = try await body()
+                group.cancelAll()
+                try await group.waitForAll()
                 if result {
                     self.succeed()
                 } else {
                     self.fail()
                 }
             } catch {
+                group.cancelAll()
+                try? await group.waitForAll()
                 self.fail()
                 throw error
             }
