@@ -15,7 +15,7 @@
       "logo-shape": { "dark": "#000", "light": "#fff" },
       "fill":       { "dark": "#000", "light": "#fff" }
     },
-    "icons": { "technology": "/consolekit/images/ConsoleKit/vapor-consolekit-logo.svg" }
+    "icons": { "technology": "/consolekit/images/vapor-consolekit-logo.svg" }
   },
   "features": {
     "quickNavigation": { "enable": true },

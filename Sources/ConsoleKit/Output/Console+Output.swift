@@ -1,29 +1,34 @@
 extension Console {
-    /// Outputs serialized `ConsoleText` to the `Console`.
+    /// Outputs serialized ``ConsoleText`` to the ``Console``.
     ///
-    ///     console.output("Hello, " + "world!".consoleText(color: .green))
+    /// ```swift
+    /// console.output("Hello, " + "world!".consoleText(color: .green))
+    /// ```
     ///
-    /// - parameters:
-    ///     - output: `ConsoleText` to serialize and print.
+    /// - parameter text: ``ConsoleText`` to serialize and print.
     public func output(_ text: ConsoleText) {
         self.output(text, newLine: true)
     }
 
-    /// Outputs a `String` to the `Console` with the specified `ConsoleStyle` style.
+    /// Outputs a `String` to the ``Console`` with the specified ``ConsoleStyle`` style.
     ///
-    ///     console.print("Hello, world!", style: .plain)
+    /// ```swift
+    /// console.print("Hello, world!", style: .plain)
+    /// ```
     ///
     /// - parameters:
     ///     - string: `String` to print.
-    ///     - style: `ConsoleStyle` to use for the `string`.
+    ///     - style: ``ConsoleStyle`` to use for the `string`.
     ///     - newLine: If `true`, the next output will be on a new line.
     public func output(_ string: String, style: ConsoleStyle, newLine: Bool = true) {
         self.output(string.consoleText(style), newLine: newLine)
     }
 
-    /// Outputs a `String` to the `Console` with `ConsoleStyle.plain` style.
+    /// Outputs a `String` to the ``Console`` with ``ConsoleStyle/plain`` style.
     ///
-    ///     console.print("Hello, world!")
+    /// ```swift
+    /// console.print("Hello, world!")
+    /// ```
     ///
     /// - parameters:
     ///     - string: `String` to print.
@@ -32,9 +37,11 @@ extension Console {
         self.output(string.consoleText(.plain), newLine: newLine)
     }
 
-    /// Outputs a `String` to the `Console` with `ConsoleStyle.info` style.
+    /// Outputs a `String` to the ``Console`` with ``ConsoleStyle/info`` style.
     ///
-    ///     console.info("Vapor is the best.")
+    /// ```swift
+    /// console.info("Vapor is the best.")
+    /// ```
     ///
     /// - parameters:
     ///     - string: `String` to print.
@@ -43,9 +50,11 @@ extension Console {
         output(string.consoleText(.info), newLine: newLine)
     }
 
-    /// Outputs a `String` to the `Console` with `ConsoleStyle.success` style.
+    /// Outputs a `String` to the ``Console`` with ``ConsoleStyle/success`` style.
     ///
-    ///     console.success("It works!")
+    /// ```swift
+    /// console.success("It works!")
+    /// ```
     ///
     /// - parameters:
     ///     - string: `String` to print.
@@ -54,9 +63,11 @@ extension Console {
         output(string.consoleText(.success), newLine: newLine)
     }
 
-    /// Outputs a `String` to the `Console` with `ConsoleStyle.warning` style.
+    /// Outputs a `String` to the ``Console`` with ``ConsoleStyle/warning`` style.
     ///
-    ///     console.warning("Watch out...")
+    /// ```swift
+    /// console.warning("Watch out...")
+    /// ```
     ///
     /// - parameters:
     ///     - string: `String` to print.
@@ -65,9 +76,11 @@ extension Console {
         output(string.consoleText(.warning), newLine: newLine)
     }
 
-    /// Outputs a `String` to the `Console` with `ConsoleStyle.error` style.
+    /// Outputs a `String` to the ``Console`` with ``ConsoleStyle/error`` style.
     ///
-    ///     console.error("Uh oh...")
+    /// ```swift
+    /// console.error("Uh oh...")
+    /// ```
     ///
     /// - parameters:
     ///     - string: `String` to print.
