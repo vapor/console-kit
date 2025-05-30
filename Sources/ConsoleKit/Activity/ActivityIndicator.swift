@@ -110,13 +110,18 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     ///   - refreshRate: The time interval (specified in milliseconds) to use when updating the activity.
     ///   - body: The asynchronous body to execute while the activity indicator is running.
     public func withActivityIndicator(refreshRate: Int = 40, _ body: () async throws -> Bool) async rethrows {
-        async let task: () = self.start(refreshRate: refreshRate)
+        let task = Task {
+            await self.start(refreshRate: refreshRate)
+        }
+
+        defer { task.cancel() }
+
         do {
             let result = try await body()
-            await task
+            await task.value
             result ? self.succeed() : self.fail()
         } catch {
-            await task
+            await task.value
             self.fail()
             throw error
         }
