@@ -3,12 +3,12 @@ public struct AnySendableHashable: @unchecked Sendable, Hashable, ExpressibleByS
     // Note: @unchecked Sendable since there's no way to express that `wrappedValue` is Sendable, even though we ensure that it is in the init.
     @usableFromInline
     let wrappedValue: AnyHashable
-    
+
     @inlinable
     public init(_ wrappedValue: some Hashable & Sendable) {
         self.wrappedValue = AnyHashable(wrappedValue)
     }
-    
+
     @inlinable
     public init(stringLiteral value: String) {
         self.init(value)

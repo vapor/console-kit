@@ -1,52 +1,50 @@
 import ConsoleKit
-import XCTest
+import Testing
 
-class ConsoleTests: XCTestCase {
-    func testLoading() throws {
+@Suite("Console Tests")
+struct ConsoleTests {
+    @Test("Loading")
+    func loading() async throws {
         let console = Terminal()
         let foo = console.loadingBar(title: "Loading")
 
-        DispatchQueue.global().async {
-            console.wait(seconds: 2.5)
-            foo.succeed()
+        try await foo.withActivityIndicator {
+            try await Task.sleep(for: .seconds(2.5))
+            return true
         }
-
-        foo.start()
     }
 
-    func testProgress() throws {
+    @Test("Progress")
+    func progress() async throws {
         let console = Terminal()
         let foo = console.progressBar(title: "Progress")
 
-        DispatchQueue.global().async {
+        try await foo.withActivityIndicator {
             while true {
                 if foo.activity.currentProgress >= 1.0 {
-                    foo.succeed()
-                    break
+                    return true
                 } else {
                     foo.activity.currentProgress += 0.1
-                    console.wait(seconds: 0.1)
+                    try await Task.sleep(for: .seconds(0.1))
                 }
             }
         }
-
-        foo.start()
     }
 
-    func testCustomIndicator()throws {
+    @Test("Custom Indicator")
+    func customIndicator() async throws {
         let console = Terminal()
-        
-        let indicator = console.customActivity(frames: ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"])
-        
-        DispatchQueue.global().async {
-            console.wait(seconds: 3)
-            indicator.succeed()
+
+        let indicator = console.customActivity(frames: ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
+
+        try await indicator.withActivityIndicator {
+            try await Task.sleep(for: .seconds(3))
+            return true
         }
-        
-        indicator.start()
     }
-    
-    func testEphemeral() {
+
+    @Test("Ephemeral")
+    func ephemeral() async throws {
         // for some reason, piping through test output doesn't work correctly
         // but this code works great if running directly in an executable
 
@@ -60,15 +58,16 @@ class ConsoleTests: XCTestCase {
         console.print("d")
         console.print("e")
         console.print("f")
-        console.wait(seconds: 1)
-        console.popEphemeral() // removes "d", "e", and "f" lines
+        try await Task.sleep(for: .seconds(1))
+        console.popEphemeral()  // removes "d", "e", and "f" lines
         console.print("g")
-        console.wait(seconds: 1)
-        console.popEphemeral() // removes "b", "c", and "g" lines
+        try await Task.sleep(for: .seconds(1))
+        console.popEphemeral()  // removes "b", "c", and "g" lines
         // just "a" has been printed now
     }
 
-    func testAsk() throws {
+    @Test("Ask")
+    func ask() throws {
         let console = TestConsole()
 
         let name = "Test Name"
@@ -78,11 +77,12 @@ class ConsoleTests: XCTestCase {
 
         let response = console.ask(question.consoleText(.plain))
 
-        XCTAssertEqual(response, name)
-        XCTAssertEqual(console.testOutputQueue.reversed().joined(), question + "\n> ")
+        #expect(response == name)
+        #expect(console.testOutputQueue.reversed().joined() == question + "\n> ")
     }
 
-    func testConfirm() throws {
+    @Test("Confirm")
+    func confirm() throws {
         let console = TestConsole()
 
         let name = "y"
@@ -92,7 +92,7 @@ class ConsoleTests: XCTestCase {
 
         let response = console.confirm(question.consoleText(.info))
 
-        XCTAssertEqual(response, true)
-        XCTAssertEqual(console.testOutputQueue.reversed().joined(), question + "\ny/n> ")
+        #expect(response == true)
+        #expect(console.testOutputQueue.reversed().joined() == question + "\ny/n> ")
     }
 }

@@ -1,8 +1,10 @@
 extension Console {
     /// Prompts the user to choose an item from the supplied array. The chosen item will be returned.
     ///
-    ///     let color = console.choose("Favorite color?", from: ["Pink", "Blue"])
-    ///     console.output("You chose: " + color.consoleText())
+    /// ```swift
+    /// let color = console.choose("Favorite color?", from: ["Pink", "Blue"])
+    /// console.output("You chose: " + color.consoleText())
+    /// ```
     ///
     /// The above code will output:
     ///
@@ -15,22 +17,23 @@ extension Console {
     ///
     ///     You chose: Blue
     ///
-    /// This method calls `choose(_:from:display:)` using `CustomStringConvertible` to display each element.
+    /// This method calls ``Console/choose(_:from:display:)`` using `CustomStringConvertible` to display each element.
     ///
     /// - parameters:
-    ///     - prompt: `ConsoleText` prompt to display to the user before listing options.
+    ///     - prompt: ``ConsoleText`` prompt to display to the user before listing options.
     ///     - array: Array of `CustomStringConvertible` items to choose from.
     /// - returns: Element from `array` that the user chose.
     public func choose<T>(_ prompt: ConsoleText, from array: [T]) -> T
-        where T: CustomStringConvertible
-    {
+    where T: CustomStringConvertible {
         return choose(prompt, from: array, display: { $0.description.consoleText() })
     }
 
     /// Prompts the user to choose an item from the supplied array. The chosen item will be returned.
     ///
-    ///     let color = console.choose("Favorite color?", from: ["Pink", "Blue"])
-    ///     console.output("You chose: " + color.consoleText())
+    /// ```swift
+    /// let color = console.choose("Favorite color?", from: ["Pink", "Blue"])
+    /// console.output("You chose: " + color.consoleText())
+    /// ```
     ///
     /// The above code will output:
     ///
@@ -43,16 +46,16 @@ extension Console {
     ///
     ///     You chose: Blue
     ///
-    /// See `choose(_:from:)` which uses `CustomStringConvertible` to display each element.
+    /// See ``Console/choose(_:from:)`` which uses `CustomStringConvertible` to display each element.
     ///
     /// - parameters:
-    ///     - prompt: `ConsoleText` prompt to display to the user before listing options.
+    ///     - prompt: ``ConsoleText`` prompt to display to the user before listing options.
     ///     - array: Array of `CustomStringConvertible` items to choose from.
-    ///     - display: A closure for converting each element of `array` to a `ConsoleText` for display.
+    ///     - display: A closure for converting each element of `array` to a ``ConsoleText`` for display.
     /// - returns: Element from `array` that the user chose.
     public func choose<T>(_ prompt: ConsoleText, from array: [T], display: (T) -> ConsoleText) -> T {
         output(prompt)
-        array.enumerated().forEach { idx, item in
+        for (idx, item) in array.enumerated() {
             let offset = idx + 1
             output("\(offset): ".consoleText(.info), newLine: false)
             let description = display(item)

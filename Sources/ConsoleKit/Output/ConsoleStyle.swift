@@ -10,7 +10,7 @@ public struct ConsoleStyle: Sendable {
     /// If `true`, text is bold.
     public let isBold: Bool
 
-    /// Creates a new `ConsoleStyle`.
+    /// Creates a new ``ConsoleStyle``.
     public init(color: ConsoleColor? = nil, background: ConsoleColor? = nil, isBold: Bool = false) {
         self.color = color
         self.background = background

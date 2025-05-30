@@ -1,41 +1,38 @@
-import Dispatch
-
 extension Console {
-    /// Creates a new `LoadingBar`-based `ActivityIndicator`.
+    /// Creates a new ``LoadingBar``-based ``ActivityIndicator``.
     ///
     ///     Loading [        •             ]
     ///
     /// The `•` character will bounce from left to right while the bar is active.
     ///
-    ///     let loadingBar = console.loadingBar(title: "Loading")
-    ///     background {
-    ///         // complete the loading bar after 3 seconds
-    ///         console.wait(seconds: 3)
-    ///         loadingBar.succeed()
-    ///     }
-    ///     // start the loading bar and wait for it to finish
-    ///     try loadingBar.start(on: ...).wait()
+    /// ```swift
+    /// let loadingBar = console.loadingBar(title: "Loading")
+    /// try await loadingBar.withActivityIndicator {
+    ///    try await Task.sleep(for: .seconds(3))
+    ///    return true
+    /// }
+    /// ```
     ///
     /// - parameters:
     ///     - title: Title to display alongside the loading bar.
-    /// - returns: An `ActivityIndicator` that can start and stop the loading bar.
-    public func loadingBar(title: String, targetQueue: DispatchQueue? = nil) -> ActivityIndicator<LoadingBar> {
-        return LoadingBar(title: title).newActivity(for: self, targetQueue: targetQueue)
+    /// - returns: An ``ActivityIndicator`` that can start and stop the loading bar.
+    public func loadingBar(title: String) -> ActivityIndicator<LoadingBar> {
+        return LoadingBar(title: title).newActivity(for: self)
     }
 }
 
-/// Loading-style implementation of `ActivityBar`.
+/// Loading-style implementation of ``ActivityBar``.
 ///
 ///     Loading [        •             ]
 ///
 /// The `•` character will bounce from left to right while the bar is active.
 ///
-/// See `Console.loadingBar(title:)` to create one.
+/// See ``Console/loadingBar(title:)`` to create one.
 public struct LoadingBar: ActivityBar {
-    /// See `ActivityBar`.
+    /// See ``ActivityBar``.
     public var title: String
 
-    /// See `ActivityBar`.
+    /// See ``ActivityBar``.
     public func renderActiveBar(tick: UInt, width: Int) -> ConsoleText {
         let period = width - 1
         let offset = Int(tick) % period

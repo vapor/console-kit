@@ -1,17 +1,17 @@
 import ConsoleKit
 import Logging
-import XCTest
 import Synchronization
+import XCTest
 
 final class TestConsole: Console {
     let lastOutput: Mutex<String?> = .init(nil)
     let _userInfo: Mutex<[AnySendableHashable: any Sendable]> = .init([:])
-    
-    var userInfo: [AnySendableHashable : any Sendable] {
+
+    var userInfo: [AnySendableHashable: any Sendable] {
         get { _userInfo.withLock { $0 } }
         set { _userInfo.withLock { $0 = newValue } }
     }
-    
+
     func input(isSecure: Bool) -> String { "" }
 
     func output(_ text: ConsoleText, newLine: Bool) {}
@@ -24,19 +24,21 @@ final class TestConsole: Console {
 }
 
 class ConsoleLoggerPerformanceTests: XCTestCase {
-    func testLoggingPerformance() throws  {
-        try performance(expected: 0.489) // average from main branch on my machine
-        
+    func testLoggingPerformance() throws {
+        try performance(expected: 0.489)  // average from main branch on my machine
+
         let console = TestConsole()
-        LoggingSystem.bootstrap({ label, provider in
-            ConsoleLogger(label: label, console: console)
-        }, metadataProvider: .init({
-            ["provided1": "from metadata provider", "provided2": "another metadata provider"]
-        }))
-        
+        LoggingSystem.bootstrap(
+            { label, provider in
+                ConsoleLogger(label: label, console: console)
+            },
+            metadataProvider: .init({
+                ["provided1": "from metadata provider", "provided2": "another metadata provider"]
+            }))
+
         self.measure {
             var logger1 = Logger(label: "codes.vapor.console.1")
-            
+
             for _ in 0..<100_000 {
                 logger1.logLevel = .trace
                 logger1[metadataKey: "value"] = "one"

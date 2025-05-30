@@ -13,13 +13,15 @@ let package = Package(
         .library(name: "ConsoleKit", targets: ["ConsoleKit"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.6.3")
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.6.3"),
+        .package(url: "https://github.com/apple/swift-async-algorithms.git", from: "1.0.4"),
     ],
     targets: [
         .target(
             name: "ConsoleKit",
             dependencies: [
-                .product(name: "Logging", package: "swift-log")
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ],
             swiftSettings: swiftSettings
         ),
@@ -44,7 +46,9 @@ let package = Package(
     ]
 )
 
-var swiftSettings: [SwiftSetting] { [
-    .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("MemberImportVisibility"),
-] }
+var swiftSettings: [SwiftSetting] {
+    [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("MemberImportVisibility"),
+    ]
+}

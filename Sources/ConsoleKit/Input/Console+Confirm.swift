@@ -1,11 +1,13 @@
 extension Console {
     /// Requests yes / no confirmation from the user after a prompt.
     ///
-    ///     if console.confirm("Delete everything?") {
-    ///         console.warning("Deleting everything!")
-    ///     } else {
-    ///         console.print("OK, I won't.")
-    ///     }
+    /// ```swift
+    /// if console.confirm("Delete everything?") {
+    ///     console.warning("Deleting everything!")
+    /// } else {
+    ///     console.print("OK, I won't.")
+    /// }
+    /// ```
     ///
     /// The above code outputs:
     ///
@@ -17,16 +19,16 @@ extension Console {
     /// It will continue to ask until the result is a proper format, providing additional help after
     /// a few failed attempts.
     ///
-    /// See `Console.confirmOverride` for enabling automatic answers to all confirmation prompts.
+    /// See ``Console/confirmOverride`` for enabling automatic answers to all confirmation prompts.
     ///
     /// - parameters:
-    ///     - prompt: `ConsoleText` to display before the confirmation input.
+    ///     - prompt: ``ConsoleText`` to display before the confirmation input.
     /// - returns: `true` if the user answered yes, false if no.
     public func confirm(_ prompt: ConsoleText) -> Bool {
         var i = 0
         var result = ""
 
-        /// continue to ask until the result can be converted to a bool
+        // continue to ask until the result can be converted to a bool
         while Bool(yn: result) == nil {
             output(prompt)
             if i >= 1 {
@@ -49,15 +51,15 @@ extension Console {
         return Bool(yn: result)!
     }
 
-    /// If set, all calls to `confirm(_:)` will use this value instead of asking the user.
+    /// If set, all calls to ``Console/confirm(_:)`` will use this value instead of asking the user.
     public var confirmOverride: Bool? {
         get { return self.userInfo["confirmOverride"] as? Bool }
         set { self.userInfo["confirmOverride"] = newValue }
     }
 }
 
-private extension Bool {
-    init?(yn: String) {
+extension Bool {
+    fileprivate init?(yn: String) {
         switch yn.lowercased() {
         case "y", "yes": self = true
         case "n", "no": self = false

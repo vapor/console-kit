@@ -8,20 +8,21 @@ on:
 
 jobs: 
   unit-tests:
-     uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
-     with:
-        # with_windows: true
-        with_musl: true
-        with_android: true
-     secrets: inherit
-
-  integration-check:
-    runs-on: ubuntu-latest
-    container: swift:noble
-    steps:
-      - uses: actions/checkout@v4
-        with: { path: console-kit }
-      - uses: actions/checkout@v4
-        with: { repository: 'vapor/vapor', path: vapor }
-      - run: swift package --package-path vapor edit console-kit --path console-kit
-      - run: SWIFT_DETERMINISTIC_HASHING=1 swift test --package-path vapor
+    uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
+    with:
+      # with_windows: true
+      with_musl: true
+      with_android: true
+      with_linting: true
+    secrets: inherit
+  
+  # integration-check:
+  #   runs-on: ubuntu-latest
+  #   container: swift:noble
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with: { path: console-kit }
+  #     - uses: actions/checkout@v4
+  #       with: { repository: 'vapor/vapor', path: vapor }
+  #     - run: swift package --package-path vapor edit console-kit --path console-kit
+  #     - run: SWIFT_DETERMINISTIC_HASHING=1 swift test --package-path vapor
