@@ -1,5 +1,5 @@
-import Synchronization
 import AsyncAlgorithms
+import Synchronization
 
 extension ActivityIndicatorType {
     /// Creates a new ``ActivityIndicator`` for this ``ActivityIndicatorType``.
@@ -38,7 +38,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
 
     /// The `Console` this `ActivityIndicator` is running on.
     private let console: any Console
-    
+
     /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.
     init(activity: A, console: any Console) {
         self.console = console
@@ -65,7 +65,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
             tolerance: .milliseconds(10),
             clock: .continuous
         )
-        
+
         var tick: UInt = 0
 
         defer {

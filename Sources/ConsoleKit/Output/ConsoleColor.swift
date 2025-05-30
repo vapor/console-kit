@@ -44,10 +44,10 @@ public enum ConsoleColor: Sendable {
     case brightWhite
 
     // MARK: Custom
-    
+
     /// A color from the predefined 256-color palette
     case palette(UInt8)
-    
+
     /// A 24-bit "true" color
     case custom(r: UInt8, g: UInt8, b: UInt8)
 }

@@ -18,7 +18,7 @@ struct ConsoleTests {
     func progress() async throws {
         let console = Terminal()
         let foo = console.progressBar(title: "Progress")
-        
+
         try await foo.withActivityIndicator {
             while true {
                 if foo.activity.currentProgress >= 1.0 {
@@ -34,15 +34,15 @@ struct ConsoleTests {
     @Test("Custom Indicator")
     func customIndicator() async throws {
         let console = Terminal()
-        
-        let indicator = console.customActivity(frames: ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"])
-        
+
+        let indicator = console.customActivity(frames: ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
+
         try await indicator.withActivityIndicator {
             try await Task.sleep(for: .seconds(3))
             return true
         }
     }
-    
+
     @Test("Ephemeral")
     func ephemeral() async throws {
         // for some reason, piping through test output doesn't work correctly
@@ -59,10 +59,10 @@ struct ConsoleTests {
         console.print("e")
         console.print("f")
         try await Task.sleep(for: .seconds(1))
-        console.popEphemeral() // removes "d", "e", and "f" lines
+        console.popEphemeral()  // removes "d", "e", and "f" lines
         console.print("g")
         try await Task.sleep(for: .seconds(1))
-        console.popEphemeral() // removes "b", "c", and "g" lines
+        console.popEphemeral()  // removes "b", "c", and "g" lines
         // just "a" has been printed now
     }
 

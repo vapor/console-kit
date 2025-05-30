@@ -1,4 +1,5 @@
 import Foundation
+
 #if canImport(Android)
 import Android
 #endif
@@ -89,9 +90,9 @@ public protocol Console: AnyObject, Sendable {
     ///     - error: Error `String` to output.
     ///     - newLine: If `true`, the next error will be on a new line.
     func report(error: String, newLine: Bool)
-    
+
     var userInfo: [AnySendableHashable: any Sendable] { get set }
-    
+
     /// If the ``Console`` supports ANSI commands such as color and cursor movement.
     var supportsANSICommands: Bool { get }
 }

@@ -27,7 +27,7 @@ extension Console {
     ) -> ActivityIndicator<CustomActivity> {
         return CustomActivity(frames: frames, success: success, failure: failure, color: color).newActivity(for: self)
     }
-    
+
     /// Creates an activity indicator with custom frames that are iterated over.
     ///
     /// ```swift
@@ -65,14 +65,13 @@ public struct CustomActivity: ActivityIndicatorType {
     ///
     /// The index of the current frame is figured using the equation `tick % frames.count`, allowing the indicator to run indefinitely.
     public let frames: [ConsoleText]
-    
+
     /// The text to be output with the ``ActivityIndicatorState/success`` style if the indicator is succeeded.
     public let success: String
-    
+
     /// The text to be output with the ``ActivityIndicatorState/failure`` style if the indicator is failed.
     public let failure: String
-    
-    
+
     /// Creates a new ``CustomActivity`` instance.
     ///
     /// - Parameters:
@@ -84,7 +83,7 @@ public struct CustomActivity: ActivityIndicatorType {
         self.success = success
         self.failure = failure
     }
-    
+
     /// Creates a new ``CustomActivity`` instance.
     ///
     /// - Parameters:
@@ -95,19 +94,18 @@ public struct CustomActivity: ActivityIndicatorType {
     public init(frames: [String], success: String = "[Done]", failure: String = "[Failed]", color: ConsoleColor = .cyan) {
         self.init(frames: frames.map { $0.consoleText(color: color) }, success: success, failure: failure)
     }
-    
-    
+
     /// See ``ActivityIndicatorType/outputActivityIndicator(to:state:)``.
     public func outputActivityIndicator(to console: any Console, state: ActivityIndicatorState) {
         let output: ConsoleText
-        
+
         switch state {
         case .ready: output = frames[0]
-        case let .active(tick): output = frames[Int(tick) % frames.count]
+        case .active(let tick): output = frames[Int(tick) % frames.count]
         case .success: output = self.success.consoleText(.success)
         case .failure: output = self.failure.consoleText(.error)
         }
-        
+
         console.output(output)
     }
 }

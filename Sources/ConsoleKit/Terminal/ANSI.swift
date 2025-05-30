@@ -1,4 +1,5 @@
 import Foundation
+
 #if canImport(Android)
 import Android
 #endif
@@ -48,11 +49,11 @@ extension Terminal {
     func command(_ command: ANSICommand) {
         guard self.enableCommands else { return }
         Swift.print(command.ansi, terminator: "")
-        
+
         // fdopen() on stdout is fast; also the returned file MUST NOT be fclose()d
         // This avoids concurrency complaints due to accessing global `stdout`.
         fflush(fdopen(STDOUT_FILENO, "w+"))
-        
+
     }
 }
 
@@ -71,11 +72,9 @@ extension String {
     /// by the style specification
     func terminalStylize(_ style: ConsoleStyle) -> String {
         if style.color == nil && style.background == nil && !style.isBold {
-            return self // No style ("plain")
+            return self  // No style ("plain")
         }
-        return style.ansiCommand.ansi +
-            self +
-            ANSICommand.sgr([.reset]).ansi
+        return style.ansiCommand.ansi + self + ANSICommand.sgr([.reset]).ansi
     }
 }
 
@@ -102,17 +101,17 @@ extension ANSISGRCommand {
     var ansi: String {
         switch self {
         case .reset: return "0"
-        
+
         case .bold: return "1"
         case .underline: return "4"
         case .slowBlink: return "5"
-        
+
         case .foregroundColor(let c): return "3\(c)"
         case .brightForegroundColor(let c): return "9\(c)"
         case .paletteForegroundColor(let c): return "38;5;\(c)"
         case .rgbForegroundColor(let r, let g, let b): return "38;2;\(r);\(g);\(b)"
         case .defaultForegroundColor: return "39"
-        
+
         case .backgroundColor(let c): return "4\(c)"
         case .brightBackgroundColor(let c): return "10\(c)"
         case .paletteBackgroundColor(let c): return "48;5;\(c)"
@@ -186,7 +185,7 @@ extension ConsoleStyle {
     /// The ANSI command for this console style.
     var ansiCommand: ANSICommand {
         var commands: [ANSISGRCommand] = [.reset]
-        
+
         if self.isBold {
             commands.append(.bold)
         }

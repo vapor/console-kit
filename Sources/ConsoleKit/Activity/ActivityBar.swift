@@ -48,7 +48,7 @@ extension Console {
         get {
             self.userInfo[ActivityBarWidthKey()] as? Int ?? 25
         }
-        
+
         set {
             self.userInfo[ActivityBarWidthKey()] = newValue
         }

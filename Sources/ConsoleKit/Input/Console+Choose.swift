@@ -24,8 +24,7 @@ extension Console {
     ///     - array: Array of `CustomStringConvertible` items to choose from.
     /// - returns: Element from `array` that the user chose.
     public func choose<T>(_ prompt: ConsoleText, from array: [T]) -> T
-        where T: CustomStringConvertible
-    {
+    where T: CustomStringConvertible {
         return choose(prompt, from: array, display: { $0.description.consoleText() })
     }
 
@@ -56,7 +55,7 @@ extension Console {
     /// - returns: Element from `array` that the user chose.
     public func choose<T>(_ prompt: ConsoleText, from array: [T], display: (T) -> ConsoleText) -> T {
         output(prompt)
-        array.enumerated().forEach { idx, item in
+        for (idx, item) in array.enumerated() {
             let offset = idx + 1
             output("\(offset): ".consoleText(.info), newLine: false)
             let description = display(item)

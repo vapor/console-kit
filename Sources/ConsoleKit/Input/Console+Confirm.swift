@@ -58,8 +58,8 @@ extension Console {
     }
 }
 
-private extension Bool {
-    init?(yn: String) {
+extension Bool {
+    fileprivate init?(yn: String) {
         switch yn.lowercased() {
         case "y", "yes": self = true
         case "n", "no": self = false

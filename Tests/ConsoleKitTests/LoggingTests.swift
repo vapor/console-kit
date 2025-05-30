@@ -1,7 +1,7 @@
 import ConsoleKit
+import Foundation
 import Logging
 import Testing
-import Foundation
 
 @Suite("ConsoleLogger Tests")
 struct ConsoleLoggerTests {
@@ -13,17 +13,17 @@ struct ConsoleLoggerTests {
         }
         logger1.logLevel = .debug
         logger1[metadataKey: "only-on"] = "first"
-        
+
         var logger2 = logger1
         logger2.logLevel = .error
         logger2[metadataKey: "only-on"] = "second"
-        
+
         #expect(.debug == logger1.logLevel)
         #expect(.error == logger2.logLevel)
         #expect("first" == logger1[metadataKey: "only-on"])
         #expect("second" == logger2[metadataKey: "only-on"])
     }
-    
+
     @Test("Logging Levels")
     func loggingLevels() throws {
         let console = TestConsole()
@@ -33,22 +33,22 @@ struct ConsoleLoggerTests {
 
         logger.trace("trace")
         #expect(console.testOutputQueue.first == nil)
-        
+
         logger.debug("debug")
         #expect(console.testOutputQueue.first == nil)
-        
+
         logger.info("info")
         expect(console, logs: .info, message: "info")
-        
+
         logger.notice("notice")
         expect(console, logs: .notice, message: "notice")
-        
+
         logger.warning("warning")
         expect(console, logs: .warning, message: "warning")
-        
+
         logger.error("error")
         expect(console, logs: .error, message: "error")
-        
+
         logger.critical("critical")
         expect(console, logs: .critical, message: "critical")
     }
@@ -69,8 +69,15 @@ struct ConsoleLoggerTests {
         logger.info("info", metadata: ["meta1": "overridden"])
         expect(console, logs: .info, message: "info [meta1: overridden]")
 
-        logger.info("info", metadata: ["meta1": "test1", "meta2": .stringConvertible("Missing command"), "meta3": ["hello", "wor\"ld"], "meta4": ["hello": "wor\"ld"]])
-        expect(console, logs: .info, message: #"info [meta1: test1, meta2: Missing command, meta3: [hello, wor"ld], meta4: [hello: wor"ld]]"#)
+        logger.info(
+            "info",
+            metadata: [
+                "meta1": "test1", "meta2": .stringConvertible("Missing command"), "meta3": ["hello", "wor\"ld"],
+                "meta4": ["hello": "wor\"ld"],
+            ]
+        )
+        expect(
+            console, logs: .info, message: #"info [meta1: test1, meta2: Missing command, meta3: [hello, wor"ld], meta4: [hello: wor"ld]]"#)
     }
 
     @Test("Source Location")
@@ -93,7 +100,7 @@ struct ConsoleLoggerTests {
             return ["simple-trace-id": .string(traceID)]
         }
         let console = TestConsole()
-        
+
         let logger = Logger(label: "codes.vapor.console") { label in
             ConsoleLogger(label: label, console: console, metadataProvider: simpleTraceIDMetadataProvider)
         }
@@ -103,19 +110,19 @@ struct ConsoleLoggerTests {
         }
         expect(console, logs: .debug, message: "debug [simple-trace-id: 1234-5678] (ConsoleKitTests/LoggingTests.swift:1)")
     }
-    
+
     @Test("Timestamp Fragment")
     func timestampFragment() {
         let console = TestConsole()
-        
+
         struct ConstantTimestampSource: TimestampSource, @unchecked Sendable {
             let time: tm
-            
+
             func now() -> tm {
                 self.time
             }
         }
-        
+
         let logger = Logger(label: "codes.vapor.console") { label in
             var time = tm()
             time.tm_sec = 1
@@ -124,31 +131,31 @@ struct ConsoleLoggerTests {
             time.tm_mday = 4
             time.tm_mon = 5
             time.tm_year = 100
-            
+
             return ConsoleFragmentLogger(
                 fragment: timestampDefaultLoggerFragment(timestampSource: ConstantTimestampSource(time: time)),
                 label: label,
                 console: console
             )
         }
-        
+
         logger.info("logged", line: 1)
-        
+
         var logged = console.testOutputQueue.first!
         let expect = "2000-06-04T03:02:01"
         #expect(logged.hasPrefix(expect))
         logged.removeFirst(expect.count)
-        
+
         // Remove the timezone, since there doesn't appear to be a good way to mock it with strftime.
-        while logged.removeFirst() != " " { }
-        
+        while logged.removeFirst() != " " {}
+
         #expect(logged == "[ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
     }
 
     @Test("Source Fragment")
     func sourceFragment() {
         let console = TestConsole()
-        
+
         let logger = Logger(label: "codes.vapor.console") { label in
             ConsoleFragmentLogger(
                 fragment: LoggerSourceFragment().and(defaultLoggerFragment().separated(" ")),
@@ -156,10 +163,12 @@ struct ConsoleLoggerTests {
                 console: console
             )
         }
-        
+
         logger.info("logged", line: 1)
-        
-        #expect(console.testOutputQueue.first == "ConsoleKitTests [ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
+
+        #expect(
+            console.testOutputQueue.first == "ConsoleKitTests [ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n"
+        )
     }
 }
 
@@ -170,4 +179,3 @@ private func expect(_ console: TestConsole, logs level: Logger.Level, message: S
 enum TraceNamespace {
     @TaskLocal static var simpleTraceID: String?
 }
-

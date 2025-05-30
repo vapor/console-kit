@@ -31,7 +31,8 @@ extension String {
 /// ```
 ///
 /// See ``Console/output(_:newLine:)`` for more information.
-public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, ExpressibleByStringLiteral, CustomStringConvertible, Sendable {
+public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, ExpressibleByStringLiteral, CustomStringConvertible, Sendable
+{
     /// See `Collection`.
     public var startIndex: Int {
         return fragments.startIndex
@@ -56,7 +57,6 @@ public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, Ex
     public init(arrayLiteral elements: ConsoleTextFragment...) {
         self.fragments = elements
     }
-
 
     /// See `ExpressibleByStringLiteral`.
     public init(stringLiteral string: String) {
@@ -91,7 +91,7 @@ public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, Ex
 /// ```swift
 /// let text: ConsoleText = "Hello, " + "world!"
 /// ```
-public func +(lhs: ConsoleText, rhs: ConsoleText) -> ConsoleText {
+public func + (lhs: ConsoleText, rhs: ConsoleText) -> ConsoleText {
     return ConsoleText(fragments: lhs.fragments + rhs.fragments)
 }
 
@@ -101,7 +101,7 @@ public func +(lhs: ConsoleText, rhs: ConsoleText) -> ConsoleText {
 /// var text: ConsoleText = "Hello, "
 /// text += "world!"
 /// ```
-public func +=(lhs: inout ConsoleText, rhs: ConsoleText) {
+public func += (lhs: inout ConsoleText, rhs: ConsoleText) {
     lhs = lhs + rhs
 }
 
@@ -128,18 +128,23 @@ extension ConsoleText: ExpressibleByStringInterpolation {
         ) {
             self.fragments.append(.init(string: value, style: style))
         }
-        
+
         public mutating func appendInterpolation(
             _ value: String,
             color: ConsoleColor?,
             background: ConsoleColor? = nil,
             isBold: Bool = false
         ) {
-            self.fragments.append(.init(string: value, style: .init(
-                color: color,
-                background: background,
-                isBold: isBold
-            )))
+            self.fragments.append(
+                .init(
+                    string: value,
+                    style: .init(
+                        color: color,
+                        background: background,
+                        isBold: isBold
+                    )
+                )
+            )
         }
     }
 }

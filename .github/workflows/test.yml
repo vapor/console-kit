@@ -13,6 +13,7 @@ jobs:
       # with_windows: true
       with_musl: true
       with_android: true
+      with_linting: true
     secrets: inherit
   
   # integration-check:
