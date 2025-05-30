@@ -114,14 +114,12 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
             await self.start(refreshRate: refreshRate)
         }
 
-        defer { task.cancel() }
-
         do {
             let result = try await body()
-            await task.value
+            task.cancel()
             result ? self.succeed() : self.fail()
         } catch {
-            await task.value
+            task.cancel()
             self.fail()
             throw error
         }
