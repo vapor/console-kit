@@ -119,7 +119,7 @@ public extension LoggerFragment {
 /// Make the current fragment conditional, only calling its `output` method if the record's `loggerLevel` is `maxLevel` or lower
 ///
 /// The sequence
-/// ```
+/// ```swift
 /// Literal("IsDebugOrTrace").maxLevel(.debug)
 /// ```
 /// will only include "IsDebugOrTrace" in the output when the log level is debug or lower.

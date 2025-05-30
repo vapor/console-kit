@@ -18,7 +18,7 @@ import WinSDK
 public final class Terminal: Console, Sendable {
     let _userInfo: Mutex<[AnySendableHashable: any Sendable]>
     
-    /// See `Console`
+    /// See ``Console``
     public var userInfo: [AnySendableHashable: any Sendable] {
         get {
             self._userInfo.withLock { $0 }
@@ -37,12 +37,12 @@ public final class Terminal: Console, Sendable {
         return supportsANSICommands
     }
 
-    /// Create a new Terminal.
+    /// Create a new ``Terminal``.
     public init() {
         self._userInfo = Mutex([:])
     }
 
-    /// See `Console`
+    /// See ``Console``
     public func clear(_ type: ConsoleClear) {
         switch type {
         case .line:
@@ -53,7 +53,7 @@ public final class Terminal: Console, Sendable {
         }
     }
 
-    /// See `Console`
+    /// See ``Console``
     public func input(isSecure: Bool) -> String {
         didOutputLines(count: 1)
         if isSecure {
@@ -101,7 +101,7 @@ public final class Terminal: Console, Sendable {
         }
     }
 
-    /// See `Console`
+    /// See ``Console``
     public func output(_ text: ConsoleText, newLine: Bool) {
         if self.enableCommands {
             var lines = 0
@@ -133,7 +133,7 @@ public final class Terminal: Console, Sendable {
         fflush(stdout)
     }
 
-    /// See `Console`
+    /// See ``Console``
     public func report(error: String, newLine: Bool) {
         for c in (newLine ? "\(error)\n" : error).utf8 {
 #if os(Windows)
@@ -144,7 +144,7 @@ public final class Terminal: Console, Sendable {
         }
     }
 
-    /// See `Console`
+    /// See ``Console``
     public var size: (width: Int, height: Int) {
 #if os(Windows)
         var csbi = CONSOLE_SCREEN_BUFFER_INFO()
@@ -159,14 +159,12 @@ public final class Terminal: Console, Sendable {
 }
 
 extension Console {
-
-    /// If set, overrides a `Terminal`'s own determination as to whether its
+    /// If set, overrides a ``Terminal``'s own determination as to whether its
     /// output supports color commands. Useful for easily implementing an option
-    /// of the form `--color=no|yes|auto`. If the active `Console` is not
-    /// specifically a `Terminal`, has no effect.
+    /// of the form `--color=no|yes|auto`. If the active ``Console`` is not
+    /// specifically a ``Terminal``, has no effect.
     public var stylizedOutputOverride: Bool? {
         get { return self.userInfo["stylizedOutputOverride"] as? Bool }
         set { self.userInfo["stylizedOutputOverride"] = newValue }
     }
-
 }

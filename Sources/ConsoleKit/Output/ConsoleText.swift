@@ -1,30 +1,36 @@
 extension String {
-    /// Converts this `String` to `ConsoleText`.
+    /// Converts this `String` to ``ConsoleText``.
     ///
-    ///     console.output("Hello, " + "world!".consoleText(color: .green))
+    /// ```swift
+    /// console.output("Hello, " + "world!".consoleText(color: .green))
+    /// ```
     ///
-    /// See `ConsoleStyle` for more information.
+    /// See ``ConsoleStyle`` for more information.
     public func consoleText(_ style: ConsoleStyle = .plain) -> ConsoleText {
         return [ConsoleTextFragment(string: self, style: style)]
     }
 
-    /// Converts this `String` to `ConsoleText`.
+    /// Converts this `String` to ``ConsoleText``.
     ///
-    ///     console.output("Hello, " + "world!".consoleText(color: .green))
+    /// ```swift
+    /// console.output("Hello, " + "world!".consoleText(color: .green))
+    /// ```
     ///
-    /// See `ConsoleStyle` for more information.
+    /// See ``ConsoleStyle`` for more information.
     public func consoleText(color: ConsoleColor? = nil, background: ConsoleColor? = nil, isBold: Bool = false) -> ConsoleText {
         let style = ConsoleStyle(color: color, background: background, isBold: isBold)
         return consoleText(style)
     }
 }
 
-/// A collection of `ConsoleTextFragment`s. Represents stylized text that can be outputted
-/// to a `Console`.
+/// A collection of ``ConsoleTextFragment``s. Represents stylized text that can be outputted
+/// to a ``Console``.
 ///
-///     let text: ConsoleText = "Hello, " + "world".consoleText(color: .green)
+/// ```swift
+/// let text: ConsoleText = "Hello, " + "world".consoleText(color: .green)
+/// ```
 ///
-/// See `Console.output(_:newLine:)` for more information.
+/// See ``Console/output(_:newLine:)`` for more information.
 public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, ExpressibleByStringLiteral, CustomStringConvertible, Sendable {
     /// See `Collection`.
     public var startIndex: Int {
@@ -61,10 +67,10 @@ public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, Ex
         }
     }
 
-    /// One or more `ConsoleTextFragment`s making up this `ConsoleText.
+    /// One or more ``ConsoleTextFragment``s making up this ``ConsoleText``.
     public var fragments: [ConsoleTextFragment]
 
-    /// Creates a new `ConsoleText`.
+    /// Creates a new ``ConsoleText``.
     public init(fragments: [ConsoleTextFragment]) {
         self.fragments = fragments
     }
@@ -80,19 +86,21 @@ public struct ConsoleText: RandomAccessCollection, ExpressibleByArrayLiteral, Ex
 
 // MARK: Operators
 
-/// Appends a `ConsoleText` to another `ConsoleText`.
+/// Appends a ``ConsoleText`` to another ``ConsoleText``.
 ///
-///     let text: ConsoleText = "Hello, " + "world!"
-///
+/// ```swift
+/// let text: ConsoleText = "Hello, " + "world!"
+/// ```
 public func +(lhs: ConsoleText, rhs: ConsoleText) -> ConsoleText {
     return ConsoleText(fragments: lhs.fragments + rhs.fragments)
 }
 
-/// Appends a `ConsoleText` to another `ConsoleText` in-place.
+/// Appends a ``ConsoleText`` to another ``ConsoleText`` in-place.
 ///
-///     var text: ConsoleText = "Hello, "
-///     text += "world!"
-///
+/// ```swift
+/// var text: ConsoleText = "Hello, "
+/// text += "world!"
+/// ```
 public func +=(lhs: inout ConsoleText, rhs: ConsoleText) {
     lhs = lhs + rhs
 }
