@@ -12,4 +12,30 @@
 
 <br>
 
-Utilities for interacting with a terminal and the commandline in a Swift application.
+💻 Utilities for interacting with a terminal and the command line in a Swift application.
+
+### Supported Platforms
+
+ConsoleKit supports all platforms supported by Swift 6.1 and later.
+
+### Installation
+
+Use the SPM string to easily include the dependendency in your `Package.swift` file
+
+```swift
+.package(url: "https://github.com/vapor/console-kit.git", from: "5.0.0")
+```
+
+and add it to your target's dependencies:
+
+```swift
+.product(name: "ConsoleKit", package: "console-kit")
+```
+
+## Overview
+
+`ConsoleKit` provides utilities for interacting with a console in a Swift application. It provides:
+
+* Utilities for sending text (including styles and colors, when supported) to a terminal.
+* Utilities for reading input from a terminal.
+* ``ConsoleLogger`` and ``ConsoleFragmentLogger``, [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementations for customizable logging to a console.
