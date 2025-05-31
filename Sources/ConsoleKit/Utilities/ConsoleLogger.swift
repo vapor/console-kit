@@ -1,6 +1,6 @@
 import Logging
 
-/// A `LoggerFragment` which implements the default logger message format.
+/// A ``LoggerFragment`` which implements the default logger message format.
 public func defaultLoggerFragment() -> some LoggerFragment {
     LabelFragment().maxLevel(.trace)
         .and(LevelFragment().separated(" ").and(MessageFragment().separated(" ")))
@@ -8,14 +8,14 @@ public func defaultLoggerFragment() -> some LoggerFragment {
         .and(SourceLocationFragment().separated(" ").maxLevel(.debug))
 }
 
-/// A `LoggerFragment` which implements the default logger message format with a timestamp at the front.
+/// A ``LoggerFragment`` which implements the default logger message format with a timestamp at the front.
 public func timestampDefaultLoggerFragment(
     timestampSource: some TimestampSource = SystemTimestampSource()
 ) -> some LoggerFragment {
     TimestampFragment(timestampSource).and(defaultLoggerFragment().separated(" "))
 }
 
-/// Outputs logs to a `Console` via a `LoggerFragment` pipeline.
+/// Outputs logs to a ``Console`` via a ``LoggerFragment`` pipeline.
 public struct ConsoleFragmentLogger<T: LoggerFragment>: LogHandler, Sendable {
     public let label: String
 
@@ -31,13 +31,13 @@ public struct ConsoleFragmentLogger<T: LoggerFragment>: LogHandler, Sendable {
     /// The conosle that the messages will get logged to.
     public let console: any Console
 
-    /// The `LoggerFragment` this logger outputs through.
+    /// The ``LoggerFragment`` this logger outputs through.
     public var fragment: T
 
-    /// Creates a new `ConsoleLogger` instance.
+    /// Creates a new ``ConsoleFragmentLogger`` instance.
     ///
     /// - Parameters:
-    ///   - fragment: The `LoggerFragment` this logger outputs through.
+    ///   - fragment: The ``LoggerFragment`` this logger outputs through.
     ///   - label: Unique identifier for this logger.
     ///   - console: The console to log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
@@ -105,7 +105,7 @@ public struct ConsoleFragmentLogger<T: LoggerFragment>: LogHandler, Sendable {
     }
 }
 
-/// Outputs logs to a `Console`.
+/// Outputs logs to a ``Console``.
 public struct ConsoleLogger: LogHandler, Sendable {
     public let label: String
 
@@ -123,7 +123,7 @@ public struct ConsoleLogger: LogHandler, Sendable {
 
     public var fragment: some LoggerFragment = defaultLoggerFragment()
 
-    /// Creates a new `ConsoleLogger` instance.
+    /// Creates a new ``ConsoleLogger`` instance.
     ///
     /// - Parameters:
     ///   - label: Unique identifier for this logger.
@@ -192,9 +192,11 @@ public struct ConsoleLogger: LogHandler, Sendable {
 }
 
 extension LoggingSystem {
-    /// Bootstraps a `ConsoleLogger` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
     ///
-    ///     LoggingSystem.boostrap(console: console)
+    /// ```swift
+    /// LoggingSystem.boostrap(console: console)
+    /// ```
     ///
     /// - Parameters:
     ///   - console: The console the logger will log the messages to.
@@ -208,9 +210,11 @@ extension LoggingSystem {
         self.bootstrap(console: console, level: level, metadata: metadata, metadataProvider: nil)
     }
 
-    /// Bootstraps a `ConsoleLogger` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
     ///
-    ///     LoggingSystem.boostrap(console: console)
+    /// ```swift
+    /// LoggingSystem.boostrap(console: console)
+    /// ```
     ///
     /// - Parameters:
     ///   - console: The console the logger will log the messages to.
@@ -231,9 +235,11 @@ extension LoggingSystem {
         )
     }
 
-    /// Bootstraps a `ConsoleFragmentLogger` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    /// Bootstraps a ``ConsoleFragmentLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
     ///
-    ///     LoggingSystem.boostrap(console: console)
+    /// ```swift
+    /// LoggingSystem.boostrap(console: console)
+    /// ```
     ///
     /// - Parameters:
     ///   - fragment: The logger fragment which will be used to build the logged messages.

@@ -30,11 +30,6 @@ let package = Package(
             dependencies: [.target(name: "ConsoleKit")],
             swiftSettings: swiftSettings
         ),
-        .testTarget(
-            name: "ConsoleKitPerformanceTests",
-            dependencies: [.target(name: "ConsoleKit")],
-            swiftSettings: swiftSettings
-        ),
         .executableTarget(
             name: "ConsoleLoggerExample",
             dependencies: [

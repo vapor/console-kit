@@ -55,14 +55,16 @@ public struct LogRecord {
 
     /// Combine all of the metadata into a single set.
     public mutating func allMetadata() -> [String: Logger.MetadataValue] {
-        // We aren't mutating self here currently, but keeping the method marked that way will ensure we can cache the result without breaking the public API if we decide that's desirable.
+        // We aren't mutating self here currently,
+        // but keeping the method marked that way will ensure we can cache the result
+        // without breaking the public API if we decide that's desirable.
         (self.metadata ?? [:])
             .merging(self.loggerMetadata, uniquingKeysWith: { (a, _) in a })
             .merging(self.metadataProvider?.get() ?? [:], uniquingKeysWith: { (a, _) in a })
     }
 }
 
-/// The output of a `LoggerFragment`, including some intermediary state used for things like deduplicating separators.
+/// The output of a ``LoggerFragment``, including some intermediary state used for things like deduplicating separators.
 public struct FragmentOutput {
     public var text = ConsoleText()
     public var needsSeparator = false
@@ -76,12 +78,15 @@ public struct FragmentOutput {
 
 /// A fragment of a log message.
 public protocol LoggerFragment: Sendable {
-    /// Indicates whether the fragment will write anything to `output` when `write` is called. This is used to determine whether writing a separator should be skipped.
+    /// Indicates whether the fragment will write anything to `output` when ``LoggerFragment/write`` is called.
+    ///
+    /// This is used to determine whether writing a separator should be skipped.
     func hasContent(record: inout LogRecord) -> Bool
 
     /// Add this fragment's output to the console text.
     ///
-    /// Fragments are allowed to mutate the `LogRecord` seen by later fragments in the pipeline, but this should generally be done before any fragments write text to avoid inconsistencies in the final message.
+    /// Fragments are allowed to mutate the ``LogRecord`` seen by later fragments in the pipeline,
+    /// but this should generally be done before any fragments write text to avoid inconsistencies in the final message.
     func write(_ record: inout LogRecord, to output: inout FragmentOutput)
 }
 
@@ -96,7 +101,7 @@ extension LoggerFragment {
     /// Make the current fragment conditional, only calling its `output` method if the record's `loggerLevel` is `maxLevel` or lower
     ///
     /// The sequence
-    /// ```
+    /// ```swift
     /// Literal("IsDebugOrTrace").maxLevel(.debug)
     /// ```
     /// will only include "IsDebugOrTrace" in the output when the log level is debug or lower.
@@ -204,7 +209,9 @@ public struct LevelFragment: LoggerFragment {
     }
 }
 
-/// Writes the given text to the output. This type does not request a separator for the next fragment
+/// Writes the given text to the output.
+///
+/// This type does not request a separator for the next fragment
 public struct LiteralFragment: LoggerFragment {
     public let literal: ConsoleText
 
@@ -268,7 +275,9 @@ public struct MetadataFragment: LoggerFragment {
     }
 }
 
-/// Writes the file location of the logged message, including the line. This fragment requests a separator for the next fragment.
+/// Writes the file location of the logged message, including the line.
+///
+/// This fragment requests a separator for the next fragment.
 public struct SourceLocationFragment: LoggerFragment {
     public init() {}
 
@@ -279,7 +288,9 @@ public struct SourceLocationFragment: LoggerFragment {
     }
 }
 
-/// Writes the source of the logged message. By default the source is the name of the module the message was logged in.
+/// Writes the source of the logged message.
+///
+/// By default the source is the name of the module the message was logged in.
 public struct LoggerSourceFragment: LoggerFragment {
     public init() {}
 
@@ -294,7 +305,7 @@ public protocol TimestampSource: Sendable {
     func now() -> tm
 }
 
-/// The default `TimestampSource`, which gets the time from the system.
+/// The default ``TimestampSource``, which gets the time from the system.
 public struct SystemTimestampSource: TimestampSource {
     public init() {}
 
@@ -313,7 +324,7 @@ public struct SystemTimestampSource: TimestampSource {
     }
 }
 
-/// Writes a formatted timestamp based on the time obtained from the `TimestampSource`.
+/// Writes a formatted timestamp based on the time obtained from the ``TimestampSource``.
 public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
     let source: S
 
