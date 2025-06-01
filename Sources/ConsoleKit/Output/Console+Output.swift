@@ -14,7 +14,7 @@ extension Console {
     ///
     /// - Parameters
     ///   - texts: An array ``ConsoleText`` to serialize and print.
-    ///   - newLine: If `true`, every element in the `texts` array will be printed on a new line.
+    ///   - newLine: If `true`, after every element in the `texts` array a new line will be printed.
     public func output(_ texts: [ConsoleText], newLine: Bool = true) {
         for text in texts {
             self.output(text, newLine: newLine)

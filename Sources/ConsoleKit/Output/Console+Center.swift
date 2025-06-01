@@ -51,12 +51,12 @@ extension Console {
     /// > Important: Each line to be centered must be a single ``ConsoleText`` object inside the array.
     ///
     /// - Parameters:
-    ///   - strings: An array of ``ConsoleText``, each representing a line of text to be centered.
+    ///   - texts: An array of ``ConsoleText``, each representing a line of text to be centered.
     ///   - padding: `Character` to use for padding, `" "` by default.
     ///
     /// - Returns: An array of ``ConsoleText`` with padding added so that each line is centered.
-    public func center(_ strings: [ConsoleText], padding: Character = " ") -> [ConsoleText] {
-        var lines = strings
+    public func center(_ texts: [ConsoleText], padding: Character = " ") -> [ConsoleText] {
+        var lines = texts
 
         // Make sure there's more than one line
         guard !lines.isEmpty else {
@@ -83,5 +83,18 @@ extension Console {
         }
 
         return lines
+    }
+
+    /// Centers a single ``ConsoleText`` according to this console's `size`.
+    ///
+    /// > Important: The `ConsoleText` must be a single line to be centered correctly.
+    ///
+    /// - Parameters:
+    ///   - text: A single ``ConsoleText`` (representing a single line) to be centered.
+    ///   - padding: `Character` to use for padding, `" "` by default.
+    ///
+    /// - Returns: A single ``ConsoleText`` with padding added so that it is centered.
+    public func center(_ text: ConsoleText, padding: Character = " ") -> ConsoleText {
+        self.center([text], padding: padding).first ?? ConsoleText()
     }
 }

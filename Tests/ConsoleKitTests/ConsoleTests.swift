@@ -75,15 +75,24 @@ struct ConsoleTests {
         #expect(centeredText == ["         Hello, World!", "         Hello, World!"])
     }
 
-    @Test("Center ConsoleText")
-    func centerConsoleText() throws {
+    @Test("Center ConsoleText Array")
+    func centerConsoleTextArray() throws {
         let console = TestConsole()
 
-        let text: [ConsoleText] = .init(repeating: "Hello, World!", count: 10)
+        let text: [ConsoleText] = .init(repeating: "Hello, World!".consoleText(.info), count: 10)
         let centeredText = console.center(text)
 
         for i in 0..<text.count {
             #expect(centeredText[i].description == "         Hello, World!")
         }
+    }
+
+    @Test("Center ConsoleText")
+    func centerConsoleText() throws {
+        let console = TestConsole()
+
+        let centeredText = console.center("Hello, World!".consoleText(.info))
+
+        #expect(centeredText.description == "         Hello, World!")
     }
 }
