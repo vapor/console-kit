@@ -11,7 +11,7 @@ struct ActivityTests {
 
         try await foo.withActivityIndicator {
             try await Task.sleep(for: .seconds(2.5))
-            return true
+            return false
         }
     }
 
@@ -44,6 +44,19 @@ struct ActivityTests {
         }
     }
 
+    @Test("Custom Indicator with ConsoleText")
+    func customIndicatorWithConsoleText() async throws {
+        let console = Terminal()
+
+        let frames: [ConsoleText] = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+        let indicator = console.customActivity(frames: frames)
+
+        try await indicator.withActivityIndicator {
+            try await Task.sleep(for: .seconds(3))
+            return true
+        }
+    }
+
     @Test("Activity Width Key")
     func activityWidthKey() {
         var dict = [AnySendableHashable: String]()
@@ -53,5 +66,10 @@ struct ActivityTests {
 
         #expect(dict[AnySendableHashable(ActivityBarWidthKey())] == "width key")
         #expect(dict[AnySendableHashable("ConsoleKit.ActivityBarWidthKey")] == "string key")
+
+        let console = Terminal()
+        #expect(console.activityBarWidth == 25)
+        console.activityBarWidth = 30
+        #expect(console.activityBarWidth == 30)
     }
 }

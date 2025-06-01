@@ -12,3 +12,17 @@ public struct ConsoleTextFragment: Sendable {
         self.style = style
     }
 }
+
+extension ConsoleTextFragment: CustomStringConvertible {
+    /// See `CustomStringConvertible`.
+    public var description: String {
+        return self.string
+    }
+}
+
+extension ConsoleTextFragment: ExpressibleByStringLiteral {
+    /// See `ExpressibleByStringLiteral`.
+    public init(stringLiteral value: String) {
+        self.init(string: value)
+    }
+}
