@@ -1,7 +1,15 @@
-import Foundation
-
-#if canImport(Android)
-import Android
+#if os(macOS)
+import Darwin.C
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(Musl)
+import Musl
+#elseif canImport(Bionic)
+import Bionic
+#elseif os(WASI)
+import WASILibc
+#elseif os(Windows)
+import CRT
 #endif
 
 /// Protocol for powering styled Console I/O.

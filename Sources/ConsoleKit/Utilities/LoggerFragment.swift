@@ -1,5 +1,18 @@
-import Foundation
 import Logging
+
+#if os(macOS)
+import Darwin.C
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(Musl)
+import Musl
+#elseif canImport(Bionic)
+import Bionic
+#elseif os(WASI)
+import WASILibc
+#elseif os(Windows)
+import CRT
+#endif
 
 /// Information about a specific log message, including information from the logger the message was logged to.
 public struct LogRecord {

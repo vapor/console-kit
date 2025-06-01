@@ -1,5 +1,4 @@
 import ConsoleKit
-import Foundation
 import Logging
 
 @main

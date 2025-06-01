@@ -1,7 +1,15 @@
-import Foundation
-
-#if canImport(Android)
-import Android
+#if os(macOS)
+import Darwin.C
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(Musl)
+import Musl
+#elseif canImport(Bionic)
+import Bionic
+#elseif os(WASI)
+import WASILibc
+#elseif os(Windows)
+import CRT
 #endif
 
 /// Terminal ANSI commands
@@ -53,7 +61,6 @@ extension Terminal {
         // fdopen() on stdout is fast; also the returned file MUST NOT be fclose()d
         // This avoids concurrency complaints due to accessing global `stdout`.
         fflush(fdopen(STDOUT_FILENO, "w+"))
-
     }
 }
 

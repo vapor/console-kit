@@ -1,7 +1,20 @@
 import ConsoleKit
-import Foundation
 import Logging
 import Testing
+
+#if os(macOS)
+import Darwin.C
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(Musl)
+import Musl
+#elseif canImport(Bionic)
+import Bionic
+#elseif os(WASI)
+import WASILibc
+#elseif os(Windows)
+import CRT
+#endif
 
 @Suite("ConsoleLogger Tests")
 struct ConsoleLoggerTests {
