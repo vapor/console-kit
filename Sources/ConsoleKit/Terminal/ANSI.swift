@@ -89,7 +89,7 @@ extension StringProtocol {
     ///
     /// - Returns: The string wrapped in ANSI codes.
     public func stylize(
-        _ color: ConsoleColor? = nil,
+        color: ConsoleColor? = nil,
         background: ConsoleColor? = nil,
         isBold: Bool = false
     ) -> String {
