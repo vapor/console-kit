@@ -129,15 +129,13 @@ public final class Terminal: Console, Sendable {
             didOutputLines(count: lines)
         }
 
-        let terminator = newLine ? "\n" : ""
-
         let output: String
         if enableCommands {
             output = text.terminalStylize()
         } else {
             output = text.description
         }
-        Swift.print(output, terminator: terminator)
+        Swift.print(output, terminator: newLine ? "\n" : "")
         fflush(stdout)
     }
 
