@@ -1,4 +1,4 @@
-extension String {
+extension StringProtocol {
     /// Converts this `String` to ``ConsoleText``.
     ///
     /// ```swift
@@ -7,7 +7,7 @@ extension String {
     ///
     /// See ``ConsoleStyle`` for more information.
     public func consoleText(_ style: ConsoleStyle = .plain) -> ConsoleText {
-        return [ConsoleTextFragment(string: self, style: style)]
+        return [ConsoleTextFragment(string: String(self), style: style)]
     }
 
     /// Converts this `String` to ``ConsoleText``.
@@ -20,6 +20,22 @@ extension String {
     public func consoleText(color: ConsoleColor? = nil, background: ConsoleColor? = nil, isBold: Bool = false) -> ConsoleText {
         let style = ConsoleStyle(color: color, background: background, isBold: isBold)
         return consoleText(style)
+    }
+}
+
+extension Character {
+    /// Converts this `Character` to ``ConsoleText``.
+    ///
+    /// See ``ConsoleStyle`` for more information.
+    public func consoleText(_ style: ConsoleStyle = .plain) -> ConsoleText {
+        return String(self).consoleText(style)
+    }
+
+    /// Converts this `Character` to ``ConsoleText``.
+    ///
+    /// See ``ConsoleStyle`` for more information.
+    public func consoleText(color: ConsoleColor? = nil, background: ConsoleColor? = nil, isBold: Bool = false) -> ConsoleText {
+        return String(self).consoleText(color: color, background: background, isBold: isBold)
     }
 }
 
