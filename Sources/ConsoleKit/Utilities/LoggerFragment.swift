@@ -78,7 +78,7 @@ public struct FragmentOutput {
 
 /// A fragment of a log message.
 public protocol LoggerFragment: Sendable {
-    /// Indicates whether the fragment will write anything to `output` when ``LoggerFragment/write`` is called.
+    /// Indicates whether the fragment will write anything to `output` when ``LoggerFragment/write(_:to:)`` is called.
     ///
     /// This is used to determine whether writing a separator should be skipped.
     func hasContent(record: inout LogRecord) -> Bool

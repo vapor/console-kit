@@ -27,7 +27,7 @@
 - ``ConsoleTextFragment``
 - ``+(_:_:)``
 - ``+=(_:_:)``
-- ``ConsoleKit/Swift/String``
+- ``ConsoleKit/Swift/StringProtocol``
 
 ### Activity
 
