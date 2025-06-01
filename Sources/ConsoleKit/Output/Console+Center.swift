@@ -21,7 +21,7 @@ extension Console {
         var lines = strings
 
         // Make sure there's more than one line
-        guard lines.count > 0 else {
+        guard !lines.isEmpty else {
             return []
         }
 
@@ -40,6 +40,45 @@ extension Console {
         for i in 0..<lines.count {
             for _ in 0..<paddingCount {
                 lines[i].insert(padding, at: lines[i].startIndex)
+            }
+        }
+
+        return lines
+    }
+
+    /// Centers an array of ``ConsoleText`` according to this console's `size`.
+    ///
+    /// > Important: Each line to be centered must be a single ``ConsoleText`` object inside the array.
+    ///
+    /// - Parameters:
+    ///   - strings: An array of ``ConsoleText``, each representing a line of text to be centered.
+    ///   - padding: `Character` to use for padding, `" "` by default.
+    ///
+    /// - Returns: An array of ``ConsoleText`` with padding added so that each line is centered.
+    public func center(_ strings: [ConsoleText], padding: Character = " ") -> [ConsoleText] {
+        var lines = strings
+
+        // Make sure there's more than one line
+        guard !lines.isEmpty else {
+            return []
+        }
+
+        // Find the longest line
+        var longestLine = 0
+        for line in lines {
+            if line.description.count > longestLine {
+                longestLine = line.description.count
+            }
+        }
+
+        // Calculate the padding and make sure it's greater than or equal to 0
+        let paddingCount = max(0, (size.width - longestLine) / 2)
+
+        // Apply the padding to each line
+        for i in 0..<lines.count {
+            let diff = (longestLine - lines[i].description.count) / 2
+            for _ in 0..<(paddingCount + diff) {
+                lines[i].fragments.insert(.init(string: String(padding)), at: 0)
             }
         }
 
