@@ -24,6 +24,20 @@ extension Console {
         self.output(string.consoleText(style), newLine: newLine)
     }
 
+    /// Outputs to the ``Console`` a combined ``ConsoleText`` from a `key` and `value`.
+    ///
+    /// ```swift
+    /// console.output(key: "name", value: "Vapor")
+    /// // name: Vapor
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - key: `String` to use as the key, which will precede the `value` an a colon.
+    ///   - value: `String` to use as the value, which will be printed in ``ConsoleStyle/info`` style.
+    public func output(key: String, value: String) {
+        self.output(key.consoleText() + ": " + value.consoleText(.info))
+    }
+
     /// Outputs a `String` to the ``Console`` with ``ConsoleStyle/plain`` style.
     ///
     /// ```swift
