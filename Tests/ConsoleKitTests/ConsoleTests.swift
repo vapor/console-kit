@@ -249,7 +249,7 @@ struct ConsoleTests {
     @Test("ConsoleText from Character")
     func consoleTextFromCharacter() throws {
         let char: Character = "A"
-        
+
         let styleConsoleText = char.consoleText(.info)
         #expect(styleConsoleText.description == "A")
 
