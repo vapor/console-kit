@@ -3,46 +3,6 @@ import Testing
 
 @Suite("Console Tests")
 struct ConsoleTests {
-    @Test("Loading")
-    func loading() async throws {
-        let console = Terminal()
-        let foo = console.loadingBar(title: "Loading")
-
-        try await foo.withActivityIndicator {
-            try await Task.sleep(for: .seconds(2.5))
-            return true
-        }
-    }
-
-    @Test("Progress")
-    func progress() async throws {
-        let console = Terminal()
-        let foo = console.progressBar(title: "Progress")
-
-        try await foo.withActivityIndicator {
-            while true {
-                if foo.activity.currentProgress >= 1.0 {
-                    return true
-                } else {
-                    foo.activity.currentProgress += 0.1
-                    try await Task.sleep(for: .seconds(0.1))
-                }
-            }
-        }
-    }
-
-    @Test("Custom Indicator")
-    func customIndicator() async throws {
-        let console = Terminal()
-
-        let indicator = console.customActivity(frames: ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
-
-        try await indicator.withActivityIndicator {
-            try await Task.sleep(for: .seconds(3))
-            return true
-        }
-    }
-
     @Test("Ephemeral")
     func ephemeral() async throws {
         // for some reason, piping through test output doesn't work correctly
@@ -94,5 +54,36 @@ struct ConsoleTests {
 
         #expect(response == true)
         #expect(console.testOutputQueue.reversed().joined() == question + "\ny/n> ")
+    }
+
+    @Test("Center String")
+    func centerString() throws {
+        let console = TestConsole()
+
+        let centeredText = console.center("Hello, World!\nHello, World!")
+
+        #expect(centeredText == "         Hello, World!\n         Hello, World!")
+    }
+
+    @Test("Center Array of Strings")
+    func centerArrayOfStrings() throws {
+        let console = TestConsole()
+
+        let text = ["Hello, World!", "Hello, World!"]
+        let centeredText = console.center(text)
+
+        #expect(centeredText == ["         Hello, World!", "         Hello, World!"])
+    }
+
+    @Test("Center ConsoleText")
+    func centerConsoleText() throws {
+        let console = TestConsole()
+
+        let text: [ConsoleText] = .init(repeating: "Hello, World!", count: 10)
+        let centeredText = console.center(text)
+
+        for i in 0..<text.count {
+            #expect(centeredText[i].description == "         Hello, World!")
+        }
     }
 }
