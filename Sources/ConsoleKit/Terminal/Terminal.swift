@@ -6,8 +6,8 @@ import Darwin.C
 @preconcurrency import Glibc
 #elseif canImport(Musl)
 import Musl
-#elseif canImport(Bionic)
-@preconcurrency import Bionic
+#elseif canImport(Android)
+@preconcurrency import Android
 #elseif os(WASI)
 import WASILibc
 #elseif os(Windows)
