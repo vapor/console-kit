@@ -60,9 +60,9 @@ extension Terminal {
 extension ConsoleText {
     /// Wraps a string in the ANSI codes indicated
     /// by the style specification
-    func terminalStylize() -> String {
+    func terminalStylized() -> String {
         self.fragments
-            .map { $0.string.stylize($0.style) }
+            .map { $0.string.stylized($0.style) }
             .joined()
     }
 }
@@ -73,7 +73,7 @@ extension StringProtocol {
     /// - Parameter style: The ``ConsoleStyle`` to use for styling.
     ///
     /// - Returns: The string wrapped in ANSI codes.
-    public func stylize(_ style: ConsoleStyle) -> String {
+    public func stylized(_ style: ConsoleStyle) -> String {
         if style.color == nil && style.background == nil && !style.isBold {
             return String(self)  // No style ("plain")
         }
@@ -88,13 +88,13 @@ extension StringProtocol {
     ///   - isBold: If `true`, the text will be bold.
     ///
     /// - Returns: The string wrapped in ANSI codes.
-    public func stylize(
+    public func stylized(
         color: ConsoleColor? = nil,
         background: ConsoleColor? = nil,
         isBold: Bool = false
     ) -> String {
         let style = ConsoleStyle(color: color, background: background, isBold: isBold)
-        return self.stylize(style)
+        return self.stylized(style)
     }
 }
 
