@@ -33,9 +33,10 @@ extension Console {
     ///
     /// - Parameters:
     ///   - key: `String` to use as the key, which will precede the `value` an a colon.
-    ///   - value: `String` to use as the value, which will be printed in ``ConsoleStyle/info`` style.
-    public func output(key: String, value: String) {
-        self.output(key.consoleText() + ": " + value.consoleText(.info))
+    ///   - value: `String` to use as the value.
+    ///   - style: ``ConsoleStyle`` to use for printing the `value`.
+    public func output(key: String, value: String, style: ConsoleStyle = .info) {
+        self.output(key.consoleText() + ": " + value.consoleText(style))
     }
 
     /// Outputs a `String` to the ``Console`` with ``ConsoleStyle/plain`` style.
