@@ -4,11 +4,11 @@
 #if canImport(Darwin)
 import Darwin
 #elseif canImport(Glibc)
-import Glibc
+@preconcurrency import Glibc
 #elseif canImport(Android)
-import Android
+@preconcurrency import Android
 #elseif canImport(Musl)
-import Musl
+@preconcurrency import Musl
 #endif
 //import Dispatch
 

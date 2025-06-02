@@ -1,11 +1,11 @@
 // https://github.com/swiftlang/swift/issues/77866
 // swift-format-ignore
-#if os(macOS)
+#if canImport(Darwin)
 import Darwin.C
 #elseif canImport(Glibc)
 @preconcurrency import Glibc
 #elseif canImport(Musl)
-import Musl
+@preconcurrency import Musl
 #elseif canImport(Android)
 @preconcurrency import Android
 #elseif os(WASI)

@@ -1,13 +1,13 @@
 public import Logging
 
-#if os(macOS)
+#if canImport(Darwin)
 public import Darwin
 #elseif canImport(Glibc)
-public import Glibc
+@preconcurrency public import Glibc
 #elseif canImport(Musl)
-public import Musl
+@preconcurrency public import Musl
 #elseif canImport(Android)
-public import Android
+@preconcurrency public import Android
 #elseif os(WASI)
 public import WASILibc
 #elseif os(Windows)
