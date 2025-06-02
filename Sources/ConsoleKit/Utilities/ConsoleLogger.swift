@@ -1,4 +1,4 @@
-import Logging
+public import Logging
 
 /// A ``LoggerFragment`` which implements the default logger message format.
 public func defaultLoggerFragment() -> some LoggerFragment {

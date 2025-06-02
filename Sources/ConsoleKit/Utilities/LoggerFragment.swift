@@ -1,17 +1,17 @@
-import Logging
+public import Logging
 
 #if os(macOS)
-import Darwin.C
+public import Darwin
 #elseif canImport(Glibc)
-import Glibc
+public import Glibc
 #elseif canImport(Musl)
-import Musl
+public import Musl
 #elseif canImport(Android)
-import Android
+public import Android
 #elseif os(WASI)
-import WASILibc
+public import WASILibc
 #elseif os(Windows)
-import CRT
+public import CRT
 #endif
 
 /// Information about a specific log message, including information from the logger the message was logged to.
