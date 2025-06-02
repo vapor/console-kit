@@ -1,5 +1,18 @@
-import Foundation
-import Logging
+public import Logging
+
+#if canImport(Darwin)
+public import Darwin
+#elseif canImport(Glibc)
+@preconcurrency public import Glibc
+#elseif canImport(Musl)
+@preconcurrency public import Musl
+#elseif canImport(Android)
+@preconcurrency public import Android
+#elseif os(WASI)
+public import WASILibc
+#elseif os(Windows)
+public import CRT
+#endif
 
 /// Information about a specific log message, including information from the logger the message was logged to.
 public struct LogRecord {

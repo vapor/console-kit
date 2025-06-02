@@ -1,20 +1,27 @@
 // https://github.com/swiftlang/swift/issues/77866
 // swift-format-ignore
-#if canImport(Glibc)
+#if canImport(Darwin)
+import Darwin.C
+#elseif canImport(Glibc)
 @preconcurrency import Glibc
-#endif
-#if canImport(Android)
+#elseif canImport(Musl)
+@preconcurrency import Musl
+#elseif canImport(Android)
 @preconcurrency import Android
+#elseif os(WASI)
+import WASILibc
+#elseif os(Windows)
+import CRT
 #endif
 
-import Foundation
 import Synchronization
+
 #if os(Windows)
 import WinSDK
 #endif
 
-/// Generic console that uses a mixture of Swift standard
-/// library and Foundation code to fulfill protocol requirements.
+/// Generic console that uses a mixture of Swift and C standard
+/// libraries to fulfill protocol requirements.
 public final class Terminal: Console, Sendable {
     let _userInfo: Mutex<[AnySendableHashable: any Sendable]>
 
