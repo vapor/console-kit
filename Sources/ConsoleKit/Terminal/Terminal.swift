@@ -138,7 +138,7 @@ public final class Terminal: Console, Sendable {
 
         let output: String
         if enableCommands {
-            output = text.terminalStylized()
+            output = text.consoleStylized()
         } else {
             output = text.description
         }
