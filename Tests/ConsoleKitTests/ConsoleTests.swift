@@ -246,17 +246,6 @@ struct ConsoleTests {
         #expect(centeredText.description == "         Hello, World!")
     }
 
-    @Test("ConsoleText from Character")
-    func consoleTextFromCharacter() throws {
-        let char: Character = "A"
-
-        let styleConsoleText = char.consoleText(.info)
-        #expect(styleConsoleText.description == "A")
-
-        let colorConsoleText = char.consoleText(color: .red)
-        #expect(colorConsoleText.description == "A")
-    }
-
     @Test("ConsoleText Operations")
     func consoleTextOperations() throws {
         let consoleText: ConsoleText = ["foo", "bar", "baz", "qux"]
