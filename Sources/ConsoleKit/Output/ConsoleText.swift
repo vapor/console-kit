@@ -23,22 +23,6 @@ extension StringProtocol {
     }
 }
 
-extension Character {
-    /// Converts this `Character` to ``ConsoleText``.
-    ///
-    /// See ``ConsoleStyle`` for more information.
-    public func consoleText(_ style: ConsoleStyle = .plain) -> ConsoleText {
-        return String(self).consoleText(style)
-    }
-
-    /// Converts this `Character` to ``ConsoleText``.
-    ///
-    /// See ``ConsoleStyle`` for more information.
-    public func consoleText(color: ConsoleColor? = nil, background: ConsoleColor? = nil, isBold: Bool = false) -> ConsoleText {
-        return String(self).consoleText(color: color, background: background, isBold: isBold)
-    }
-}
-
 /// A collection of ``ConsoleTextFragment``s. Represents stylized text that can be outputted
 /// to a ``Console``.
 ///
