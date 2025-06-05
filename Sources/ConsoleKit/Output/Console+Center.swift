@@ -18,12 +18,12 @@ extension Console {
     ///     - padding: `Character` to use for padding, `" "` by default.
     /// - returns: `String` with padding added so that it is centered.
     public func center(_ strings: [String], padding: Character = " ") -> [String] {
-        var lines = strings
-
         // Make sure there's more than one line
-        guard !lines.isEmpty else {
+        guard !strings.isEmpty else {
             return []
         }
+
+        var lines = strings
 
         // Find the longest line
         var longestLine = 0
@@ -56,12 +56,12 @@ extension Console {
     ///
     /// - Returns: An array of ``ConsoleText`` with padding added so that each line is centered.
     public func center(_ texts: [ConsoleText], padding: Character = " ") -> [ConsoleText] {
-        var lines = texts
-
         // Make sure there's more than one line
-        guard !lines.isEmpty else {
+        guard !texts.isEmpty else {
             return []
         }
+
+        var lines = texts
 
         // Find the longest line
         var longestLine = 0
@@ -83,18 +83,5 @@ extension Console {
         }
 
         return lines
-    }
-
-    /// Centers a single ``ConsoleText`` according to this console's `size`.
-    ///
-    /// > Important: The `ConsoleText` must be a single line to be centered correctly.
-    ///
-    /// - Parameters:
-    ///   - text: A single ``ConsoleText`` (representing a single line) to be centered.
-    ///   - padding: `Character` to use for padding, `" "` by default.
-    ///
-    /// - Returns: A single ``ConsoleText`` with padding added so that it is centered.
-    public func center(_ text: ConsoleText, padding: Character = " ") -> ConsoleText {
-        self.center([text], padding: padding).first ?? ConsoleText()
     }
 }
