@@ -13,6 +13,15 @@ struct ActivityTests {
             try await Task.sleep(for: .seconds(2.5))
             return false
         }
+
+        enum TestError: Error {
+            case test
+        }
+        await #expect(throws: TestError.test) {
+            try await foo.withActivityIndicator {
+                throw TestError.test
+            }
+        }
     }
 
     @Test("Progress")
