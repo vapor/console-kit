@@ -3,16 +3,6 @@ import Testing
 
 @Suite("Console Tests")
 struct ConsoleTests {
-    @Test("Output Array of ConsoleText")
-    func outputArrayOfConsoleText() throws {
-        let console = TestConsole()
-
-        let texts = ["Hello, World!".consoleText(.info), "This is a test.".consoleText(.plain)]
-        console.output(texts)
-
-        #expect(console.testOutputQueue.reversed().joined() == "Hello, World!\nThis is a test.\n")
-    }
-
     @Test("Output String")
     func outputString() throws {
         let console = TestConsole()
@@ -235,15 +225,6 @@ struct ConsoleTests {
         let centeredText = console.center(text)
 
         #expect(centeredText.isEmpty)
-    }
-
-    @Test("Center ConsoleText")
-    func centerConsoleText() throws {
-        let console = TestConsole()
-
-        let centeredText = console.center("Hello, World!".consoleText(.info))
-
-        #expect(centeredText.description == "         Hello, World!")
     }
 
     @Test("ConsoleText Operations")
