@@ -13,17 +13,6 @@ struct ConsoleTests {
         #expect(console.testOutputQueue.reversed().joined() == text + "\n")
     }
 
-    @Test("Output Key-Value")
-    func outputKeyValue() throws {
-        let console = TestConsole()
-
-        let key = "name"
-        let value = "Vapor"
-        console.output(key: key, value: value, style: .info)
-
-        #expect(console.testOutputQueue.reversed().joined() == "\(key): \(value)\n")
-    }
-
     @Test("Print Info")
     func printInfo() throws {
         let console = TestConsole()
