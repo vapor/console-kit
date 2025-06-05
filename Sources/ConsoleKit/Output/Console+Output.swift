@@ -5,11 +5,9 @@ extension Console {
     /// console.output("Hello, " + "world!".consoleText(color: .green))
     /// ```
     ///
-    /// - Parameters:
-    ///   - text: ``ConsoleText`` to serialize and print.
-    ///   - newLine: If `true`, the next output will be on a new line.
-    public func output(_ text: ConsoleText, newLine: Bool = true) {
-        self.output(text, newLine: newLine)
+    /// - parameter text: ``ConsoleText`` to serialize and print.
+    public func output(_ text: ConsoleText) {
+        self.output(text, newLine: true)
     }
 
     /// Outputs a `String` to the ``Console`` with the specified ``ConsoleStyle`` style.
