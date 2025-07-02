@@ -67,21 +67,41 @@ extension Terminal {
 extension ConsoleText {
     /// Wraps a string in the ANSI codes indicated
     /// by the style specification
-    func terminalStylize() -> String {
+    func consoleStylized() -> String {
         self.fragments
-            .map { $0.string.terminalStylize($0.style) }
+            .map { $0.string.consoleStylized($0.style) }
             .joined()
     }
 }
 
-extension String {
-    /// Wraps a string in the ANSI codes indicated
-    /// by the style specification
-    func terminalStylize(_ style: ConsoleStyle) -> String {
+extension StringProtocol {
+    /// Wraps a string in the ANSI codes indicated by the ``ConsoleStyle`` specification.
+    ///
+    /// - Parameter style: The ``ConsoleStyle`` to use for styling.
+    ///
+    /// - Returns: The string wrapped in ANSI codes.
+    public func consoleStylized(_ style: ConsoleStyle) -> String {
         if style.color == nil && style.background == nil && !style.isBold {
-            return self  // No style ("plain")
+            return String(self)  // No style ("plain")
         }
         return style.ansiCommand.ansi + self + ANSICommand.sgr([.reset]).ansi
+    }
+
+    /// Wraps a string in the ANSI codes indicated by the style specification.
+    ///
+    /// - Parameters:
+    ///   - color: The foreground ``ConsoleColor`` to use.
+    ///   - background: The background ``ConsoleColor`` to use.
+    ///   - isBold: If `true`, the text will be bold.
+    ///
+    /// - Returns: The string wrapped in ANSI codes.
+    public func consoleStylized(
+        color: ConsoleColor? = nil,
+        background: ConsoleColor? = nil,
+        isBold: Bool = false
+    ) -> String {
+        let style = ConsoleStyle(color: color, background: background, isBold: isBold)
+        return self.consoleStylized(style)
     }
 }
 

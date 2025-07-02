@@ -1,4 +1,4 @@
-extension String {
+extension StringProtocol {
     /// Converts this `String` to ``ConsoleText``.
     ///
     /// ```swift
@@ -7,7 +7,7 @@ extension String {
     ///
     /// See ``ConsoleStyle`` for more information.
     public func consoleText(_ style: ConsoleStyle = .plain) -> ConsoleText {
-        return [ConsoleTextFragment(string: self, style: style)]
+        return [ConsoleTextFragment(string: String(self), style: style)]
     }
 
     /// Converts this `String` to ``ConsoleText``.

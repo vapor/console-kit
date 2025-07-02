@@ -39,5 +39,5 @@ final class TestConsole: Console {
 
     func clear(_ type: ConsoleClear) {}
 
-    var size: (width: Int, height: Int) { (width: 0, height: 0) }
+    var size: (width: Int, height: Int) { (width: 32, height: 0) }
 }
