@@ -97,8 +97,6 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
 
     /// Starts the ``ActivityIndicator`` and stops it after the provided body completes.
     ///
-    /// The body must return a `Bool` indicating whether the activity was successful or not.
-    ///
     /// - Parameters:
     ///   - refreshRate: The time interval (specified in milliseconds) to use when updating the activity.
     ///   - body: The asynchronous body to execute while the activity indicator is running.
