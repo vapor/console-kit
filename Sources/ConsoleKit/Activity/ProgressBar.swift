@@ -10,7 +10,7 @@ extension Console {
     /// try await progressBar.withActivityIndicator {
     ///     while true {
     ///         if progressBar.activity.currentProgress >= 1.0 {
-    ///             return true
+    ///             return
     ///         } else {
     ///             progressBar.activity.currentProgress += 0.1
     ///             try await Task.sleep(for: .seconds(0.25))

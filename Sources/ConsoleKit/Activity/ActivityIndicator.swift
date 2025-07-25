@@ -20,7 +20,6 @@ extension ActivityIndicatorType {
 /// let loadingBar = console.loadingBar(title: "Loading")
 /// try await foo.withActivityIndicator {
 ///     try await Task.sleep(for: .seconds(2.5))
-///     return true
 /// }
 /// ```
 ///
@@ -109,7 +108,8 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     /// - Parameters:
     ///   - refreshRate: The time interval (specified in milliseconds) to use when updating the activity.
     ///   - body: The asynchronous body to execute while the activity indicator is running.
-    public func withActivityIndicator(refreshRate: Int = 40, _ body: () async throws -> Bool) async rethrows {
+    @discardableResult
+    public func withActivityIndicator<T>(refreshRate: Int = 40, _ body: () async throws -> T) async rethrows -> T {
         let task = Task {
             await self.start(refreshRate: refreshRate)
         }
@@ -117,7 +117,8 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
         do {
             let result = try await body()
             task.cancel()
-            result ? self.succeed() : self.fail()
+            self.succeed()
+            return result
         } catch {
             task.cancel()
             self.fail()

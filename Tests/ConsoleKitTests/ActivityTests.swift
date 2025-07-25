@@ -11,7 +11,6 @@ struct ActivityTests {
 
         try await foo.withActivityIndicator {
             try await Task.sleep(for: .seconds(2.5))
-            return false
         }
 
         enum TestError: Error {
@@ -32,7 +31,7 @@ struct ActivityTests {
         try await foo.withActivityIndicator {
             while true {
                 if foo.activity.currentProgress >= 1.0 {
-                    return true
+                    return
                 } else {
                     foo.activity.currentProgress += 0.1
                     try await Task.sleep(for: .seconds(0.1))
@@ -49,7 +48,6 @@ struct ActivityTests {
 
         try await indicator.withActivityIndicator {
             try await Task.sleep(for: .seconds(3))
-            return true
         }
     }
 
@@ -62,7 +60,6 @@ struct ActivityTests {
 
         try await indicator.withActivityIndicator {
             try await Task.sleep(for: .seconds(3))
-            return true
         }
     }
 

@@ -9,7 +9,6 @@ extension Console {
     /// let loadingBar = console.loadingBar(title: "Loading")
     /// try await loadingBar.withActivityIndicator {
     ///    try await Task.sleep(for: .seconds(3))
-    ///    return true
     /// }
     /// ```
     ///

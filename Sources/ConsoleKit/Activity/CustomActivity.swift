@@ -8,7 +8,6 @@ extension Console {
     /// try await indicator.withActivityIndicator {
     ///     // complete the indicator after 3 seconds
     ///     try await Task.sleep(for: .seconds(3))
-    ///     return true
     /// }
     /// ```
     ///
@@ -37,7 +36,6 @@ extension Console {
     /// try await indicator.withActivityIndicator {
     ///     // complete the indicator after 3 seconds
     ///     try await Task.sleep(for: .seconds(3))
-    ///     return true
     /// }
     /// ```
     ///
