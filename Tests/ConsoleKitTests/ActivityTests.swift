@@ -44,7 +44,7 @@ struct ActivityTests {
     func customIndicator() async throws {
         let console = Terminal()
 
-        let indicator = console.customActivity(frames: ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
+        let indicator = console.customActivity(title: "Loading", frames: ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
 
         try await indicator.withActivityIndicator {
             try await Task.sleep(for: .seconds(3))
@@ -56,7 +56,7 @@ struct ActivityTests {
         let console = Terminal()
 
         let frames: [ConsoleText] = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
-        let indicator = console.customActivity(frames: frames)
+        let indicator = console.customActivity(title: "Loading", frames: frames)
 
         try await indicator.withActivityIndicator {
             try await Task.sleep(for: .seconds(3))

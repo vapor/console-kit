@@ -52,8 +52,8 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     /// - Parameters:
     ///     - refreshRate: The time interval (specified in milliseconds) to use
     ///                    when updating the activity.
-    private func start(refreshRate: Int = 40) async {
-        guard console.supportsANSICommands else {
+    private func start(refreshRate: Int) async {
+        guard self.console.supportsANSICommands else {
             // Skip animations if the console does not support ANSI commands
             self.activity.outputActivityIndicator(to: self.console, state: .ready)
             return
@@ -87,18 +87,18 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     ///
     /// Passes `ActivityIndicatorState.failure` to the `ActivityIndicatorType`.
     ///
-    /// Must be called after `start(on:)` and completes the future returned by that method.
+    /// Must be called after `start(refreshRate:)`.
     private func fail() {
-        activity.outputActivityIndicator(to: console, state: .failure)
+        self.activity.outputActivityIndicator(to: console, state: .failure)
     }
 
     /// Stops the `ActivityIndicator`, yielding a success / done appearance.
     ///
     /// Passes `ActivityIndicatorState.success` to the `ActivityIndicatorType`.
     ///
-    /// Must be called after `start(on:)` and completes the future returned by that method.
+    /// Must be called after `start(refreshRate:)`.
     private func succeed() {
-        activity.outputActivityIndicator(to: console, state: .success)
+        self.activity.outputActivityIndicator(to: console, state: .success)
     }
 
     /// Starts the ``ActivityIndicator`` and stops it after the provided body completes.
@@ -109,7 +109,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     ///   - refreshRate: The time interval (specified in milliseconds) to use when updating the activity.
     ///   - body: The asynchronous body to execute while the activity indicator is running.
     @discardableResult
-    public func withActivityIndicator<T>(refreshRate: Int = 40, _ body: () async throws -> T) async rethrows -> T {
+    public func withActivityIndicator<T>(refreshRate: Int = 40, _ body: @Sendable () async throws -> T) async rethrows -> T {
         let task = Task {
             await self.start(refreshRate: refreshRate)
         }
