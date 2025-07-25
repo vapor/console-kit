@@ -67,12 +67,6 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
 
         var tick: UInt = 0
 
-        defer {
-            if tick > 0 {
-                self.console.popEphemeral()
-            }
-        }
-
         for await _ in timer {
             if tick > 0 {
                 self.console.popEphemeral()
@@ -117,10 +111,18 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
         do {
             let result = try await body()
             task.cancel()
+            _ = await task.result
+            if self.console.supportsANSICommands, self.console.depth > 0 {
+                self.console.popEphemeral()
+            }
             self.succeed()
             return result
         } catch {
             task.cancel()
+            _ = await task.result
+            if self.console.supportsANSICommands, self.console.depth > 0 {
+                self.console.popEphemeral()
+            }
             self.fail()
             throw error
         }
