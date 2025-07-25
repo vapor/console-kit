@@ -103,14 +103,13 @@ public struct CustomActivity: ActivityIndicatorType {
 
     /// See ``ActivityIndicatorType/outputActivityIndicator(to:state:)``.
     public func outputActivityIndicator(to console: any Console, state: ActivityIndicatorState) {
-        let indicator: ConsoleText
-
-        switch state {
-        case .ready: indicator = frames[0]
-        case .active(let tick): indicator = frames[Int(tick) % frames.count]
-        case .success: indicator = self.success.consoleText(.success)
-        case .failure: indicator = self.failure.consoleText(.error)
-        }
+        let indicator: ConsoleText =
+            switch state {
+            case .ready: frames[0]
+            case .active(let tick): frames[Int(tick) % frames.count]
+            case .success: self.success.consoleText(.success)
+            case .failure: self.failure.consoleText(.error)
+            }
 
         console.output(indicator + " " + title.consoleText(.plain))
     }
