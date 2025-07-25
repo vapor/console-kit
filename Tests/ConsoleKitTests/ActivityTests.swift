@@ -73,6 +73,10 @@ struct ActivityTests {
         #expect(dict[AnySendableHashable(ActivityBarWidthKey())] == "width key")
         #expect(dict[AnySendableHashable("ConsoleKit.ActivityBarWidthKey")] == "string key")
 
+        #expect(dict.keys.contains { $0.description == "ActivityBarWidthKey()" })
+        #expect(dict.keys.contains { $0.debugDescription == "AnyHashable(ConsoleKit.ActivityBarWidthKey())" })
+        #expect(dict.keys.first?.customMirror.displayStyle == nil)
+
         let console = Terminal()
         #expect(console.activityBarWidth == 25)
         console.activityBarWidth = 30
