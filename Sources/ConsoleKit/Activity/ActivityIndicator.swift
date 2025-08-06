@@ -25,7 +25,7 @@ extension ActivityIndicatorType {
 ///
 public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType {
     let _activity: Mutex<A>
-    /// The generic `ActivityIndicatorType` powering this `ActivityIndicator`.
+    /// The generic ``ActivityIndicatorType`` powering this ``ActivityIndicator``.
     public var activity: A {
         get {
             self._activity.withLock { $0 }
@@ -35,19 +35,19 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
         }
     }
 
-    /// The `Console` this `ActivityIndicator` is running on.
+    /// The ``Console`` this ``ActivityIndicator`` is running on.
     private let console: any Console
 
-    /// Creates a new `ActivityIndicator`. Use `ActivityIndicatorType.newActivity(for:)`.
+    /// Creates a new ``ActivityIndicator``. Use ``ActivityIndicatorType/newActivity(for:)``.
     init(activity: A, console: any Console) {
         self.console = console
         self._activity = Mutex(activity)
     }
 
-    /// Starts the `ActivityIndicator`. Usually this means beginning the associated "loading" animation.
+    /// Starts the ``ActivityIndicator``. Usually this means beginning the associated "loading" animation.
     ///
-    /// Once started, `ActivityIndicator` will continue to redraw the `ActivityIndicatorType` at a fixed
-    /// refresh rate passing `ActivityIndicatorState.active`.
+    /// Once started, ``ActivityIndicator`` will continue to redraw the ``ActivityIndicatorType`` at a fixed
+    /// refresh rate passing ``ActivityIndicatorState/active``.
     ///
     /// - Parameters:
     ///     - refreshRate: The time interval (specified in milliseconds) to use
@@ -77,20 +77,20 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
         }
     }
 
-    /// Stops the `ActivityIndicator`, yielding a failed / error appearance.
+    /// Stops the ``ActivityIndicator``, yielding a failed / error appearance.
     ///
-    /// Passes `ActivityIndicatorState.failure` to the `ActivityIndicatorType`.
+    /// Passes ``ActivityIndicatorState/failure`` to the ``ActivityIndicatorType``.
     ///
-    /// Must be called after `start(refreshRate:)`.
+    /// Must be called after ``ActivityIndicator/start(refreshRate:)``.
     private func fail() {
         self.activity.outputActivityIndicator(to: console, state: .failure)
     }
 
-    /// Stops the `ActivityIndicator`, yielding a success / done appearance.
+    /// Stops the ``ActivityIndicator``, yielding a success / done appearance.
     ///
-    /// Passes `ActivityIndicatorState.success` to the `ActivityIndicatorType`.
+    /// Passes ``ActivityIndicatorState/success`` to the ``ActivityIndicatorType``.
     ///
-    /// Must be called after `start(refreshRate:)`.
+    /// Must be called after ``ActivityIndicator/start(refreshRate:)``.
     private func succeed() {
         self.activity.outputActivityIndicator(to: console, state: .success)
     }
