@@ -16,6 +16,7 @@ extension Console {
     ///
     /// - Parameters:
     ///   - title: The title of the activity indicator.
+    ///   - titleAfterIndicator: If `true`, the title of the activity indicator will be printed after the indicator itself.
     ///   - frames: The strings to loop over as the activity indicator runs.
     ///   - success: The string to replace the indicator with when the operation succeeds. The default value is `[Done]`.
     ///   - failure: The string to replace the indicator with when the operation fails: The default value is `[Failed]`.
@@ -23,9 +24,21 @@ extension Console {
     ///
     /// - Returns: An ``ActivityIndicator`` that can start and stop the indicator.
     public func customActivity(
-        title: String, frames: [String], success: String = "[Done]", failure: String = "[Failed]", color: ConsoleColor = .cyan
+        title: String,
+        titleAfterIndicator: Bool = true,
+        frames: [String],
+        success: String = "[Done]",
+        failure: String = "[Failed]",
+        color: ConsoleColor = .cyan
     ) -> ActivityIndicator<CustomActivity> {
-        return CustomActivity(title: title, frames: frames, success: success, failure: failure, color: color).newActivity(for: self)
+        return CustomActivity(
+            title: title,
+            titleAfterIndicator: titleAfterIndicator,
+            frames: frames,
+            success: success,
+            failure: failure,
+            color: color
+        ).newActivity(for: self)
     }
 
     /// Creates an activity indicator with custom frames that are iterated over.
@@ -45,15 +58,26 @@ extension Console {
     ///
     /// - Parameters:
     ///   - title: The title of the activity indicator.
+    ///   - titleAfterIndicator: If `true`, the title of the activity indicator will be printed after the indicator itself.
     ///   - frames: The text to loop over as the activity indicator runs.
     ///   - success: The string to replace the indicator with when the operation succeeds. The default value is `[Done]`.
     ///   - failure: The string to replace the indicator with when the operation fails: The default value is `[Failed]`.
     ///
     /// - Returns: An ``ActivityIndicator`` that can start and stop the indicator.
     public func customActivity(
-        title: String, frames: [ConsoleText], success: String = "[Done]", failure: String = "[Failed]"
+        title: String,
+        titleAfterIndicator: Bool = true,
+        frames: [ConsoleText],
+        success: String = "[Done]",
+        failure: String = "[Failed]"
     ) -> ActivityIndicator<CustomActivity> {
-        return CustomActivity(title: title, frames: frames, success: success, failure: failure).newActivity(for: self)
+        return CustomActivity(
+            title: title,
+            titleAfterIndicator: titleAfterIndicator,
+            frames: frames,
+            success: success,
+            failure: failure
+        ).newActivity(for: self)
     }
 }
 
@@ -63,6 +87,10 @@ extension Console {
 public struct CustomActivity: ActivityIndicatorType {
     /// The title of the activity indicator.
     public let title: String
+
+    /// If `true`, the title of the activity indicator will be printed after the indicator itself.
+    /// If `false`, the title will be printed before the indicator.
+    public let titleAfterIndicator: Bool
 
     /// The text that will be output on the indicator ticks, each frame corresponding to a single tick in a range of `0...(frames.count - 1)`.
     ///
@@ -79,11 +107,19 @@ public struct CustomActivity: ActivityIndicatorType {
     ///
     /// - Parameters:
     ///   - title: The title of the activity indicator.
+    ///   - titleAfterIndicator: If `true`, the title of the activity indicator will be printed after the indicator itself.
     ///   - frames: The text to loop over as the activity indicator runs.
     ///   - success: The string to replace the indicator with when the operation succeeds. The default value is `[Done]`.
     ///   - failure: The string to replace the indicator with when the operation fails: The default value is `[Failed]`.
-    public init(title: String, frames: [ConsoleText], success: String = "[Done]", failure: String = "[Failed]") {
+    public init(
+        title: String,
+        titleAfterIndicator: Bool = true,
+        frames: [ConsoleText],
+        success: String = "[Done]",
+        failure: String = "[Failed]"
+    ) {
         self.title = title
+        self.titleAfterIndicator = titleAfterIndicator
         self.frames = frames.count > 0 ? frames : ["".consoleText(color: .cyan)]
         self.success = success
         self.failure = failure
@@ -93,12 +129,26 @@ public struct CustomActivity: ActivityIndicatorType {
     ///
     /// - Parameters:
     ///   - title: The title of the activity indicator.
+    ///   - titleAfterIndicator: If `true`, the title of the activity indicator will be printed after the indicator itself.
     ///   - frames: The strings to loop over as the activity indicator runs.
     ///   - success: The string to replace the indicator with when the operation succeeds. The default value is `[Done]`.
     ///   - failure: The string to replace the indicator with when the operation fails: The default value is `[Failed]`.
     ///   - color: The color of text when the frames are displayed. The default value is `.cyan`.
-    public init(title: String, frames: [String], success: String = "[Done]", failure: String = "[Failed]", color: ConsoleColor = .cyan) {
-        self.init(title: title, frames: frames.map { $0.consoleText(color: color) }, success: success, failure: failure)
+    public init(
+        title: String,
+        titleAfterIndicator: Bool = true,
+        frames: [String],
+        success: String = "[Done]",
+        failure: String = "[Failed]",
+        color: ConsoleColor = .cyan
+    ) {
+        self.init(
+            title: title,
+            titleAfterIndicator: titleAfterIndicator,
+            frames: frames.map { $0.consoleText(color: color) },
+            success: success,
+            failure: failure
+        )
     }
 
     /// See ``ActivityIndicatorType/outputActivityIndicator(to:state:)``.
@@ -111,6 +161,8 @@ public struct CustomActivity: ActivityIndicatorType {
             case .failure: self.failure.consoleText(.error)
             }
 
-        console.output(indicator + " " + title.consoleText(.plain))
+        titleAfterIndicator
+            ? console.output(indicator + " " + title.consoleText(.plain))
+            : console.output(title.consoleText(.plain) + " " + indicator)
     }
 }
