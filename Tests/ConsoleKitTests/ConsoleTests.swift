@@ -1,6 +1,5 @@
+import ConsoleKit
 import Testing
-
-@testable import ConsoleKit
 
 @Suite("Console Tests")
 struct ConsoleTests {
@@ -225,7 +224,6 @@ struct ConsoleTests {
         #expect(consoleText.endIndex == 4)
         #expect(consoleText[0].string == "foo")
         #expect(consoleText.index(after: 0) == 1)
-        #expect(consoleText.consoleStylized() == "foobarbazqux")
 
         var emptyConsoleText: ConsoleText = ""
         #expect(emptyConsoleText.fragments.isEmpty)

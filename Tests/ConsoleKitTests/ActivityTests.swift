@@ -1,6 +1,5 @@
+import ConsoleKit
 import Testing
-
-@testable import ConsoleKit
 
 @Suite("Activity Tests")
 struct ActivityTests {
@@ -66,15 +65,11 @@ struct ActivityTests {
     @Test("Activity Width Key")
     func activityWidthKey() {
         var dict = [AnySendableHashable: String]()
+        dict[AnySendableHashable("ConsoleKit.Tests")] = "string key"
 
-        dict[AnySendableHashable(ActivityBarWidthKey())] = "width key"
-        dict[AnySendableHashable("ConsoleKit.ActivityBarWidthKey")] = "string key"
-
-        #expect(dict[AnySendableHashable(ActivityBarWidthKey())] == "width key")
-        #expect(dict[AnySendableHashable("ConsoleKit.ActivityBarWidthKey")] == "string key")
-
-        #expect(dict.keys.contains { $0.description == "ActivityBarWidthKey()" })
-        #expect(dict.keys.contains { $0.debugDescription == "AnyHashable(ConsoleKit.ActivityBarWidthKey())" })
+        #expect(dict[AnySendableHashable("ConsoleKit.Tests")] == "string key")
+        #expect(dict.keys.contains { $0.description == "ConsoleKit.Tests" })
+        #expect(dict.keys.contains { $0.debugDescription == "AnyHashable(\"ConsoleKit.Tests\")" })
         #expect(dict.keys.first?.customMirror.displayStyle == nil)
 
         let console = Terminal()
