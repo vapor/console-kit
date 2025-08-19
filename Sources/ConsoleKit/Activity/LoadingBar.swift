@@ -29,7 +29,7 @@ extension Console {
 /// See ``Console/loadingBar(title:)`` to create one.
 public struct LoadingBar: ActivityBar {
     /// See ``ActivityBar``.
-    public var title: String
+    public let title: String
 
     /// See ``ActivityBar``.
     public func renderActiveBar(tick: UInt, width: Int) -> ConsoleText {

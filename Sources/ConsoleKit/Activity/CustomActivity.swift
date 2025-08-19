@@ -83,7 +83,7 @@ extension Console {
 
 /// An activity indicator with customizable frames and success and failure messages.
 ///
-/// See ``Console/customActivity(frames:success:failure:color:)`` to make one.
+/// See ``Console/customActivity(title:titleAfterIndicator:frames:success:failure:color:)`` to make one.
 public struct CustomActivity: ActivityIndicatorType {
     /// The title of the activity indicator.
     public let title: String

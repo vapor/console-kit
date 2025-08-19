@@ -37,6 +37,17 @@ struct ActivityTests {
                 }
             }
         }
+
+        try await console.progressBar(title: "Progress").withActivityIndicator { foo in
+            while true {
+                if foo.activity.currentProgress >= 1.0 {
+                    return
+                } else {
+                    foo.activity.currentProgress += 0.1
+                    try await Task.sleep(for: .seconds(0.1))
+                }
+            }
+        }
     }
 
     @Test("Custom Indicator")
