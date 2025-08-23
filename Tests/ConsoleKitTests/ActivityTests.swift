@@ -1,6 +1,5 @@
+import ConsoleKit
 import Testing
-
-@testable import ConsoleKit
 
 @Suite("Activity Tests")
 struct ActivityTests {
@@ -11,7 +10,6 @@ struct ActivityTests {
 
         try await foo.withActivityIndicator {
             try await Task.sleep(for: .seconds(2.5))
-            return false
         }
 
         enum TestError: Error {
@@ -32,7 +30,18 @@ struct ActivityTests {
         try await foo.withActivityIndicator {
             while true {
                 if foo.activity.currentProgress >= 1.0 {
-                    return true
+                    return
+                } else {
+                    foo.activity.currentProgress += 0.1
+                    try await Task.sleep(for: .seconds(0.1))
+                }
+            }
+        }
+
+        try await console.progressBar(title: "Progress").withActivityIndicator { foo in
+            while true {
+                if foo.activity.currentProgress >= 1.0 {
+                    return
                 } else {
                     foo.activity.currentProgress += 0.1
                     try await Task.sleep(for: .seconds(0.1))
@@ -45,11 +54,10 @@ struct ActivityTests {
     func customIndicator() async throws {
         let console = Terminal()
 
-        let indicator = console.customActivity(frames: ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
+        let indicator = console.customActivity(title: "Loading", frames: ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
 
         try await indicator.withActivityIndicator {
             try await Task.sleep(for: .seconds(3))
-            return true
         }
     }
 
@@ -58,23 +66,22 @@ struct ActivityTests {
         let console = Terminal()
 
         let frames: [ConsoleText] = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
-        let indicator = console.customActivity(frames: frames)
+        let indicator = console.customActivity(title: "Loading", frames: frames)
 
         try await indicator.withActivityIndicator {
             try await Task.sleep(for: .seconds(3))
-            return true
         }
     }
 
     @Test("Activity Width Key")
     func activityWidthKey() {
         var dict = [AnySendableHashable: String]()
+        dict[AnySendableHashable("ConsoleKit.Tests")] = "string key"
 
-        dict[AnySendableHashable(ActivityBarWidthKey())] = "width key"
-        dict[AnySendableHashable("ConsoleKit.ActivityBarWidthKey")] = "string key"
-
-        #expect(dict[AnySendableHashable(ActivityBarWidthKey())] == "width key")
-        #expect(dict[AnySendableHashable("ConsoleKit.ActivityBarWidthKey")] == "string key")
+        #expect(dict[AnySendableHashable("ConsoleKit.Tests")] == "string key")
+        #expect(dict.keys.contains { $0.description == "ConsoleKit.Tests" })
+        #expect(dict.keys.contains { $0.debugDescription == "AnyHashable(\"ConsoleKit.Tests\")" })
+        #expect(dict.keys.first?.customMirror.displayStyle == nil)
 
         let console = Terminal()
         #expect(console.activityBarWidth == 25)

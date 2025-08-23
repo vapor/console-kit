@@ -105,7 +105,7 @@ extension Console {
     /// Tracks how many successive calls to ``Console/pushEphemeral()`` have been made.
     ///
     /// Calling ``Console/popEphemeral()`` will decrement this number.
-    private var depth: Int {
+    private(set) var depth: Int {
         get { return (self.userInfo["depth"] as? Int) ?? 0 }
         set { self.userInfo["depth"] = newValue }
     }

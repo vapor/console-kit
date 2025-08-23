@@ -9,7 +9,6 @@ extension Console {
     /// let loadingBar = console.loadingBar(title: "Loading")
     /// try await loadingBar.withActivityIndicator {
     ///    try await Task.sleep(for: .seconds(3))
-    ///    return true
     /// }
     /// ```
     ///
@@ -30,7 +29,7 @@ extension Console {
 /// See ``Console/loadingBar(title:)`` to create one.
 public struct LoadingBar: ActivityBar {
     /// See ``ActivityBar``.
-    public var title: String
+    public let title: String
 
     /// See ``ActivityBar``.
     public func renderActiveBar(tick: UInt, width: Int) -> ConsoleText {

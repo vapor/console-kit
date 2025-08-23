@@ -10,7 +10,7 @@ extension Console {
     /// try await progressBar.withActivityIndicator {
     ///     while true {
     ///         if progressBar.activity.currentProgress >= 1.0 {
-    ///             return true
+    ///             return
     ///         } else {
     ///             progressBar.activity.currentProgress += 0.1
     ///             try await Task.sleep(for: .seconds(0.25))
@@ -36,7 +36,7 @@ extension Console {
 /// See ``Console/progressBar(title:)`` to create one.
 public struct ProgressBar: ActivityBar {
     /// See ``ActivityBar``.
-    public var title: String
+    public let title: String
 
     /// Controls how the ``ProgressBar`` is rendered.
     ///
@@ -58,5 +58,36 @@ public struct ProgressBar: ActivityBar {
         barComponents.append(.init(repeating: " ", count: Int(right)))
         barComponents.append("]")
         return barComponents.joined(separator: "").consoleText(.info)
+    }
+}
+
+extension ActivityIndicator where A == ProgressBar {
+    /// Starts the ``ActivityIndicator`` with a default refresh rate of 40 milliseconds.
+    ///
+    /// This method is a convenience wrapper around ``ActivityIndicator/withActivityIndicator(refreshRate:_:)-(_,()->T)``.
+    /// It passes the progress bar to the body closure, allowing you to update the `currentProgress` property as needed.
+    ///
+    /// ```swift
+    /// try await console.progressBar(title: "Downloading").withActivityIndicator { progressBar in
+    ///     while true {
+    ///         if progressBar.activity.currentProgress >= 1.0 {
+    ///             return
+    ///         } else {
+    ///             progressBar.activity.currentProgress += 0.1
+    ///             try await Task.sleep(for: .seconds(0.25))
+    ///         }
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// See ``ActivityIndicator/withActivityIndicator(refreshRate:_:)-(_,()->T)`` for more information.
+    @discardableResult
+    public func withActivityIndicator<T>(
+        refreshRate: Int = 40,
+        _ body: @Sendable (ActivityIndicator<ProgressBar>) async throws -> T
+    ) async rethrows -> T {
+        return try await self.withActivityIndicator(refreshRate: refreshRate) {
+            try await body(self)
+        }
     }
 }
