@@ -68,12 +68,12 @@ public final class Terminal: Console, Sendable {
             #if canImport(Darwin) || canImport(Glibc) || canImport(Musl) || os(Android)
             // swift-format-ignore
             func plat_readpassphrase(into buf: UnsafeMutableBufferPointer<Int8>) -> Int {
-                #if canImport(Darwin)
+                //#if canImport(Darwin)
                 let rpp = readpassphrase
-                #else
-                let rpp = linux_readpassphrase
-                let RPP_REQUIRE_TTY = 0 as Int32
-                #endif
+                //#else
+                //let rpp = linux_readpassphrase
+                //let RPP_REQUIRE_TTY = 0 as Int32
+                //#endif
 
                 while rpp("", buf.baseAddress!, buf.count, RPP_REQUIRE_TTY) == nil {
                     guard errno == EINTR else { return 0 }
