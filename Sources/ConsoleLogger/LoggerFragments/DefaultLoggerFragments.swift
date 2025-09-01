@@ -1,4 +1,4 @@
-#if ConsoleLogger
+import ConsoleKit
 import Logging
 
 /// A ``LoggerFragment`` which implements the default logger message format.
@@ -15,4 +15,3 @@ public func timestampDefaultLoggerFragment(
 ) -> some LoggerFragment {
     TimestampFragment(timestampSource).and(defaultLoggerFragment.separated(" "))
 }
-#endif

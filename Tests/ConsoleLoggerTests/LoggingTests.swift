@@ -1,4 +1,5 @@
 import ConsoleKit
+import ConsoleLogger
 import Logging
 import Testing
 
@@ -101,7 +102,7 @@ struct ConsoleLoggerTests {
         }
 
         logger.debug("debug", line: 1)
-        expect(console, logs: .debug, message: "debug (ConsoleKitTests/LoggingTests.swift:1)")
+        expect(console, logs: .debug, message: "debug (ConsoleLoggerTests/LoggingTests.swift:1)")
     }
 
     @Test("Metadata Providers")
@@ -121,7 +122,7 @@ struct ConsoleLoggerTests {
         TraceNamespace.$simpleTraceID.withValue("1234-5678") {
             logger.debug("debug", line: 1)
         }
-        expect(console, logs: .debug, message: "debug [simple-trace-id: 1234-5678] (ConsoleKitTests/LoggingTests.swift:1)")
+        expect(console, logs: .debug, message: "debug [simple-trace-id: 1234-5678] (ConsoleLoggerTests/LoggingTests.swift:1)")
     }
 
     @Test("Timestamp Fragment")
@@ -162,7 +163,7 @@ struct ConsoleLoggerTests {
         // Remove the timezone, since there doesn't appear to be a good way to mock it with strftime.
         while logged.removeFirst() != " " {}
 
-        #expect(logged == "[ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
+        #expect(logged == "[ \(Logger.Level.info.name) ] logged (ConsoleLoggerTests/LoggingTests.swift:1)\n")
     }
 
     @Test("Source Fragment")
@@ -180,7 +181,8 @@ struct ConsoleLoggerTests {
         logger.info("logged", line: 1)
 
         #expect(
-            console.testOutputQueue.first == "ConsoleKitTests [ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n"
+            console.testOutputQueue.first
+                == "ConsoleLoggerTests [ \(Logger.Level.info.name) ] logged (ConsoleLoggerTests/LoggingTests.swift:1)\n"
         )
     }
 }

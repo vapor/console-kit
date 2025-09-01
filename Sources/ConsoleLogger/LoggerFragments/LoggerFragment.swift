@@ -1,4 +1,4 @@
-#if ConsoleLogger
+public import ConsoleKit
 public import Logging
 
 #if canImport(Darwin)
@@ -320,4 +320,3 @@ extension Logger.Metadata {
         return "[\(contents)]"
     }
 }
-#endif

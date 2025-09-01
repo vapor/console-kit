@@ -1,4 +1,5 @@
 import ConsoleKit
+import ConsoleLogger
 import Logging
 
 @main

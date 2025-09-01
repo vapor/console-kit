@@ -1,4 +1,3 @@
-#if ConsoleLogger
 public import Logging
 
 /// Information about a specific log message, including information from the logger the message was logged to.
@@ -63,4 +62,3 @@ public struct LogRecord {
             .merging(self.metadataProvider?.get() ?? [:], uniquingKeysWith: { (a, _) in a })
     }
 }
-#endif

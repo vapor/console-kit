@@ -1,43 +1,42 @@
-import ConsoleKit
 import Synchronization
 
-final class TestConsole: Console {
+package final class TestConsole: Console {
     let _testInputQueue: Mutex<[String]> = Mutex([])
 
-    var testInputQueue: [String] {
+    package var testInputQueue: [String] {
         get { self._testInputQueue.withLock { $0 } }
         set { self._testInputQueue.withLock { $0 = newValue } }
     }
 
     let _testOutputQueue: Mutex<[String]> = Mutex([])
-    var testOutputQueue: [String] {
+    package var testOutputQueue: [String] {
         get { self._testOutputQueue.withLock { $0 } }
         set { self._testOutputQueue.withLock { $0 = newValue } }
     }
 
     let _userInfo: Mutex<[AnySendableHashable: any Sendable]> = Mutex([:])
-    var userInfo: [AnySendableHashable: any Sendable] {
+    package var userInfo: [AnySendableHashable: any Sendable] {
         get { self._userInfo.withLock { $0 } }
         set { self._userInfo.withLock { $0 = newValue } }
     }
 
-    init() {
+    package init() {
         self.testInputQueue = []
         self.testOutputQueue = []
         self.userInfo = [:]
     }
 
-    func input(isSecure: Bool) -> String {
+    package func input(isSecure: Bool) -> String {
         return testInputQueue.popLast() ?? ""
     }
 
-    func output(_ text: ConsoleText, newLine: Bool) {
+    package func output(_ text: ConsoleText, newLine: Bool) {
         testOutputQueue.insert(text.description + (newLine ? "\n" : ""), at: 0)
     }
 
-    func report(error: String, newLine: Bool) {}
+    package func report(error: String, newLine: Bool) {}
 
-    func clear(_ type: ConsoleClear) {}
+    package func clear(_ type: ConsoleClear) {}
 
-    var size: (width: Int, height: Int) { (width: 32, height: 0) }
+    package var size: (width: Int, height: Int) { (width: 32, height: 0) }
 }

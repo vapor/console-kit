@@ -1,4 +1,4 @@
-#if ConsoleLogger
+public import ConsoleKit
 public import Logging
 
 extension LoggingSystem {
@@ -31,4 +31,3 @@ extension LoggingSystem {
         )
     }
 }
-#endif

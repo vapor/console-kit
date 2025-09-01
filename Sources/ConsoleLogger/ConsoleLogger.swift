@@ -1,4 +1,4 @@
-#if ConsoleLogger
+public import ConsoleKit
 public import Logging
 
 /// Outputs logs to a ``Console`` via a ``LoggerFragment`` pipeline.
@@ -109,4 +109,3 @@ extension Logger.Level {
         }
     }
 }
-#endif
