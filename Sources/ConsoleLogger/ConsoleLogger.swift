@@ -1,7 +1,7 @@
 public import ConsoleKit
 public import Logging
 
-/// Outputs logs to a ``Console`` via a ``LoggerFragment`` pipeline.
+/// Outputs logs to a `Console` via a ``LoggerFragment`` pipeline.
 public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     public let label: String
 

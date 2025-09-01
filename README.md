@@ -39,3 +39,13 @@ and add it to your target's dependencies:
 * Utilities for sending text (including styles and colors, when supported) to a terminal.
 * Utilities for reading input from a terminal.
 * ``ConsoleLogger``, a [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementation for customizable logging to a console.
+
+### Logging
+
+`ConsoleLogger` is a flexible logging backend for console applications, allowing developers to customize log output with various fragments, including timestamps, log levels, and source locations.
+
+To use `ConsoleLogger`, add it to your target's dependencies:
+
+```swift
+.product(name: "ConsoleLogger", package: "console-kit")
+```

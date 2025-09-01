@@ -12,7 +12,6 @@
 
 * Utilities for sending text (including styles and colors, when supported) to a terminal.
 * Utilities for reading input from a terminal.
-* ``ConsoleLogger``, a [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementation for customizable logging to a console.
 
 ## Topics
 
@@ -38,26 +37,3 @@
 - ``LoadingBar``
 - ``ProgressBar``
 - ``CustomActivity``
-
-### Logging
-
-- ``ConsoleLogger``
-- ``LoggerFragment``
-- ``LogRecord``
-- ``FragmentOutput``
-- ``IfMaxLevelFragment``
-- ``AndFragment``
-- ``LabelFragment``
-- ``LevelFragment``
-- ``LiteralFragment``
-- ``SeparatorFragment``
-- ``MessageFragment``
-- ``MetadataFragment``
-- ``SourceLocationFragment``
-- ``LoggerSourceFragment``
-- ``TimestampSource``
-- ``SystemTimestampSource``
-- ``TimestampFragment``
-- ``defaultLoggerFragment()``
-- ``timestampDefaultLoggerFragment(timestampSource:)``
-- ``ConsoleKit/Logging``
