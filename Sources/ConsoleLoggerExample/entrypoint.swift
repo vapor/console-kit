@@ -4,12 +4,21 @@ import Logging
 @main
 struct ConsoleLoggerExample {
     static func main() {
+        let console = Terminal()
+
+        var customizedLoggerFragment: some LoggerFragment {
+            LabelFragment().maxLevel(.trace)
+                .and(LevelFragment().separated(" ").and(MessageFragment().separated(" ")))
+                .and(MetadataFragment().separated(" "))
+                .and(SourceLocationFragment().separated(" ").maxLevel(.debug))
+        }
+
         LoggingSystem.bootstrap(
-            fragment: timestampDefaultLoggerFragment(),
-            console: Terminal()
+            fragment: customizedLoggerFragment,
+            console: console
         )
 
-        // Prints "2023-08-21T00:00:00Z [ INFO ] Logged!"
+        // Prints "[ INFO ] Logged!"
         Logger(label: "EXAMPLE").info("Logged!")
     }
 }

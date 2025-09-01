@@ -145,7 +145,7 @@ struct ConsoleLoggerTests {
             time.tm_mon = 5
             time.tm_year = 100
 
-            return ConsoleFragmentLogger(
+            return ConsoleLogger(
                 fragment: timestampDefaultLoggerFragment(timestampSource: ConstantTimestampSource(time: time)),
                 label: label,
                 console: console
@@ -170,8 +170,8 @@ struct ConsoleLoggerTests {
         let console = TestConsole()
 
         let logger = Logger(label: "codes.vapor.console") { label in
-            ConsoleFragmentLogger(
-                fragment: LoggerSourceFragment().and(defaultLoggerFragment().separated(" ")),
+            ConsoleLogger(
+                fragment: LoggerSourceFragment().and(defaultLoggerFragment.separated(" ")),
                 label: label,
                 console: console
             )

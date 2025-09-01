@@ -38,4 +38,4 @@ and add it to your target's dependencies:
 
 * Utilities for sending text (including styles and colors, when supported) to a terminal.
 * Utilities for reading input from a terminal.
-* ``ConsoleLogger`` and ``ConsoleFragmentLogger``, [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementations for customizable logging to a console.
+* ``ConsoleLogger``, a [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementation for customizable logging to a console.
