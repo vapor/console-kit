@@ -88,7 +88,7 @@ extension Console {
     /// This method allows the ``Console`` implementation to record how many lines have been printed so
     /// that ``Console/pushEphemeral()`` and ``Console/popEphemeral()`` knows how many lines to clear.
     ///
-    /// This method should only be used by ``Console`` implementations.
+    /// > Note: This method should only be used by ``Console`` implementations.
     public func didOutputLines(count: Int) {
         guard self.depth > 0 else {
             // not in an ephemeral state
