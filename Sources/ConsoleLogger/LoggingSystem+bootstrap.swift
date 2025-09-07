@@ -15,7 +15,7 @@ extension LoggingSystem {
     ///   - metadata: Extra metadata to log with all messages. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to bootstrap the logging system with.
     public static func bootstrap(
-        fragment: some LoggerFragment = defaultLoggerFragment,
+        fragment: some LoggerFragment = .default,
         console: any Console,
         level: Logger.Level = .info,
         metadata: Logger.Metadata = [:],

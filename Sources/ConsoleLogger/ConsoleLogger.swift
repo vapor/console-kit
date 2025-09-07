@@ -30,7 +30,7 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to use for this logger. This defaults to `nil`.
     public init(
-        fragment: T = defaultLoggerFragment,
+        fragment: T = .default,
         label: String,
         console: any Console,
         level: Logger.Level = .debug,

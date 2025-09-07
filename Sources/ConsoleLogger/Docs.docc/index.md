@@ -12,11 +12,15 @@ A `SwiftLog` `LogHandler` implementation for customizable logging to a console.
 
 ## Topics
 
-### Logging
+### Essentials
 
 - ``ConsoleLogger``
-- ``LoggerFragment``
 - ``LogRecord``
+- ``ConsoleLogger/Logging``
+
+### Logger Fragments
+
+- ``LoggerFragment``
 - ``FragmentOutput``
 - ``IfMaxLevelFragment``
 - ``AndFragment``
@@ -31,6 +35,5 @@ A `SwiftLog` `LogHandler` implementation for customizable logging to a console.
 - ``TimestampSource``
 - ``SystemTimestampSource``
 - ``TimestampFragment``
-- ``defaultLoggerFragment``
-- ``timestampDefaultLoggerFragment(timestampSource:)``
-- ``ConsoleLogger/Logging``
+- ``DefaultLoggerFragmentType``
+- ``TimestampDefaultLoggerFragmentType``
