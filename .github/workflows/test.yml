@@ -5,8 +5,10 @@ concurrency:
 on:
   pull_request: { types: [opened, reopened, synchronize, ready_for_review] }
   push: { branches: [ main ] }
+permissions:
+  contents: read
 
-jobs: 
+jobs:
   unit-tests:
      uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
      with:
@@ -18,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     container: swift:noble
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with: { path: console-kit }
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with: { repository: 'vapor/vapor', path: vapor }
       - run: swift package --package-path vapor edit console-kit --path console-kit
-      - run: SWIFT_DETERMINISTIC_HASHING=1 swift test --package-path vapor
+      - run: swift test --package-path vapor
