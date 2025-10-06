@@ -306,7 +306,14 @@ extension Logger.MetadataValue {
         case .array(let array): return "[\(array.map(\.descriptionWithoutExcessQuotes).joined(separator: ", "))]"
         case .dictionary(let dict): return "[\(dict.map { "\($0): \($1.descriptionWithoutExcessQuotes)" }.joined(separator: ", "))]"
         case .string(let str): return str
-        case .stringConvertible(let conv): return "\(conv)"
+        case .stringConvertible(let repr):
+            switch repr {
+            case let repr as Bool: "\(repr)"
+            case let repr as any FixedWidthInteger: "\(repr)"
+            case let repr as any BinaryFloatingPoint: "\(repr)"
+            default: #""\#(repr.description)""#
+            }
+        }
         }
     }
 }
