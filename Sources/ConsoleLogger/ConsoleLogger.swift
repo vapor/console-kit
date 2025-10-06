@@ -49,7 +49,7 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     ///
     /// This just acts as a getter/setter for the `.metadata` property.
     public subscript(metadataKey key: String) -> Logger.Metadata.Value? {
-        get { return self.metadata[key] }
+        get { self.metadata[key] }
         set { self.metadata[key] = newValue }
     }
 
