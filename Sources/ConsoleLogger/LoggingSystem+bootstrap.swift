@@ -22,11 +22,7 @@ extension LoggingSystem {
         metadataProvider: Logger.MetadataProvider? = nil
     ) {
         self.bootstrap(
-            { (label, metadataProvider) in
-                return ConsoleLogger(
-                    fragment: fragment, label: label, console: console, level: level, metadata: metadata, metadataProvider: metadataProvider
-                )
-            },
+            { ConsoleLogger(fragment: fragment, label: $0, console: console, level: level, metadata: metadata, metadataProvider: $1) },
             metadataProvider: metadataProvider
         )
     }
