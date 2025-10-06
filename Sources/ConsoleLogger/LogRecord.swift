@@ -57,8 +57,8 @@ public struct LogRecord {
         // We aren't mutating self here currently,
         // but keeping the method marked that way will ensure we can cache the result
         // without breaking the public API if we decide that's desirable.
-        (self.metadata ?? [:])
-            .merging(self.loggerMetadata, uniquingKeysWith: { (a, _) in a })
-            .merging(self.metadataProvider?.get() ?? [:], uniquingKeysWith: { (a, _) in a })
+        self.loggerMetadata
+            .merging(self.metadataProvider?.get() ?? [:]) { $1 }
+            .merging(self.metadata ?? [:]) { $1 }
     }
 }

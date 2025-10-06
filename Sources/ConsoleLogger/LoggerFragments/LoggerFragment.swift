@@ -358,17 +358,24 @@ extension Logger.MetadataValue {
         case .array(let array): return "[\(array.map(\.descriptionWithoutExcessQuotes).joined(separator: ", "))]"
         case .dictionary(let dict): return "[\(dict.map { "\($0): \($1.descriptionWithoutExcessQuotes)" }.joined(separator: ", "))]"
         case .string(let str): return str
-        case .stringConvertible(let conv): return "\(conv)"
+        case .stringConvertible(let repr):
+            return switch repr {
+            case let repr as Bool: "\(repr)"
+            case let repr as any FixedWidthInteger: "\(repr)"
+            case let repr as any BinaryFloatingPoint: "\(repr)"
+            default: #""\#(repr.description)""#
+            }
         }
     }
 }
 
 extension Logger.Metadata {
     fileprivate var sortedDescriptionWithoutQuotes: String {
-        let contents = Array(self)
-            .sorted(by: { $0.0 < $1.0 })
+        "["
+            + self.lazy
+            .sorted(by: { $0.key < $1.key })
             .map { "\($0): \($1.descriptionWithoutExcessQuotes)" }
             .joined(separator: ", ")
-        return "[\(contents)]"
+            + "]"
     }
 }
