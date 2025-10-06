@@ -79,7 +79,6 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
         )
 
         self.fragment.write(&record, to: &output)
-
         self.console.output(output.text)
     }
 }
