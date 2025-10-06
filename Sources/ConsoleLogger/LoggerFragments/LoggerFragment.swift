@@ -324,6 +324,10 @@ extension Logger.Metadata {
             .sorted(by: { $0.0 < $1.0 })
             .map { "\($0): \($1.descriptionWithoutExcessQuotes)" }
             .joined(separator: ", ")
-        return "[\(contents)]"
+           "[" + self.lazy
+               .sorted(by: { $0.key < $1.key })
+               .map { "\($0): \($1.descriptionWithoutExcessQuotes)" }
+               .joined(separator: ", ")
+           + "]"
     }
 }
