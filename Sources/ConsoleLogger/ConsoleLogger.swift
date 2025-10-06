@@ -64,7 +64,6 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
         line: UInt
     ) {
         var output = FragmentOutput()
-
         var record = LogRecord(
             level: level,
             message: message,
