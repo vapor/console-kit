@@ -89,11 +89,11 @@ extension Logger.Level {
     /// Converts log level to console style
     public var style: ConsoleStyle {
         switch self {
-        case .trace, .debug: return .plain
-        case .info, .notice: return .info
-        case .warning: return .warning
-        case .error: return .error
-        case .critical: return ConsoleStyle(color: .brightRed)
+        case .trace, .debug .plain
+        case .info, .notice: .info
+        case .warning: .warning
+        case .error: .error
+        case .critical: ConsoleStyle(color: .brightRed)
         }
     }
 
