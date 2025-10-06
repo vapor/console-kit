@@ -91,7 +91,8 @@ struct ConsoleLoggerTests {
             ]
         )
         expect(
-            console, logs: .info, message: #"info [meta1: test1, meta2: Missing command, meta3: [hello, wor"ld], meta4: [hello: wor"ld]]"#)
+            console, logs: .info, message: #"info [meta1: test1, meta2: "Missing command", meta3: [hello, wor"ld], meta4: [hello: wor"ld]]"#
+        )
     }
 
     @Test("Source Location")
