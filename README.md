@@ -6,7 +6,7 @@
 <a href="https://discord.gg/vapor"><img src="https://design.vapor.codes/images/discordchat.svg" alt="Team Chat"></a>
 <a href="LICENSE"><img src="https://design.vapor.codes/images/mitlicense.svg" alt="MIT License"></a>
 <a href="https://github.com/vapor/console-kit/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/vapor/console-kit/test.yml?event=push&style=plastic&logo=github&label=tests&logoColor=%23ccc" alt="Continuous Integration"></a>
-<a href="https://codecov.io/github/vapor/console-kit"><img src="https://img.shields.io/codecov/c/github/vapor/console-kit?style=plastic&logo=codecov&label=codecov"></a>
+<a href="https://codecov.io/github/vapor/console-kit"><img src="https://img.shields.io/codecov/c/github/vapor/console-kit?style=plastic&logo=codecov&label=codecov" alt="Code Coverage"></a>
 <a href="https://swift.org"><img src="https://design.vapor.codes/images/swift61up.svg" alt="Swift 6.1+"></a>
 </p>
 
@@ -38,4 +38,14 @@ and add it to your target's dependencies:
 
 * Utilities for sending text (including styles and colors, when supported) to a terminal.
 * Utilities for reading input from a terminal.
-* ``ConsoleLogger`` and ``ConsoleFragmentLogger``, [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementations for customizable logging to a console.
+* ``ConsoleLogger``, a [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementation for customizable logging to a console.
+
+### Logging
+
+`ConsoleLogger` is a flexible logging backend for console applications, allowing developers to customize log output with various fragments, including timestamps, log levels, and source locations.
+
+To use `ConsoleLogger`, add it to your target's dependencies:
+
+```swift
+.product(name: "ConsoleLogger", package: "console-kit")
+```

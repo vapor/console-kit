@@ -82,7 +82,7 @@ extension ActivityIndicator where A == ProgressBar {
     ///
     /// See ``ActivityIndicator/withActivityIndicator(refreshRate:_:)-(_,()->T)`` for more information.
     @discardableResult
-    public func withActivityIndicator<T>(
+    public func withActivityIndicator<T: Sendable>(
         refreshRate: Int = 40,
         _ body: @Sendable (ActivityIndicator<ProgressBar>) async throws -> T
     ) async rethrows -> T {

@@ -1,11 +1,12 @@
 import ConsoleKit
+import ConsoleLogger
 import Logging
 
 @main
 struct ConsoleLoggerExample {
     static func main() {
         LoggingSystem.bootstrap(
-            fragment: timestampDefaultLoggerFragment(),
+            fragment: .timestampDefault(),
             console: Terminal()
         )
 

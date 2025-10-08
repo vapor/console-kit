@@ -3,7 +3,7 @@ import Synchronization
 
 /// A test console that captures input and output for testing purposes.
 ///
-/// > Warning: This class is a duplicate of the one in `ConsoleLoggerTests`,
+/// > Warning: This class is a duplicate of the one in `ConsoleKitTests`,
 ///            remember to update both when making changes.
 final class TestConsole: Console {
     let _testInputQueue: Mutex<[String]> = Mutex([])
