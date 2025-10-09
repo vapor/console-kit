@@ -88,12 +88,12 @@ public protocol Console: AnyObject, Sendable {
 
 extension Console {
     public var supportsANSICommands: Bool {
-        #if Xcode
-        // Xcode output does not support ANSI commands
-        return false
-        #else
         // If STDOUT is not an interactive terminal then omit ANSI commands
-        return isatty(STDOUT_FILENO) > 0
-        #endif
+        guard isatty(STDOUT_FILENO) > 0 else {
+            return false
+        }
+
+        // "dumb" terminals, such as Xcode's, do not support ANSI commands.
+        return ProcessInfo.processInfo.environment["TERM"] != "dumb"
     }
 }
