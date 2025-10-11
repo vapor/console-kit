@@ -4,10 +4,7 @@ import PackageDescription
 let package = Package(
     name: "benchmarks",
     platforms: [
-        .macOS(.v15),
-        .iOS(.v18),
-        .watchOS(.v11),
-        .tvOS(.v18),
+        .macOS(.v15)
     ],
     dependencies: [
         .package(path: "../"),
@@ -40,7 +37,6 @@ var swiftSettings: [SwiftSetting] {
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
         .enableUpcomingFeature("InferIsolatedConformances"),
-        //.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
         .enableUpcomingFeature("ImmutableWeakCaptures"),
     ]
 }

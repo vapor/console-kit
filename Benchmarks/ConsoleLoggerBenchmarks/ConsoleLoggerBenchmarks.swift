@@ -22,17 +22,22 @@ let benchmarks: @Sendable () -> Void = {
         ]
     )
 
-    let console = TestConsole()
-    LoggingSystem.bootstrap(
-        { label, provider in
-            ConsoleLogger(label: label, console: console)
-        },
-        metadataProvider: .init {
-            ["provided1": "from metadata provider", "provided2": "another metadata provider"]
-        }
-    )
-
-    Benchmark("Logging") { benchmark in
+    Benchmark(
+        "Logging",
+        configuration: .init(
+            setup: {
+                let console = TestConsole()
+                LoggingSystem.bootstrap(
+                    { label, provider in
+                        ConsoleLogger(label: label, console: console)
+                    },
+                    metadataProvider: .init {
+                        ["provided1": "from metadata provider", "provided2": "another metadata provider"]
+                    }
+                )
+            }
+        )
+    ) { benchmark in
         var logger = Logger(label: "codes.vapor.console")
         logger.logLevel = .trace
         logger[metadataKey: "value"] = "one"
