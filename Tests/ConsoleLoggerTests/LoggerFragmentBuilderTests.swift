@@ -115,4 +115,32 @@ struct LoggerFragmentBuilderTests {
             #expect(console.testOutputQueue.first == "i [ INFO ] Test message\n")
         }
     }
+
+    @Test("Default built with LoggerFragmentBuilder")
+    func defaultFragment() throws {
+        let console = TestConsole()
+
+        let loggerBuilder = Logger(label: "codes.vapor.console") { label in
+            ConsoleLogger(label: label, console: console) {
+                // This is the default logger fragment, but built using LoggerFragmentBuilder
+                SpacedFragment {
+                    LabelFragment().maxLevel(.trace)
+                    LevelFragment()
+                    MessageFragment()
+                    MetadataFragment()
+                    SourceLocationFragment().maxLevel(.debug)
+                }
+            }
+        }
+
+        let defaultLogger = Logger(label: "codes.vapor.console") { label in
+            ConsoleLogger(label: label, console: console)
+        }
+
+        loggerBuilder.info("Test message", metadata: ["key": "value"])
+        defaultLogger.info("Test message", metadata: ["key": "value"])
+
+        // Drop the last 5 characters which are the source location line number that can differ
+        #expect(console.testOutputQueue[0].dropLast(5) == console.testOutputQueue[1].dropLast(5))
+    }
 }
