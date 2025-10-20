@@ -36,11 +36,11 @@ extension LoggingSystem {
     /// ```
     ///
     /// - Parameters:
-    ///   - fragment: The logger fragment which will be used to build the logged messages.
     ///   - console: The console the logger will log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.info`.
     ///   - metadata: Extra metadata to log with all messages. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to bootstrap the logging system with.
+    ///   - fragment: The logger fragment which will be used to build the logged messages.
     public static func bootstrap(
         console: any Console,
         level: Logger.Level = .info,
