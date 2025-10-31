@@ -14,6 +14,7 @@ A `SwiftLog` `LogHandler` implementation for customizable logging to a console.
 
 ### Essentials
 
+- <doc:GettingStarted>
 - ``ConsoleLogger``
 - ``LogRecord``
 - ``ConsoleLogger/Logging``
