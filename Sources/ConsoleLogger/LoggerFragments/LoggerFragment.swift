@@ -352,6 +352,23 @@ public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
     }
 }
 
+/// A fragment that wraps another fragment, automatically separating its components with spaces.
+public struct SpacedFragment<T: LoggerFragment>: LoggerFragment {
+    public let fragment: T
+
+    public init(@LoggerSpacedFragmentBuilder _ content: () -> T) {
+        self.fragment = content()
+    }
+
+    public func hasContent(record: inout LogRecord) -> Bool {
+        self.fragment.hasContent(record: &record)
+    }
+
+    public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
+        self.fragment.write(&record, to: &output)
+    }
+}
+
 extension Logger.MetadataValue {
     fileprivate var descriptionWithoutExcessQuotes: String {
         switch self {
