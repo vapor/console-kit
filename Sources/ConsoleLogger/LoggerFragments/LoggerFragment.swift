@@ -140,6 +140,48 @@ public struct AndFragment<T: LoggerFragment, U: LoggerFragment>: LoggerFragment 
     }
 }
 
+/// A fragment that conditionally includes another fragment.
+public struct OptionalFragment<T: LoggerFragment>: LoggerFragment {
+    public let fragment: T?
+
+    public init(_ fragment: T?) {
+        self.fragment = fragment
+    }
+
+    public func hasContent(record: inout LogRecord) -> Bool {
+        fragment?.hasContent(record: &record) ?? false
+    }
+
+    public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
+        fragment?.write(&record, to: &output)
+    }
+}
+
+/// A fragment that combines multiple fragments of the same type.
+public struct ArrayFragment<T: LoggerFragment>: LoggerFragment {
+    public let fragments: [T]
+    public let separator: ConsoleText?
+
+    public init(_ fragments: [T], separator: ConsoleText? = nil) {
+        self.fragments = fragments
+        self.separator = separator
+    }
+
+    public func hasContent(record: inout LogRecord) -> Bool {
+        fragments.contains { $0.hasContent(record: &record) }
+    }
+
+    public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
+        for fragment in fragments {
+            if let separator {
+                SeparatorFragment(separator, fragment: fragment).write(&record, to: &output)
+            } else {
+                fragment.write(&record, to: &output)
+            }
+        }
+    }
+}
+
 /// Writes the label of the logger, and requests a separator for the next fragment.
 public struct LabelFragment: LoggerFragment {
     public init() {}
@@ -161,8 +203,6 @@ public struct LevelFragment: LoggerFragment {
 }
 
 /// Writes the given text to the output.
-///
-/// This type does not request a separator for the next fragment
 public struct LiteralFragment: LoggerFragment {
     public let literal: ConsoleText
 
@@ -170,8 +210,20 @@ public struct LiteralFragment: LoggerFragment {
         self.literal = literal
     }
 
+    public func hasContent(record: inout LogRecord) -> Bool {
+        !self.literal.isEmpty
+    }
+
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
+        guard self.hasContent(record: &record) else { return }
         output += self.literal
+        output.needsSeparator = true
+    }
+}
+
+extension LiteralFragment: ExpressibleByStringLiteral {
+    public init(stringLiteral value: String) {
+        self.literal = value.consoleText()
     }
 }
 
@@ -297,6 +349,23 @@ public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
             }
             return String(cString: $0.baseAddress!)
         }
+    }
+}
+
+/// A fragment that wraps another fragment, automatically separating its components with spaces.
+public struct SpacedFragment<T: LoggerFragment>: LoggerFragment {
+    public let fragment: T
+
+    public init(@LoggerSpacedFragmentBuilder _ content: () -> T) {
+        self.fragment = content()
+    }
+
+    public func hasContent(record: inout LogRecord) -> Bool {
+        self.fragment.hasContent(record: &record)
+    }
+
+    public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
+        self.fragment.write(&record, to: &output)
     }
 }
 

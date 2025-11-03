@@ -49,4 +49,39 @@ let benchmarks: @Sendable () -> Void = {
             )
         }
     }
+
+    Benchmark(
+        "LoggerFragmentBuilder",
+        configuration: .init(
+            setup: {
+                let console = TestConsole()
+                LoggingSystem.bootstrap(
+                    console: console,
+                    metadataProvider: .init {
+                        ["provided1": "from metadata provider", "provided2": "another metadata provider"]
+                    }
+                ) {
+                    // This is the default logger fragment, but built using LoggerFragmentBuilder
+                    SpacedFragment {
+                        LabelFragment().maxLevel(.trace)
+                        LevelFragment()
+                        MessageFragment()
+                        MetadataFragment()
+                        SourceLocationFragment().maxLevel(.debug)
+                    }
+                }
+            }
+        )
+    ) { benchmark in
+        var logger = Logger(label: "codes.vapor.console")
+        logger.logLevel = .trace
+        logger[metadataKey: "value"] = "one"
+
+        for _ in benchmark.scaledIterations {
+            logger.info(
+                "Info",
+                metadata: ["from-log": "value", "also-from-log": "other"]
+            )
+        }
+    }
 }

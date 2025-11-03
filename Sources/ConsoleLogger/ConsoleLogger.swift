@@ -45,6 +45,31 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
         self.metadataProvider = metadataProvider
     }
 
+    /// Creates a new ``ConsoleLogger`` instance.
+    ///
+    /// - Parameters:
+    ///   - label: Unique identifier for this logger.
+    ///   - console: The console to log the messages to.
+    ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
+    ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
+    ///   - metadataProvider: The metadata provider to use for this logger. This defaults to `nil`.
+    ///   - fragment: The ``LoggerFragment`` this logger outputs through.
+    public init(
+        label: String,
+        console: any Console,
+        level: Logger.Level = .debug,
+        metadata: Logger.Metadata = [:],
+        metadataProvider: Logger.MetadataProvider? = nil,
+        @LoggerFragmentBuilder fragment: () -> T
+    ) {
+        self.fragment = fragment()
+        self.label = label
+        self.metadata = metadata
+        self.logLevel = level
+        self.console = console
+        self.metadataProvider = metadataProvider
+    }
+
     /// See `LogHandler[metadataKey:]`.
     ///
     /// This just acts as a getter/setter for the `.metadata` property.
