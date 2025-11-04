@@ -20,7 +20,7 @@ enum ANSIColor: String {
     case brightRed = "\u{001B}[91m"
 }
 
-extension String{
+extension String {
     func colored(_ color: ANSIColor?) -> String {
         guard supportsANSICommands, let color else { return self }
         return color.rawValue + self + "\u{001B}[0m"
