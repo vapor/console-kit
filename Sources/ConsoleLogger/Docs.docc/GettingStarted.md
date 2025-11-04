@@ -73,13 +73,10 @@ Keep in mind that you can also create your own custom fragments by conforming to
 
 ### Bootstrapping the LoggingSystem
 
-Build a ``ConsoleLogger`` with a custom or default fragment and a `ConsoleKit` `Console` (usually a `Terminal`), and register it with the `LoggingSystem`:
+Build a ``ConsoleLogger`` with a custom or default fragment and register it with the `LoggingSystem`:
 
 ```swift
-LoggingSystem.bootstrap(
-    fragment: .timestampDefault(),
-    console: Terminal()
-)
+LoggingSystem.bootstrap(fragment: .timestampDefault())
 
 // Prints "2023-08-21T00:00:00Z [ INFO ] Logged!"
 Logger(label: "EXAMPLE").info("Logged!")
@@ -89,7 +86,7 @@ You can also create multiple loggers with different labels and fragments as need
 
 ```swift
 let logger = Logger(label: "codes.vapor.console") { label in
-    ConsoleLogger(label: label, console: console) {
+    ConsoleLogger(label: label) {
         SpacedFragment {
             "ConsoleLogger" // This is equivalent to LiteralFragment("ConsoleLogger")
             LabelFragment()

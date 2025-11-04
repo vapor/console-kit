@@ -1,7 +1,6 @@
-public import ConsoleKit
 public import Logging
 
-/// Outputs logs to a `Console` via a ``LoggerFragment`` pipeline.
+/// Outputs logs to console via a ``LoggerFragment`` pipeline.
 public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     public let label: String
 
@@ -14,9 +13,6 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     /// See `LogHandler.logLevel`.
     public var logLevel: Logger.Level
 
-    /// The conosle that the messages will get logged to.
-    public let console: any Console
-
     /// The ``LoggerFragment`` this logger outputs through.
     public var fragment: T
 
@@ -25,14 +21,12 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     /// - Parameters:
     ///   - fragment: The ``LoggerFragment`` this logger outputs through.
     ///   - label: Unique identifier for this logger.
-    ///   - console: The console to log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to use for this logger. This defaults to `nil`.
     public init(
         fragment: T = .default,
         label: String,
-        console: any Console,
         level: Logger.Level = .debug,
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil
@@ -41,7 +35,6 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
         self.label = label
         self.metadata = metadata
         self.logLevel = level
-        self.console = console
         self.metadataProvider = metadataProvider
     }
 
@@ -49,14 +42,12 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     ///
     /// - Parameters:
     ///   - label: Unique identifier for this logger.
-    ///   - console: The console to log the messages to.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to use for this logger. This defaults to `nil`.
     ///   - fragment: The ``LoggerFragment`` this logger outputs through.
     public init(
         label: String,
-        console: any Console,
         level: Logger.Level = .debug,
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil,
@@ -66,7 +57,6 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
         self.label = label
         self.metadata = metadata
         self.logLevel = level
-        self.console = console
         self.metadataProvider = metadataProvider
     }
 
@@ -104,19 +94,19 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
         )
 
         self.fragment.write(&record, to: &output)
-        self.console.output(output.text)
+        print(output.text)
     }
 }
 
 extension Logger.Level {
     /// Converts log level to console style
-    public var style: ConsoleStyle {
+    var style: ANSIColor? {
         switch self {
-        case .trace, .debug: .plain
-        case .info, .notice: .info
-        case .warning: .warning
-        case .error: .error
-        case .critical: ConsoleStyle(color: .brightRed)
+        case .trace, .debug: nil
+        case .info, .notice: .cyan
+        case .warning: .yellow
+        case .error: .red
+        case .critical: .brightRed
         }
     }
 

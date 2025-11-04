@@ -35,8 +35,7 @@ let package = Package(
         .target(
             name: "ConsoleLogger",
             dependencies: [
-                .product(name: "Logging", package: "swift-log"),
-                .target(name: "ConsoleKit"),
+                .product(name: "Logging", package: "swift-log")
             ],
             swiftSettings: swiftSettings
         ),
@@ -50,7 +49,6 @@ let package = Package(
         .executableTarget(
             name: "ConsoleLoggerExample",
             dependencies: [
-                .target(name: "ConsoleKit"),
                 .target(name: "ConsoleLogger"),
                 .product(name: "Logging", package: "swift-log"),
             ],
