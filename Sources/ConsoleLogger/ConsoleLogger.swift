@@ -16,6 +16,9 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     /// The ``LoggerFragment`` this logger outputs through.
     public var fragment: T
 
+    /// The printer used to output log messages. Used for testing purposes only.
+    package var printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter()
+
     /// Creates a new ``ConsoleLogger`` instance.
     ///
     /// - Parameters:
@@ -62,7 +65,7 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
 
     /// See `LogHandler[metadataKey:]`.
     ///
-    /// This just acts as a getter/setter for the `.metadata` property.
+    /// This just acts as a getter/setter for the ``ConsoleLogger/metadata`` property.
     public subscript(metadataKey key: String) -> Logger.Metadata.Value? {
         get { self.metadata[key] }
         set { self.metadata[key] = newValue }
@@ -94,7 +97,7 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
         )
 
         self.fragment.write(&record, to: &output)
-        print(output.text)
+        self.printer.print(output.text)
     }
 }
 
@@ -112,5 +115,17 @@ extension Logger.Level {
 
     public var name: String {
         "\(self)".uppercased()
+    }
+}
+
+/// Defines a printer used to output log messages. Used for testing purposes only.
+package protocol ConsoleLoggerPrinter: Sendable {
+    func print(_ string: String)
+}
+
+/// The default ``ConsoleLoggerPrinter`` that prints to standard output. It exists for testing purposes only.
+struct DefaultConsoleLoggerPrinter: ConsoleLoggerPrinter {
+    func print(_ string: String) {
+        Swift.print(string)
     }
 }
