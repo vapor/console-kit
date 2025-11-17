@@ -148,7 +148,7 @@ struct ConsoleLoggerTests {
         logger.info("logged", line: 1)
 
         //var logged = console.testOutputQueue.first!
-        let expect = "2000-06-04T03:02:01"
+        //let expect = "2000-06-04T03:02:01"
         //#expect(logged.hasPrefix(expect))
         //logged.removeFirst(expect.count)
 
