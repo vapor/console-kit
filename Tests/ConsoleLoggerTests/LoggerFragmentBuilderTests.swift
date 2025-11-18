@@ -8,7 +8,7 @@ struct LoggerFragmentBuilderTests {
     func simpleFragment() throws {
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(label: label) {
+            ConsoleLogger(printer: printer, label: label) {
                 SpacedFragment {
                     "ConsoleLogger"
                     LabelFragment()
@@ -16,8 +16,6 @@ struct LoggerFragmentBuilderTests {
                     MessageFragment()
                 }
             }
-            consoleLogger.printer = printer
-            return consoleLogger
         }
 
         logger.info("Test message")
@@ -29,7 +27,7 @@ struct LoggerFragmentBuilderTests {
     func conditionalFragment(includeTimestamp: Bool) throws {
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(label: label) {
+            ConsoleLogger(printer: printer, label: label) {
                 SpacedFragment {
                     if includeTimestamp {
                         TimestampFragment()
@@ -38,8 +36,6 @@ struct LoggerFragmentBuilderTests {
                     MessageFragment()
                 }
             }
-            consoleLogger.printer = printer
-            return consoleLogger
         }
 
         logger.info("Test message")
@@ -55,7 +51,7 @@ struct LoggerFragmentBuilderTests {
     func arrayFragment() throws {
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(label: label) {
+            ConsoleLogger(printer: printer, label: label) {
                 SpacedFragment {
                     for i in 1...2 {
                         "[PREFIX\(i)]"
@@ -64,8 +60,6 @@ struct LoggerFragmentBuilderTests {
                     MessageFragment()
                 }
             }
-            consoleLogger.printer = printer
-            return consoleLogger
         }
 
         logger.info("Test message")
@@ -77,11 +71,9 @@ struct LoggerFragmentBuilderTests {
     func emptyBlock() throws {
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(label: label) {
+            ConsoleLogger(printer: printer, label: label) {
                 // Empty block
             }
-            consoleLogger.printer = printer
-            return consoleLogger
         }
 
         logger.info("Test message")
@@ -93,7 +85,7 @@ struct LoggerFragmentBuilderTests {
     func complexConditionalFragment(level: Logger.Level) throws {
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(label: label) {
+            ConsoleLogger(printer: printer, label: label) {
                 if level >= .error {
                     "X"
                 } else if level >= .warning {
@@ -105,8 +97,6 @@ struct LoggerFragmentBuilderTests {
                 LevelFragment().separated(" ")
                 MessageFragment().separated(" ")
             }
-            consoleLogger.printer = printer
-            return consoleLogger
         }
 
         logger.info("Test message")
@@ -124,7 +114,7 @@ struct LoggerFragmentBuilderTests {
     func defaultFragment() throws {
         let loggerBuilderPrinter = TestingConsoleLoggerPrinter()
         let loggerBuilder = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(label: label) {
+            ConsoleLogger(printer: loggerBuilderPrinter, label: label) {
                 // This is the default logger fragment, but built using LoggerFragmentBuilder
                 SpacedFragment {
                     LabelFragment().maxLevel(.trace)
@@ -134,15 +124,11 @@ struct LoggerFragmentBuilderTests {
                     SourceLocationFragment().maxLevel(.debug)
                 }
             }
-            consoleLogger.printer = loggerBuilderPrinter
-            return consoleLogger
         }
 
         let defaultLoggerPrinter = TestingConsoleLoggerPrinter()
         let defaultLogger = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(label: label)
-            consoleLogger.printer = defaultLoggerPrinter
-            return consoleLogger
+            ConsoleLogger(printer: defaultLoggerPrinter, label: label)
         }
 
         loggerBuilder.info("Test message", metadata: ["key": "value"], line: 1)

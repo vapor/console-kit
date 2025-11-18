@@ -9,17 +9,19 @@ extension LoggingSystem {
     ///
     /// - Parameters:
     ///   - fragment: The logger fragment which will be used to build the logged messages.
+    ///   - printer: The ``ConsoleLoggerPrinter`` used to output log messages.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.info`.
     ///   - metadata: Extra metadata to log with all messages. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to bootstrap the logging system with.
     public static func bootstrap(
         fragment: some LoggerFragment = .default,
+        printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
         level: Logger.Level = .info,
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil
     ) {
         self.bootstrap(
-            { ConsoleLogger(fragment: fragment, label: $0, level: level, metadata: metadata, metadataProvider: $1) },
+            { ConsoleLogger(fragment: fragment, printer: printer, label: $0, level: level, metadata: metadata, metadataProvider: $1) },
             metadataProvider: metadataProvider
         )
     }
@@ -33,11 +35,13 @@ extension LoggingSystem {
     /// ```
     ///
     /// - Parameters:
+    ///   - print: The ``ConsoleLoggerPrinter`` used to output log messages.
     ///   - level: The minimum level of message that the logger will output. This defaults to `.info`.
     ///   - metadata: Extra metadata to log with all messages. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to bootstrap the logging system with.
     ///   - fragment: The logger fragment which will be used to build the logged messages.
     public static func bootstrap(
+        print: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
         level: Logger.Level = .info,
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil,

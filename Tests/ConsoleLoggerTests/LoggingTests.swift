@@ -1,6 +1,5 @@
 import ConsoleLogger
 import Logging
-import Synchronization
 import Testing
 
 #if canImport(Darwin)
@@ -41,9 +40,7 @@ struct ConsoleLoggerTests {
     func loggingLevels() throws {
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(label: label, level: .info)
-            consoleLogger.printer = printer
-            return consoleLogger
+            ConsoleLogger(printer: printer, label: label, level: .info)
         }
 
         logger.trace("trace")
@@ -72,9 +69,7 @@ struct ConsoleLoggerTests {
     func metadata() {
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(label: label, level: .info, metadata: ["meta1": "test1"])
-            consoleLogger.printer = printer
-            return consoleLogger
+            ConsoleLogger(printer: printer, label: label, level: .info, metadata: ["meta1": "test1"])
         }
 
         logger.info("info")
@@ -104,9 +99,7 @@ struct ConsoleLoggerTests {
     func sourceLocation() {
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(label: label, level: .debug)
-            consoleLogger.printer = printer
-            return consoleLogger
+            ConsoleLogger(printer: printer, label: label, level: .debug)
         }
 
         logger.debug("debug", line: 1)
@@ -124,9 +117,7 @@ struct ConsoleLoggerTests {
 
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(label: label, metadataProvider: simpleTraceIDMetadataProvider)
-            consoleLogger.printer = printer
-            return consoleLogger
+            ConsoleLogger(printer: printer, label: label, metadataProvider: simpleTraceIDMetadataProvider)
         }
 
         TraceNamespace.$simpleTraceID.withValue("1234-5678") {
@@ -155,12 +146,11 @@ struct ConsoleLoggerTests {
             time.tm_mon = 5
             time.tm_year = 100
 
-            var consoleLogger = ConsoleLogger(
+            return ConsoleLogger(
                 fragment: .timestampDefault(timestampSource: ConstantTimestampSource(time: time)),
+                printer: printer,
                 label: label
             )
-            consoleLogger.printer = printer
-            return consoleLogger
         }
 
         logger.info("logged", line: 1)
@@ -180,12 +170,11 @@ struct ConsoleLoggerTests {
     func sourceFragment() {
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            var consoleLogger = ConsoleLogger(
+            return ConsoleLogger(
                 fragment: LoggerSourceFragment().and(.default.separated(" ")),
+                printer: printer,
                 label: label
             )
-            consoleLogger.printer = printer
-            return consoleLogger
         }
 
         logger.info("logged", line: 1)
@@ -208,16 +197,4 @@ private func expect(
 
 enum TraceNamespace {
     @TaskLocal static var simpleTraceID: String?
-}
-
-final class TestingConsoleLoggerPrinter: ConsoleLoggerPrinter {
-    let _testOutputQueue: Mutex<[String]> = .init([])
-    var testOutputQueue: [String] {
-        get { _testOutputQueue.withLock { $0 } }
-        set { _testOutputQueue.withLock { $0 = newValue } }
-    }
-
-    func print(_ string: String) {
-        testOutputQueue.insert(string, at: 0)
-    }
 }
