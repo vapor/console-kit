@@ -8,7 +8,7 @@ public protocol ConsoleLoggerPrinter: Sendable {
 
 /// The default ``ConsoleLoggerPrinter`` that prints to standard output.
 public struct DefaultConsoleLoggerPrinter: ConsoleLoggerPrinter {
-    /// Prints the given string to standard output using ``Swift/print(_:separator:terminator:)``.
+    /// Prints the given string to standard output using `Swift.print(_:)`.
     ///
     /// - Parameter string: The string to print.
     public func print(_ string: String) {
