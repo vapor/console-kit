@@ -1,5 +1,3 @@
-import ConsoleKit
-
 /// A result builder for creating logger fragments in a declarative way.
 ///
 /// This allows you to build complex logger fragment combinations using Swift's result builder syntax.
@@ -12,7 +10,7 @@ public enum LoggerFragmentBuilder {
 
     /// Build an expression from a string literal, creating a ``LiteralFragment``.
     public static func buildExpression(_ literal: String) -> LiteralFragment {
-        LiteralFragment(literal.consoleText())
+        LiteralFragment(literal)
     }
 
     /// Build a block from a single logger fragment.

@@ -16,7 +16,6 @@ A `SwiftLog` `LogHandler` implementation for customizable logging to a console.
 
 - <doc:GettingStarted>
 - ``ConsoleLogger``
-- ``LogRecord``
 - ``ConsoleLogger/Logging``
 
 ### Logger Fragments
@@ -43,3 +42,9 @@ A `SwiftLog` `LogHandler` implementation for customizable logging to a console.
 - ``TimestampFragment``
 - ``DefaultLoggerFragmentType``
 - ``TimestampDefaultLoggerFragmentType``
+
+### Miscellaneous
+
+- ``LogRecord``
+- ``ConsoleLoggerPrinter``
+- ``DefaultConsoleLoggerPrinter``

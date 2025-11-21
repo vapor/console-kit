@@ -1,4 +1,3 @@
-import ConsoleKit
 import ConsoleLogger
 import Logging
 import Testing
@@ -21,9 +20,8 @@ import CRT
 struct ConsoleLoggerTests {
     @Test("Log Handler Check")
     func logHandlerCheck() {
-        let console = TestConsole()
         var logger1 = Logger(label: "codes.vapor.console.1") { label in
-            ConsoleLogger(label: label, console: console)
+            ConsoleLogger(label: label)
         }
         logger1.logLevel = .debug
         logger1[metadataKey: "only-on"] = "first"
@@ -40,48 +38,48 @@ struct ConsoleLoggerTests {
 
     @Test("Logging Levels")
     func loggingLevels() throws {
-        let console = TestConsole()
+        let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            ConsoleLogger(label: label, console: console, level: .info)
+            ConsoleLogger(printer: printer, label: label, level: .info)
         }
 
         logger.trace("trace")
-        #expect(console.testOutputQueue.first == nil)
+        #expect(printer.testOutputQueue.first == nil)
 
         logger.debug("debug")
-        #expect(console.testOutputQueue.first == nil)
+        #expect(printer.testOutputQueue.first == nil)
 
         logger.info("info")
-        expect(console, logs: .info, message: "info")
+        expect(printer: printer, logs: .info, message: "info")
 
         logger.notice("notice")
-        expect(console, logs: .notice, message: "notice")
+        expect(printer: printer, logs: .notice, message: "notice")
 
         logger.warning("warning")
-        expect(console, logs: .warning, message: "warning")
+        expect(printer: printer, logs: .warning, message: "warning")
 
         logger.error("error")
-        expect(console, logs: .error, message: "error")
+        expect(printer: printer, logs: .error, message: "error")
 
         logger.critical("critical")
-        expect(console, logs: .critical, message: "critical")
+        expect(printer: printer, logs: .critical, message: "critical")
     }
 
     @Test("Metadata")
     func metadata() {
-        let console = TestConsole()
+        let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            ConsoleLogger(label: label, console: console, level: .info, metadata: ["meta1": "test1"])
+            ConsoleLogger(printer: printer, label: label, level: .info, metadata: ["meta1": "test1"])
         }
 
         logger.info("info")
-        expect(console, logs: .info, message: "info [meta1: test1]")
+        expect(printer: printer, logs: .info, message: "info [meta1: test1]")
 
         logger.info("info", metadata: ["meta2": "test2"])
-        expect(console, logs: .info, message: "info [meta1: test1, meta2: test2]")
+        expect(printer: printer, logs: .info, message: "info [meta1: test1, meta2: test2]")
 
         logger.info("info", metadata: ["meta1": "overridden"])
-        expect(console, logs: .info, message: "info [meta1: overridden]")
+        expect(printer: printer, logs: .info, message: "info [meta1: overridden]")
 
         logger.info(
             "info",
@@ -91,19 +89,21 @@ struct ConsoleLoggerTests {
             ]
         )
         expect(
-            console, logs: .info, message: #"info [meta1: test1, meta2: "Missing command", meta3: [hello, wor"ld], meta4: [hello: wor"ld]]"#
+            printer: printer,
+            logs: .info,
+            message: #"info [meta1: test1, meta2: "Missing command", meta3: [hello, wor"ld], meta4: [hello: wor"ld]]"#
         )
     }
 
     @Test("Source Location")
     func sourceLocation() {
-        let console = TestConsole()
+        let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            ConsoleLogger(label: label, console: console, level: .debug)
+            ConsoleLogger(printer: printer, label: label, level: .debug)
         }
 
         logger.debug("debug", line: 1)
-        expect(console, logs: .debug, message: "debug (ConsoleLoggerTests/LoggingTests.swift:1)")
+        expect(printer: printer, logs: .debug, message: "debug (ConsoleLoggerTests/LoggingTests.swift:1)")
     }
 
     @Test("Metadata Providers")
@@ -114,22 +114,20 @@ struct ConsoleLoggerTests {
             }
             return ["simple-trace-id": .string(traceID)]
         }
-        let console = TestConsole()
 
+        let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            ConsoleLogger(label: label, console: console, metadataProvider: simpleTraceIDMetadataProvider)
+            ConsoleLogger(printer: printer, label: label, metadataProvider: simpleTraceIDMetadataProvider)
         }
 
         TraceNamespace.$simpleTraceID.withValue("1234-5678") {
             logger.debug("debug", line: 1)
         }
-        expect(console, logs: .debug, message: "debug [simple-trace-id: 1234-5678] (ConsoleLoggerTests/LoggingTests.swift:1)")
+        expect(printer: printer, logs: .debug, message: "debug [simple-trace-id: 1234-5678] (ConsoleLoggerTests/LoggingTests.swift:1)")
     }
 
     @Test("Timestamp Fragment")
     func timestampFragment() {
-        let console = TestConsole()
-
         struct ConstantTimestampSource: TimestampSource, @unchecked Sendable {
             let time: tm
 
@@ -138,6 +136,7 @@ struct ConsoleLoggerTests {
             }
         }
 
+        let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
             var time = tm()
             time.tm_sec = 1
@@ -149,14 +148,14 @@ struct ConsoleLoggerTests {
 
             return ConsoleLogger(
                 fragment: .timestampDefault(timestampSource: ConstantTimestampSource(time: time)),
-                label: label,
-                console: console
+                printer: printer,
+                label: label
             )
         }
 
         logger.info("logged", line: 1)
 
-        var logged = console.testOutputQueue.first!
+        var logged = printer.testOutputQueue.first!
         let expect = "2000-06-04T03:02:01"
         #expect(logged.hasPrefix(expect))
         logged.removeFirst(expect.count)
@@ -164,32 +163,36 @@ struct ConsoleLoggerTests {
         // Remove the timezone, since there doesn't appear to be a good way to mock it with strftime.
         while logged.removeFirst() != " " {}
 
-        #expect(logged == "[ \(Logger.Level.info.name) ] logged (ConsoleLoggerTests/LoggingTests.swift:1)\n")
+        #expect(logged == "[ \(Logger.Level.info.name) ] logged (ConsoleLoggerTests/LoggingTests.swift:1)")
     }
 
     @Test("Source Fragment")
     func sourceFragment() {
-        let console = TestConsole()
-
+        let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
-            ConsoleLogger(
+            return ConsoleLogger(
                 fragment: LoggerSourceFragment().and(.default.separated(" ")),
-                label: label,
-                console: console
+                printer: printer,
+                label: label
             )
         }
 
         logger.info("logged", line: 1)
 
         #expect(
-            console.testOutputQueue.first
-                == "ConsoleLoggerTests [ \(Logger.Level.info.name) ] logged (ConsoleLoggerTests/LoggingTests.swift:1)\n"
+            printer.testOutputQueue.first
+                == "ConsoleLoggerTests [ \(Logger.Level.info.name) ] logged (ConsoleLoggerTests/LoggingTests.swift:1)"
         )
     }
 }
 
-private func expect(_ console: TestConsole, logs level: Logger.Level, message: String, sourceLocation: SourceLocation = #_sourceLocation) {
-    #expect(console.testOutputQueue.first ?? "" == "[ \(level.name) ] \(message)\n", sourceLocation: sourceLocation)
+private func expect(
+    printer: TestingConsoleLoggerPrinter,
+    logs level: Logger.Level,
+    message: String,
+    sourceLocation: SourceLocation = #_sourceLocation
+) {
+    #expect(printer.testOutputQueue.first ?? "" == "[ \(level.name) ] \(message)", sourceLocation: sourceLocation)
 }
 
 enum TraceNamespace {

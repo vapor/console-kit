@@ -1,4 +1,3 @@
-import ConsoleKit
 import Logging
 
 /// The type of the default ``LoggerFragment``.

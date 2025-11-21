@@ -1,5 +1,4 @@
 import Benchmark
-import ConsoleKit
 import ConsoleLogger
 import Logging
 
@@ -26,10 +25,9 @@ let benchmarks: @Sendable () -> Void = {
         "Logging",
         configuration: .init(
             setup: {
-                let console = TestConsole()
                 LoggingSystem.bootstrap(
                     { label, provider in
-                        ConsoleLogger(label: label, console: console)
+                        ConsoleLogger(label: label)
                     },
                     metadataProvider: .init {
                         ["provided1": "from metadata provider", "provided2": "another metadata provider"]
@@ -54,9 +52,7 @@ let benchmarks: @Sendable () -> Void = {
         "LoggerFragmentBuilder",
         configuration: .init(
             setup: {
-                let console = TestConsole()
                 LoggingSystem.bootstrap(
-                    console: console,
                     metadataProvider: .init {
                         ["provided1": "from metadata provider", "provided2": "another metadata provider"]
                     }

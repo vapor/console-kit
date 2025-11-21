@@ -1,5 +1,3 @@
-import ConsoleKit
-
 /// A result builder for creating logger fragments in a declarative way.
 ///
 /// This allows you to build complex logger fragment combinations using Swift's result builder syntax.

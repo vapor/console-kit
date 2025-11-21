@@ -1,4 +1,3 @@
-public import ConsoleKit
 public import Logging
 
 #if canImport(Darwin)
@@ -17,13 +16,13 @@ public import CRT
 
 /// The output of a ``LoggerFragment``, including some intermediary state used for things like deduplicating separators.
 public struct FragmentOutput {
-    public var text = ConsoleText()
+    public var text = ""
     public var needsSeparator = false
 
     public init() {}
 
-    public static func += (lhs: inout FragmentOutput, rhs: ConsoleText) {
-        lhs.text = ConsoleText(fragments: lhs.text.fragments + rhs.fragments)
+    public static func += (lhs: inout FragmentOutput, rhs: String) {
+        lhs.text += rhs
     }
 }
 
@@ -66,19 +65,19 @@ extension LoggerFragment {
     }
 
     /// Add a literal prefix to the current fragment.
-    public func prefixed(_ text: ConsoleText) -> AndFragment<LiteralFragment, Self> {
+    public func prefixed(_ text: String) -> AndFragment<LiteralFragment, Self> {
         AndFragment(LiteralFragment(text), self)
     }
 
     /// Add a literal suffix to the current fragment.
-    public func suffixed(_ text: ConsoleText) -> AndFragment<Self, LiteralFragment> {
+    public func suffixed(_ text: String) -> AndFragment<Self, LiteralFragment> {
         AndFragment(self, LiteralFragment(text))
     }
 
     /// Appends the given separator text to the output before `self`'s output, as long as a separator is needed.
     ///
     /// If the wrapped fragment reports that it has no content, no separator will be inserted.
-    public func separated(_ text: ConsoleText) -> SeparatorFragment<Self> {
+    public func separated(_ text: String) -> SeparatorFragment<Self> {
         SeparatorFragment(text, fragment: self)
     }
 }
@@ -160,9 +159,9 @@ public struct OptionalFragment<T: LoggerFragment>: LoggerFragment {
 /// A fragment that combines multiple fragments of the same type.
 public struct ArrayFragment<T: LoggerFragment>: LoggerFragment {
     public let fragments: [T]
-    public let separator: ConsoleText?
+    public let separator: String?
 
-    public init(_ fragments: [T], separator: ConsoleText? = nil) {
+    public init(_ fragments: [T], separator: String? = nil) {
         self.fragments = fragments
         self.separator = separator
     }
@@ -187,7 +186,7 @@ public struct LabelFragment: LoggerFragment {
     public init() {}
 
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
-        output += "[ \(record.label) ]".consoleText()
+        output += "[ \(record.label) ]"
         output.needsSeparator = true
     }
 }
@@ -197,16 +196,16 @@ public struct LevelFragment: LoggerFragment {
     public init() {}
 
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
-        output += "[ \(record.level.name) ]".consoleText(record.level.style)
+        output += "[ \(record.level.name) ]".colored(record.level.style)
         output.needsSeparator = true
     }
 }
 
 /// Writes the given text to the output.
 public struct LiteralFragment: LoggerFragment {
-    public let literal: ConsoleText
+    public let literal: String
 
-    public init(_ literal: ConsoleText) {
+    public init(_ literal: String) {
         self.literal = literal
     }
 
@@ -223,15 +222,15 @@ public struct LiteralFragment: LoggerFragment {
 
 extension LiteralFragment: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
-        self.literal = value.consoleText()
+        self.literal = value
     }
 }
 
 public struct SeparatorFragment<T: LoggerFragment>: LoggerFragment {
-    public let literal: ConsoleText
+    public let literal: String
     public var fragment: T
 
-    public init(_ literal: ConsoleText, fragment: T) {
+    public init(_ literal: String, fragment: T) {
         self.literal = literal
         self.fragment = fragment
     }
@@ -253,7 +252,7 @@ public struct MessageFragment: LoggerFragment {
     public init() {}
 
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
-        output += record.message.description.consoleText()
+        output += record.message.description
         output.needsSeparator = true
     }
 }
@@ -273,7 +272,7 @@ public struct MetadataFragment: LoggerFragment {
 
         guard !allMetadata.isEmpty else { return }
 
-        output += allMetadata.sortedDescriptionWithoutQuotes.consoleText()
+        output += allMetadata.sortedDescriptionWithoutQuotes
         output.needsSeparator = true
     }
 }
@@ -286,7 +285,7 @@ public struct SourceLocationFragment: LoggerFragment {
 
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
         let file = record.file + ":" + record.line.description
-        output += "(" + file.consoleText() + ")"
+        output += "(" + file + ")"
         output.needsSeparator = true
     }
 }
@@ -298,7 +297,7 @@ public struct LoggerSourceFragment: LoggerFragment {
     public init() {}
 
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
-        output += record.source.consoleText()
+        output += record.source
         output.needsSeparator = true
     }
 }
@@ -336,7 +335,7 @@ public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
     }
 
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
-        output += self.timestamp().consoleText()
+        output += self.timestamp()
         output.needsSeparator = true
     }
 
