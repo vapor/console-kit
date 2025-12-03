@@ -1,3 +1,4 @@
+public import Configuration
 public import Logging
 
 /// Outputs logs to console via a ``LoggerFragment`` pipeline.
@@ -66,6 +67,62 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
         self.label = label
         self.metadata = metadata
         self.logLevel = level
+        self.metadataProvider = metadataProvider
+    }
+
+    /// Creates a new ``ConsoleLogger`` instance.
+    ///
+    /// ## Configuration keys
+    /// - `log.level` (string, optional, default: `"debug"`): The minimum level of message that the logger will output.
+    ///
+    /// - Parameters:
+    ///   - fragment: The ``LoggerFragment`` this logger outputs through.
+    ///   - printer: The ``ConsoleLoggerPrinter`` used to output log messages.
+    ///   - label: Unique identifier for this logger.
+    ///   - config: The config reader to read the log level from. This defaults to `.debug`, the lowest level.
+    ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
+    ///   - metadataProvider: The metadata provider to use for this logger. This defaults to `nil`.
+    public init(
+        fragment: T = .default,
+        printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
+        label: String,
+        config: ConfigReader,
+        metadata: Logger.Metadata = [:],
+        metadataProvider: Logger.MetadataProvider? = nil
+    ) {
+        self.fragment = fragment
+        self.printer = printer
+        self.label = label
+        self.metadata = metadata
+        self.logLevel = config.string(forKey: "log.level", as: Logger.Level.self, default: .debug)
+        self.metadataProvider = metadataProvider
+    }
+
+    /// Creates a new ``ConsoleLogger`` instance.
+    ///
+    /// ## Configuration keys
+    /// - `log.level` (string, optional, default: `"debug"`): The minimum level of message that the logger will output.
+    ///
+    /// - Parameters:
+    ///   - printer: The ``ConsoleLoggerPrinter`` used to output log messages.
+    ///   - label: Unique identifier for this logger.
+    ///   - config: The config reader to read the log level from. This defaults to `.debug`, the lowest level.
+    ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
+    ///   - metadataProvider: The metadata provider to use for this logger. This defaults to `nil`.
+    ///   - fragment: The ``LoggerFragment`` this logger outputs through.
+    public init(
+        printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
+        label: String,
+        config: ConfigReader,
+        metadata: Logger.Metadata = [:],
+        metadataProvider: Logger.MetadataProvider? = nil,
+        @LoggerFragmentBuilder fragment: () -> T
+    ) {
+        self.fragment = fragment()
+        self.printer = printer
+        self.label = label
+        self.metadata = metadata
+        self.logLevel = config.string(forKey: "log.level", as: Logger.Level.self, default: .debug)
         self.metadataProvider = metadataProvider
     }
 
