@@ -1,4 +1,4 @@
-// swift-tools-version:6.1
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.6.3"),
         .package(url: "https://github.com/apple/swift-async-algorithms.git", from: "1.0.4"),
+        .package(url: "https://github.com/apple/swift-configuration", exact: "1.0.0-alpha.1"),
     ],
     targets: [
         .target(
@@ -35,14 +36,16 @@ let package = Package(
         .target(
             name: "ConsoleLogger",
             dependencies: [
-                .product(name: "Logging", package: "swift-log")
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "Configuration", package: "swift-configuration"),
             ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "ConsoleLoggerTests",
             dependencies: [
-                .target(name: "ConsoleLogger")
+                .target(name: "ConsoleLogger"),
+                .product(name: "Configuration", package: "swift-configuration"),
             ],
             swiftSettings: swiftSettings
         ),
@@ -65,7 +68,7 @@ var swiftSettings: [SwiftSetting] {
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
         .enableUpcomingFeature("InferIsolatedConformances"),
-        //.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
         .enableUpcomingFeature("ImmutableWeakCaptures"),
     ]
 }

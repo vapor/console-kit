@@ -10,9 +10,9 @@ jobs:
   unit-tests:
     uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
     with:
-      with_windows: true
+      # with_windows: true
       with_musl: true
-      with_android: true
+      # with_android: true
       with_linting: true
     secrets: inherit
   

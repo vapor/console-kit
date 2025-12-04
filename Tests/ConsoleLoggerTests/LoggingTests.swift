@@ -1,3 +1,4 @@
+import Configuration
 import ConsoleLogger
 import Logging
 import Testing
@@ -184,15 +185,36 @@ struct ConsoleLoggerTests {
                 == "ConsoleLoggerTests [ \(Logger.Level.info.name) ] logged (ConsoleLoggerTests/LoggingTests.swift:1)"
         )
     }
+
+    @Test("Log Level from ConfigReader", .serialized, arguments: Logger.Level.allCases)
+    func logLevelFromConfigReader(level: Logger.Level) {
+        let config = ConfigReader(provider: InMemoryProvider(values: ["log.level": .init(stringLiteral: level.rawValue)]))
+        let printer = TestingConsoleLoggerPrinter()
+        let logger = Logger(label: "codes.vapor.console") { label in
+            ConsoleLogger(printer: printer, label: label, config: config)
+        }
+        logger.log(level: level, "logged", line: 1)
+        // Source location is only shown for log levels up to `.debug`
+        let expectedMessage =
+            level <= Logger.Level.debug
+            ? "logged (ConsoleLoggerTests/LoggingTests.swift:1)"
+            : "logged"
+        expect(printer: printer, logs: level, message: expectedMessage)
+    }
 }
 
 private func expect(
     printer: TestingConsoleLoggerPrinter,
     logs level: Logger.Level,
     message: String,
+    label: String = "codes.vapor.console",
     sourceLocation: SourceLocation = #_sourceLocation
 ) {
-    #expect(printer.testOutputQueue.first ?? "" == "[ \(level.name) ] \(message)", sourceLocation: sourceLocation)
+    #expect(
+        printer.testOutputQueue.first ?? ""
+            == "\(level == .trace ? "[ \(label) ] " : "")[ \(level.name) ] \(message)",
+        sourceLocation: sourceLocation
+    )
 }
 
 enum TraceNamespace {
