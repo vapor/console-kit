@@ -186,7 +186,7 @@ struct ConsoleLoggerTests {
         )
     }
 
-    @Test("Log Level from ConfigReader", arguments: Logger.Level.allCases)
+    @Test("Log Level from ConfigReader", .serialized, arguments: Logger.Level.allCases)
     func logLevelFromConfigReader(level: Logger.Level) {
         let config = ConfigReader(provider: InMemoryProvider(values: ["log.level": .init(stringLiteral: level.rawValue)]))
         let printer = TestingConsoleLoggerPrinter()
