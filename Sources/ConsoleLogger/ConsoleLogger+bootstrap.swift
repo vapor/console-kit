@@ -1,11 +1,11 @@
 public import Configuration
 public import Logging
 
-extension LoggingSystem {
+extension ConsoleLogger {
     /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
     ///
     /// ```swift
-    /// LoggingSystem.boostrap()
+    /// ConsoleLogger.bootstrap()
     /// ```
     ///
     /// - Parameters:
@@ -15,13 +15,13 @@ extension LoggingSystem {
     ///   - metadata: Extra metadata to log with all messages. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to bootstrap the logging system with.
     public static func bootstrap(
-        fragment: some LoggerFragment = .default,
+        fragment: T = .default,
         printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
         level: Logger.Level = .info,
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil
     ) {
-        self.bootstrap(
+        LoggingSystem.bootstrap(
             { ConsoleLogger(fragment: fragment, printer: printer, label: $0, level: level, metadata: metadata, metadataProvider: $1) },
             metadataProvider: metadataProvider
         )
@@ -30,7 +30,7 @@ extension LoggingSystem {
     /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
     ///
     /// ```swift
-    /// LoggingSystem.boostrap() {
+    /// ConsoleLogger.bootstrap() {
     ///     TimestampFragment()
     /// }
     /// ```
@@ -46,7 +46,7 @@ extension LoggingSystem {
         level: Logger.Level = .info,
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil,
-        @LoggerFragmentBuilder fragment: () -> some LoggerFragment
+        @LoggerFragmentBuilder fragment: () -> T
     ) {
         self.bootstrap(fragment: fragment(), level: level, metadata: metadata, metadataProvider: metadataProvider)
     }
@@ -54,7 +54,7 @@ extension LoggingSystem {
     /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
     ///
     /// ```swift
-    /// LoggingSystem.boostrap(config: ConfigReader(...))
+    /// ConsoleLogger.bootstrap(config: ConfigReader(...))
     /// ```
     ///
     /// ## Configuration keys
@@ -67,13 +67,13 @@ extension LoggingSystem {
     ///   - metadata: Extra metadata to log with all messages. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to bootstrap the logging system with.
     public static func bootstrap(
-        fragment: some LoggerFragment = .default,
+        fragment: T = .default,
         printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
         config: ConfigReader,
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil
     ) {
-        self.bootstrap(
+        LoggingSystem.bootstrap(
             {
                 ConsoleLogger(
                     fragment: fragment,
@@ -91,7 +91,7 @@ extension LoggingSystem {
     /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
     ///
     /// ```swift
-    /// LoggingSystem.boostrap(config: ConfigReader(...)) {
+    /// ConsoleLogger.bootstrap(config: ConfigReader(...)) {
     ///     TimestampFragment()
     /// }
     /// ```
@@ -109,7 +109,7 @@ extension LoggingSystem {
         config: ConfigReader,
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil,
-        @LoggerFragmentBuilder fragment: () -> some LoggerFragment
+        @LoggerFragmentBuilder fragment: () -> T
     ) {
         self.bootstrap(fragment: fragment(), config: config, metadata: metadata, metadataProvider: metadataProvider)
     }
