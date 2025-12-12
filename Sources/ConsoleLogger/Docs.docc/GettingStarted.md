@@ -76,7 +76,7 @@ Keep in mind that you can also create your own custom fragments by conforming to
 Build a ``ConsoleLogger`` with a custom or default fragment and register it with the `LoggingSystem`:
 
 ```swift
-LoggingSystem.bootstrap(fragment: .timestampDefault())
+ConsoleLogger.bootstrap(fragment: .timestampDefault())
 
 // Prints "2023-08-21T00:00:00Z [ INFO ] Logged!"
 Logger(label: "EXAMPLE").info("Logged!")
