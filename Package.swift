@@ -14,9 +14,9 @@ let package = Package(
         .library(name: "ConsoleLogger", targets: ["ConsoleLogger"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.6.3"),
-        .package(url: "https://github.com/apple/swift-async-algorithms.git", from: "1.0.4"),
-        .package(url: "https://github.com/apple/swift-configuration", exact: "1.0.0-alpha.1"),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.7.1"),
+        .package(url: "https://github.com/apple/swift-async-algorithms.git", from: "1.1.1"),
+        .package(url: "https://github.com/apple/swift-configuration", from: "1.0.0"),
     ],
     targets: [
         .target(
