@@ -62,7 +62,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
         let timer = AsyncTimerSequence(
             interval: .milliseconds(refreshRate),
             tolerance: .milliseconds(10),
-            clock: .continuous
+            clock: .suspending
         )
 
         var tick: UInt = 0

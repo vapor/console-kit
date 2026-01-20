@@ -73,6 +73,23 @@ struct ActivityTests {
         }
     }
 
+    @Test("Task Cancellation")
+    func taskCancellation() async throws {
+        let console = Terminal()
+        let indicator = console.loadingBar(title: "Loading")
+
+        let task = Task {
+            try await indicator.withActivityIndicator {
+                try await Task.sleep(for: .seconds(5))
+            }
+        }
+
+        try await Task.sleep(for: .seconds(1))
+        task.cancel()
+
+        await #expect(throws: CancellationError.self) { try await task.value }
+    }
+
     @Test("Activity Width Key")
     func activityWidthKey() {
         var dict = [AnySendableHashable: String]()
