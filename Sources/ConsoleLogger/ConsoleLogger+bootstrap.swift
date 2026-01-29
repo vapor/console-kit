@@ -1,5 +1,8 @@
-public import Configuration
 public import Logging
+
+#if ConfigReader
+public import Configuration
+#endif
 
 extension ConsoleLogger {
     /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
@@ -51,6 +54,7 @@ extension ConsoleLogger {
         self.bootstrap(fragment: fragment(), printer: printer, level: level, metadata: metadata, metadataProvider: metadataProvider)
     }
 
+    #if ConfigReader
     /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
     ///
     /// ```swift
@@ -113,4 +117,5 @@ extension ConsoleLogger {
             metadataProvider: metadataProvider
         )
     }
+    #endif
 }

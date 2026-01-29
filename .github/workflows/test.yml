@@ -15,6 +15,15 @@ jobs:
       # with_android: true
       with_linting: true
     secrets: inherit
+    
+  package-traits:
+    runs-on: ubuntu-latest
+    container: swift:6.2-bookworm
+    steps:
+      - name: Check out ConsoleKit
+        uses: actions/checkout@v6
+      - name: Run tests with traits disabled
+        run: swift test --disable-default-traits
   
   # integration-check:
   #   runs-on: ubuntu-latest

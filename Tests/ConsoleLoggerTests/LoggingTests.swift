@@ -186,6 +186,7 @@ struct ConsoleLoggerTests {
         )
     }
 
+    #if ConfigReader
     @Test("Log Level from ConfigReader", .serialized, arguments: Logger.Level.allCases)
     func logLevelFromConfigReader(level: Logger.Level) {
         let config = ConfigReader(provider: InMemoryProvider(values: ["log.level": .init(stringLiteral: level.rawValue)]))
@@ -201,6 +202,7 @@ struct ConsoleLoggerTests {
             : "logged"
         expect(printer: printer, logs: level, message: expectedMessage)
     }
+    #endif
 }
 
 private func expect(
