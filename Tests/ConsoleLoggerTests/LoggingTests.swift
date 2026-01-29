@@ -1,4 +1,3 @@
-import Configuration
 import ConsoleLogger
 import Logging
 import Testing
@@ -15,6 +14,10 @@ import Darwin.C
 import WASILibc
 #elseif os(Windows)
 import CRT
+#endif
+
+#if ConfigReader
+import Configuration
 #endif
 
 @Suite("ConsoleLogger Tests")
