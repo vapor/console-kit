@@ -1,4 +1,3 @@
-import Configuration
 import ConsoleLogger
 import Logging
 import Testing
@@ -15,6 +14,10 @@ import Darwin.C
 import WASILibc
 #elseif os(Windows)
 import CRT
+#endif
+
+#if ConfigReader
+import Configuration
 #endif
 
 @Suite("ConsoleLogger Tests")
@@ -186,6 +189,7 @@ struct ConsoleLoggerTests {
         )
     }
 
+    #if ConfigReader
     @Test("Log Level from ConfigReader", .serialized, arguments: Logger.Level.allCases)
     func logLevelFromConfigReader(level: Logger.Level) {
         let config = ConfigReader(provider: InMemoryProvider(values: ["log.level": .init(stringLiteral: level.rawValue)]))
@@ -201,6 +205,7 @@ struct ConsoleLoggerTests {
             : "logged"
         expect(printer: printer, logs: level, message: expectedMessage)
     }
+    #endif
 }
 
 private func expect(

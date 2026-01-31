@@ -1,5 +1,8 @@
-public import Configuration
 public import Logging
+
+#if ConfigReader
+public import Configuration
+#endif
 
 /// Outputs logs to console via a ``LoggerFragment`` pipeline.
 public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
@@ -70,6 +73,7 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
         self.metadataProvider = metadataProvider
     }
 
+    #if ConfigReader
     /// Creates a new ``ConsoleLogger`` instance.
     ///
     /// ## Configuration keys
@@ -125,6 +129,7 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
         self.logLevel = config.string(forKey: "log.level", as: Logger.Level.self, default: .debug)
         self.metadataProvider = metadataProvider
     }
+    #endif
 
     /// See `LogHandler[metadataKey:]`.
     ///

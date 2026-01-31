@@ -13,10 +13,14 @@ let package = Package(
         .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
         .library(name: "ConsoleLogger", targets: ["ConsoleLogger"]),
     ],
+    traits: [
+        .trait(name: "ConfigReader", description: "Create ConsoleLogger using Swift Configuration"),
+        .default(enabledTraits: ["ConfigReader"]),
+    ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.8.0"),
         .package(url: "https://github.com/apple/swift-async-algorithms.git", from: "1.1.1"),
-        .package(url: "https://github.com/apple/swift-configuration.git", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-configuration.git", from: "1.0.0", traits: [.defaults, "CommandLineArguments"]),
     ],
     targets: [
         .target(
@@ -37,7 +41,7 @@ let package = Package(
             name: "ConsoleLogger",
             dependencies: [
                 .product(name: "Logging", package: "swift-log"),
-                .product(name: "Configuration", package: "swift-configuration"),
+                .product(name: "Configuration", package: "swift-configuration", condition: .when(traits: ["ConfigReader"])),
             ],
             swiftSettings: swiftSettings
         ),
@@ -45,7 +49,7 @@ let package = Package(
             name: "ConsoleLoggerTests",
             dependencies: [
                 .target(name: "ConsoleLogger"),
-                .product(name: "Configuration", package: "swift-configuration"),
+                .product(name: "Configuration", package: "swift-configuration", condition: .when(traits: ["ConfigReader"])),
             ],
             swiftSettings: swiftSettings
         ),
