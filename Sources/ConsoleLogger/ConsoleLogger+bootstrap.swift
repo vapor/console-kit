@@ -44,12 +44,13 @@ extension ConsoleLogger {
     ///   - metadata: Extra metadata to log with all messages. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to bootstrap the logging system with.
     ///   - fragment: The logger fragment which will be used to build the logged messages.
+    @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
     public static func bootstrap(
         printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
         level: Logger.Level = .info,
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil,
-        @LoggerFragmentBuilder fragment: () -> T
+        @LoggerFragmentBuilder<0> fragment: () -> T
     ) {
         self.bootstrap(fragment: fragment(), printer: printer, level: level, metadata: metadata, metadataProvider: metadataProvider)
     }
@@ -102,12 +103,13 @@ extension ConsoleLogger {
     ///   - metadata: Extra metadata to log with all messages. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to bootstrap the logging system with.
     ///   - fragment: The logger fragment which will be used to build the logged messages.
+    @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
     public static func bootstrapWithConfigReader(
         printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
         config: ConfigReader = ConfigReader(providers: [CommandLineArgumentsProvider(), EnvironmentVariablesProvider()]),
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil,
-        @LoggerFragmentBuilder fragment: () -> T
+        @LoggerFragmentBuilder<0> fragment: () -> T
     ) {
         self.bootstrapWithConfigReader(
             fragment: fragment(),

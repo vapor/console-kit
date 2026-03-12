@@ -1,8 +1,13 @@
 /// A result builder for creating logger fragments in a declarative way.
 ///
 /// This allows you to build complex logger fragment combinations using Swift's result builder syntax.
+///
+/// You can add spaces between fragments by specifying the number of spaces as the generic parameter.
+/// For example, `@LoggerFragmentBuilder<1>` will add a single space between fragments,
+/// while `@LoggerFragmentBuilder<0>` will not add any spaces.
+@available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
 @resultBuilder
-public enum LoggerFragmentBuilder {
+public enum LoggerFragmentBuilder<let spaces: Int> {
     /// Build an expression from a single logger fragment.
     public static func buildExpression<F: LoggerFragment>(_ fragment: F) -> F {
         fragment
@@ -32,8 +37,8 @@ public enum LoggerFragmentBuilder {
     public static func buildPartialBlock<F1: LoggerFragment, F2: LoggerFragment>(
         accumulated: F1,
         next: F2
-    ) -> AndFragment<F1, F2> {
-        AndFragment(accumulated, next)
+    ) -> AndFragment<F1, SeparatorFragment<F2>> {
+        AndFragment(accumulated, next.separated(String(repeating: " ", count: spaces)))
     }
 
     /// Handle optional fragments using an optional wrapper.
@@ -53,6 +58,6 @@ public enum LoggerFragmentBuilder {
 
     /// Build an array of fragments using a custom ``ArrayFragment``.
     public static func buildArray<F: LoggerFragment>(_ fragments: [F]) -> ArrayFragment<F> {
-        ArrayFragment(fragments)
+        ArrayFragment(fragments, separator: String(repeating: " ", count: spaces))
     }
 }

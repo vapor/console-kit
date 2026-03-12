@@ -238,8 +238,10 @@ public struct SeparatorFragment<T: LoggerFragment>: LoggerFragment {
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
         if output.needsSeparator {
             if self.fragment.hasContent(record: &record) {
-                output.needsSeparator = false
-                output += self.literal
+                if !self.literal.isEmpty {
+                    output.needsSeparator = false
+                    output += self.literal
+                }
             }
         }
 
@@ -352,10 +354,11 @@ public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
 }
 
 /// A fragment that wraps another fragment, automatically separating its components with spaces.
+@available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
 public struct SpacedFragment<T: LoggerFragment>: LoggerFragment {
     public let fragment: T
 
-    public init(@LoggerSpacedFragmentBuilder _ content: () -> T) {
+    public init(@LoggerFragmentBuilder<1> _ content: () -> T) {
         self.fragment = content()
     }
 
