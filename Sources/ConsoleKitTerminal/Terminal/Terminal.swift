@@ -1,11 +1,18 @@
-import Foundation
-import NIOConcurrencyHelpers
-#if canImport(Android)
-import Android
-#endif
-#if os(Windows)
+#if canImport(Darwin)
+import Darwin.C
+#elseif canImport(Glibc)
+@preconcurrency import Glibc
+#elseif canImport(Musl)
+@preconcurrency import Musl
+#elseif canImport(Android)
+@preconcurrency import Android
+#elseif os(WASI)
+import WASILibc
+#elseif os(Windows)
+import CRT
 import WinSDK
 #endif
+import NIOConcurrencyHelpers
 
 /// Generic console that uses a mixture of Swift standard
 /// library and Foundation code to fulfill protocol requirements.

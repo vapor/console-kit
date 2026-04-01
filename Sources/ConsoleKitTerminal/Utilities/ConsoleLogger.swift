@@ -1,57 +1,78 @@
 import Logging
 
-/// A `LoggerFragment` which implements the default logger message format.
-public func defaultLoggerFragment() -> some LoggerFragment {
+/// The complete explicit type of the ``defaultLoggerFragment()``. Unfortunately, we have to
+/// spell it out instead of just letting it be `some LoggerFragment` in order to define the
+/// ``ConsoleLogger`` alias properly.
+public typealias DefaultLoggerFragmentType = AndFragment<AndFragment<AndFragment<IfMaxLevelFragment<LabelFragment>, AndFragment<SeparatorFragment<LevelFragment>, SeparatorFragment<MessageFragment>>>, SeparatorFragment<MetadataFragment>>, IfMaxLevelFragment<SeparatorFragment<SourceLocationFragment>>>
+
+/// A ``LoggerFragment`` which implements the default logger message format.
+public func defaultLoggerFragment() -> DefaultLoggerFragmentType {
     LabelFragment().maxLevel(.trace)
         .and(LevelFragment().separated(" ").and(MessageFragment().separated(" ")))
         .and(MetadataFragment().separated(" "))
         .and(SourceLocationFragment().separated(" ").maxLevel(.debug))
 }
 
-/// A `LoggerFragment` which implements the default logger message format with a timestamp at the front.
+/// A ``LoggerFragment`` which implements the default logger message format with a timestamp at the front.
 public func timestampDefaultLoggerFragment(
     timestampSource: some TimestampSource = SystemTimestampSource()
 ) -> some LoggerFragment {
     TimestampFragment(timestampSource).and(defaultLoggerFragment().separated(" "))
 }
 
-/// Outputs logs to a `Console` via a `LoggerFragment` pipeline.
+/// Outputs logs to a ``Console`` via a ``LoggerFragment`` pipeline.
 public struct ConsoleFragmentLogger<T: LoggerFragment>: LogHandler, Sendable {
+    /// The log handler's label.
     public let label: String
-    
-    /// See `LogHandler.metadata`.
+
+    // See `LogHandler.metadata`.
     public var metadata: Logger.Metadata
     
-    /// See `LogHandler.metadataProvider`.
+    // See `LogHandler.metadataProvider`.
     public var metadataProvider: Logger.MetadataProvider?
     
-    /// See `LogHandler.logLevel`.
+    // See `LogHandler.logLevel`.
     public var logLevel: Logger.Level
     
-    /// The conosle that the messages will get logged to.
+    /// The console to which messages will be logged.
     public let console: any Console
     
-    /// The `LoggerFragment` this logger outputs through.
-    public var fragment: T
-    
-    /// Creates a new `ConsoleLogger` instance.
+    private var _fragment: T
+
+    /// The ``LoggerFragment`` this logger outputs through.
+    public var fragment: T {
+        get { self._fragment }
+        @available(*, deprecated, message: "Setting ConsoleFragmentLogger's fragment after creation is deprecated.")
+        set { self._fragment = newValue }
+    }
+
+    /// Creates a new ``ConsoleFragmentLogger`` instance.
     ///
     /// - Parameters:
-    ///   - fragment: The `LoggerFragment` this logger outputs through.
-    ///   - label: Unique identifier for this logger.
+    ///   - fragment: The ``LoggerFragment`` this handler outputs through.
+    ///   - label: Unique identifier for this handler.
     ///   - console: The console to log the messages to.
-    ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
-    ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    public init(fragment: T, label: String, console: any Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
-        self.fragment = fragment
+    ///   - level: The minimum level of message that the handler will output. Defaults to `.debug`.
+    ///   - metadata: Extra metadata to log with the message. Defaults to an empty dictionary.
+    public init(fragment: T = defaultLoggerFragment(), label: String, console: any Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
+        self._fragment = fragment
         self.label = label
         self.metadata = metadata
         self.logLevel = level
         self.console = console
     }
     
-    public init(fragment: T, label: String, console: any Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:], metadataProvider: Logger.MetadataProvider?) {
-        self.fragment = fragment
+    /// Creates a new ``ConsoleFragmentLogger`` instance.
+    ///
+    /// - Parameters:
+    ///   - fragment: The ``LoggerFragment`` this handler outputs through.
+    ///   - label: Unique identifier for this handler.
+    ///   - console: The console to log the messages to.
+    ///   - level: The minimum level of message that the handler will output. Defaults to `.debug`.
+    ///   - metadata: Extra metadata to log with the message. Defaults to an empty dictionary.
+    ///   - metadataProvider: A metadata provider to associate with this handler.
+    public init(fragment: T = defaultLoggerFragment(), label: String, console: any Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:], metadataProvider: Logger.MetadataProvider?) {
+        self._fragment = fragment
         self.label = label
         self.metadata = metadata
         self.logLevel = level
@@ -59,129 +80,43 @@ public struct ConsoleFragmentLogger<T: LoggerFragment>: LogHandler, Sendable {
         self.metadataProvider = metadataProvider
     }
     
-    /// See `LogHandler[metadataKey:]`.
-    ///
-    /// This just acts as a getter/setter for the `.metadata` property.
+    // See `LogHandler.subscript(metadataKey:)`.
     public subscript(metadataKey key: String) -> Logger.Metadata.Value? {
         get { return self.metadata[key] }
         set { self.metadata[key] = newValue }
     }
-    
-    /// See `LogHandler.log(level:message:metadata:source:file:function:line:)`.
-    public func log(
-        level: Logger.Level,
-        message: Logger.Message,
-        metadata: Logger.Metadata?,
-        source: String,
-        file: String,
-        function: String,
-        line: UInt
-    ) {
+
+    // See `LogHandler.log(event:)`.
+    public func log(event: LogEvent) {
         var output = FragmentOutput()
         var record = LogRecord(
-            level: level,
-            message: message,
-            metadata: metadata,
-            source: source,
-            file: file,
-            function: function,
-            line: line,
+            level: event.level,
+            message: event.message,
+            metadata: event.metadata,
+            source: event.source,
+            file: event.file,
+            function: event.function,
+            line: event.line,
             label: self.label,
             loggerLevel: self.logLevel,
             loggerMetadata: self.metadata,
             metadataProvider: self.metadataProvider
         )
-        
+
         self.fragment.write(&record, to: &output)
-        
         self.console.output(output.text)
     }
 }
 
-/// Outputs logs to a `Console`.
-public struct ConsoleLogger: LogHandler, Sendable {
-    public let label: String
-    
-    /// See `LogHandler.metadata`.
-    public var metadata: Logger.Metadata
-    
-    /// See `LogHandler.metadataProvider`.
-    public var metadataProvider: Logger.MetadataProvider?
-    
-    /// See `LogHandler.logLevel`.
-    public var logLevel: Logger.Level
-    
-    /// The conosle that the messages will get logged to.
-    public let console: any Console
-    
-    public var fragment: some LoggerFragment = defaultLoggerFragment()
-    
-    /// Creates a new `ConsoleLogger` instance.
-    ///
-    /// - Parameters:
-    ///   - label: Unique identifier for this logger.
-    ///   - console: The console to log the messages to.
-    ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
-    ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    public init(label: String, console: any Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:]) {
-        self.label = label
-        self.metadata = metadata
-        self.logLevel = level
-        self.console = console
-    }
-    
-    public init(label: String, console: any Console, level: Logger.Level = .debug, metadata: Logger.Metadata = [:], metadataProvider: Logger.MetadataProvider?) {
-        self.label = label
-        self.metadata = metadata
-        self.logLevel = level
-        self.console = console
-        self.metadataProvider = metadataProvider
-    }
-    
-    /// See `LogHandler[metadataKey:]`.
-    ///
-    /// This just acts as a getter/setter for the `.metadata` property.
-    public subscript(metadataKey key: String) -> Logger.Metadata.Value? {
-        get { return self.metadata[key] }
-        set { self.metadata[key] = newValue }
-    }
-    
-    /// See `LogHandler.log(level:message:metadata:source:file:function:line:)`.
-    public func log(
-        level: Logger.Level,
-        message: Logger.Message,
-        metadata: Logger.Metadata?,
-        source: String,
-        file: String,
-        function: String,
-        line: UInt
-    ) {
-        var output = FragmentOutput()
-        
-        var record = LogRecord(
-            level: level,
-            message: message,
-            metadata: metadata,
-            source: source,
-            file: file,
-            function: function,
-            line: line,
-            label: self.label,
-            loggerLevel: self.logLevel,
-            loggerMetadata: self.metadata,
-            metadataProvider: self.metadataProvider
-        )
-        
-        self.fragment.write(&record, to: &output)
-        
-        self.console.output(output.text)
-    }
-}
+/// Outputs logs to a ``Console`` using the ``defaultLoggerFragment()``.
+public typealias ConsoleLogger = ConsoleFragmentLogger<DefaultLoggerFragmentType>
 
 extension LoggingSystem {
-    /// Bootstraps a `ConsoleLogger` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem` as the default log handler.
     ///
-    ///     LoggingSystem.boostrap(console: console)
+    /// ```swift
+    /// LoggingSystem.boostrap(console: console)
+    /// ```
     ///
     /// - Parameters:
     ///   - console: The console the logger will log the messages to.
@@ -195,9 +130,11 @@ extension LoggingSystem {
         self.bootstrap(console: console, level: level, metadata: metadata, metadataProvider: nil)
     }
     
-    /// Bootstraps a `ConsoleLogger` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem` as the default log handler.
     ///
-    ///     LoggingSystem.boostrap(console: console)
+    /// ```swift
+    /// LoggingSystem.boostrap(console: console)
+    /// ```
     ///
     /// - Parameters:
     ///   - console: The console the logger will log the messages to.
@@ -210,14 +147,16 @@ extension LoggingSystem {
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil
     ) {
-        self.bootstrap({ (label, metadataProvider) in
+        self.bootstrap({ label, metadataProvider in
             return ConsoleLogger(label: label, console: console, level: level, metadata: metadata, metadataProvider: metadataProvider)
         }, metadataProvider: metadataProvider)
     }
     
-    /// Bootstraps a `ConsoleFragmentLogger` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    /// Bootstraps a ``ConsoleFragmentLogger`` to the `LoggingSystem` as the default log handler.
     ///
-    ///     LoggingSystem.boostrap(console: console)
+    /// ```swift
+    /// LoggingSystem.boostrap(fragment: timestampDefaultLoggerFragment())
+    /// ```
     ///
     /// - Parameters:
     ///   - fragment: The logger fragment which will be used to build the logged messages.
@@ -232,8 +171,8 @@ extension LoggingSystem {
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil
     ) {
-        self.bootstrap({ (label, metadataProvider) in
-            return ConsoleFragmentLogger(fragment: fragment, label: label, console: console, level: level, metadata: metadata, metadataProvider: metadataProvider)
+        self.bootstrap({ label, metadataProvider in
+            ConsoleFragmentLogger(fragment: fragment, label: label, console: console, level: level, metadata: metadata, metadataProvider: metadataProvider)
         }, metadataProvider: metadataProvider)
     }
 }
@@ -249,16 +188,9 @@ extension Logger.Level {
         case .critical: return ConsoleStyle(color: .brightRed)
         }
     }
-    
+
+    @available(*, deprecated, renamed: "rawValue", message: "Use `Logger.Level.rawValue` instead")
     public var name: String {
-        switch self {
-        case .trace: return "TRACE"
-        case .debug: return "DEBUG"
-        case .info: return "INFO"
-        case .notice: return "NOTICE"
-        case .warning: return "WARNING"
-        case .error: return "ERROR"
-        case .critical: return "CRITICAL"
-        }
+        self.rawValue.uppercased()
     }
 }

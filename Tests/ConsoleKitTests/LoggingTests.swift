@@ -134,7 +134,7 @@ final class ConsoleLoggerTests: XCTestCase {
         // Remove the timezone, since there doesn't appear to be a good way to mock it with strftime.
         while logged.removeFirst() != " " { }
         
-        XCTAssertEqual(logged, "[ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
+        XCTAssertEqual(logged, "[ \(Logger.Level.info.rawValue.uppercased()) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
     }
     
     func testSourceFragment() {
@@ -150,12 +150,12 @@ final class ConsoleLoggerTests: XCTestCase {
         
         logger.info("logged", line: 1)
         
-        XCTAssertEqual(console.testOutputQueue.first, "ConsoleKitTests [ \(Logger.Level.info.name) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
+        XCTAssertEqual(console.testOutputQueue.first, "ConsoleKitTests [ \(Logger.Level.info.rawValue.uppercased()) ] logged (ConsoleKitTests/LoggingTests.swift:1)\n")
     }
 }
 
 private func XCTAssertLog(_ console: TestConsole, _ level: Logger.Level, _ message: String, file: StaticString = #filePath, line: UInt = #line) {
-    XCTAssertEqual(console.testOutputQueue.first ?? "", "[ \(level.name) ] \(message)\n", file: file, line: line)
+    XCTAssertEqual(console.testOutputQueue.first ?? "", "[ \(level.rawValue.uppercased()) ] \(message)\n", file: file, line: line)
 }
 
 enum TraceNamespace {

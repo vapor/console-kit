@@ -1,6 +1,15 @@
-import Foundation
-#if canImport(Android)
-import Android
+#if canImport(Darwin)
+import Darwin.C
+#elseif canImport(Glibc)
+@preconcurrency import Glibc
+#elseif canImport(Musl)
+@preconcurrency import Musl
+#elseif canImport(Android)
+@preconcurrency import Android
+#elseif os(WASI)
+import WASILibc
+#elseif os(Windows)
+import CRT
 #endif
 
 /// Protocol for powering styled Console I/O.
@@ -91,6 +100,8 @@ extension Console {
         #if Xcode
         // Xcode output does not support ANSI commands
         return false
+        #elseif os(Windows)
+        return _isatty(_fileno(stdout)) > 0
         #else
         // If STDOUT is not an interactive terminal then omit ANSI commands
         return isatty(STDOUT_FILENO) > 0
