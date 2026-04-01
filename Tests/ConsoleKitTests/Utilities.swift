@@ -2,8 +2,6 @@ import ConsoleKit
 import XCTest
 import NIOConcurrencyHelpers
 
-extension String: Error {}
-
 final class TestGroup: CommandGroup {
     struct Signature: CommandSignature {
         @Flag(name: "version", help: "Prints the version")

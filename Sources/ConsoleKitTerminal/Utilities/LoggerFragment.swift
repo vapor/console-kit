@@ -2,6 +2,8 @@ import Logging
 import Foundation
 
 /// Information about a specific log message, including information from the logger the message was logged to.
+///
+/// > Note: This type is obsoleted by the new `LogEvent` type in `swift-log`.
 public struct LogRecord {
     public init(level: Logger.Level, message: Logger.Message, metadata: Logger.Metadata? = nil, source: String, file: String, function: String, line: UInt, label: String, loggerLevel: Logger.Level, loggerMetadata: Logger.Metadata, metadataProvider: Logger.MetadataProvider? = nil) {
         self.level = level
@@ -188,7 +190,7 @@ public struct LevelFragment: LoggerFragment {
     public init() { }
     
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
-        output += "[ \(record.level.name) ]".consoleText(record.level.style)
+        output += "[ \(record.level.rawValue.uppercased()) ]".consoleText(record.level.style)
         output.needsSeparator = true
     }
 }
