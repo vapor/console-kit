@@ -1,4 +1,4 @@
-// swift-tools-version:5.8
+// swift-tools-version:6.1
 import PackageDescription
 
 let package = Package(
@@ -15,8 +15,8 @@ let package = Package(
         .library(name: "ConsoleKitCommands", targets: ["ConsoleKitCommands"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),
-        .package(url: "https://github.com/apple/swift-nio.git", from: "2.62.0"),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.11.0"),
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.97.0"),
     ],
     targets: [
         .target(
@@ -81,6 +81,10 @@ let package = Package(
 )
 
 var swiftSettings: [SwiftSetting] { [
-    .enableUpcomingFeature("ForwardTrailingClosures"),
-    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("ExistentialAny"),
+    //.enableUpcomingFeature("InternalImportsByDefault"),
+    .enableUpcomingFeature("MemberImportVisibility"),
+    .enableUpcomingFeature("InferIsolatedConformances"),
+    //.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+    .enableUpcomingFeature("ImmutableWeakCaptures"),
 ] }

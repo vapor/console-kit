@@ -10,13 +10,24 @@ permissions:
 
 jobs:
   unit-tests:
-     uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
-     with:
-        with_windows: true
-        with_musl: true
-     secrets: inherit
+    permissions:
+      contents: read
+    uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
+    with:
+       with_windows: true
+       with_musl: true
+    secrets: inherit
+
+  submit-dependencies:
+    permissions:
+      contents: write
+    if: ${{ github.event_name == 'push' }}
+    uses: vapor/ci/.github/workflows/submit-deps.yml@main
+    secrets: inherit
 
   integration-check:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     container: swift:noble
     steps:
