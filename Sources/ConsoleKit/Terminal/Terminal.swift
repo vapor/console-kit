@@ -12,13 +12,10 @@ import Darwin.C
 import WASILibc
 #elseif os(Windows)
 import CRT
+import WinSDK
 #endif
 
 import Synchronization
-
-#if os(Windows)
-import WinSDK
-#endif
 
 /// Generic console that uses a mixture of Swift and C standard
 /// libraries to fulfill protocol requirements.

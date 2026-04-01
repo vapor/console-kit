@@ -6,15 +6,16 @@ public import Configuration
 
 /// Outputs logs to console via a ``LoggerFragment`` pipeline.
 public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
+    /// The log handler's label.
     public let label: String
 
-    /// See `LogHandler.metadata`.
+    // See `LogHandler.metadata`.
     public var metadata: Logger.Metadata
 
-    /// See `LogHandler.metadataProvider`.
+    // See `LogHandler.metadataProvider`.
     public var metadataProvider: Logger.MetadataProvider?
 
-    /// See `LogHandler.logLevel`.
+    // See `LogHandler.logLevel`.
     public var logLevel: Logger.Level
 
     /// The ``LoggerFragment`` this logger outputs through.
@@ -29,9 +30,9 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     ///   - fragment: The ``LoggerFragment`` this logger outputs through.
     ///   - printer: The ``ConsoleLoggerPrinter`` used to output log messages.
     ///   - label: Unique identifier for this logger.
-    ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
-    ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    ///   - metadataProvider: The metadata provider to use for this logger. This defaults to `nil`.
+    ///   - level: The minimum level of message that the logger will output. Defaults to `.debug`.
+    ///   - metadata: Extra metadata to log with the message. Defaults to an empty dictionary.
+    ///   - metadataProvider: The metadata provider to use for this logger. Defaults to `nil`.
     public init(
         fragment: T = .default,
         printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
@@ -53,9 +54,9 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     /// - Parameters:
     ///   - printer: The ``ConsoleLoggerPrinter`` used to output log messages.
     ///   - label: Unique identifier for this logger.
-    ///   - level: The minimum level of message that the logger will output. This defaults to `.debug`, the lowest level.
-    ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    ///   - metadataProvider: The metadata provider to use for this logger. This defaults to `nil`.
+    ///   - level: The minimum level of message that the logger will output. Defaults to `.debug`.
+    ///   - metadata: Extra metadata to log with the message. Defaults to an empty dictionary.
+    ///   - metadataProvider: The metadata provider to use for this logger. Defaults to `nil`.
     ///   - fragment: The ``LoggerFragment`` this logger outputs through.
     public init(
         printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
@@ -83,9 +84,9 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     ///   - fragment: The ``LoggerFragment`` this logger outputs through.
     ///   - printer: The ``ConsoleLoggerPrinter`` used to output log messages.
     ///   - label: Unique identifier for this logger.
-    ///   - config: The config reader to read the log level from. This defaults to `.debug`, the lowest level.
-    ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
-    ///   - metadataProvider: The metadata provider to use for this logger. This defaults to `nil`.
+    ///   - config: The config reader to read the log level from. Defaults to `.debug`.
+    ///   - metadata: Extra metadata to log with the message. Defaults to an empty dictionary.
+    ///   - metadataProvider: The metadata provider to use for this logger. Defaults to `nil`.
     public init(
         fragment: T = .default,
         printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
@@ -131,33 +132,23 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     }
     #endif
 
-    /// See `LogHandler[metadataKey:]`.
-    ///
-    /// This just acts as a getter/setter for the ``ConsoleLogger/metadata`` property.
+    // See `LogHandler.subscript(metadataKey:)`.
     public subscript(metadataKey key: String) -> Logger.Metadata.Value? {
         get { self.metadata[key] }
         set { self.metadata[key] = newValue }
     }
 
-    /// See `LogHandler.log(level:message:metadata:source:file:function:line:)`.
-    public func log(
-        level: Logger.Level,
-        message: Logger.Message,
-        metadata: Logger.Metadata?,
-        source: String,
-        file: String,
-        function: String,
-        line: UInt
-    ) {
+    // See `LogHandler.log(event:)`.
+    public func log(event: LogEvent) {
         var output = FragmentOutput()
         var record = LogRecord(
-            level: level,
-            message: message,
-            metadata: metadata,
-            source: source,
-            file: file,
-            function: function,
-            line: line,
+            level: event.level,
+            message: event.message,
+            metadata: event.metadata,
+            source: event.source,
+            file: event.file,
+            function: event.function,
+            line: event.line,
             label: self.label,
             loggerLevel: self.logLevel,
             loggerMetadata: self.metadata,
@@ -179,9 +170,5 @@ extension Logger.Level {
         case .error: .red
         case .critical: .brightRed
         }
-    }
-
-    public var name: String {
-        "\(self)".uppercased()
     }
 }

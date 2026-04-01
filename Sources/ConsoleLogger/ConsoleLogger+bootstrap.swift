@@ -5,7 +5,7 @@ public import Configuration
 #endif
 
 extension ConsoleLogger {
-    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem` as the default log handler.
     ///
     /// ```swift
     /// ConsoleLogger.bootstrap()
@@ -30,7 +30,7 @@ extension ConsoleLogger {
         )
     }
 
-    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem` as the default log handler.
     ///
     /// ```swift
     /// ConsoleLogger.bootstrap() {
@@ -55,7 +55,7 @@ extension ConsoleLogger {
     }
 
     #if ConfigReader
-    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem` as the default log handler.
     ///
     /// ```swift
     /// ConsoleLogger.bootstrapWithConfigReader(config: ConfigReader(...))
@@ -86,7 +86,7 @@ extension ConsoleLogger {
         )
     }
 
-    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem`, so that logger will be used in `Logger.init(label:)`.
+    /// Bootstraps a ``ConsoleLogger`` to the `LoggingSystem` as the default log handler.
     ///
     /// ```swift
     /// ConsoleLogger.bootstrapWithConfigReader(config: ConfigReader(...)) {
