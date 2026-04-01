@@ -31,6 +31,8 @@ private var supportsANSICommands: Bool {
     #if Xcode
     // Xcode output does not support ANSI commands
     return false
+    #elseif os(Windows)
+    return _isatty(_fileno(stdout)) > 0
     #else
     // If STDOUT is not an interactive terminal then omit ANSI commands
     return isatty(STDOUT_FILENO) > 0
