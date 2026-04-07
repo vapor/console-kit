@@ -167,7 +167,7 @@ struct ConsoleLoggerTests {
         // Remove the timezone, since there doesn't appear to be a good way to mock it with strftime.
         while logged.removeFirst() != " " {}
 
-        #expect(logged == "[ \(Logger.Level.info.name) ] logged (ConsoleLoggerTests/LoggingTests.swift:1)")
+        #expect(logged == "[ \(Logger.Level.info.rawValue.uppercased()) ] logged (ConsoleLoggerTests/LoggingTests.swift:1)")
     }
 
     @Test("Source Fragment")
@@ -185,7 +185,7 @@ struct ConsoleLoggerTests {
 
         #expect(
             printer.testOutputQueue.first
-                == "ConsoleLoggerTests [ \(Logger.Level.info.name) ] logged (ConsoleLoggerTests/LoggingTests.swift:1)"
+                == "ConsoleLoggerTests [ \(Logger.Level.info.rawValue.uppercased()) ] logged (ConsoleLoggerTests/LoggingTests.swift:1)"
         )
     }
 
@@ -217,7 +217,7 @@ private func expect(
 ) {
     #expect(
         printer.testOutputQueue.first ?? ""
-            == "\(level == .trace ? "[ \(label) ] " : "")[ \(level.name) ] \(message)",
+            == "\(level == .trace ? "[ \(label) ] " : "")[ \(level.rawValue.uppercased()) ] \(message)",
         sourceLocation: sourceLocation
     )
 }

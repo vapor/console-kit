@@ -196,7 +196,7 @@ public struct LevelFragment: LoggerFragment {
     public init() {}
 
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
-        output += "[ \(record.level.name) ]".colored(record.level.style)
+        output += "[ \(record.level.rawValue.uppercased()) ]".colored(record.level.style)
         output.needsSeparator = true
     }
 }
