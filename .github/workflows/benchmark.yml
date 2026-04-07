@@ -1,0 +1,21 @@
+name: benchmark
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        type: string
+        required: true
+        description: "The commit SHA to run the benchmarks against."
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+jobs:
+  benchmark:
+    uses: vapor/ci/.github/workflows/run-benchmark.yml@main
+    with:
+      sha: ${{ inputs.sha }}
+    secrets: inherit

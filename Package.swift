@@ -1,78 +1,62 @@
-// swift-tools-version:6.1
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
     name: "console-kit",
     platforms: [
-        .macOS(.v10_15),
-        .iOS(.v13),
-        .watchOS(.v6),
-        .tvOS(.v13),
+        .macOS(.v15),
+        .iOS(.v18),
+        .watchOS(.v11),
+        .tvOS(.v18),
     ],
     products: [
         .library(name: "ConsoleKit", targets: ["ConsoleKit"]),
-        .library(name: "ConsoleKitTerminal", targets: ["ConsoleKitTerminal"]),
-        .library(name: "ConsoleKitCommands", targets: ["ConsoleKitCommands"]),
+        .library(name: "ConsoleLogger", targets: ["ConsoleLogger"]),
+    ],
+    traits: [
+        .trait(name: "ConfigReader", description: "Create ConsoleLogger using Swift Configuration"),
+        .default(enabledTraits: ["ConfigReader"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.11.0"),
-        .package(url: "https://github.com/apple/swift-nio.git", from: "2.97.0"),
+        .package(url: "https://github.com/apple/swift-async-algorithms.git", from: "1.1.1"),
+        .package(url: "https://github.com/apple/swift-configuration.git", from: "1.0.0", traits: [.defaults, "CommandLineArguments"]),
     ],
     targets: [
         .target(
             name: "ConsoleKit",
             dependencies: [
-                .target(name: "ConsoleKitCommands"),
-                .target(name: "ConsoleKitTerminal"),
-            ],
-            swiftSettings: swiftSettings
-        ),
-        .target(
-            name: "ConsoleKitCommands",
-            dependencies: [
-                .product(name: "Logging", package: "swift-log"),
-                .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
-                .target(name: "ConsoleKitTerminal"),
-            ],
-            swiftSettings: swiftSettings
-        ),
-        .target(
-            name: "ConsoleKitTerminal",
-            dependencies: [
-                .product(name: "Logging", package: "swift-log"),
-                .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms")
             ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "ConsoleKitTests",
-            dependencies: [.target(name: "ConsoleKit")],
+            dependencies: [
+                .target(name: "ConsoleKit")
+            ],
+            swiftSettings: swiftSettings
+        ),
+        .target(
+            name: "ConsoleLogger",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "Configuration", package: "swift-configuration", condition: .when(traits: ["ConfigReader"])),
+            ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "AsyncConsoleKitTests",
-            dependencies: [.target(name: "ConsoleKit")],
-            swiftSettings: swiftSettings
-        ),
-        .testTarget(
-            name: "ConsoleKitPerformanceTests",
-            dependencies: [.target(name: "ConsoleKit")],
-            swiftSettings: swiftSettings
-        ),
-        .executableTarget(
-            name: "ConsoleKitExample",
-            dependencies: [.target(name: "ConsoleKit")],
-            swiftSettings: swiftSettings
-        ),
-        .executableTarget(
-            name: "ConsoleKitAsyncExample",
-            dependencies: [.target(name: "ConsoleKit")],
+            name: "ConsoleLoggerTests",
+            dependencies: [
+                .target(name: "ConsoleLogger"),
+                .product(name: "Configuration", package: "swift-configuration", condition: .when(traits: ["ConfigReader"])),
+            ],
             swiftSettings: swiftSettings
         ),
         .executableTarget(
             name: "ConsoleLoggerExample",
             dependencies: [
-                .target(name: "ConsoleKit"),
+                .target(name: "ConsoleLogger"),
                 .product(name: "Logging", package: "swift-log"),
             ],
             swiftSettings: swiftSettings
@@ -80,11 +64,13 @@ let package = Package(
     ]
 )
 
-var swiftSettings: [SwiftSetting] { [
-    .enableUpcomingFeature("ExistentialAny"),
-    //.enableUpcomingFeature("InternalImportsByDefault"),
-    .enableUpcomingFeature("MemberImportVisibility"),
-    .enableUpcomingFeature("InferIsolatedConformances"),
-    //.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-    .enableUpcomingFeature("ImmutableWeakCaptures"),
-] }
+var swiftSettings: [SwiftSetting] {
+    [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("InferIsolatedConformances"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+        .enableUpcomingFeature("ImmutableWeakCaptures"),
+    ]
+}

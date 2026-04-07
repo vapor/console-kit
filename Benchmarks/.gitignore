@@ -1,0 +1,10 @@
+.build
+Packages
+*.xcodeproj
+Package.pins
+Package.resolved
+.DS_Store
+DerivedData
+.swiftpm
+Tests/LinuxMain.swift
+.vscode

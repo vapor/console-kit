@@ -9,5 +9,44 @@
 <a href="https://codecov.io/gh/vapor/console-kit"><img src="https://img.shields.io/codecov/c/gh/vapor/console-kit?style=plastic&logo=codecov&label=codecov" alt="Code Coverage"></a>
 <a href="https://swift.org"><img src="https://design.vapor.codes/images/swift61up.svg" alt="Swift 6.1+"></a>
 </p>
+
 <br>
-Utilities for interacting with a terminal and the commandline in a Swift application.
+
+💻 Utilities for interacting with a terminal and the command line in a Swift application.
+
+## Overview
+
+`ConsoleKit` provides utilities for interacting with a console in a Swift application. It provides:
+
+* Utilities for sending text (including styles and colors, when supported) to and reading input from a terminal.
+* ``ConsoleLogger``, a [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementation for customizable logging to a console.
+
+### Supported Platforms
+
+ConsoleKit supports all platforms supported by Swift 6.1 and later.
+
+### Installation
+
+Use the SPM string to easily include the dependendency in your `Package.swift` file
+
+```swift
+.package(url: "https://github.com/vapor/console-kit.git", from: "5.0.0")
+```
+
+### CLI Tools
+
+To use `ConsoleKit`, add it to your target's dependencies:
+
+```swift
+.product(name: "ConsoleKit", package: "console-kit")
+```
+
+### Logging
+
+`ConsoleLogger` is a flexible logging backend for console applications, allowing developers to customize log output with various fragments, including timestamps, log levels, and source locations.
+
+To use `ConsoleLogger`, add it to your target's dependencies:
+
+```swift
+.product(name: "ConsoleLogger", package: "console-kit")
+```

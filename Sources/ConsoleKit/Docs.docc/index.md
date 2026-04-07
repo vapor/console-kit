@@ -4,6 +4,36 @@
     @TitleHeading(Package)
 }
 
-Utilities for interacting with a terminal and the commandline in a Swift application.
+💻 APIs for creating interactive CLI tools.
 
-`ConsoleKit` is an umbrella module, exporting [ConsoleKitTerminal](https://api.vapor.codes/consolekitterminal/documentation/consolekitterminal/) and [ConsoleKitCommands](https://api.vapor.codes/consolekitcommands/documentation/consolekitcommands/). It has no separate functionality of its own.
+## Overview
+
+`ConsoleKit` provides utilities for interacting with a console in a Swift application. It provides:
+
+* Utilities for sending text (including styles and colors, when supported) to a terminal.
+* Utilities for reading input from a terminal.
+
+## Topics
+
+### Terminal
+
+- ``Console``
+- ``Terminal``
+- ``ConsoleColor``
+- ``ConsoleStyle``
+- ``ConsoleClear``
+- ``ConsoleText``
+- ``ConsoleTextFragment``
+- ``+(_:_:)``
+- ``+=(_:_:)``
+- ``ConsoleKit/Swift/StringProtocol``
+
+### Activity
+
+- ``ActivityIndicator``
+- ``ActivityIndicatorType``
+- ``ActivityIndicatorState``
+- ``ActivityBar``
+- ``LoadingBar``
+- ``ProgressBar``
+- ``CustomActivity``
