@@ -22,7 +22,6 @@ A `SwiftLog` `LogHandler` implementation for customizable logging to a console.
 
 - ``LoggerFragment``
 - ``LoggerFragmentBuilder``
-- ``LoggerSpacedFragmentBuilder``
 - ``FragmentOutput``
 - ``IfMaxLevelFragment``
 - ``AndFragment``

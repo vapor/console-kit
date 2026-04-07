@@ -58,13 +58,14 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     ///   - metadata: Extra metadata to log with the message. Defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to use for this logger. Defaults to `nil`.
     ///   - fragment: The ``LoggerFragment`` this logger outputs through.
+    @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
     public init(
         printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
         label: String,
         level: Logger.Level = .debug,
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil,
-        @LoggerFragmentBuilder fragment: () -> T
+        @LoggerFragmentBuilder<0> fragment: () -> T
     ) {
         self.fragment = fragment()
         self.printer = printer
@@ -115,13 +116,14 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
     ///   - metadata: Extra metadata to log with the message. This defaults to an empty dictionary.
     ///   - metadataProvider: The metadata provider to use for this logger. This defaults to `nil`.
     ///   - fragment: The ``LoggerFragment`` this logger outputs through.
+    @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
     public init(
         printer: any ConsoleLoggerPrinter = DefaultConsoleLoggerPrinter(),
         label: String,
         config: ConfigReader,
         metadata: Logger.Metadata = [:],
         metadataProvider: Logger.MetadataProvider? = nil,
-        @LoggerFragmentBuilder fragment: () -> T
+        @LoggerFragmentBuilder<0> fragment: () -> T
     ) {
         self.fragment = fragment()
         self.printer = printer
