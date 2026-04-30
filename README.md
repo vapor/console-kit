@@ -38,7 +38,7 @@ ConsoleKit supports all platforms supported by Swift 6.2 and later.
 
 ### Installation
 
-Use the SPM string to easily include the dependendency in your `Package.swift` file
+Use the Github repository URL to add the dependency to your `Package.swift` manifest:
 
 ```swift
 .package(url: "https://github.com/vapor/console-kit.git", from: "5.0.0")
