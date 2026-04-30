@@ -8,7 +8,18 @@
 <a href="https://github.com/vapor/console-kit/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/vapor/console-kit/test.yml?event=push&style=plastic&logo=github&label=tests&logoColor=ccc" alt="Continuous Integration"></a>
 <a href="https://codecov.io/gh/vapor/console-kit"><img src="https://img.shields.io/codecov/c/gh/vapor/console-kit?style=plastic&logo=codecov&label=codecov" alt="Code Coverage"></a>
 <a href="https://swift.org"><img src="https://design.vapor.codes/images/swift62up.svg" alt="Swift 6.2+"></a>
-</p>
+<div align="center">
+<img src="https://design.vapor.codes/images/vapor-consolekit.svg" height="96" alt="ConsoleKit">
+<br>
+
+[![Documentation](https://design.vapor.codes/images/readthedocs.svg)](https://docs.vapor.codes/4.0/)
+[![Team Chat](https://design.vapor.codes/images/discordchat.svg)](https://discord.gg/vapor)
+[![MIT License](https://design.vapor.codes/images/mitlicense.svg)](LICENSE)
+[![Continuous Integration](https://img.shields.io/github/actions/workflow/status/vapor/console-kit/test.yml?event=push&style=plastic&logo=github&label=tests&logoColor=ccc)](https://github.com/vapor/console-kit/actions/workflows/test.yml)
+[![Code Coverage](https://img.shields.io/codecov/c/gh/vapor/console-kit?style=plastic&logo=codecov&label=codecov)](https://codecov.io/gh/vapor/console-kit)
+[![Swift 6.2+](https://design.vapor.codes/images/swift62up.svg)](https://swift.org)
+
+</div>
 
 <br>
 
