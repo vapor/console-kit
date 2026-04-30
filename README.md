@@ -30,7 +30,7 @@
 `ConsoleKit` provides utilities for interacting with a console in a Swift application. It provides:
 
 * Utilities for sending text (including styles and colors, when supported) to and reading input from a terminal.
-* ``ConsoleLogger``, a [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementation for customizable logging to a console.
+* `ConsoleLogger`, a [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementation for customizable logging to a console.
 
 ### Supported Platforms
 
