@@ -7,7 +7,7 @@
 <a href="LICENSE"><img src="https://design.vapor.codes/images/mitlicense.svg" alt="MIT License"></a>
 <a href="https://github.com/vapor/console-kit/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/vapor/console-kit/test.yml?event=push&style=plastic&logo=github&label=tests&logoColor=ccc" alt="Continuous Integration"></a>
 <a href="https://codecov.io/gh/vapor/console-kit"><img src="https://img.shields.io/codecov/c/gh/vapor/console-kit?style=plastic&logo=codecov&label=codecov" alt="Code Coverage"></a>
-<a href="https://swift.org"><img src="https://design.vapor.codes/images/swift61up.svg" alt="Swift 6.1+"></a>
+<a href="https://swift.org"><img src="https://design.vapor.codes/images/swift62up.svg" alt="Swift 6.2+"></a>
 </p>
 
 <br>
@@ -23,7 +23,7 @@
 
 ### Supported Platforms
 
-ConsoleKit supports all platforms supported by Swift 6.1 and later.
+ConsoleKit supports all platforms supported by Swift 6.2 and later.
 
 ### Installation
 
