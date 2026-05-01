@@ -1,14 +1,15 @@
-<p align="center">
+<div align="center">
 <img src="https://design.vapor.codes/images/vapor-consolekit.svg" height="96" alt="ConsoleKit">
 <br>
-<br>
-<a href="https://docs.vapor.codes/4.0/"><img src="https://design.vapor.codes/images/readthedocs.svg" alt="Documentation"></a>
-<a href="https://discord.gg/vapor"><img src="https://design.vapor.codes/images/discordchat.svg" alt="Team Chat"></a>
-<a href="LICENSE"><img src="https://design.vapor.codes/images/mitlicense.svg" alt="MIT License"></a>
-<a href="https://github.com/vapor/console-kit/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/vapor/console-kit/test.yml?event=push&style=plastic&logo=github&label=tests&logoColor=ccc" alt="Continuous Integration"></a>
-<a href="https://codecov.io/gh/vapor/console-kit"><img src="https://img.shields.io/codecov/c/gh/vapor/console-kit?style=plastic&logo=codecov&label=codecov" alt="Code Coverage"></a>
-<a href="https://swift.org"><img src="https://design.vapor.codes/images/swift61up.svg" alt="Swift 6.1+"></a>
-</p>
+
+[![Documentation](https://design.vapor.codes/images/readthedocs.svg)](https://docs.vapor.codes/4.0/)
+[![Team Chat](https://design.vapor.codes/images/discordchat.svg)](https://discord.gg/vapor)
+[![MIT License](https://design.vapor.codes/images/mitlicense.svg)](LICENSE)
+[![Continuous Integration](https://img.shields.io/github/actions/workflow/status/vapor/console-kit/test.yml?event=push&style=plastic&logo=github&label=tests&logoColor=ccc)](https://github.com/vapor/console-kit/actions/workflows/test.yml)
+[![Code Coverage](https://img.shields.io/codecov/c/gh/vapor/console-kit?style=plastic&logo=codecov&label=codecov)](https://codecov.io/gh/vapor/console-kit)
+[![Swift 6.2+](https://design.vapor.codes/images/swift62up.svg)](https://swift.org)
+
+</div>
 
 <br>
 
@@ -19,15 +20,15 @@
 `ConsoleKit` provides utilities for interacting with a console in a Swift application. It provides:
 
 * Utilities for sending text (including styles and colors, when supported) to and reading input from a terminal.
-* ``ConsoleLogger``, a [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementation for customizable logging to a console.
+* `ConsoleLogger`, a [SwiftLog](https://github.com/apple/swift-log) `LogHandler` implementation for customizable logging to a console.
 
 ### Supported Platforms
 
-ConsoleKit supports all platforms supported by Swift 6.1 and later.
+ConsoleKit supports all platforms supported by Swift 6.2 and later.
 
 ### Installation
 
-Use the SPM string to easily include the dependendency in your `Package.swift` file
+Use the Github repository URL to add the dependency to your `Package.swift` manifest:
 
 ```swift
 .package(url: "https://github.com/vapor/console-kit.git", from: "5.0.0")
