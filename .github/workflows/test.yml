@@ -28,7 +28,7 @@ jobs:
     container: swift:noble
     steps:
       - name: Check out ConsoleKit
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Run tests with traits disabled
         run: swift test --disable-default-traits
 
@@ -43,9 +43,9 @@ jobs:
   #   runs-on: ubuntu-latest
   #   container: swift:noble
   #   steps:
-  #     - uses: actions/checkout@v6
+  #     - uses: actions/checkout@v7
   #       with: { path: console-kit }
-  #     - uses: actions/checkout@v6
+  #     - uses: actions/checkout@v7
   #       with: { repository: 'vapor/vapor', path: vapor }
   #     - run: swift package --package-path vapor edit console-kit --path console-kit
   #     - run: swift test --package-path vapor
