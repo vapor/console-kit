@@ -3,15 +3,15 @@ on:
   push:
     branches:
       - main
+      - v4
 permissions:
   contents: read
   id-token: write
 
 jobs:
   build-and-deploy:
-     uses: vapor/api-docs/.github/workflows/build-and-deploy-docs-workflow.yml@main
-     secrets: inherit
-     with:
-       package_name: console-kit
-       modules: ConsoleKit,ConsoleLogger
-       pathsToInvalidate: /consolekit/* /consolelogger/*
+    uses: vapor/api-docs/.github/workflows/deploy.yml@main
+    secrets: inherit
+    with:
+      package: console-kit
+      ref: ${{ github.ref_name }}
