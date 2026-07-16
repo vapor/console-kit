@@ -2,4 +2,4 @@ version: 1
 metadata:
   authors: "Maintained by the Vapor Core Team with hundreds of contributions from the Vapor Community."
 external_links:
-  documentation: "https://api.vapor.codes/consolekit/documentation/consolekit/"
+  documentation: "https://api.vapor.codes/consolekit"
