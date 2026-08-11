@@ -10,7 +10,6 @@ import Darwin
 #elseif canImport(Musl)
 @preconcurrency import Musl
 #endif
-//import Dispatch
 
 /// This implementation of `readpassphrase()`, used only on Linux where it's extremely difficult to get at the `libbsd`
 /// API even when it is definitely present, is even less tolerant of being called on multiple threads at once than the
@@ -54,11 +53,6 @@ internal func linux_readpassphrase(
     // Reset the signal counts and install a recovery handler onto a whole buncha signals
     linux_readpassphrase_signos.reset()
     var sigrecovery = sigaction()
-    var sigsave = sigaction()
-    var sigsaves: [Int32: sigaction] = [
-        SIGALRM: .init(), SIGHUP: .init(), SIGINT: .init(), SIGPIPE: .init(), SIGQUIT: .init(),
-        SIGTERM: .init(), SIGTSTP: .init(), SIGTTIN: .init(), SIGTTOU: .init(),
-    ]
     sigemptyset(&sigrecovery.sa_mask)
     sigrecovery.sa_flags = 0
     #if canImport(Darwin)
@@ -70,10 +64,7 @@ internal func linux_readpassphrase(
     #elseif os(Android)
     sigrecovery.sa_handler = { linux_readpassphrase_signos[$0] += 1 }
     #endif
-    for (sig, _) in sigsaves {
-        sigaction(sig, &sigrecovery, &sigsave)
-        sigsaves[sig] = sigsave
-    }
+    let sigsaves = linux_readpassphrase_installHandlers(linux_readpassphrase_signals, &sigrecovery)
 
     // Loop over a read() call, character by character. At the end, null-terminate. If echo is disabled, write a newline.
     var i = 0
@@ -102,7 +93,7 @@ internal func linux_readpassphrase(
     }
 
     // Restore signal handlers
-    for (sig, var sa) in sigsaves { sigaction(sig, &sa, nil) }
+    linux_readpassphrase_restoreHandlers(linux_readpassphrase_signals, sigsaves)
 
     // libbsd closes the TTY fd here. Since we deferred the fd closure, we just hope the difference doesn't cause problems.
 
@@ -118,6 +109,31 @@ internal func linux_readpassphrase(
         errno = save_errno
     }
     return nr == -1 ? nil : buf
+}
+
+// MARK: - Workaround for https://github.com/swiftlang/swift/issues/91387
+internal let linux_readpassphrase_signals: [Int32] = [
+    SIGALRM, SIGHUP, SIGINT, SIGPIPE, SIGQUIT, SIGTERM, SIGTSTP, SIGTTIN, SIGTTOU,
+]
+
+internal func linux_readpassphrase_installHandlers(_ signals: [Int32], _ handler: inout sigaction) -> [sigaction] {
+    var saved: [sigaction] = .init(repeating: .init(), count: signals.count)
+    var previous = sigaction()
+
+    for (i, signo) in signals.enumerated() {
+        sigaction(signo, &handler, &previous)
+        saved[i] = previous
+    }
+    return saved
+}
+
+internal func linux_readpassphrase_restoreHandlers(_ signals: [Int32], _ saved: [sigaction]) {
+    precondition(signals.count == saved.count, "Each signal must have exactly one saved disposition")
+
+    for (i, signo) in signals.enumerated() {
+        var sa = saved[i]
+        sigaction(signo, &sa, nil)
+    }
 }
 
 /// Used for signal recovery by `linux_readpassphrase()`. This is `static volatile` storage in the original.
