@@ -14,9 +14,11 @@ jobs:
       contents: read
     uses: vapor/ci/.github/workflows/run-unit-tests.yml@main
     with:
+      with_release_mode_testing: true
       with_windows: true
       with_musl: true
       with_android: true
+      # with_wasm: true
       with_linting: true
       enable_all_traits: true
     secrets: inherit
@@ -38,6 +40,13 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     uses: vapor/ci/.github/workflows/submit-deps.yml@main
     secrets: inherit
+
+  foundation-linking:
+    uses: vapor/ci/.github/workflows/check-foundation-linking.yml@main
+    permissions:
+      contents: read
+    with:
+      swift_image: swift:6.3-noble
 
   # integration-check:
   #   runs-on: ubuntu-latest
