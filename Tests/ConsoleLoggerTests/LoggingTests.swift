@@ -142,6 +142,15 @@ struct ConsoleLoggerTests {
 
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
+            #if os(Windows)
+            var time = tm()
+            time.tm_sec = 1
+            time.tm_min = 2
+            time.tm_hour = 3
+            time.tm_mday = 4
+            time.tm_mon = 5
+            time.tm_year = 100
+            #else
             var time = unsafe tm()
             unsafe time.tm_sec = 1
             unsafe time.tm_min = 2
@@ -149,6 +158,7 @@ struct ConsoleLoggerTests {
             unsafe time.tm_mday = 4
             unsafe time.tm_mon = 5
             unsafe time.tm_year = 100
+            #endif
 
             return unsafe ConsoleLogger(
                 fragment: .timestampDefault(timestampSource: ConstantTimestampSource(time: time)),
