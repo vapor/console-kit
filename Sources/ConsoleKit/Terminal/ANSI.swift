@@ -1,11 +1,11 @@
 #if canImport(Darwin)
 import Darwin.C
 #elseif canImport(Glibc)
-@preconcurrency import Glibc
+@unsafe @preconcurrency import Glibc
 #elseif canImport(Musl)
-@preconcurrency import Musl
+@unsafe @preconcurrency import Musl
 #elseif canImport(Android)
-@preconcurrency import Android
+@unsafe @preconcurrency import Android
 #elseif os(WASI)
 import WASILibc
 #elseif os(Windows)

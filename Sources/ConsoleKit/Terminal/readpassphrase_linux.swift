@@ -4,11 +4,11 @@
 #if canImport(Darwin)
 import Darwin
 #elseif canImport(Glibc)
-@preconcurrency import Glibc
+@unsafe @preconcurrency import Glibc
 #elseif canImport(Android)
-@preconcurrency import Android
+@unsafe @preconcurrency import Android
 #elseif canImport(Musl)
-@preconcurrency import Musl
+@unsafe @preconcurrency import Musl
 #endif
 
 /// This implementation of `readpassphrase()`, used only on Linux where it's extremely difficult to get at the `libbsd`
