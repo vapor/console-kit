@@ -61,9 +61,9 @@ extension Terminal {
         // fdopen() on stdout is fast; also the returned file MUST NOT be fclose()d
         // This avoids concurrency complaints due to accessing global `stdout`.
         #if os(Windows)
-        fflush(_fdopen(_fileno(stdout), "w+"))
+        unsafe fflush(_fdopen(_fileno(stdout), "w+"))
         #else
-        fflush(fdopen(STDOUT_FILENO, "w+"))
+        unsafe fflush(fdopen(STDOUT_FILENO, "w+"))
         #endif
     }
 }

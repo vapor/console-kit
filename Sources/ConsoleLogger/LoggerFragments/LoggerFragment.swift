@@ -321,10 +321,10 @@ public struct SystemTimestampSource: TimestampSource {
         _ = _localtime64_s(&localTime, &timestamp)
         #else
         var timestamp = time(nil)
-        var localTime = tm()
-        localtime_r(&timestamp, &localTime)
+        var localTime = unsafe tm()
+        unsafe localtime_r(&timestamp, &localTime)
         #endif
-        return localTime
+        return unsafe localTime
     }
 }
 
@@ -342,13 +342,13 @@ public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
     }
 
     private func timestamp() -> String {
-        withUnsafeTemporaryAllocation(of: CChar.self, capacity: 255) {
-            var localTime = self.source.now()
+        unsafe withUnsafeTemporaryAllocation(of: CChar.self, capacity: 255) {
+            var localTime = unsafe self.source.now()
 
-            guard strftime($0.baseAddress!, $0.count, "%Y-%m-%dT%H:%M:%S%z", &localTime) > 0 else {
+            guard unsafe strftime($0.baseAddress!, $0.count, "%Y-%m-%dT%H:%M:%S%z", &localTime) > 0 else {
                 return "<unknown>"
             }
-            return String(cString: $0.baseAddress!)
+            return unsafe String(cString: $0.baseAddress!)
         }
     }
 }
