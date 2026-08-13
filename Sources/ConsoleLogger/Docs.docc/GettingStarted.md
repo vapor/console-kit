@@ -16,7 +16,7 @@ You then pass the resulting fragment to the ``ConsoleLogger``, which is a `Swift
 
 `ConsoleLogger` includes a couple of default ``LoggerFragment``s that can be used out of the box:
 
-- ``LoggerFragment/default``, which outputs the label of the logger, the level of the logged message, the logged message itself, the metadata and the file location of the logged message, including the line.
+- ``LoggerFragment/default``, which outputs the label of the logger, the level of the logged message, the logged message itself, the error and metadata, and the file location of the logged message, including the line.
 - ``LoggerFragment/timestampDefault(timestampSource:)``, which adds a timestamp at the front of the default fragment.
 
 ### Creating a LoggerFragment
@@ -27,6 +27,7 @@ As an example, here's how to recreate the ``LoggerFragment/default`` fragment st
 ```swift
 let myDefaultLoggerFragment = LabelFragment().maxLevel(.trace)
     .and(LevelFragment().separated(" ").and(MessageFragment().separated(" ")))
+    .and(ErrorFragment().separated(" "))
     .and(MetadataFragment().separated(" "))
     .and(SourceLocationFragment().separated(" ").maxLevel(.debug))
 ```
@@ -39,6 +40,7 @@ let myDefaultLoggerFragment = SpacedFragment {
     LabelFragment().maxLevel(.trace)
     LevelFragment()
     MessageFragment()
+    ErrorFragment()
     MetadataFragment()
     SourceLocationFragment().maxLevel(.debug)
 }
@@ -64,6 +66,7 @@ Here's a list of all the fragments available out of the box in `ConsoleLogger`:
 - ``SeparatorFragment``
 - ``SpacedFragment``
 - ``MessageFragment``
+- ``ErrorFragment``
 - ``MetadataFragment``
 - ``SourceLocationFragment``
 - ``LoggerSourceFragment``

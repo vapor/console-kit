@@ -5,6 +5,7 @@ public struct LogRecord {
     public init(
         level: Logger.Level,
         message: Logger.Message,
+        error: (any Error)?,
         metadata: Logger.Metadata? = nil,
         source: String,
         file: String,
@@ -17,6 +18,7 @@ public struct LogRecord {
     ) {
         self.level = level
         self.message = message
+        self.error = error
         self.metadata = metadata
         self.source = source
         self.file = file
@@ -32,6 +34,8 @@ public struct LogRecord {
     public var level: Logger.Level
     /// The logged message
     public var message: Logger.Message
+    /// The error associated with the logged message
+    public var error: (any Error)?
     /// The metadata explicitly associated with the logged message
     public var metadata: Logger.Metadata?
     /// The source of the log message, usually the module name

@@ -73,6 +73,26 @@ struct LoggerFragmentBuilderTests {
     }
 
     @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
+    @Test("Error Fragment")
+    func errorFragment() throws {
+        let printer = TestingConsoleLoggerPrinter()
+
+        @LoggerFragmentBuilder<0>
+        var fragment: some LoggerFragment {
+            MessageFragment()
+            ErrorFragment()
+        }
+
+        let logger = Logger(label: "codes.vapor.console") { label in
+            ConsoleLogger(fragment: fragment, printer: printer, label: label)
+        }
+
+        logger.info("Test message", error: TestError())
+
+        #expect(printer.testOutputQueue.first == "Test message[ ConsoleLoggerTests.TestError: Something went wrong! ]")
+    }
+
+    @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
     @Test("Conditional Fragment", arguments: [true, false])
     func conditionalFragment(includeTimestamp: Bool) throws {
         let printer = TestingConsoleLoggerPrinter()

@@ -259,6 +259,21 @@ public struct MessageFragment: LoggerFragment {
     }
 }
 
+/// Writes the logger error to the output, and requests a separator for the next fragment only if the error was not nil
+public struct ErrorFragment: LoggerFragment {
+    public init() {}
+
+    public func hasContent(record: inout LogRecord) -> Bool {
+        record.error != nil
+    }
+
+    public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
+        guard let error = record.error else { return }
+        output += "[ \(String(reflecting: type(of: error))): \(error) ]"
+        output.needsSeparator = true
+    }
+}
+
 /// Writes the combined metadata to the output, and requests a separator for the next fragment only if the metadata was not empty.
 ///
 /// This fragment is considered to not have content if the metadata is empty.

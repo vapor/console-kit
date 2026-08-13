@@ -3,7 +3,13 @@ import Logging
 /// The type of the default ``LoggerFragment``.
 public typealias DefaultLoggerFragmentType = AndFragment<
     AndFragment<
-        AndFragment<IfMaxLevelFragment<LabelFragment>, AndFragment<SeparatorFragment<LevelFragment>, SeparatorFragment<MessageFragment>>>,
+        AndFragment<
+            AndFragment<
+                IfMaxLevelFragment<LabelFragment>,
+                AndFragment<SeparatorFragment<LevelFragment>, SeparatorFragment<MessageFragment>>
+            >,
+            SeparatorFragment<ErrorFragment>
+        >,
         SeparatorFragment<MetadataFragment>
     >,
     IfMaxLevelFragment<SeparatorFragment<SourceLocationFragment>>
@@ -14,6 +20,7 @@ extension LoggerFragment where Self == DefaultLoggerFragmentType {
     public static var `default`: DefaultLoggerFragmentType {
         LabelFragment().maxLevel(.trace)
             .and(LevelFragment().separated(" ").and(MessageFragment().separated(" ")))
+            .and(ErrorFragment().separated(" "))
             .and(MetadataFragment().separated(" "))
             .and(SourceLocationFragment().separated(" ").maxLevel(.debug))
     }

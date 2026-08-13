@@ -69,6 +69,17 @@ struct ConsoleLoggerTests {
         expect(printer: printer, logs: .critical, message: "critical")
     }
 
+    @Test("Error")
+    func error() {
+        let printer = TestingConsoleLoggerPrinter()
+        let logger = Logger(label: "codes.vapor.console") { label in
+            ConsoleLogger(printer: printer, label: label, level: .info)
+        }
+
+        logger.warning("warning", error: TestError())
+        expect(printer: printer, logs: .warning, message: "warning [ ConsoleLoggerTests.TestError: Something went wrong! ]")
+    }
+
     @Test("Metadata")
     func metadata() {
         let printer = TestingConsoleLoggerPrinter()
