@@ -111,7 +111,7 @@ extension Console {
         // Xcode output does not support ANSI commands
         return false
         #elseif os(Windows)
-        return _isatty(_fileno(stdout)) > 0
+        return unsafe _isatty(_fileno(stdout)) > 0
         #else
         // If STDOUT is not an interactive terminal then omit ANSI commands
         return isatty(STDOUT_FILENO) > 0

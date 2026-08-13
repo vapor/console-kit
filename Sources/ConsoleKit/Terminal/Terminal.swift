@@ -158,8 +158,11 @@ public final class Terminal: Console, Sendable {
     public var size: (width: Int, height: Int) {
         #if os(Windows)
         var csbi = CONSOLE_SCREEN_BUFFER_INFO()
-        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)
+        unsafe GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)
         return (Int(csbi.dwSize.X), Int(csbi.dwSize.Y))
+        #elseif os(WASI)
+        // WASI has no `ioctl`/`TIOCGWINSZ`/`winsize`, so return `0, 0` as "unknown size".
+        return (0, 0)
         #else
         var w = winsize()
         _ = unsafe ioctl(STDOUT_FILENO, UInt(TIOCGWINSZ), &w)
