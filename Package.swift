@@ -66,6 +66,12 @@ let package = Package(
 
 var swiftSettings: [SwiftSetting] {
     [
+        .treatAllWarnings(as: .error),
+        .strictMemorySafety(),
+        .enableExperimentalFeature("SuppressedAssociatedTypesWithDefaults"),
+        .enableExperimentalFeature("LifetimeDependence"),
+        .enableExperimentalFeature("Lifetimes"),
+        .enableUpcomingFeature("LifetimeDependence"),
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),

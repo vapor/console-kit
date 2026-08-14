@@ -3,11 +3,11 @@ public import Logging
 #if canImport(Darwin)
 public import Darwin
 #elseif canImport(Glibc)
-@preconcurrency public import Glibc
+@unsafe @preconcurrency public import Glibc
 #elseif canImport(Musl)
-@preconcurrency public import Musl
+@unsafe @preconcurrency public import Musl
 #elseif canImport(Android)
-@preconcurrency public import Android
+@unsafe @preconcurrency public import Android
 #elseif os(WASI)
 public import WASILibc
 #elseif os(Windows)
@@ -332,14 +332,15 @@ public struct SystemTimestampSource: TimestampSource {
         #if os(Windows)
         var timestamp = __time64_t()
         var localTime = tm()
-        _ = _time64(&timestamp)
-        _ = _localtime64_s(&localTime, &timestamp)
+        _ = unsafe _time64(&timestamp)
+        _ = unsafe _localtime64_s(&localTime, &timestamp)
+        return localTime
         #else
         var timestamp = time(nil)
-        var localTime = tm()
-        localtime_r(&timestamp, &localTime)
+        var localTime = unsafe tm()
+        unsafe localtime_r(&timestamp, &localTime)
+        return unsafe localTime
         #endif
-        return localTime
     }
 }
 
@@ -357,13 +358,17 @@ public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
     }
 
     private func timestamp() -> String {
-        withUnsafeTemporaryAllocation(of: CChar.self, capacity: 255) {
+        unsafe withUnsafeTemporaryAllocation(of: CChar.self, capacity: 255) {
+            #if os(Windows)
             var localTime = self.source.now()
+            #else
+            var localTime = unsafe self.source.now()
+            #endif
 
-            guard strftime($0.baseAddress!, $0.count, "%Y-%m-%dT%H:%M:%S%z", &localTime) > 0 else {
+            guard unsafe strftime($0.baseAddress!, $0.count, "%Y-%m-%dT%H:%M:%S%z", &localTime) > 0 else {
                 return "<unknown>"
             }
-            return String(cString: $0.baseAddress!)
+            return unsafe String(cString: $0.baseAddress!)
         }
     }
 }

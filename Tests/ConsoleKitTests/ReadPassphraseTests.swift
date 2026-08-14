@@ -17,25 +17,25 @@ import Musl
 struct ReadPassphraseTests {
     private func handler(of sa: sigaction) -> UInt {
         #if canImport(Darwin)
-        return unsafeBitCast(sa.__sigaction_u.__sa_handler, to: UInt.self)
+        return unsafe unsafeBitCast(sa.__sigaction_u.__sa_handler, to: UInt.self)
         #elseif canImport(Glibc)
-        return unsafeBitCast(sa.__sigaction_handler.sa_handler, to: UInt.self)
+        return unsafe unsafeBitCast(sa.__sigaction_handler.sa_handler, to: UInt.self)
         #elseif canImport(Musl)
-        return unsafeBitCast(sa.__sa_handler.sa_handler, to: UInt.self)
+        return unsafe unsafeBitCast(sa.__sa_handler.sa_handler, to: UInt.self)
         #elseif os(Android)
-        return unsafeBitCast(sa.sa_handler, to: UInt.self)
+        return unsafe unsafeBitCast(sa.sa_handler, to: UInt.self)
         #endif
     }
 
     private func currentHandler(_ signo: Int32) -> UInt {
         var sa = sigaction()
-        sigaction(signo, nil, &sa)
+        unsafe sigaction(signo, nil, &sa)
         return self.handler(of: sa)
     }
 
     private func makeRecoveryHandler() -> sigaction {
         var sa = sigaction()
-        sigemptyset(&sa.sa_mask)
+        unsafe sigemptyset(&sa.sa_mask)
         sa.sa_flags = 0
         #if canImport(Darwin)
         sa.__sigaction_u = .init(__sa_handler: { _ in })

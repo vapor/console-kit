@@ -5,11 +5,11 @@ import Testing
 #if canImport(Darwin)
 import Darwin.C
 #elseif canImport(Glibc)
-@preconcurrency import Glibc
+@unsafe @preconcurrency import Glibc
 #elseif canImport(Musl)
-@preconcurrency import Musl
+@unsafe @preconcurrency import Musl
 #elseif canImport(Android)
-@preconcurrency import Android
+@unsafe @preconcurrency import Android
 #elseif os(WASI)
 import WASILibc
 #elseif os(Windows)
@@ -143,16 +143,17 @@ struct ConsoleLoggerTests {
 
     @Test("Timestamp Fragment")
     func timestampFragment() {
-        struct ConstantTimestampSource: TimestampSource, @unchecked Sendable {
+        @unsafe struct ConstantTimestampSource: TimestampSource, @unchecked Sendable {
             let time: tm
 
             func now() -> tm {
-                self.time
+                unsafe self.time
             }
         }
 
         let printer = TestingConsoleLoggerPrinter()
         let logger = Logger(label: "codes.vapor.console") { label in
+            #if os(Windows)
             var time = tm()
             time.tm_sec = 1
             time.tm_min = 2
@@ -160,8 +161,17 @@ struct ConsoleLoggerTests {
             time.tm_mday = 4
             time.tm_mon = 5
             time.tm_year = 100
+            #else
+            var time = unsafe tm()
+            unsafe time.tm_sec = 1
+            unsafe time.tm_min = 2
+            unsafe time.tm_hour = 3
+            unsafe time.tm_mday = 4
+            unsafe time.tm_mon = 5
+            unsafe time.tm_year = 100
+            #endif
 
-            return ConsoleLogger(
+            return unsafe ConsoleLogger(
                 fragment: .timestampDefault(timestampSource: ConstantTimestampSource(time: time)),
                 printer: printer,
                 label: label

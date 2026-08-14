@@ -3,11 +3,11 @@
 #if canImport(Darwin)
 import Darwin.C
 #elseif canImport(Glibc)
-@preconcurrency import Glibc
+@unsafe @preconcurrency import Glibc
 #elseif canImport(Musl)
-@preconcurrency import Musl
+@unsafe @preconcurrency import Musl
 #elseif canImport(Android)
-@preconcurrency import Android
+@unsafe @preconcurrency import Android
 #elseif os(WASI)
 import WASILibc
 #elseif os(Windows)
@@ -66,26 +66,26 @@ public final class Terminal: Console, Sendable {
             // swift-format-ignore
             func plat_readpassphrase(into buf: UnsafeMutableBufferPointer<Int8>) -> Int {
                 #if canImport(Darwin)
-                let rpp = readpassphrase
+                let rpp = unsafe readpassphrase
                 #else
-                let rpp = linux_readpassphrase
+                let rpp = unsafe linux_readpassphrase
                 let RPP_REQUIRE_TTY = 0 as Int32
                 #endif
 
-                while rpp("", buf.baseAddress!, buf.count, RPP_REQUIRE_TTY) == nil {
+                while unsafe rpp("", buf.baseAddress!, buf.count, RPP_REQUIRE_TTY) == nil {
                     guard errno == EINTR else { return 0 }
                 }
-                return strlen(buf.baseAddress!)
+                return unsafe strlen(buf.baseAddress!)
             }
             // swift-format-ignore
             func readpassphrase_str() -> String {
                 if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
-                    return .init(unsafeUninitializedCapacity: 1024) {
-                        $0.withMemoryRebound(to: Int8.self) { plat_readpassphrase(into: $0) }
+                    return unsafe .init(unsafeUninitializedCapacity: 1024) {
+                        unsafe $0.withMemoryRebound(to: Int8.self) { unsafe plat_readpassphrase(into: $0) }
                     }
                 } else {
-                    return .init(
-                        decoding: [Int8](unsafeUninitializedCapacity: 1024) { $1 = plat_readpassphrase(into: $0) }.map(UInt8.init),
+                    return unsafe .init(
+                        decoding: [Int8](unsafeUninitializedCapacity: 1024) { $1 = unsafe plat_readpassphrase(into: $0) }.map(UInt8.init),
                         as: UTF8.self
                     )
                 }
@@ -140,16 +140,16 @@ public final class Terminal: Console, Sendable {
             output = text.description
         }
         Swift.print(output, terminator: newLine ? "\n" : "")
-        fflush(stdout)
+        unsafe fflush(stdout)
     }
 
     /// See ``Console``
     public func report(error: String, newLine: Bool) {
         for c in (newLine ? "\(error)\n" : error).utf8 {
             #if os(Windows)
-            _putc_nolock(CInt(c), stderr)
+            unsafe _putc_nolock(CInt(c), stderr)
             #else
-            putc_unlocked(CInt(c), stderr)
+            unsafe putc_unlocked(CInt(c), stderr)
             #endif
         }
     }
@@ -158,11 +158,14 @@ public final class Terminal: Console, Sendable {
     public var size: (width: Int, height: Int) {
         #if os(Windows)
         var csbi = CONSOLE_SCREEN_BUFFER_INFO()
-        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)
+        unsafe GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)
         return (Int(csbi.dwSize.X), Int(csbi.dwSize.Y))
+        #elseif os(WASI)
+        // WASI has no `ioctl`/`TIOCGWINSZ`/`winsize`, so return `0, 0` as "unknown size".
+        return (0, 0)
         #else
         var w = winsize()
-        _ = ioctl(STDOUT_FILENO, UInt(TIOCGWINSZ), &w)
+        _ = unsafe ioctl(STDOUT_FILENO, UInt(TIOCGWINSZ), &w)
         return (Int(w.ws_col), Int(w.ws_row))
         #endif
     }
