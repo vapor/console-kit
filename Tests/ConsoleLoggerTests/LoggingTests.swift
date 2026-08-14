@@ -77,7 +77,7 @@ struct ConsoleLoggerTests {
         }
 
         logger.warning("warning", error: TestError())
-        expect(printer: printer, logs: .warning, message: "warning [ ConsoleLoggerTests.TestError: Something went wrong! ]")
+        expect(printer: printer, logs: .warning, message: "warning [ ConsoleLoggerTests.ConsoleLoggerTests.TestError: Boom! ]")
     }
 
     @Test("Metadata")
@@ -217,6 +217,12 @@ struct ConsoleLoggerTests {
         expect(printer: printer, logs: level, message: expectedMessage)
     }
     #endif
+
+    struct TestError: Error, CustomStringConvertible {
+        var description: String {
+            "Boom!"
+        }
+    }
 }
 
 private func expect(

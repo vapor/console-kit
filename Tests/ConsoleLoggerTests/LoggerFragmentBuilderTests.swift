@@ -89,7 +89,7 @@ struct LoggerFragmentBuilderTests {
 
         logger.info("Test message", error: TestError())
 
-        #expect(printer.testOutputQueue.first == "Test message[ ConsoleLoggerTests.TestError: Something went wrong! ]")
+        #expect(printer.testOutputQueue.first == "Test message[ ConsoleLoggerTests.LoggerFragmentBuilderTests.TestError: Boom! ]")
     }
 
     @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
@@ -228,5 +228,11 @@ struct LoggerFragmentBuilderTests {
         // `.separated("")` should not insert any text but also should not consume the `needsSeparator` flag,
         // so the next `.separated(" ")` still inserts a space.
         #expect(printer.testOutputQueue.first == "Hello[ INFO ] Test message")
+    }
+
+    struct TestError: Error, CustomStringConvertible {
+        var description: String {
+            "Boom!"
+        }
     }
 }
