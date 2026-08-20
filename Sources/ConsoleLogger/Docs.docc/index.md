@@ -33,7 +33,6 @@ A `SwiftLog` `LogHandler` implementation for customizable logging to a console.
 - ``SeparatorFragment``
 - ``SpacedFragment``
 - ``MessageFragment``
-- ``ErrorFragment``
 - ``MetadataFragment``
 - ``SourceLocationFragment``
 - ``LoggerSourceFragment``

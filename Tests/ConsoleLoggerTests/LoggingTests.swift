@@ -76,8 +76,12 @@ struct ConsoleLoggerTests {
             ConsoleLogger(printer: printer, label: label, level: .info)
         }
 
-        logger.warning("warning", error: TestError())
-        expect(printer: printer, logs: .warning, message: "warning [ ConsoleLoggerTests.ConsoleLoggerTests.TestError: Boom! ]")
+        logger.warning("warning", error: TestError(), metadata: ["error.message": "Overridden", "error.type": "Overridden"])
+        expect(
+            printer: printer,
+            logs: .warning,
+            message: "warning [error.message: Boom!, error.type: ConsoleLoggerTests.ConsoleLoggerTests.TestError]"
+        )
     }
 
     @Test("Metadata")

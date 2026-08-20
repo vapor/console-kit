@@ -73,14 +73,14 @@ struct LoggerFragmentBuilderTests {
     }
 
     @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
-    @Test("Error Fragment")
-    func errorFragment() throws {
+    @Test("Error Metadata Fragment")
+    func errorMetadataFragment() throws {
         let printer = TestingConsoleLoggerPrinter()
 
         @LoggerFragmentBuilder<0>
         var fragment: some LoggerFragment {
             MessageFragment()
-            ErrorFragment()
+            MetadataFragment()
         }
 
         let logger = Logger(label: "codes.vapor.console") { label in
@@ -89,7 +89,10 @@ struct LoggerFragmentBuilderTests {
 
         logger.info("Test message", error: TestError())
 
-        #expect(printer.testOutputQueue.first == "Test message[ ConsoleLoggerTests.LoggerFragmentBuilderTests.TestError: Boom! ]")
+        #expect(
+            printer.testOutputQueue.first
+                == "Test message[error.message: Boom!, error.type: ConsoleLoggerTests.LoggerFragmentBuilderTests.TestError]"
+        )
     }
 
     @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)

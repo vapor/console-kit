@@ -27,7 +27,6 @@ As an example, here's how to recreate the ``LoggerFragment/default`` fragment st
 ```swift
 let myDefaultLoggerFragment = LabelFragment().maxLevel(.trace)
     .and(LevelFragment().separated(" ").and(MessageFragment().separated(" ")))
-    .and(ErrorFragment().separated(" "))
     .and(MetadataFragment().separated(" "))
     .and(SourceLocationFragment().separated(" ").maxLevel(.debug))
 ```
@@ -40,7 +39,6 @@ let myDefaultLoggerFragment = SpacedFragment {
     LabelFragment().maxLevel(.trace)
     LevelFragment()
     MessageFragment()
-    ErrorFragment()
     MetadataFragment()
     SourceLocationFragment().maxLevel(.debug)
 }
@@ -66,7 +64,6 @@ Here's a list of all the fragments available out of the box in `ConsoleLogger`:
 - ``SeparatorFragment``
 - ``SpacedFragment``
 - ``MessageFragment``
-- ``ErrorFragment``
 - ``MetadataFragment``
 - ``SourceLocationFragment``
 - ``LoggerSourceFragment``
