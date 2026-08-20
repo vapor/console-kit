@@ -73,6 +73,29 @@ struct LoggerFragmentBuilderTests {
     }
 
     @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
+    @Test("Error Metadata Fragment")
+    func errorMetadataFragment() throws {
+        let printer = TestingConsoleLoggerPrinter()
+
+        @LoggerFragmentBuilder<0>
+        var fragment: some LoggerFragment {
+            MessageFragment()
+            MetadataFragment()
+        }
+
+        let logger = Logger(label: "codes.vapor.console") { label in
+            ConsoleLogger(fragment: fragment, printer: printer, label: label)
+        }
+
+        logger.info("Test message", error: TestError())
+
+        #expect(
+            printer.testOutputQueue.first
+                == "Test message[error.message: Boom!, error.type: ConsoleLoggerTests.LoggerFragmentBuilderTests.TestError]"
+        )
+    }
+
+    @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, macCatalyst 26.0, visionOS 26.0, *)
     @Test("Conditional Fragment", arguments: [true, false])
     func conditionalFragment(includeTimestamp: Bool) throws {
         let printer = TestingConsoleLoggerPrinter()
@@ -208,5 +231,11 @@ struct LoggerFragmentBuilderTests {
         // `.separated("")` should not insert any text but also should not consume the `needsSeparator` flag,
         // so the next `.separated(" ")` still inserts a space.
         #expect(printer.testOutputQueue.first == "Hello[ INFO ] Test message")
+    }
+
+    struct TestError: Error, CustomStringConvertible {
+        var description: String {
+            "Boom!"
+        }
     }
 }

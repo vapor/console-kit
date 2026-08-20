@@ -69,6 +69,21 @@ struct ConsoleLoggerTests {
         expect(printer: printer, logs: .critical, message: "critical")
     }
 
+    @Test("Error")
+    func error() {
+        let printer = TestingConsoleLoggerPrinter()
+        let logger = Logger(label: "codes.vapor.console") { label in
+            ConsoleLogger(printer: printer, label: label, level: .info)
+        }
+
+        logger.warning("warning", error: TestError(), metadata: ["error.message": "Overridden", "error.type": "Overridden"])
+        expect(
+            printer: printer,
+            logs: .warning,
+            message: "warning [error.message: Boom!, error.type: ConsoleLoggerTests.ConsoleLoggerTests.TestError]"
+        )
+    }
+
     @Test("Metadata")
     func metadata() {
         let printer = TestingConsoleLoggerPrinter()
@@ -216,6 +231,12 @@ struct ConsoleLoggerTests {
         expect(printer: printer, logs: level, message: expectedMessage)
     }
     #endif
+
+    struct TestError: Error, CustomStringConvertible {
+        var description: String {
+            "Boom!"
+        }
+    }
 }
 
 private func expect(

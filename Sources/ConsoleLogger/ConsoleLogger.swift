@@ -146,6 +146,7 @@ public struct ConsoleLogger<T: LoggerFragment>: LogHandler, Sendable {
         var record = LogRecord(
             level: event.level,
             message: event.message,
+            error: event.error,
             metadata: event.metadata,
             source: event.source,
             file: event.file,
