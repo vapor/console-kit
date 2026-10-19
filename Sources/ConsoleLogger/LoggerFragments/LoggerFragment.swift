@@ -343,7 +343,7 @@ public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
     }
 
     private func timestamp() -> String {
-        unsafe withUnsafeTemporaryAllocation(of: CChar.self, capacity: 255) {
+        /*unsafe*/ withUnsafeTemporaryAllocation(of: CChar.self, capacity: 255) {
             #if os(Windows)
             var localTime = self.source.now()
             #else
