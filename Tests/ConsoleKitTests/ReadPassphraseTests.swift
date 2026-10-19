@@ -1,5 +1,5 @@
 #if (os(Linux) || os(Android)) || (os(macOS) && DEBUG)
-@testable import ConsoleKit
+@testable import ConsoleKitTerminal
 import Testing
 
 #if canImport(Darwin)
