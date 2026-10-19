@@ -31,9 +31,9 @@ jobs:
     runs-on: ubuntu-latest
     container: swift:noble
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with: { path: console-kit }
-      - uses: actions/checkout@v6
-        with: { repository: 'vapor/vapor', path: vapor }
+      - uses: actions/checkout@v7
+        with: { repository: 'vapor/vapor', ref: 'vapor4', path: vapor }
       - run: swift package --package-path vapor edit console-kit --path console-kit
       - run: swift test --package-path vapor
