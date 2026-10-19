@@ -88,7 +88,7 @@ public final class Terminal: Console, Sendable {
                     return unsafe .init(unsafeUninitializedCapacity: 1024) {
                         unsafe $0.withMemoryRebound(to: Int8.self) { unsafe plat_readpassphrase(into: $0) }
                     }
-                    #endif                
+                    #endif
                 } else {
                     return unsafe .init(
                         decoding: [Int8](unsafeUninitializedCapacity: 1024) { $1 = unsafe plat_readpassphrase(into: $0) }.map(UInt8.init),
