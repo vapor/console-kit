@@ -111,7 +111,7 @@ extension Console {
         // Xcode output does not support ANSI commands
         // We cannot check `#if Xcode` anymore due to https://github.com/swiftlang/swift-package-manager/issues/10675
         // This is a pretty awful hack, but at least it works.
-        return unsafe (getenv("TERM").map { strncmp($0, "dumb", 4) } ?? 1) != 0
+        return unsafe (getenv("TERM").map { unsafe strncmp($0, "dumb", 4) } ?? 1) != 0
         #elseif os(Windows)
         return unsafe _isatty(_fileno(stdout)) > 0
         #else
