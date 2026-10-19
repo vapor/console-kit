@@ -107,9 +107,11 @@ public protocol Console: AnyObject, Sendable {
 
 extension Console {
     public var supportsANSICommands: Bool {
-        #if Xcode
+        #if canImport(Darwin)
         // Xcode output does not support ANSI commands
-        return false
+        // We cannot check `#if Xcode` anymore due to https://github.com/swiftlang/swift-package-manager/issues/10675
+        // This is a pretty awful hack, but at least it works.
+        return unsafe (getenv("TERM").map { unsafe strncmp($0, "dumb", 4) } ?? 1) != 0
         #elseif os(Windows)
         return unsafe _isatty(_fileno(stdout)) > 0
         #else

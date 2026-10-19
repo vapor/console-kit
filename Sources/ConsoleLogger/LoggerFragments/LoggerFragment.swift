@@ -343,6 +343,20 @@ public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
     }
 
     private func timestamp() -> String {
+        #if compiler(>=6.4)
+        withUnsafeTemporaryAllocation(of: CChar.self, capacity: 255) {
+            #if os(Windows)
+            var localTime = self.source.now()
+            #else
+            var localTime = unsafe self.source.now()
+            #endif
+
+            guard unsafe strftime($0.baseAddress!, $0.count, "%Y-%m-%dT%H:%M:%S%z", &localTime) > 0 else {
+                return "<unknown>"
+            }
+            return unsafe String(cString: $0.baseAddress!)
+        }
+        #else
         unsafe withUnsafeTemporaryAllocation(of: CChar.self, capacity: 255) {
             #if os(Windows)
             var localTime = self.source.now()
@@ -355,6 +369,7 @@ public struct TimestampFragment<S: TimestampSource>: LoggerFragment {
             }
             return unsafe String(cString: $0.baseAddress!)
         }
+        #endif
     }
 }
 

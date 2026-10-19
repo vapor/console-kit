@@ -80,9 +80,15 @@ public final class Terminal: Console, Sendable {
             // swift-format-ignore
             func readpassphrase_str() -> String {
                 if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
+                    #if compiler(>=6.4)
+                    return .init(unsafeUninitializedCapacity: 1024) {
+                        unsafe $0.withMemoryRebound(to: Int8.self) { unsafe plat_readpassphrase(into: $0) }
+                    }
+                    #else
                     return unsafe .init(unsafeUninitializedCapacity: 1024) {
                         unsafe $0.withMemoryRebound(to: Int8.self) { unsafe plat_readpassphrase(into: $0) }
                     }
+                    #endif
                 } else {
                     return unsafe .init(
                         decoding: [Int8](unsafeUninitializedCapacity: 1024) { $1 = unsafe plat_readpassphrase(into: $0) }.map(UInt8.init),
