@@ -259,18 +259,22 @@ public struct MessageFragment: LoggerFragment {
     }
 }
 
-/// Writes the combined metadata to the output, and requests a separator for the next fragment only if the metadata was not empty.
+/// Writes the combined metadata (including the logged error) to the output, and requests a separator for the next fragment only if the metadata was not empty.
 ///
 /// This fragment is considered to not have content if the metadata is empty.
 public struct MetadataFragment: LoggerFragment {
     public init() {}
 
     public func hasContent(record: inout LogRecord) -> Bool {
-        !record.allMetadata().isEmpty
+        !record.allMetadata().isEmpty || record.error != nil
     }
 
     public func write(_ record: inout LogRecord, to output: inout FragmentOutput) {
-        let allMetadata = record.allMetadata()
+        var allMetadata = record.allMetadata()
+        if let error = record.error {
+            allMetadata["error.message"] = "\(error)"
+            allMetadata["error.type"] = "\(String(reflecting: type(of: error)))"
+        }
 
         guard !allMetadata.isEmpty else { return }
 
