@@ -14,14 +14,14 @@ struct ConsoleTableTests {
         ])
 
         let expected = """
-        ┌───────┬─────┐
-        │ Name  │ Age │
-        ├───────┼─────┤
-        │ Alice │ 30  │
-        │ Bob   │ 25  │
-        └───────┴─────┘
+            ┌───────┬─────┐
+            │ Name  │ Age │
+            ├───────┼─────┤
+            │ Alice │ 30  │
+            │ Bob   │ 25  │
+            └───────┴─────┘
 
-        """
+            """
         #expect(console.testOutputQueue.reversed().joined() == expected)
     }
 
@@ -36,14 +36,14 @@ struct ConsoleTableTests {
         ])
 
         let expected = """
-        ┌───┬───┬───┐
-        │ A │ B │ C │
-        ├───┼───┼───┤
-        │ 1 │   │   │
-        │ 2 │ 3 │   │
-        └───┴───┴───┘
+            ┌───┬───┬───┐
+            │ A │ B │ C │
+            ├───┼───┼───┤
+            │ 1 │   │   │
+            │ 2 │ 3 │   │
+            └───┴───┴───┘
 
-        """
+            """
         #expect(console.testOutputQueue.reversed().joined() == expected)
     }
 
@@ -80,13 +80,13 @@ struct ConsoleTableTests {
         ])
 
         let expected = """
-        ┌──────┐
-        │ Item │
-        ├──────┤
-        │ x    │
-        └──────┘
+            ┌──────┐
+            │ Item │
+            ├──────┤
+            │ x    │
+            └──────┘
 
-        """
+            """
         #expect(console.testOutputQueue.reversed().joined() == expected)
     }
 }
