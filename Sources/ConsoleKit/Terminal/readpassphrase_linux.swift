@@ -1,6 +1,7 @@
 // swift-format-ignore-file
-// This implementation is only used on Linux, but we enable building it on macOS in debug for testing purposes.
-#if (os(Linux) || os(Android)) || (os(macOS) && DEBUG)
+// This implementation is used on Linux and FreeBSD (which lack easy access to libbsd readpassphrase),
+// and is also enabled on macOS in debug for testing purposes.
+#if (os(Linux) || os(Android) || os(FreeBSD)) || (os(macOS) && DEBUG)
 #if canImport(Darwin)
 import Darwin
 #elseif canImport(Glibc)
@@ -26,12 +27,13 @@ internal func linux_readpassphrase(
 ) -> UnsafeMutablePointer<Int8>? {
     //dispatchPrecondition(condition: .onQueue(.main))
 
+
     precondition((flags & 0x20 /* RPP_STDIN */) == 0, "RPP_STDIN is not supported by this implementation")
     precondition((flags & 0x04 /* RPP_FORCELOWER */) == 0, "RPP_FORCELOWER is not supported by this implementation")
     precondition((flags & 0x08 /* RPP_FORCEUPPER */) == 0, "RPP_FORCEUPPER is not supported by this implementation")
     precondition((flags & 0x10 /* RPP_SEVENBIT */) == 0, "RPP_SEVENBIT is not supported by this implementation")
 
-    #if !canImport(Darwin)
+    #if !canImport(Darwin) && !os(FreeBSD)
     let TCSASOFT = 0 as Int32
     #endif
 
@@ -55,7 +57,7 @@ internal func linux_readpassphrase(
     var sigrecovery = sigaction()
     unsafe sigemptyset(&sigrecovery.sa_mask)
     sigrecovery.sa_flags = 0
-    #if canImport(Darwin)
+    #if canImport(Darwin) || os(FreeBSD)
     sigrecovery.__sigaction_u = .init(__sa_handler: { unsafe linux_readpassphrase_signos[$0] += 1 })
     #elseif canImport(Glibc)
     sigrecovery.__sigaction_handler = .init(sa_handler: { unsafe linux_readpassphrase_signos[$0] += 1 })
